@@ -26,7 +26,7 @@ This endpoint would be meta-described as:
 ```
 {
    @type: "hydra:Operation",
-   "result_type": "dbpedia:Length"  # 
+   "result_type": "dbpedia:Length"  # a taxonomy of measurement units is availble at opencyc.org
    @returns: "umbel: Float"
    ...
 }
@@ -37,4 +37,4 @@ This endpoint would be meta-described as:
 As HYDRA is meant to let clients to interoperate automatically, we try here to subset the problem posing it on this shape: starting from an initial input from a human-user, how can different layers of HYDRA-featured APIs respond consistantly by navigating the provided endpoints? 
 * "UI": a user (or a machine from another network) is wishful to know "what is most distant from the Sun, Earth or Mars?"
 * "Client": the client knows that some endpoints are available and we suppose that it knows it has to look for some kind of length value. It looks for the endpoints that can help, we suppose it can understand the fact that it needs the `/api/planet/calculate_average_au` (that is basically a semantic/NLP problem); so it pass the parameters (Earth and Mars) to it
-* "Server": the server performs the calculation and responds
+* "Server": the server performs the calculation and responds: "Mars!"
