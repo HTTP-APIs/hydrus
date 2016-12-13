@@ -1,3 +1,6 @@
+### State of the document
+This document is just a collection of annotations at the moment.
+
 ### About the option of having endpoints that are type- (class-) based
 As we discussed, the fun idea would be to have somenthing that can "mix" REST and RPC in some way, not technically but at least conceptually. This approach comes from the observation that the statefulness of a REST API can be in some sort (at a level we are trying to understand for the purpose of our implementation) related to the concept of invariability of the output of a pure-function. This would be practically accomplished by dedicating some endpoints to resources obviously but also to "operations" (functions that accepts some kind of paramethers and run some kind of reasoning on a data structure).
 
