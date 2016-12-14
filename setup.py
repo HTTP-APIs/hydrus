@@ -8,5 +8,5 @@ setup(name='hydrus',
       author='W3C HYDRA development group',
       author_email='public-hydra@w3.org',
       url='https://github.com/HTTP-APIs/hydrus',
-      packages=['flask==0.11'],
+      install_requires=['flask==0.11'],
 )
