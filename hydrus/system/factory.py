@@ -20,6 +20,8 @@ Example use case:
 * the handler responds.
 """
 from thespian.actors import Actor
+from hydrus.server.application import system
+
 
 # a classes factory that creates actor types based on the @type
 
@@ -38,19 +40,22 @@ from thespian.actors import Actor
 #+-------------------------+ | t         +---------------------------------+
 #                            | a
 #                            | n
-#                            v c
-#                     +------+-e-----------+
-#                     | Actor              |
-#                     |                    |   owl#isSubClassOf
-#                     | SomeResource       +--------------------+
-#                     | @type: owl#Class   |                    |
-#                     | sameAs: http://..  |                    |
-#                     +--------------------+                    |
-#                                                               |
-#                             +----------------------+          |
-#                             | Actor                |          |
-#                             |                      |          |
-#                             | SomeOtherType        +----------+
-#                             | @type: owl#Class     |
-#                             | sameAs: http://..    | 
-#                             +----------------------+
+#                            | c
+#                            v e
+#           l |         +------+-e-----------+
+#           o |         | Actor              |
+#           c |         |                    |   owl#isSubClassOf
+#           a |         | SomeResource       +--------------------+
+#           l |         | @type: owl#Class   |                    |
+#             |         | sameAs: http://..  |                    |
+#           m |         +--------------------+                    |
+#           i |                                                   |
+#           n |                 +----------------------+          |
+#           i |                 | Actor                |          |
+#           - |                 |                      |          |
+#           s |                 | SomeOtherType        +----------+
+#           y |                 | @type: owl#Class     |
+#           s |                 | sameAs: http://..    | 
+#           t |                 +----------------------+
+#           e |
+#           m |

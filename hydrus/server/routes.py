@@ -1,7 +1,7 @@
-from hydrus.application import app
-from hydrus.handlers import *
+from application import app
+from handlers import *
 
 
-app.add_url_rule('/api/available', list_resources)
-app.add_url_rule('/api/<string:resource>', read_resource)
-app.add_url_rule('/api', entrypoint)
+app.add_url_rule('/api/available', 'available', list_resources)
+app.add_url_rule('/api/<string:resource>', 'resources', read_resource)
+app.add_url_rule('/api', 'root', entrypoint)

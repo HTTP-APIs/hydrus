@@ -3,6 +3,8 @@ Handlers for the Flask server.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
 
+from flask import jsonify
+
 def entrypoint():
     """
     Return a set of URI
