@@ -43,7 +43,7 @@ As HYDRA is meant to let clients to interoperate automatically, we try here to s
 * "Server": the server performs the calculation and responds: "Mars!"
 
 ### Stack
-* initial version: local in-memory low-footprint actors with a cache (Mongo or Redis)
+* initial version: local in-memory low-footprint actors with a cache (Mongo or Redis), supported by ZeroMQ
 * development version: add a some kind of graph database
 * ...
 
