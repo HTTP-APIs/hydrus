@@ -41,3 +41,9 @@ As HYDRA is meant to let clients to interoperate automatically, we try here to s
 * "UI": a user (or a machine from another network) is wishful to know "what is most distant from the Sun, Earth or Mars?"
 * "Client": the client knows that some endpoints are available and we suppose that it knows it has to look for some kind of length value. It looks for the endpoints that can help, we suppose it can understand the fact that it needs the `/api/planet/calculate_average_au` (that is basically a semantic/NLP problem); so it pass the parameters (Earth and Mars) to it
 * "Server": the server performs the calculation and responds: "Mars!"
+
+### Stack
+* initial version: local in-memory low-footprint actors with a cache (Mongo or Redis)
+* development version: add a some kind of graph database
+* ...
+
