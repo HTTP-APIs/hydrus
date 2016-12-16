@@ -1,4 +1,3 @@
 venv/
-hydrus/__pycache__/
-server/__pycache__/
-hydrus/server/__pycache__/
+__pycache__/
+
