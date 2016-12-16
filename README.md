@@ -7,9 +7,9 @@ A project to develop a space sciences-based application to demonstrate features 
 At the moment: start from STARTING.md
 
 ### Running
-* In the `hydrus/` directory `python3 application.py`
+* In the repo directory `python3 application.py`
 
 ### Testing
 * `curl -i localhost:5000/api`
-* `curl -i localhost:5000/api/available`
+* `curl -i localhost:5000/api/astronomy`
 * `curl -X POST localhost:5000/api/CelestialBody/create -H 'Content-Length: 0'`
