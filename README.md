@@ -7,4 +7,4 @@ A project to develop a space sciences-based application to demonstrate features 
 At the moment: start from STARTING.md
 
 ### Running
-* `python3 hydrus/server/application.py`
+* In the `hydrus/` directory `python3 application.py`
