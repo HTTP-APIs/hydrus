@@ -28,13 +28,21 @@ def list_resources():
         'available': ALLOWED_RESOURCES
     })
 
-def read_resource(resource):
+def read_resources(resource):
     """
-    Provide the READ operation on resource
+    Provide a collection of `owl:Class`
     """
 
     return jsonify({
         'resource': resource
     })
 
+def crud_resource(resource, crud):
+    """
+    Provide a CRUD operation on a particular resource
+    """
+    return jsonify({
+        'resource': resource,
+        'operation': crud
+        })
 
