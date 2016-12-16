@@ -21,7 +21,7 @@ def list_resources():
     """
 
     # load vocabulary in data/ to create an array of allowed names
-    from hydrus.parser import collect_astronomy_resources
+    from server.parser import collect_astronomy_resources
     ALLOWED_RESOURCES = collect_astronomy_resources()
 
     return jsonify({

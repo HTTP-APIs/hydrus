@@ -336,7 +336,7 @@ astronomy = {
 		"@id": "http://ontology.projectchronos.eu/sensors/PlanetaryAstronomy",
 		"@type": "http://www.w3.org/2002/07/owl#Class"
 	}, {
-		"rdf: label": "PlanetaryGeology",
+		"rdf:label": "PlanetaryGeology",
 		"rdfs:subClassOf": {
 			"@id": "http://ontology.projectchronos.eu/sensors/PlanetaryScience"
 		},

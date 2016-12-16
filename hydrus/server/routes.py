@@ -1,5 +1,5 @@
 from application import app
-from handlers import *
+from server.handlers import *
 
 
 app.add_url_rule('/api/available', 'available', list_resources)

@@ -1,6 +1,7 @@
 from flask import Flask
 
 app = Flask(__name__)
+app.config['DEBUG'] = True
 
 from thespian.actors import ActorSystem
 
@@ -9,7 +10,7 @@ def start_system():
 
 system = None
 
-from routes import *
+from server.routes import *
 
 
 if __name__ == '__main__':
