@@ -8,11 +8,9 @@ from thespian.actors import ActorSystem
 def start_system():
     return ActorSystem()
 
-system = None
-
 from server.routes import *
 
 
 if __name__ == '__main__':
     app.run()
-    system = start_system()
+    start_system()

@@ -4,16 +4,25 @@ Handlers for the Flask server.
 """
 
 from flask import jsonify, request
+from data.apidocumentation import global_doc, make_doc
 
 def entrypoint():
     """
     Return a set of URI
     """
     return jsonify({
-        "root": '/api/',
-        "allowed": '/api/available'
+        "hydra:apiDocumentation": "/api/hydra",  # link to global documentation
+        "resources": "/api/<class>",  # list possible classes
+        "documentation": "/api/hydra/<view>"  # list routes' documentation
     })
 
+def hydra_documentation(view=None):
+    """
+    Return HYDRA apiDocumentation for given view.
+    """
+    if view is None: return jsonify(global_doc)
+
+    return jsonify(make_doc(view))
 
 def list_resources():
     """
@@ -35,11 +44,15 @@ def read_resources(resource):
         "resource": resource
     })
 
-def crud_resource(resource, crud):
+def crud_resource(resource, crud, id_=None):
     """
     Provide a CRUD operation on a particular resource
     """
     if crud not in ['create', 'read', 'update', 'delete']: return jsonify({"error": 1})
+
+    if crud == 'read' and id_ == None: return jsonify({"error": 1})
+
+    # if crud == 'read' and id_ is hexdigest: resource lookup by hash
 
     return jsonify({
         "resource": resource,

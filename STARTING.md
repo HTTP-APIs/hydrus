@@ -43,7 +43,13 @@ As HYDRA is meant to let clients to interoperate automatically, we try here to s
 * "Server": the server performs the calculation and responds: "Mars!"
 
 ### Stack
-* initial version: local in-memory low-footprint actors with a cache (Mongo or Redis), supported by ZeroMQ
-* development version: add a some kind of graph database
+* initial version: local Flask and in-memory low-footprint actors reading from local vocabularies, use ZeroMQ;
+* development version: use a cache (Mongo or Redis) for documents and try to represent a graph;
+* stable version: add a some kind of graph database under the cache layer;
 * ...
+
+### Implementation
+
+#### Starting idea
+* Let Flask and the Actor System to communicate via ZeroMQ. Major concern: how to make the worker to be run into a Request (maybe implementing Celery could be easier in the beginning).
 

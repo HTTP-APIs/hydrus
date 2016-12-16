@@ -20,8 +20,6 @@ Example use case:
 * the handler responds.
 """
 from thespian.actors import Actor
-from hydrus.server.application import system
-
 
 # a classes factory that creates actor types based on the @type
 
