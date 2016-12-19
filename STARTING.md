@@ -39,11 +39,13 @@ This endpoint would be meta-described as:
 ### Different layers of API: a simple use-case
 As HYDRA is meant to let clients to interoperate automatically, we try here to subset the problem posing it on this shape: starting from an initial input from a human-user, how can different layers of HYDRA-featured APIs respond consistantly by navigating the provided endpoints? 
 * "UI": a user (or a machine from another network) is wishful to know "what is most distant from the Sun, Earth or Mars?"
-* "Client": the client knows that some endpoints are available and we suppose that it knows it has to look for some kind of length value. It looks for the endpoints that can help, we suppose it can understand the fact that it needs the `/api/planet/calculate_average_au` (that is basically a semantic/NLP problem); so it pass the parameters (Earth and Mars) to it
+* "Client": the client knows that some endpoints are available and we suppose that it knows it has to look for some kind of length value. It looks for the endpoints that can help, we suppose it can understand the fact that it needs the `/api/planet/calculate_average_au` (that is basically a semantic/NLP problem); so it pass the parameters (Earth and Mars) to it. This layer is commonly referred to as a *middleware*;
 * "Server": the server performs the calculation and responds: "Mars!"
 
+The server has to be build with at least two layers of abstraction: a low-level strict-HYDRA-RDF that can map as directly as possible the data to resources/collections, and a middleware to perform some sort of opinionated intermediation between the lower level and the proper client above. For opinionated we mean that the middleware has to implement data querying on the lower endpoints  
+
 ### Stack
-* initial version: local Flask and in-memory low-footprint actors reading from local vocabularies, use ZeroMQ;
+* initial version: local Flask ("Server") and in-memory low-footprint actors ("Client") reading from local vocabularies, use ZeroMQ;
 * development version: use a cache (Mongo or Redis) for documents and try to represent a graph;
 * stable version: add a some kind of graph database under the cache layer;
 * ...

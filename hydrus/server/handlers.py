@@ -11,6 +11,7 @@ def entrypoint():
     Return a set of URI
     """
     return jsonify({
+        "collections": ["/api/astronomy", "/api/solarsystem"], 
         "hydra:apiDocumentation": "/api/hydra",  # link to global documentation
         "resources": "/api/<class>",  # list possible classes
         "documentation": "/api/hydra/<view>"  # list routes' documentation
@@ -19,6 +20,8 @@ def entrypoint():
 def hydra_documentation(view=None):
     """
     Return HYDRA apiDocumentation for given view.
+
+    :view str: the name given to the route in routes.py
     """
     if view is None: return jsonify(global_doc)
 
@@ -31,7 +34,10 @@ def list_resources():
 
     # load vocabulary in data/ to create an array of allowed names
     from server.parser import collect_astronomy_resources
-    ALLOWED_RESOURCES = collect_astronomy_resources(request.url_rule.endpoint)
+    try:
+        ALLOWED_RESOURCES = collect_astronomy_resources(request.url_rule.endpoint)
+    except AttributeError as e:
+        return jsonify({"error": 1})
 
     return jsonify(ALLOWED_RESOURCES)
 

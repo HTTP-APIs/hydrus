@@ -1,3 +1,11 @@
+"""
+Data file with the ontologies.
+
+At the moment there are:
+* astronomy: a collection of general concept about astronomical object
+* solarsystem: a collection of definitions for bodies in the Solar System
+"""
+
 astronomy = {
 	"@context": {
 		"@base": "http://ontology.projectchronos.eu/astronomy",

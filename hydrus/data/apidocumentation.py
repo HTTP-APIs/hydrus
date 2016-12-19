@@ -1,11 +1,15 @@
+"""
+Generate documentation dictionaries.
+"""
+
 global_doc = {
   "@context": {
      "hydra": "http://www.w3.org/ns/hydra/context.jsonld",
   },
   "@id": "/api",
   "@type": "hydra:ApiDocumentation",
-  "hydra:title": "The name of the API",
-  "hydra:description": "A short description of the API",
+  "hydra:title": "Astronomical HYDRA",
+  "hydra:description": "A demo API for HYDRA framework",
   "hydra:entrypoint": "/api",
   "hydra:supportedClass": [
     
@@ -16,6 +20,9 @@ global_doc = {
 }
 
 def make_doc(view):
+  """
+  Crate the dictionary for a given view (endpoint)
+  """
   return {
     "@context": {
       "hydra": "http://www.w3.org/ns/hydra/context.jsonld"

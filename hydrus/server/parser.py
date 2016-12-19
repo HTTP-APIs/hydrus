@@ -1,8 +1,10 @@
-from data.astronomy import astronomy
+"""
+Take data from the data files and implement HYDRA spec.
+"""
+
+import data
 from server.commons import ROOT, SERVE, HYDRA_DOC
 
-
-objects = astronomy['defines']
 
 # print(objects[0])
 
@@ -25,6 +27,8 @@ def collect_astronomy_resources(uri):
     """
     Serve an HYDRA collection loaded from a local dictionary.
     """
+
+    objects = getattr(data, uri)['defines']  # get the data got the URL or raise AttributeError 
 
     # SERVE.format(class_=o.get('@type')[o.get('@type').rfind('/')+1:]
     members = [

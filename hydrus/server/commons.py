@@ -1,4 +1,8 @@
-from data.astronomy import astronomy
+"""
+Generic configuration vriables and scripts.
+"""
+
+from data.astronomy import astronomy, solarsystem
 
 ROOT = '/api'
 SERVE = '/api/{class_}/{label_}'
@@ -14,3 +18,9 @@ for i, a in enumerate(astronomy['defines']):
         bytes(a.get('rdf:label', ValueError()), 'utf-8')
     )
     astronomy['defines'][i]['hash'] = m.hexdigest()
+
+for i, a in enumerate(solarsystem['defines']):
+    m.update(
+        bytes(a.get('rdf:label', ValueError()), 'utf-8')
+    )
+    solarsystem['defines'][i]['hash'] = m.hexdigest()
