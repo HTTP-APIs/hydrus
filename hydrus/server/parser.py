@@ -36,7 +36,7 @@ def collect_astronomy_resources(uri):
     ]
 
     template['@id'], template['hydra:totalItems'], template['hydra:member'] = ROOT + '/' + uri, len(members), members
-    template['hydra:apiDocumnetation'] = HYDRA_DOC.format(uri)
+    template['hydra:apiDocumnetation'] = HYDRA_DOC.format(endpoint_=uri)
 
     return template
 

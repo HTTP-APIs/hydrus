@@ -13,3 +13,4 @@ At the moment: start from STARTING.md
 * `curl -i localhost:5000/api`
 * `curl -i localhost:5000/api/astronomy`
 * `curl -X POST localhost:5000/api/CelestialBody/create -H 'Content-Length: 0'`
+* `curl -i localhost:5000/api/hydra/resources`
