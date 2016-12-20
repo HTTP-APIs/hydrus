@@ -12,7 +12,7 @@ def entrypoint():
     """
     return jsonify({
         "collections": ["/api/astronomy", "/api/solarsystem"], 
-        "hydra:apiDocumentation": "/api/hydra",  # link to global documentation
+        "apiDocumentation": "/api/hydra/<view>",  # link to global documentation
         "resources": "/api/<class>",  # list possible classes
         "documentation": "/api/hydra/<view>"  # list routes' documentation
     })
