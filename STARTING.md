@@ -30,7 +30,7 @@ This kind and body of the request:
 POST /api/planet/calculate_average_au
 {
    @type: "hydra:Collection",
-   "parameters": [
+   "hydra:member": [
        {"@id": "/api/planet/earth", "@type": "astronomy:Planet"}, 
        {"@id": "/api/planet/mars", "@type": "astronomy:Planet"},
    ]
