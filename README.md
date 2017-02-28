@@ -1,5 +1,8 @@
 # Hydrus
 
+See [issues tagged with "wiki"](https://github.com/HTTP-APIs/hydrus/issues?q=is%3Aissue+is%3Aopen+label%3Awiki)
+
+
 DISCLAIMER: this repo is only a collection of annotations at the moment, don't take them too seriously.
 
 A project to develop a space sciences-based application to demonstrate features provided by [HYDRA](http://www.hydra-cg.com/spec/latest/core)-powered HTTP APIs.
