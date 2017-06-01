@@ -1,57 +1,105 @@
 """Models for Hydra Classes."""
 
+from sqlalchemy import create_engine, ForeignKey
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, String
 
-class Property:
-    """Class for Hydra Property.
+engine = create_engine('sqlite:///database.db')
 
-    >>> prop1 = Property('maxWorkingTemperature')
-    >>> prop2 = Property('minWorkingTemperature')
+Base = declarative_base()
+
+
+class Property(Base):
+    """Class for Hydra Instance Properties.
+
+    >>> prop1 = Property('hasWeight')
+    >>> prop2 = Property('hasCost')
     """
 
-    def __init__(self, name):
-        """Constructor."""
-        self.name = name
+    __tablename__ = "property"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    type_ = Column(String)  # Can be ABSTRACT or INSTANCE depending on which one it is
+
+    def __repr__(self):
+        """Verbose object name."""
+        return "<id='%s', name='%s', type_='%s'>" % (self.id, self.name, self.type_)
 
 
-class SubSysType:
-    """Generic class for Hydra SubSystem.
+class Instance(Base):
+    """Class for Hydra Object/Resource."""
 
-    >>> primary_power = SubSysType('Spacecraft_PrimaryPower', [ prop1, prop2, ...])
-    >>> backup_power = SubSysType('Spacecraft_BackupPower', [ prop1, prop2, ...])
-    """
+    __tablename__ = "instance"
 
-    def __init__(self, type_, allowed_properties):
-        """Constructor."""
-        self.type_ = type_
-        self.allowed_properties = allowed_properties
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
 
-
-class Resource:
-    """Generic Resource class for Hydra objects.
-
-    >>> component1 = Resource(name=123, type=primary_power, [...])
-    >>> component2 = Resource(name=123, type=backup_power, [...])
-    """
-
-    def __init__(self, id_, name, type_):
-        """Constructor."""
-        self.id = id_
-        self.name = name
-        self.type = type_
+    def __repr__(self):
+        """Verbose object name."""
+        return "<id='%s', name='%s'>" % (self.id, self.name)
 
 
-class Graph:
-    """Graph triple contains subject, predicate, object.
+class Classes(Base):
+    """Class for Hydra Classes."""
 
-    >>> Graph(component1, attribute, component2)
-    """
+    __tablename__ = "classes"
 
-    def __init__(self, subject, predicate, object_):
-        """Constructor."""
-        self.subject = subject
-        self.predicate = predicate
-        self.object = object_
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
 
-    def hydrafy(self):
-        """Generate Hydra compatible JSON for the instance."""
-        pass
+    def __repr__(self):
+        """Verbose object name."""
+        return "<id='%s', name='%s'>" % (self.id, self.name)
+
+
+class Terminal(object):
+    """Class for Hydra Supported Terminals."""
+
+    __tablename__ = "terminal"
+
+    id = Column(Integer, primary_key=True)
+    value = Column(String)
+    unit = Column(String)
+
+    def __repr__(self):
+        """Verbose object name."""
+        return "<id='%s', value='%s', unit='%s'>" % (self.id, self.value, self.unit)
+
+
+Base.metadata.create_all(engine)
+
+
+# class Supported_Property(Base):
+#     """Class for Hydra Supported Properties."""
+#
+#     __tablename__ = "supported"
+#
+#     class_id = Column(Integer, ForeignKey("classes.id"))
+#     prop_id = Column(Integer, ForeignKey("property.id"))
+#
+#     def __repr__(self):
+#         """Verbose object name."""
+#         return "<class_id='%s', prop_id='%s'>" % (self.class_id, self.prop_id)
+
+
+class Graph(Base):
+    """Graph triple contains subject, predicate, object."""
+
+    __tablename__ = "graph"
+
+    id = Column(Integer, primary_key=True)
+    subject = Column(Integer, ForeignKey("classes.id"))
+    predicte = Column(Integer, ForeignKey("property.id"))
+    object_ = Column(Integer, ForeignKey("classes.id"), nullable=True)
+    terminal = Column(Integer, ForeignKey("terminal.id"), nullable=True)
+
+    def __repr__(self):
+        """Verbose object name."""
+        obj = self.terminal
+        if obj is None:
+            obj = self.object_
+        return "<subject='%s', predicate='%s', object_='%s'>" % (self.value, self.unit, obj)
+
+
+Base.metadata.create_all(engine)
