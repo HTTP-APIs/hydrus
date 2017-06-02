@@ -9,6 +9,19 @@ engine = create_engine('sqlite:///database.db')
 Base = declarative_base()
 
 
+class Classes(Base):
+    """Class for Hydra Classes."""
+
+    __tablename__ = "classes"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+
+    def __repr__(self):
+        """Verbose object name."""
+        return "<id='%s', name='%s'>" % (self.id, self.name)
+
+
 class Property(Base):
     """Class for Hydra Instance Properties.
 
@@ -27,19 +40,6 @@ class Property(Base):
         return "<id='%s', name='%s', type_='%s'>" % (self.id, self.name, self.type_)
 
 
-class Classes(Base):
-    """Class for Hydra Classes."""
-
-    __tablename__ = "classes"
-
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-
-    def __repr__(self):
-        """Verbose object name."""
-        return "<id='%s', name='%s'>" % (self.id, self.name)
-
-
 class Instance(Base):
     """Class for Hydra Object/Resource."""
 
@@ -47,11 +47,11 @@ class Instance(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    class_id = Column(Integer, ForeignKey="classes.id")
+    type_ = Column(Integer, ForeignKey("classes.id"), nullable=True)
 
     def __repr__(self):
         """Verbose object name."""
-        return "<id='%s', name='%s'>" % (self.id, self.name)
+        return "<id='%s', name='%s', type_='%s'>" % (self.id, self.name, self.type_.name)
 
 
 class Terminal(Base):
@@ -87,10 +87,11 @@ class Graph(Base):
     __tablename__ = "graph"
 
     id = Column(Integer, primary_key=True)
-    subject = Column(Integer, ForeignKey("classes.id"))
+    subject = Column(Integer)
+    subject_type = Column(String)   # Can be CLASS or INSTANCE depending on which one it is
     predicte = Column(Integer, ForeignKey("property.id"))
-    object_id = Column(Integer, ForeignKey("classes.id"), nullable=True)
-    terminal_id = Column(Integer, ForeignKey("terminal.id"), nullable=True)
+    object_id = Column(Integer, nullable=True)
+    object_type = Column(String)    # Can be CLASS or TERMINAL depending on which one it is
 
     def __repr__(self):
         """Verbose object name."""
@@ -101,4 +102,6 @@ class Graph(Base):
 
 
 if __name__ == "__main__":
+    print("Creating models....")
     Base.metadata.create_all(engine)
+    print("Done")

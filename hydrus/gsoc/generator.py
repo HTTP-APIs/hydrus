@@ -6,84 +6,84 @@ subsystems = dict({
     "communication": {
         "slug": "COM",
         "ontology": "http://ontology.projectchronos.eussubsystems/Spacecraft_Communication",
-        "power": {"min": -200, "max": -1},
-        "mass": {"min": 30, "max": 100},
-        "cost": {"min": 1000, "max": 10000},
-        "minWorkingTemp": {"min": -40, "max": -20},
-        "maxWorkingTemp": {"min": 40, "max": 90}
+        "hasPower": {"min": -200, "max": -1},
+        "hasMass": {"min": 30, "max": 100},
+        "hasMonetaryValue": {"min": 1000, "max": 10000},
+        "minWorkingTemperature": {"min": -40, "max": -20},
+        "maxWorkingTemperature": {"min": 40, "max": 90}
     },
     "propulsion": {
         "slug": "PROP",
         "ontology": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Propulsion",
-        "power": {"min": -200, "max": -50},
-        "mass": {"min": 10, "max": 100},
-        "cost": {"min": 5000, "max": 25000},
-        "minWorkingTemp": {"min": -30, "max": -10},
-        "maxWorkingTemp": {"min": 20, "max": 80}
+        "hasPower": {"min": -200, "max": -50},
+        "hasMass": {"min": 10, "max": 100},
+        "hasMonetaryValue": {"min": 5000, "max": 25000},
+        "minWorkingTemperature": {"min": -30, "max": -10},
+        "maxWorkingTemperature": {"min": 20, "max": 80}
     },
     "detector": {
         "slug": "DTR",
         "ontology": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Detector",
-        "power": {"min": -100, "max": -10},
-        "mass": {"min": 50, "max": 400},
-        "cost": {"min": 2000, "max": 15000},
-        "minWorkingTemp": {"min": -30, "max": -10},
-        "maxWorkingTemp": {"min": 20, "max": 80}
+        "hasPower": {"min": -100, "max": -10},
+        "hasMass": {"min": 50, "max": 400},
+        "hasMonetaryValue": {"min": 2000, "max": 15000},
+        "minWorkingTemperature": {"min": -30, "max": -10},
+        "maxWorkingTemperature": {"min": 20, "max": 80}
     },
     "primary power": {
         "slug": "PPW",
         "ontology": "http://ontology.projectchronos.eu/subsystems/Spacecraft_PrimaryPower",
-        "power": {"min": 200, "max": 2000},
+        "hasPower": {"min": 200, "max": 2000},
         "density": 1.5,
-        "mass": {"min": 30, "max": 100},
-        "cost": {"min": 2000, "max": 10000},
-        "minWorkingTemp": {"min": -60, "max": -40},
-        "maxWorkingTemp": {"min": 50, "max": 100}
+        "hasMass": {"min": 30, "max": 100},
+        "hasMonetaryValue": {"min": 2000, "max": 10000},
+        "minWorkingTemperature": {"min": -60, "max": -40},
+        "maxWorkingTemperature": {"min": 50, "max": 100}
     },
     "backup power": {
         "slug": "BCK",
         "ontology": "http://ontology.projectchronos.eu/subsystems/Spacecraft_BackupPower",
-        "power": {"min": 50, "max": 1500},
+        "hasPower": {"min": 50, "max": 1500},
         "density": 2,
-        "mass": {"min": 100, "max": 300},
-        "cost": {"min": 5000, "max": 25000},
-        "minWorkingTemp": {"min": -30, "max": -10},
-        "maxWorkingTemp": {"min": 20, "max": 80}
+        "hasMass": {"min": 100, "max": 300},
+        "hasMonetaryValue": {"min": 5000, "max": 25000},
+        "minWorkingTemperature": {"min": -30, "max": -10},
+        "maxWorkingTemperature": {"min": 20, "max": 80}
     },
     "thermal": {
         "slug": "THR",
         "ontology": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Thermal",
-        "power": {"min": -100, "max": 100},
-        "mass": {"min": 20, "max": 150},
-        "cost": {"min": 500, "max": 4000},
+        "hasPower": {"min": -100, "max": 100},
+        "hasMass": {"min": 20, "max": 150},
+        "hasMonetaryValue": {"min": 500, "max": 4000},
         "minTemperature": {"min": -100, "max": -30},
         "maxTemperature": {"min": 50, "max": 100}
     },
     "structure": {
         "slug": "STR",
         "ontology": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Structure",
-        "mass": {"min": 10, "max": 100},
-        "cost": {"min": 2000, "max": 35000},
-        "minWorkingTemp": {"min": -90, "max": -30},
-        "maxWorkingTemp": {"min": 30, "max": 70}
+        "hasMass": {"min": 10, "max": 100},
+        "hasMonetaryValue": {"min": 2000, "max": 35000},
+        "minWorkingTemperature": {"min": -90, "max": -30},
+        "maxWorkingTemperature": {"min": 30, "max": 70}
     },
     "command and data": {
         "slug": "CDH",
         "ontology": "http://ontology.projectchronos.eu/subsystems/Spacecraft_CDH",
-        "power": {"min": -50, "max": -5},
-        "mass": {"min": 20, "max": 70},
-        "cost": {"min": 1000, "max": 5000},
-        "minWorkingTemp": {"min": -20, "max": -10},
-        "maxWorkingTemp": {"min": 10, "max": 50}
+        "hasPower": {"min": -50, "max": -5},
+        "hasMass": {"min": 20, "max": 70},
+        "hasMonetaryValue": {"min": 1000, "max": 5000},
+        "minWorkingTemperature": {"min": -20, "max": -10},
+        "maxWorkingTemperature": {"min": 10, "max": 50}
     },
     "attitude and orbit control": {
         "slug": "AODCS",
         "ontology": "http://ontology.projectchronos.eu/subsystems/Spacecraft_AODCS",
-        "power": {"min": -150, "max": 100},
-        "mass": {"min": 10, "max": 80},
-        "cost": {"min": 1000, "max": 15000},
-        "minWorkingTemp": {"min": -50, "max": -30},
-        "maxWorkingTemp": {"min": 30, "max": 70},
+        "hasPower": {"min": -150, "max": 100},
+        "hasMass": {"min": 10, "max": 80},
+        "hasMonetaryValue": {"min": 1000, "max": 15000},
+        "minWorkingTemperature": {"min": -50, "max": -30},
+        "maxWorkingTemperature": {"min": 30, "max": 70},
         "active": ["magnetic torque", "cold gas", "microthrusters"],
         "passive": ["rotation", "gravity", "solar pressure"]
     }
@@ -100,39 +100,39 @@ def randomValue(interval):
 def generateObject(name, subsystem):
     """Generate random components from given input dictionary."""
     result = {}
-    result['mass'] = randomValue(subsystem['mass'])
+    result['hasMass'] = randomValue(subsystem['hasMass'])
     result['category'] = name
-    if 'minWorkingTemp' in subsystem.keys():
+    if 'minWorkingTemperature' in subsystem.keys():
         if not name == 'structure':
-            result['power'] = randomValue(subsystem['power'])
-        result['minWorkingTemp'] = randomValue(subsystem['minWorkingTemp'])
-        result['maxWorkingTemp'] = randomValue(subsystem['maxWorkingTemp'])
+            result['hasPower'] = randomValue(subsystem['hasPower'])
+        result['minWorkingTemperature'] = randomValue(subsystem['minWorkingTemperature'])
+        result['maxWorkingTemperature'] = randomValue(subsystem['maxWorkingTemperature'])
         if 'density' in subsystem.keys():  # rule power or battery
-            result['volume'] = int(result['mass'] / subsystem['density']) // 1
+            result['hasVolume'] = int(result['hasMass'] / subsystem['density']) // 1
             if name == 'primary power':
-                result['cost'] = result['power'] * 5
+                result['hasMonetaryValue'] = result['hasPower'] * 5
                 return result
             elif name == 'backup power':
-                result['cost'] = result['power'] * 16
+                result['hasMonetaryValue'] = result['hasPower'] * 16
                 return result
         else:    # rule for other not generator
-            result['volume'] = result['mass'] + \
+            result['hasVolume'] = result['hasMass'] + \
                 randomValue({'min': -5, 'max': 5})
             if name not in ['structure', 'attitude and orbit control']:
                 if name == 'detector':
                     result['type'] = random.choice(
                         ['interferometer', 'spectrometer', 'photometer', 'optical', 'dust detector'])
 
-                result['cost'] = randomValue(subsystem['cost'])
+                result['hasMonetaryValue'] = randomValue(subsystem['hasMonetaryValue'])
                 return result
             else:
                 if name == 'structure':
-                    result['power'] = 0
-                    result['cost'] = int(350000 / result['mass']) // 1
+                    result['hasPower'] = 0
+                    result['hasMonetaryValue'] = int(350000 / result['hasMass']) // 1
                     return result
                 elif name == 'attitude and orbit control':
-                    if result['power'] > 0:
-                        result['power'] = 0
+                    if result['hasPower'] > 0:
+                        result['hasPower'] = 0
                         result['type'] = 'passive'
                         result['mechanism'] = random.choice(
                             subsystem['passive'])
@@ -140,21 +140,21 @@ def generateObject(name, subsystem):
                         result['type'] = 'active'
                         result['mechanism'] = random.choice(
                             subsystem['active'])
-                    result['cost'] = randomValue(subsystem['cost'])
+                    result['hasMonetaryValue'] = randomValue(subsystem['hasMonetaryValue'])
                     return result
 
     else:
-        result['volume'] = result['mass'] + randomValue({'min': -5, 'max': 5})
-        result['power'] = randomValue(subsystem['power'])
-        if result['power'] > 0:
-            result['power'] = 0
+        result['hasVolume'] = result['hasMass'] + randomValue({'min': -5, 'max': 5})
+        result['hasPower'] = randomValue(subsystem['hasPower'])
+        if result['hasPower'] > 0:
+            result['hasPower'] = 0
         result['minTemperature'] = randomValue(subsystem['minTemperature'])
         result['maxTemperature'] = randomValue(subsystem['maxTemperature'])
 
-        result['cost'] = (result['maxTemperature'] -
+        result['hasMonetaryValue'] = (result['maxTemperature'] -
                           result['minTemperature']) * 20
 
-        if result['power'] == 0:
+        if result['hasPower'] == 0:
             result['type'] = 'passive'
         else:
             result['type'] = 'active'
