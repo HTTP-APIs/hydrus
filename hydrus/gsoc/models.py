@@ -27,19 +27,6 @@ class Property(Base):
         return "<id='%s', name='%s', type_='%s'>" % (self.id, self.name, self.type_)
 
 
-class Instance(Base):
-    """Class for Hydra Object/Resource."""
-
-    __tablename__ = "instance"
-
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-
-    def __repr__(self):
-        """Verbose object name."""
-        return "<id='%s', name='%s'>" % (self.id, self.name)
-
-
 class Classes(Base):
     """Class for Hydra Classes."""
 
@@ -53,7 +40,21 @@ class Classes(Base):
         return "<id='%s', name='%s'>" % (self.id, self.name)
 
 
-class Terminal(object):
+class Instance(Base):
+    """Class for Hydra Object/Resource."""
+
+    __tablename__ = "instance"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    class_id = Column(Integer, ForeignKey="classes.id")
+
+    def __repr__(self):
+        """Verbose object name."""
+        return "<id='%s', name='%s'>" % (self.id, self.name)
+
+
+class Terminal(Base):
     """Class for Hydra Supported Terminals."""
 
     __tablename__ = "terminal"
@@ -65,9 +66,6 @@ class Terminal(object):
     def __repr__(self):
         """Verbose object name."""
         return "<id='%s', value='%s', unit='%s'>" % (self.id, self.value, self.unit)
-
-
-Base.metadata.create_all(engine)
 
 
 # class Supported_Property(Base):
@@ -91,8 +89,8 @@ class Graph(Base):
     id = Column(Integer, primary_key=True)
     subject = Column(Integer, ForeignKey("classes.id"))
     predicte = Column(Integer, ForeignKey("property.id"))
-    object_ = Column(Integer, ForeignKey("classes.id"), nullable=True)
-    terminal = Column(Integer, ForeignKey("terminal.id"), nullable=True)
+    object_id = Column(Integer, ForeignKey("classes.id"), nullable=True)
+    terminal_id = Column(Integer, ForeignKey("terminal.id"), nullable=True)
 
     def __repr__(self):
         """Verbose object name."""
@@ -102,4 +100,5 @@ class Graph(Base):
         return "<subject='%s', predicate='%s', object_='%s'>" % (self.value, self.unit, obj)
 
 
-Base.metadata.create_all(engine)
+if __name__ == "__main__":
+    Base.metadata.create_all(engine)

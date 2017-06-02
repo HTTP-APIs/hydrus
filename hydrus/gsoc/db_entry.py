@@ -1,4 +1,4 @@
-"""Generate random data and create triples using objects."""
+"""Test script to enter data from random objects into old models(Depreciated)."""
 
 from models import Property, SubSysType, Resource, Graph
 from generator import gen_all_types
