@@ -89,16 +89,13 @@ class Graph(Base):
     id = Column(Integer, primary_key=True)
     subject = Column(Integer)
     subject_type = Column(String)   # Can be CLASS or INSTANCE depending on which one it is
-    predicte = Column(Integer, ForeignKey("property.id"))
+    predicate = Column(Integer, ForeignKey("property.id"))
     object_id = Column(Integer, nullable=True)
     object_type = Column(String)    # Can be CLASS or TERMINAL depending on which one it is
 
     def __repr__(self):
         """Verbose object name."""
-        obj = self.terminal
-        if obj is None:
-            obj = self.object_
-        return "<subject='%s', predicate='%s', object_='%s'>" % (self.value, self.unit, obj)
+        return "<subject='%s', predicate='%s', object_='%s'>" % (self.subject, self.predicate, self.object_id)
 
 
 if __name__ == "__main__":

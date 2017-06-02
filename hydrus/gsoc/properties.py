@@ -26,6 +26,8 @@ instance_properties = {
     "hasMonetaryValue": Property(name="hasMonetaryValue", type_="INSTANCE"),
     "hasPower": Property(name="hasPower", type_="INSTANCE"),
     "hasSpecificImpulse": Property(name="hasSpecificImpulse", type_="INSTANCE"),
+    "type": Property(name="type", type_="INSTANCE"),
+    "mechanism": Property(name="mechanism", type_="INSTANCE"),
 }
 
 if __name__ == "__main__":

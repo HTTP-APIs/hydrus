@@ -9,6 +9,7 @@ classes = {
     "Spacecraft_Propulsion": models.Classes(name="Spacecraft_Propulsion"),
     "Spacecraft_Detector": models.Classes(name="Spacecraft_Detector"),
     "Spacecraft_PrimaryPower": models.Classes(name="Spacecraft_PrimaryPower"),
+    "Spacecraft_BackupPower": models.Classes(name="Spacecraft_BackupPower"),
     "Spacecraft_Thermal": models.Classes(name="Spacecraft_Thermal"),
     "Spacecraft_Structure": models.Classes(name="Spacecraft_Structure"),
     "Spacecraft_CDH": models.Classes(name="Spacecraft_CDH"),
