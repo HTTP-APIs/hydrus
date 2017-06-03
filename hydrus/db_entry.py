@@ -1,7 +1,7 @@
 """Test script to enter data from random objects into old models(Depreciated)."""
 
-from models import Property, Instance, Graph, engine, Classes, Terminal
-from generator import gen_all_types
+from hydrus.models import Property, Instance, Graph, engine, Classes, Terminal
+from hydrus.generator import gen_all_types
 from sqlalchemy.orm import sessionmaker
 import pdb
 keymap = {

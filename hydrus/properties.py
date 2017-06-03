@@ -4,10 +4,6 @@ from hydrus.models import AbstractProperty, Property, engine
 from sqlalchemy.orm import sessionmaker
 
 
-# TODO @xadahiya:
-# Refactor this part to use a JSON-LD parser, so that RDF classes
-#  can be directly imported from the vocabulary. Add the classes in the
-#  `spacecraft` vocabulary.
 # NOTE: "holdsSensor" is a property that targets classes in the `sensors` vocabulary
 abstract_properties = {
     "hasWireInWith": AbstractProperty(name="hasWireInWith"),  # points to an instance of Subsystem_Spacecraft subclasses
