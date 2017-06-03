@@ -1,4 +1,21 @@
-# Subsystems vocabulary from http://ontology.projectchronos.eu/subsystems/?format=jsonld
+"""
+Subsystems vocabulary from http://ontology.projectchronos.eu/subsystems/?format=jsonld
+"""
+# Listed classes:
+#     "Spacecraft_Communication": models.Classes(name="Spacecraft_Communication"),
+#     "Spacecraft_Propulsion": models.Classes(name="Spacecraft_Propulsion"),
+#     "Spacecraft_Detector": models.Classes(name="Spacecraft_Detector"),
+#     "Spacecraft_PrimaryPower": models.Classes(name="Spacecraft_PrimaryPower"),
+#     "Spacecraft_BackupPower": models.Classes(name="Spacecraft_BackupPower"),
+#     "Spacecraft_Thermal": models.Classes(name="Spacecraft_Thermal"),
+#     "Spacecraft_Structure": models.Classes(name="Spacecraft_Structure"),
+#     "Spacecraft_CDH": models.Classes(name="Spacecraft_CDH"),
+#     "Spacecraft_AODCS": models.Classes(name="Spacecraft_AODCS"),
+#     "Spacecraft": models.Classes(name="Spacecraft"),
+#     "Subsystem_Spacecraft": models.Classes(name="Subsystem_Spacecraft"),  # all the subsystems types, except detectors (or experiments)
+#     "Payload_Spacecraft": models.Classes(name="Payload_Spacecraft")  # Detectors are payload not strictly subssytems
+#
+#
 
 subsystem_data = {
    "defines":[
