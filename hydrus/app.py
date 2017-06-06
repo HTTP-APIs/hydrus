@@ -36,14 +36,8 @@ class Cots(Resource):
     Commercial Off The Shelves (COTS) spare parts for pico- and nano-satellites."""
 
     def get(self, id):
-        query = text('select * from graph;')
-        result = engine.execute(query)
-        names = []
-        for row in result:
-            names.append(row)
-        # print(jsonify(names))
-        return names
-
+        pass
+        
     def post(self, id):
         pass
 
