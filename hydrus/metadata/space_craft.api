@@ -1,0 +1,1427 @@
+{
+    "@id": "http://api.example.com/doc/",
+    "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+    "@type": "ApiDocumentation",
+    "description": "A short description of the API",
+    "title": "The name of the API",
+    "possibleStatus": [],
+    "entrypoint": "URL of the API's main entry point",
+    "supportedClass": [
+        {
+            "@id": "http://ontology.projectchronos.eu/subsystems/cubicMillimeters",
+            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+            "supportedProperty": [
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isSubsystemOf",
+                    "title": "isSubsystemOf",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "subject is a device or a system of devices that is subsystem of a wider system or device",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isComponentOf",
+                    "title": "isComponentOf",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "the subject is a member of a wider artifact, that is a set of artifacts",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/hasSubSystem",
+                    "title": "hasSubSystem",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isDeployedIn",
+                    "title": "isDeployedIn",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "the environment in which a device or a system of devices is designed to work",
+                    "readonly": "false"
+                }
+            ],
+            "@type": "Class",
+            "description": "unit of measure for volume",
+            "title": "cubicMillimeters",
+            "supportedOperation": [
+                {
+                    "@id": "_:cubicMillimeters_create",
+                    "statusCodes": [],
+                    "method": "POST",
+                    "@type": "hydra:Operation",
+                    "expects": "http://ontology.projectchronos.eu/subsystems/cubicMillimeters",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/cubicMillimeters",
+                    "description": "null",
+                    "label": "Creates a new cubicMillimeters entity"
+                },
+                {
+                    "@id": "_:cubicMillimeters_replace",
+                    "statusCodes": [
+                        {
+                            "code": 404,
+                            "description": "If the cubicMillimeters entity wasn't found."
+                        }
+                    ],
+                    "method": "PUT",
+                    "@type": "hydra:Operation",
+                    "expects": "http://ontology.projectchronos.eu/subsystems/cubicMillimeters",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/cubicMillimeters",
+                    "description": "null",
+                    "label": "Replaces an existing cubicMillimeters entity"
+                },
+                {
+                    "@id": "_:cubicMillimeters_delete",
+                    "statusCodes": [],
+                    "method": "DELETE",
+                    "@type": "hydra:Operation",
+                    "expects": "null",
+                    "returns": "null",
+                    "description": "null",
+                    "label": "Deletes a cubicMillimeters entity"
+                },
+                {
+                    "@id": "_:cubicMillimeters_retrieve",
+                    "statusCodes": [
+                        {
+                            "code": 404,
+                            "description": "If the cubicMillimeters entity wasn't found."
+                        }
+                    ],
+                    "method": "GET",
+                    "@type": "hydra:Operation",
+                    "expects": "null",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/cubicMillimeters",
+                    "description": "null",
+                    "label": "Retrieves a cubicMillimeters entity"
+                }
+            ]
+        },
+        {
+            "@id": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Detector",
+            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+            "supportedProperty": [
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isSubsystemOf",
+                    "title": "isSubsystemOf",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "subject is a device or a system of devices that is subsystem of a wider system or device",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isComponentOf",
+                    "title": "isComponentOf",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "the subject is a member of a wider artifact, that is a set of artifacts",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/hasSubSystem",
+                    "title": "hasSubSystem",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isDeployedIn",
+                    "title": "isDeployedIn",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "the environment in which a device or a system of devices is designed to work",
+                    "readonly": "false"
+                }
+            ],
+            "@type": "Class",
+            "description": "A space detector is a sensor supported by another device that let it collect data, that is deployed into a spacecraft and works outside Earth lower atmosphere",
+            "title": "Spacecraft_Detector",
+            "supportedOperation": [
+                {
+                    "@id": "_:Spacecraft_Detector_create",
+                    "statusCodes": [],
+                    "method": "POST",
+                    "@type": "hydra:Operation",
+                    "expects": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Detector",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Detector",
+                    "description": "null",
+                    "label": "Creates a new Spacecraft_Detector entity"
+                },
+                {
+                    "@id": "_:Spacecraft_Detector_replace",
+                    "statusCodes": [
+                        {
+                            "code": 404,
+                            "description": "If the Spacecraft_Detector entity wasn't found."
+                        }
+                    ],
+                    "method": "PUT",
+                    "@type": "hydra:Operation",
+                    "expects": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Detector",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Detector",
+                    "description": "null",
+                    "label": "Replaces an existing Spacecraft_Detector entity"
+                },
+                {
+                    "@id": "_:Spacecraft_Detector_delete",
+                    "statusCodes": [],
+                    "method": "DELETE",
+                    "@type": "hydra:Operation",
+                    "expects": "null",
+                    "returns": "null",
+                    "description": "null",
+                    "label": "Deletes a Spacecraft_Detector entity"
+                },
+                {
+                    "@id": "_:Spacecraft_Detector_retrieve",
+                    "statusCodes": [
+                        {
+                            "code": 404,
+                            "description": "If the Spacecraft_Detector entity wasn't found."
+                        }
+                    ],
+                    "method": "GET",
+                    "@type": "hydra:Operation",
+                    "expects": "null",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Detector",
+                    "description": "null",
+                    "label": "Retrieves a Spacecraft_Detector entity"
+                }
+            ]
+        },
+        {
+            "@id": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Propulsion",
+            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+            "supportedProperty": [
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isSubsystemOf",
+                    "title": "isSubsystemOf",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "subject is a device or a system of devices that is subsystem of a wider system or device",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isComponentOf",
+                    "title": "isComponentOf",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "the subject is a member of a wider artifact, that is a set of artifacts",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/hasSubSystem",
+                    "title": "hasSubSystem",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/subsystems/embedSensor",
+                    "title": "embedSensor",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "a subsystem that holds a sensor",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isDeployedIn",
+                    "title": "isDeployedIn",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "the environment in which a device or a system of devices is designed to work",
+                    "readonly": "false"
+                }
+            ],
+            "@type": "Class",
+            "description": "Complex devices-subsystems used for impelling (processes of applying a force which results in translational motion) a spacecraft, in the specific http://umbel.org/umbel/rc/ProjectilePropelling",
+            "title": "Spacecraft_Propulsion.",
+            "supportedOperation": [
+                {
+                    "@id": "_:Spacecraft_Propulsion._create",
+                    "statusCodes": [],
+                    "method": "POST",
+                    "@type": "hydra:Operation",
+                    "expects": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Propulsion",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Propulsion",
+                    "description": "null",
+                    "label": "Creates a new Spacecraft_Propulsion. entity"
+                },
+                {
+                    "@id": "_:Spacecraft_Propulsion._replace",
+                    "statusCodes": [
+                        {
+                            "code": 404,
+                            "description": "If the Spacecraft_Propulsion. entity wasn't found."
+                        }
+                    ],
+                    "method": "PUT",
+                    "@type": "hydra:Operation",
+                    "expects": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Propulsion",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Propulsion",
+                    "description": "null",
+                    "label": "Replaces an existing Spacecraft_Propulsion. entity"
+                },
+                {
+                    "@id": "_:Spacecraft_Propulsion._delete",
+                    "statusCodes": [],
+                    "method": "DELETE",
+                    "@type": "hydra:Operation",
+                    "expects": "null",
+                    "returns": "null",
+                    "description": "null",
+                    "label": "Deletes a Spacecraft_Propulsion. entity"
+                },
+                {
+                    "@id": "_:Spacecraft_Propulsion._retrieve",
+                    "statusCodes": [
+                        {
+                            "code": 404,
+                            "description": "If the Spacecraft_Propulsion. entity wasn't found."
+                        }
+                    ],
+                    "method": "GET",
+                    "@type": "hydra:Operation",
+                    "expects": "null",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Propulsion",
+                    "description": "null",
+                    "label": "Retrieves a Spacecraft_Propulsion. entity"
+                }
+            ]
+        },
+        {
+            "@id": "http://ontology.projectchronos.eu/subsystems/Spacecraft_PrimaryPower",
+            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+            "supportedProperty": [
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isSubsystemOf",
+                    "title": "isSubsystemOf",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "subject is a device or a system of devices that is subsystem of a wider system or device",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isComponentOf",
+                    "title": "isComponentOf",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "the subject is a member of a wider artifact, that is a set of artifacts",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/hasSubSystem",
+                    "title": "hasSubSystem",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/subsystems/embedSensor",
+                    "title": "embedSensor",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "a subsystem that holds a sensor",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isDeployedIn",
+                    "title": "isDeployedIn",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "the environment in which a device or a system of devices is designed to work",
+                    "readonly": "false"
+                }
+            ],
+            "@type": "Class",
+            "description": "Complex devices-subsystems used for collecting energy.",
+            "title": "Spacecraft_PrimaryPower.",
+            "supportedOperation": [
+                {
+                    "@id": "_:Spacecraft_PrimaryPower._create",
+                    "statusCodes": [],
+                    "method": "POST",
+                    "@type": "hydra:Operation",
+                    "expects": "http://ontology.projectchronos.eu/subsystems/Spacecraft_PrimaryPower",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_PrimaryPower",
+                    "description": "null",
+                    "label": "Creates a new Spacecraft_PrimaryPower. entity"
+                },
+                {
+                    "@id": "_:Spacecraft_PrimaryPower._replace",
+                    "statusCodes": [
+                        {
+                            "code": 404,
+                            "description": "If the Spacecraft_PrimaryPower. entity wasn't found."
+                        }
+                    ],
+                    "method": "PUT",
+                    "@type": "hydra:Operation",
+                    "expects": "http://ontology.projectchronos.eu/subsystems/Spacecraft_PrimaryPower",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_PrimaryPower",
+                    "description": "null",
+                    "label": "Replaces an existing Spacecraft_PrimaryPower. entity"
+                },
+                {
+                    "@id": "_:Spacecraft_PrimaryPower._delete",
+                    "statusCodes": [],
+                    "method": "DELETE",
+                    "@type": "hydra:Operation",
+                    "expects": "null",
+                    "returns": "null",
+                    "description": "null",
+                    "label": "Deletes a Spacecraft_PrimaryPower. entity"
+                },
+                {
+                    "@id": "_:Spacecraft_PrimaryPower._retrieve",
+                    "statusCodes": [
+                        {
+                            "code": 404,
+                            "description": "If the Spacecraft_PrimaryPower. entity wasn't found."
+                        }
+                    ],
+                    "method": "GET",
+                    "@type": "hydra:Operation",
+                    "expects": "null",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_PrimaryPower",
+                    "description": "null",
+                    "label": "Retrieves a Spacecraft_PrimaryPower. entity"
+                }
+            ]
+        },
+        {
+            "@id": "http://ontology.projectchronos.eu/subsystems/Spacecraft_BackupPower",
+            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+            "supportedProperty": [
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isSubsystemOf",
+                    "title": "isSubsystemOf",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "subject is a device or a system of devices that is subsystem of a wider system or device",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isComponentOf",
+                    "title": "isComponentOf",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "the subject is a member of a wider artifact, that is a set of artifacts",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/hasSubSystem",
+                    "title": "hasSubSystem",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/subsystems/embedSensor",
+                    "title": "embedSensor",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "a subsystem that holds a sensor",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isDeployedIn",
+                    "title": "isDeployedIn",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "the environment in which a device or a system of devices is designed to work",
+                    "readonly": "false"
+                }
+            ],
+            "@type": "Class",
+            "description": "Complex devices-subsystems used for storing energy.",
+            "title": "Spacecraft_BackupPower",
+            "supportedOperation": [
+                {
+                    "@id": "_:Spacecraft_BackupPower_create",
+                    "statusCodes": [],
+                    "method": "POST",
+                    "@type": "hydra:Operation",
+                    "expects": "http://ontology.projectchronos.eu/subsystems/Spacecraft_BackupPower",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_BackupPower",
+                    "description": "null",
+                    "label": "Creates a new Spacecraft_BackupPower entity"
+                },
+                {
+                    "@id": "_:Spacecraft_BackupPower_replace",
+                    "statusCodes": [
+                        {
+                            "code": 404,
+                            "description": "If the Spacecraft_BackupPower entity wasn't found."
+                        }
+                    ],
+                    "method": "PUT",
+                    "@type": "hydra:Operation",
+                    "expects": "http://ontology.projectchronos.eu/subsystems/Spacecraft_BackupPower",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_BackupPower",
+                    "description": "null",
+                    "label": "Replaces an existing Spacecraft_BackupPower entity"
+                },
+                {
+                    "@id": "_:Spacecraft_BackupPower_delete",
+                    "statusCodes": [],
+                    "method": "DELETE",
+                    "@type": "hydra:Operation",
+                    "expects": "null",
+                    "returns": "null",
+                    "description": "null",
+                    "label": "Deletes a Spacecraft_BackupPower entity"
+                },
+                {
+                    "@id": "_:Spacecraft_BackupPower_retrieve",
+                    "statusCodes": [
+                        {
+                            "code": 404,
+                            "description": "If the Spacecraft_BackupPower entity wasn't found."
+                        }
+                    ],
+                    "method": "GET",
+                    "@type": "hydra:Operation",
+                    "expects": "null",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_BackupPower",
+                    "description": "null",
+                    "label": "Retrieves a Spacecraft_BackupPower entity"
+                }
+            ]
+        },
+        {
+            "@id": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Thermal",
+            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+            "supportedProperty": [
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isSubsystemOf",
+                    "title": "isSubsystemOf",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "subject is a device or a system of devices that is subsystem of a wider system or device",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isComponentOf",
+                    "title": "isComponentOf",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "the subject is a member of a wider artifact, that is a set of artifacts",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/hasSubSystem",
+                    "title": "hasSubSystem",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/subsystems/embedSensor",
+                    "title": "embedSensor",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "a subsystem that holds a sensor",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isDeployedIn",
+                    "title": "isDeployedIn",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "the environment in which a device or a system of devices is designed to work",
+                    "readonly": "false"
+                }
+            ],
+            "@type": "Class",
+            "description": "Shields, shells or any device insulation from/reflecting radiation exploiting emission and absorption events",
+            "title": "Spacecraft_Thermal",
+            "supportedOperation": [
+                {
+                    "@id": "_:Spacecraft_Thermal_create",
+                    "statusCodes": [],
+                    "method": "POST",
+                    "@type": "hydra:Operation",
+                    "expects": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Thermal",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Thermal",
+                    "description": "null",
+                    "label": "Creates a new Spacecraft_Thermal entity"
+                },
+                {
+                    "@id": "_:Spacecraft_Thermal_replace",
+                    "statusCodes": [
+                        {
+                            "code": 404,
+                            "description": "If the Spacecraft_Thermal entity wasn't found."
+                        }
+                    ],
+                    "method": "PUT",
+                    "@type": "hydra:Operation",
+                    "expects": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Thermal",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Thermal",
+                    "description": "null",
+                    "label": "Replaces an existing Spacecraft_Thermal entity"
+                },
+                {
+                    "@id": "_:Spacecraft_Thermal_delete",
+                    "statusCodes": [],
+                    "method": "DELETE",
+                    "@type": "hydra:Operation",
+                    "expects": "null",
+                    "returns": "null",
+                    "description": "null",
+                    "label": "Deletes a Spacecraft_Thermal entity"
+                },
+                {
+                    "@id": "_:Spacecraft_Thermal_retrieve",
+                    "statusCodes": [
+                        {
+                            "code": 404,
+                            "description": "If the Spacecraft_Thermal entity wasn't found."
+                        }
+                    ],
+                    "method": "GET",
+                    "@type": "hydra:Operation",
+                    "expects": "null",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Thermal",
+                    "description": "null",
+                    "label": "Retrieves a Spacecraft_Thermal entity"
+                }
+            ]
+        },
+        {
+            "@id": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Thermal_PassiveDevice",
+            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+            "supportedProperty": [
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isSubsystemOf",
+                    "title": "isSubsystemOf",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "subject is a device or a system of devices that is subsystem of a wider system or device",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isComponentOf",
+                    "title": "isComponentOf",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "the subject is a member of a wider artifact, that is a set of artifacts",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/hasSubSystem",
+                    "title": "hasSubSystem",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isDeployedIn",
+                    "title": "isDeployedIn",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "the environment in which a device or a system of devices is designed to work",
+                    "readonly": "false"
+                }
+            ],
+            "@type": "Class",
+            "description": "They are passive because they mostly transform radiation into heating/cooling ",
+            "title": "Spacecraft_Thermal_PassiveDevice",
+            "supportedOperation": [
+                {
+                    "@id": "_:Spacecraft_Thermal_PassiveDevice_create",
+                    "statusCodes": [],
+                    "method": "POST",
+                    "@type": "hydra:Operation",
+                    "expects": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Thermal_PassiveDevice",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Thermal_PassiveDevice",
+                    "description": "null",
+                    "label": "Creates a new Spacecraft_Thermal_PassiveDevice entity"
+                },
+                {
+                    "@id": "_:Spacecraft_Thermal_PassiveDevice_replace",
+                    "statusCodes": [
+                        {
+                            "code": 404,
+                            "description": "If the Spacecraft_Thermal_PassiveDevice entity wasn't found."
+                        }
+                    ],
+                    "method": "PUT",
+                    "@type": "hydra:Operation",
+                    "expects": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Thermal_PassiveDevice",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Thermal_PassiveDevice",
+                    "description": "null",
+                    "label": "Replaces an existing Spacecraft_Thermal_PassiveDevice entity"
+                },
+                {
+                    "@id": "_:Spacecraft_Thermal_PassiveDevice_delete",
+                    "statusCodes": [],
+                    "method": "DELETE",
+                    "@type": "hydra:Operation",
+                    "expects": "null",
+                    "returns": "null",
+                    "description": "null",
+                    "label": "Deletes a Spacecraft_Thermal_PassiveDevice entity"
+                },
+                {
+                    "@id": "_:Spacecraft_Thermal_PassiveDevice_retrieve",
+                    "statusCodes": [
+                        {
+                            "code": 404,
+                            "description": "If the Spacecraft_Thermal_PassiveDevice entity wasn't found."
+                        }
+                    ],
+                    "method": "GET",
+                    "@type": "hydra:Operation",
+                    "expects": "null",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Thermal_PassiveDevice",
+                    "description": "null",
+                    "label": "Retrieves a Spacecraft_Thermal_PassiveDevice entity"
+                }
+            ]
+        },
+        {
+            "@id": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Thermal_ActiveDevice",
+            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+            "supportedProperty": [
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isSubsystemOf",
+                    "title": "isSubsystemOf",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "subject is a device or a system of devices that is subsystem of a wider system or device",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isComponentOf",
+                    "title": "isComponentOf",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "the subject is a member of a wider artifact, that is a set of artifacts",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/hasSubSystem",
+                    "title": "hasSubSystem",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isDeployedIn",
+                    "title": "isDeployedIn",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "the environment in which a device or a system of devices is designed to work",
+                    "readonly": "false"
+                }
+            ],
+            "@type": "Class",
+            "description": "Complex devices-subsystems used to protect sensors or electronic devices from over/under-heating, like refrigeration absorption.",
+            "title": "Spacecraft_Thermal_ActiveDevice",
+            "supportedOperation": [
+                {
+                    "@id": "_:Spacecraft_Thermal_ActiveDevice_create",
+                    "statusCodes": [],
+                    "method": "POST",
+                    "@type": "hydra:Operation",
+                    "expects": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Thermal_ActiveDevice",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Thermal_ActiveDevice",
+                    "description": "null",
+                    "label": "Creates a new Spacecraft_Thermal_ActiveDevice entity"
+                },
+                {
+                    "@id": "_:Spacecraft_Thermal_ActiveDevice_replace",
+                    "statusCodes": [
+                        {
+                            "code": 404,
+                            "description": "If the Spacecraft_Thermal_ActiveDevice entity wasn't found."
+                        }
+                    ],
+                    "method": "PUT",
+                    "@type": "hydra:Operation",
+                    "expects": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Thermal_ActiveDevice",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Thermal_ActiveDevice",
+                    "description": "null",
+                    "label": "Replaces an existing Spacecraft_Thermal_ActiveDevice entity"
+                },
+                {
+                    "@id": "_:Spacecraft_Thermal_ActiveDevice_delete",
+                    "statusCodes": [],
+                    "method": "DELETE",
+                    "@type": "hydra:Operation",
+                    "expects": "null",
+                    "returns": "null",
+                    "description": "null",
+                    "label": "Deletes a Spacecraft_Thermal_ActiveDevice entity"
+                },
+                {
+                    "@id": "_:Spacecraft_Thermal_ActiveDevice_retrieve",
+                    "statusCodes": [
+                        {
+                            "code": 404,
+                            "description": "If the Spacecraft_Thermal_ActiveDevice entity wasn't found."
+                        }
+                    ],
+                    "method": "GET",
+                    "@type": "hydra:Operation",
+                    "expects": "null",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Thermal_ActiveDevice",
+                    "description": "null",
+                    "label": "Retrieves a Spacecraft_Thermal_ActiveDevice entity"
+                }
+            ]
+        },
+        {
+            "@id": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Structure",
+            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+            "supportedProperty": [
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isSubsystemOf",
+                    "title": "isSubsystemOf",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "subject is a device or a system of devices that is subsystem of a wider system or device",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isComponentOf",
+                    "title": "isComponentOf",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "the subject is a member of a wider artifact, that is a set of artifacts",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/hasSubSystem",
+                    "title": "hasSubSystem",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/subsystems/embedSensor",
+                    "title": "embedSensor",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "a subsystem that holds a sensor",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isDeployedIn",
+                    "title": "isDeployedIn",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "the environment in which a device or a system of devices is designed to work",
+                    "readonly": "false"
+                }
+            ],
+            "@type": "Class",
+            "description": "It's the skeleton and framework of the spacecraft.",
+            "title": "Spacecraft_Structure",
+            "supportedOperation": [
+                {
+                    "@id": "_:Spacecraft_Structure_create",
+                    "statusCodes": [],
+                    "method": "POST",
+                    "@type": "hydra:Operation",
+                    "expects": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Structure",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Structure",
+                    "description": "null",
+                    "label": "Creates a new Spacecraft_Structure entity"
+                },
+                {
+                    "@id": "_:Spacecraft_Structure_replace",
+                    "statusCodes": [
+                        {
+                            "code": 404,
+                            "description": "If the Spacecraft_Structure entity wasn't found."
+                        }
+                    ],
+                    "method": "PUT",
+                    "@type": "hydra:Operation",
+                    "expects": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Structure",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Structure",
+                    "description": "null",
+                    "label": "Replaces an existing Spacecraft_Structure entity"
+                },
+                {
+                    "@id": "_:Spacecraft_Structure_delete",
+                    "statusCodes": [],
+                    "method": "DELETE",
+                    "@type": "hydra:Operation",
+                    "expects": "null",
+                    "returns": "null",
+                    "description": "null",
+                    "label": "Deletes a Spacecraft_Structure entity"
+                },
+                {
+                    "@id": "_:Spacecraft_Structure_retrieve",
+                    "statusCodes": [
+                        {
+                            "code": 404,
+                            "description": "If the Spacecraft_Structure entity wasn't found."
+                        }
+                    ],
+                    "method": "GET",
+                    "@type": "hydra:Operation",
+                    "expects": "null",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Structure",
+                    "description": "null",
+                    "label": "Retrieves a Spacecraft_Structure entity"
+                }
+            ]
+        },
+        {
+            "@id": "http://ontology.projectchronos.eu/subsystems/Spacecraft_CDH",
+            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+            "supportedProperty": [
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isSubsystemOf",
+                    "title": "isSubsystemOf",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "subject is a device or a system of devices that is subsystem of a wider system or device",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isComponentOf",
+                    "title": "isComponentOf",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "the subject is a member of a wider artifact, that is a set of artifacts",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/hasSubSystem",
+                    "title": "hasSubSystem",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/subsystems/embedSensor",
+                    "title": "embedSensor",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "a subsystem that holds a sensor",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isDeployedIn",
+                    "title": "isDeployedIn",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "the environment in which a device or a system of devices is designed to work",
+                    "readonly": "false"
+                }
+            ],
+            "@type": "Class",
+            "description": "The DH system shall: Enable HK and science data flow \u2013 Housekeeping data (Temperatures, Pressures, Voltages, Currents, Status,...) \u2013 Attitude data \u2013 Payload data (e.g., Science data) - Receive and distribute commands - Perform TM and TC protocols - Distribute timing signals - Synchronization of data \u2013 Time stamping of data - Provide data storage - Execute commands and schedules - Control subsystems and payloads - Monitor spacecraft health - Make autonomous decisions - Perform data compression.",
+            "title": "Spacecraft_CDH",
+            "supportedOperation": [
+                {
+                    "@id": "_:Spacecraft_CDH_create",
+                    "statusCodes": [],
+                    "method": "POST",
+                    "@type": "hydra:Operation",
+                    "expects": "http://ontology.projectchronos.eu/subsystems/Spacecraft_CDH",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_CDH",
+                    "description": "null",
+                    "label": "Creates a new Spacecraft_CDH entity"
+                },
+                {
+                    "@id": "_:Spacecraft_CDH_replace",
+                    "statusCodes": [
+                        {
+                            "code": 404,
+                            "description": "If the Spacecraft_CDH entity wasn't found."
+                        }
+                    ],
+                    "method": "PUT",
+                    "@type": "hydra:Operation",
+                    "expects": "http://ontology.projectchronos.eu/subsystems/Spacecraft_CDH",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_CDH",
+                    "description": "null",
+                    "label": "Replaces an existing Spacecraft_CDH entity"
+                },
+                {
+                    "@id": "_:Spacecraft_CDH_delete",
+                    "statusCodes": [],
+                    "method": "DELETE",
+                    "@type": "hydra:Operation",
+                    "expects": "null",
+                    "returns": "null",
+                    "description": "null",
+                    "label": "Deletes a Spacecraft_CDH entity"
+                },
+                {
+                    "@id": "_:Spacecraft_CDH_retrieve",
+                    "statusCodes": [
+                        {
+                            "code": 404,
+                            "description": "If the Spacecraft_CDH entity wasn't found."
+                        }
+                    ],
+                    "method": "GET",
+                    "@type": "hydra:Operation",
+                    "expects": "null",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_CDH",
+                    "description": "null",
+                    "label": "Retrieves a Spacecraft_CDH entity"
+                }
+            ]
+        },
+        {
+            "@id": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Communication",
+            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+            "supportedProperty": [
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isSubsystemOf",
+                    "title": "isSubsystemOf",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "subject is a device or a system of devices that is subsystem of a wider system or device",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isComponentOf",
+                    "title": "isComponentOf",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "the subject is a member of a wider artifact, that is a set of artifacts",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/hasSubSystem",
+                    "title": "hasSubSystem",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/subsystems/embedSensor",
+                    "title": "embedSensor",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "a subsystem that holds a sensor",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isDeployedIn",
+                    "title": "isDeployedIn",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "the environment in which a device or a system of devices is designed to work",
+                    "readonly": "false"
+                }
+            ],
+            "@type": "Class",
+            "description": "Complex devices-subsystems used for transmitting/receiving radio waves.",
+            "title": "Spacecraft_Communication",
+            "supportedOperation": [
+                {
+                    "@id": "_:Spacecraft_Communication_create",
+                    "statusCodes": [],
+                    "method": "POST",
+                    "@type": "hydra:Operation",
+                    "expects": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Communication",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Communication",
+                    "description": "null",
+                    "label": "Creates a new Spacecraft_Communication entity"
+                },
+                {
+                    "@id": "_:Spacecraft_Communication_replace",
+                    "statusCodes": [
+                        {
+                            "code": 404,
+                            "description": "If the Spacecraft_Communication entity wasn't found."
+                        }
+                    ],
+                    "method": "PUT",
+                    "@type": "hydra:Operation",
+                    "expects": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Communication",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Communication",
+                    "description": "null",
+                    "label": "Replaces an existing Spacecraft_Communication entity"
+                },
+                {
+                    "@id": "_:Spacecraft_Communication_delete",
+                    "statusCodes": [],
+                    "method": "DELETE",
+                    "@type": "hydra:Operation",
+                    "expects": "null",
+                    "returns": "null",
+                    "description": "null",
+                    "label": "Deletes a Spacecraft_Communication entity"
+                },
+                {
+                    "@id": "_:Spacecraft_Communication_retrieve",
+                    "statusCodes": [
+                        {
+                            "code": 404,
+                            "description": "If the Spacecraft_Communication entity wasn't found."
+                        }
+                    ],
+                    "method": "GET",
+                    "@type": "hydra:Operation",
+                    "expects": "null",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Communication",
+                    "description": "null",
+                    "label": "Retrieves a Spacecraft_Communication entity"
+                }
+            ]
+        },
+        {
+            "@id": "http://ontology.projectchronos.eu/subsystems/Spacecraft_AODCS",
+            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+            "supportedProperty": [
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isSubsystemOf",
+                    "title": "isSubsystemOf",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "subject is a device or a system of devices that is subsystem of a wider system or device",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isComponentOf",
+                    "title": "isComponentOf",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "the subject is a member of a wider artifact, that is a set of artifacts",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/hasSubSystem",
+                    "title": "hasSubSystem",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/subsystems/embedSensor",
+                    "title": "embedSensor",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "a subsystem that holds a sensor",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isDeployedIn",
+                    "title": "isDeployedIn",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "the environment in which a device or a system of devices is designed to work",
+                    "readonly": "false"
+                }
+            ],
+            "@type": "Class",
+            "description": "Complex devices-subsystems used to set the direction and the position of the spacecraft, it controls flight dynamics.",
+            "title": "Spacecraft_AODCS",
+            "supportedOperation": [
+                {
+                    "@id": "_:Spacecraft_AODCS_create",
+                    "statusCodes": [],
+                    "method": "POST",
+                    "@type": "hydra:Operation",
+                    "expects": "http://ontology.projectchronos.eu/subsystems/Spacecraft_AODCS",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_AODCS",
+                    "description": "null",
+                    "label": "Creates a new Spacecraft_AODCS entity"
+                },
+                {
+                    "@id": "_:Spacecraft_AODCS_replace",
+                    "statusCodes": [
+                        {
+                            "code": 404,
+                            "description": "If the Spacecraft_AODCS entity wasn't found."
+                        }
+                    ],
+                    "method": "PUT",
+                    "@type": "hydra:Operation",
+                    "expects": "http://ontology.projectchronos.eu/subsystems/Spacecraft_AODCS",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_AODCS",
+                    "description": "null",
+                    "label": "Replaces an existing Spacecraft_AODCS entity"
+                },
+                {
+                    "@id": "_:Spacecraft_AODCS_delete",
+                    "statusCodes": [],
+                    "method": "DELETE",
+                    "@type": "hydra:Operation",
+                    "expects": "null",
+                    "returns": "null",
+                    "description": "null",
+                    "label": "Deletes a Spacecraft_AODCS entity"
+                },
+                {
+                    "@id": "_:Spacecraft_AODCS_retrieve",
+                    "statusCodes": [
+                        {
+                            "code": 404,
+                            "description": "If the Spacecraft_AODCS entity wasn't found."
+                        }
+                    ],
+                    "method": "GET",
+                    "@type": "hydra:Operation",
+                    "expects": "null",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_AODCS",
+                    "description": "null",
+                    "label": "Retrieves a Spacecraft_AODCS entity"
+                }
+            ]
+        },
+        {
+            "@id": "http://ontology.projectchronos.eu/subsystems/Spacecraft_AODCS_ActiveDevice",
+            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+            "supportedProperty": [
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isSubsystemOf",
+                    "title": "isSubsystemOf",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "subject is a device or a system of devices that is subsystem of a wider system or device",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isComponentOf",
+                    "title": "isComponentOf",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "the subject is a member of a wider artifact, that is a set of artifacts",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/hasSubSystem",
+                    "title": "hasSubSystem",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isDeployedIn",
+                    "title": "isDeployedIn",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "the environment in which a device or a system of devices is designed to work",
+                    "readonly": "false"
+                }
+            ],
+            "@type": "Class",
+            "description": "Do NOT use any additional power from the spacecraft generator",
+            "title": "Spacecraft_AODCS_Active",
+            "supportedOperation": [
+                {
+                    "@id": "_:Spacecraft_AODCS_Active_create",
+                    "statusCodes": [],
+                    "method": "POST",
+                    "@type": "hydra:Operation",
+                    "expects": "http://ontology.projectchronos.eu/subsystems/Spacecraft_AODCS_ActiveDevice",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_AODCS_ActiveDevice",
+                    "description": "null",
+                    "label": "Creates a new Spacecraft_AODCS_Active entity"
+                },
+                {
+                    "@id": "_:Spacecraft_AODCS_Active_replace",
+                    "statusCodes": [
+                        {
+                            "code": 404,
+                            "description": "If the Spacecraft_AODCS_Active entity wasn't found."
+                        }
+                    ],
+                    "method": "PUT",
+                    "@type": "hydra:Operation",
+                    "expects": "http://ontology.projectchronos.eu/subsystems/Spacecraft_AODCS_ActiveDevice",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_AODCS_ActiveDevice",
+                    "description": "null",
+                    "label": "Replaces an existing Spacecraft_AODCS_Active entity"
+                },
+                {
+                    "@id": "_:Spacecraft_AODCS_Active_delete",
+                    "statusCodes": [],
+                    "method": "DELETE",
+                    "@type": "hydra:Operation",
+                    "expects": "null",
+                    "returns": "null",
+                    "description": "null",
+                    "label": "Deletes a Spacecraft_AODCS_Active entity"
+                },
+                {
+                    "@id": "_:Spacecraft_AODCS_Active_retrieve",
+                    "statusCodes": [
+                        {
+                            "code": 404,
+                            "description": "If the Spacecraft_AODCS_Active entity wasn't found."
+                        }
+                    ],
+                    "method": "GET",
+                    "@type": "hydra:Operation",
+                    "expects": "null",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_AODCS_ActiveDevice",
+                    "description": "null",
+                    "label": "Retrieves a Spacecraft_AODCS_Active entity"
+                }
+            ]
+        },
+        {
+            "@id": "http://ontology.projectchronos.eu/subsystems/Spacecraft_AODCS_PassiveDevice",
+            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+            "supportedProperty": [
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isSubsystemOf",
+                    "title": "isSubsystemOf",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "subject is a device or a system of devices that is subsystem of a wider system or device",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isComponentOf",
+                    "title": "isComponentOf",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "the subject is a member of a wider artifact, that is a set of artifacts",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/hasSubSystem",
+                    "title": "hasSubSystem",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "readonly": "false"
+                },
+                {
+                    "property": "http://ontology.projectchronos.eu/spacecraft/isDeployedIn",
+                    "title": "isDeployedIn",
+                    "@type": "SupportedProperty",
+                    "required": "false",
+                    "writeonly": "false",
+                    "description": "the environment in which a device or a system of devices is designed to work",
+                    "readonly": "false"
+                }
+            ],
+            "@type": "Class",
+            "description": "DO use any additional power from the spacecraft generator",
+            "title": "Spacecraft_AODCS_PassiveDevice",
+            "supportedOperation": [
+                {
+                    "@id": "_:Spacecraft_AODCS_PassiveDevice_create",
+                    "statusCodes": [],
+                    "method": "POST",
+                    "@type": "hydra:Operation",
+                    "expects": "http://ontology.projectchronos.eu/subsystems/Spacecraft_AODCS_PassiveDevice",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_AODCS_PassiveDevice",
+                    "description": "null",
+                    "label": "Creates a new Spacecraft_AODCS_PassiveDevice entity"
+                },
+                {
+                    "@id": "_:Spacecraft_AODCS_PassiveDevice_replace",
+                    "statusCodes": [
+                        {
+                            "code": 404,
+                            "description": "If the Spacecraft_AODCS_PassiveDevice entity wasn't found."
+                        }
+                    ],
+                    "method": "PUT",
+                    "@type": "hydra:Operation",
+                    "expects": "http://ontology.projectchronos.eu/subsystems/Spacecraft_AODCS_PassiveDevice",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_AODCS_PassiveDevice",
+                    "description": "null",
+                    "label": "Replaces an existing Spacecraft_AODCS_PassiveDevice entity"
+                },
+                {
+                    "@id": "_:Spacecraft_AODCS_PassiveDevice_delete",
+                    "statusCodes": [],
+                    "method": "DELETE",
+                    "@type": "hydra:Operation",
+                    "expects": "null",
+                    "returns": "null",
+                    "description": "null",
+                    "label": "Deletes a Spacecraft_AODCS_PassiveDevice entity"
+                },
+                {
+                    "@id": "_:Spacecraft_AODCS_PassiveDevice_retrieve",
+                    "statusCodes": [
+                        {
+                            "code": 404,
+                            "description": "If the Spacecraft_AODCS_PassiveDevice entity wasn't found."
+                        }
+                    ],
+                    "method": "GET",
+                    "@type": "hydra:Operation",
+                    "expects": "null",
+                    "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_AODCS_PassiveDevice",
+                    "description": "null",
+                    "label": "Retrieves a Spacecraft_AODCS_PassiveDevice entity"
+                }
+            ]
+        }
+    ]
+}
