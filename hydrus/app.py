@@ -43,6 +43,7 @@ class Cots(Resource):
             names.append(row)
         # print(jsonify(names))
         return names
+
     def post(self, id):
         pass
 
@@ -72,6 +73,39 @@ class Spacecraft(Resource):
         pass
 
 api.add_resource(Spacecraft, "/api/spacecraft/<string:id>", endpoint="spacecraft")
+
+class Vocab(Resource):
+    """ Returns the main Hydra vocab"""
+
+    def get(self):
+        pass
+
+api.add_resource(Vocab, "/api/vocab#", endpoint="vacab")
+
+
+class Entrypoint(Resource):
+    """ Returns application main Entrypoint"""
+
+    def get(self):
+        pass
+
+api.add_resource(Entrypoint, "/api/contexts/EntryPoint.jsonld", endpoint="main_entrypoint")
+
+class SpacecraftContext(Resource):
+    """ Return SpaceCraft context"""
+
+    def get(self):
+        pass
+
+api.add_resource(SpacecraftContext, "/api/contexts/SpaceCraft.jsonld", endpoint="spacecraft_context")
+
+class CotsContext(Resource):
+    """ Return COTS context"""
+
+    def get(self):
+        pass
+
+api.add_resource(CotsContext, "/api/contexts/Cots.jsonld", endpoint="cots_context")
 
 
 if __name__ == "__main__":
