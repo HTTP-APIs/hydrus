@@ -45,7 +45,9 @@ def hydrafy_class(class_, supported_props):
             operation["returns"] = operation["returns"] % (hydra_class["@id"])
         if operation["method"] in ["PUT", "GET"]:
             operation["statusCodes"][0]["description"] = operation["statusCodes"][0]["description"] % (hydra_class["title"])
-    hydra_class["supportedProperty"] = supported_props
+
+    additional_props = terminal_props(class_, supported_props)
+    hydra_class["supportedProperty"] = supported_props + additional_props
     hydra_class["supportedOperation"] = supported_ops
 
     return hydra_class
@@ -99,7 +101,8 @@ def hydrafy_property(prop):
       "writeonly": "false"
     }
     hydra_prop["property"] = prop["@id"]
-    hydra_prop["title"] = prop["rdf:label"]
+    if "rdf:label" in prop:
+        hydra_prop["title"] = prop["rdf:label"]
     if "rdf:comment" in prop:
         hydra_prop["description"] = prop["rdf:comment"]
     if "skos:prefLabel" in prop:
@@ -125,6 +128,18 @@ def hydrafy_properties(properties):
             "classes": ops,
         })
     return hydra_props
+
+
+def terminal_props(class_, properties):
+    """Create terminal properties for non-descriptive property restrictions."""
+    additional_props = list()
+    supported_props = [x["property"] for x in properties]
+    if "rdfs:subClassOf" in class_:
+        for restriction in class_["rdfs:subClassOf"]:
+            if "owl:onProperty" in restriction:
+                if restriction["owl:onProperty"]["@id"] not in supported_props:
+                    additional_props.append(hydrafy_property(restriction["owl:onProperty"]))
+    return additional_props
 
 
 def gen_APIDoc(hydra_classes):
