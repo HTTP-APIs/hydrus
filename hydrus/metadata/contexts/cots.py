@@ -1,8 +1,9 @@
-subsystem_context = {
+cots_context = {
   "@context": {
     "hydra": "http://www.w3.org/ns/hydra/core#",
-    "vocab": "http://www.markus-lanthaler.com/hydra/event-api/vocab#",
-    "Event": "http://schema.org/Event",
+    "vocab": "http://hydrus.com/vocab#",
+    "Cots": "http://ontology.projectchronos.eu/subsystems?format=jsonld",
+# COTS PROPERTIES
     "name": "http://schema.org/name",
     "description": "http://schema.org/description",
     "start_date": {
