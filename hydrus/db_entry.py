@@ -1,7 +1,7 @@
 """Test script to enter data from random objects into old models(Depreciated)."""
 
-from hydrus.models import Property, Instance, Graph, engine, Classes, Terminal
-from hydrus.generator import gen_all_types
+from models import Property, Instance, Graph, engine, RDFClass, Terminal
+from generator import gen_all_types
 from sqlalchemy.orm import sessionmaker
 import pdb
 keymap = {
@@ -29,7 +29,7 @@ session = Session()
 for object_ in objects:
     class_name = keymap[object_["object"]["category"]]
     print(class_name)
-    class_ = session.query(Classes).filter(Classes.name == class_name).one()
+    class_ = session.query(RDFClass).filter(RDFClass.name == class_name).one()
 
     resource = Instance(id=object_["id"], name=object_["name"], type_=class_.id)
     session.add(resource)
@@ -48,7 +48,7 @@ for object_ in objects:
             triple = Graph(
                 subject=resource.id,
                 subject_type="INSTANCE",
-                predicate=property_.id,
+                abs_predicate=property_.id,
                 object_id=value.id,
                 object_type="TERMINAL"
             )

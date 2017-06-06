@@ -1,6 +1,6 @@
 """Definition of all Properties in the SubSystem and Spacecraft vocabulary."""
 
-from hydrus.models import AbstractProperty, Property, engine
+from models import AbstractProperty, Property, engine
 from sqlalchemy.orm import sessionmaker
 
 

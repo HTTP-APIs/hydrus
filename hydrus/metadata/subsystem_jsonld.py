@@ -430,7 +430,7 @@ subsystem_data = {
          },
          "rdf:comment":"Complex devices-subsystems used for impelling (processes of applying a force which results in translational motion) a spacecraft, in the specific http://umbel.org/umbel/rc/ProjectilePropelling",
          "spacecraft:isComponentOf":"http://ontology.projectchronos.eu/spacecraft/Spacecraft",
-         "rdf:label":"Spacecraft_Propulsion.",
+         "rdf:label":"Spacecraft_Propulsion",
          "rdfs:subClassOf":[
             {
                "@id":"http://ontology.projectchronos.eu/spacecraft/Subsystem_Spacecraft"
@@ -514,7 +514,7 @@ subsystem_data = {
          "spacecraft:isComponentOf":{
             "@id":"http://ontology.projectchronos.eu/spacecraft/Spacecraft"
          },
-         "rdf:label":"Spacecraft_PrimaryPower.",
+         "rdf:label":"Spacecraft_PrimaryPower",
          "rdfs:subClassOf":[
             {
                "@id":"http://ontology.projectchronos.eu/spacecraft/Subsystem_Spacecraft"

@@ -177,3 +177,5 @@ def gen_all_types():
         output.append(obj)
         i += 1
     return output
+
+print(gen_all_types())
