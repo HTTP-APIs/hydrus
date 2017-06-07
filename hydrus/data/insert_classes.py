@@ -1,9 +1,9 @@
 """Definition of all Classes in the SubSystem and Spacecraft vocabulary."""
 
-import hydrus.models as models
+import models as models
 from sqlalchemy.orm import sessionmaker
-from hydrus.metadata.spacecraft_jsonld import spacecraft_data
-from hydrus.metadata.subsystem_jsonld import subsystem_data
+from metadata.spacecraft_jsonld import spacecraft_data
+from metadata.subsystem_jsonld import subsystem_data
 
 
 def filter_objects(data, key='@type', value='http://www.w3.org/2002/07/owl#Class'):
@@ -36,11 +36,12 @@ def gen_classes(labels):
 # Generate classes for subsystem data
 subsystem_labels = get_rdf_lables(filter_objects(subsystem_data))
 subsystem_classes = gen_classes(subsystem_labels)
+print(subsystem_labels)
 
 # Generate classes for the spacecraft data
 spacecraft_labels = get_rdf_lables(filter_objects(spacecraft_data))
 spacecraft_classes = gen_classes(spacecraft_labels)
-
+print(spacecraft_labels)
 
 if __name__ == "__main__":
     Session = sessionmaker(bind=models.engine)

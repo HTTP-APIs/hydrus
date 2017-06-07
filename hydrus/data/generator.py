@@ -160,20 +160,43 @@ def generateObject(name, subsystem):
             result['type'] = 'active'
         return result
 
+#
+# def gen_all_types():
+#     """Generate one random object for all classes."""
+#     output = []
+#     global subsystems
+#     i = 0
+#     for k, v in subsystems.items():
+#         # print(k)
+#         name = str(random.randrange(0, 50)) + \
+#             str(random.choice(['T', 'W', 'KV', 'JFG'])) + ' ' + k
+#         obj = {}
+#         obj['name'] = name
+#         obj['id'] = i + 1
+#         obj['object'] = generateObject(k, v)
+#         output.append(obj)
+#         i += 1
+#         break
+#     return output
+#
+# print(gen_all_types())
 
-def gen_all_types():
-    """Generate one random object for all classes."""
+
+# First we will generate data for COTS (spacecraft parts).
+# gen_cots will generate n number of spacecraft parts with random properties
+
+def gen_cots(n):
+    """Generate n number of spacecraft parts with random properties"""
     output = []
-    global subsystems
-    i = 0
-    for k, v in subsystems.items():
-        # print(k)
+    for num in range(n):
+        index = random.randint(0, len(subsystems.items())-1)
+        k, v = subsystems.items()[index]
         name = str(random.randrange(0, 50)) + \
             str(random.choice(['T', 'W', 'KV', 'JFG'])) + ' ' + k
         obj = {}
         obj['name'] = name
-        obj['id'] = i + 1
-        obj['object'] = generateObject(k, v)
+        obj['object'] =generateObject(k, v)
         output.append(obj)
-        i += 1
     return output
+
+# print(gen_cots(1))

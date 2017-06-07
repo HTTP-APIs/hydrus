@@ -3,8 +3,8 @@
 from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String
-
-engine = create_engine('sqlite:///database.db')
+# Default username - postgres, password - "  " (Double space), DB - hydra
+engine = create_engine("postgresql://postgres:  @localhost:5432/hydra")
 
 Base = declarative_base()
 
@@ -17,7 +17,7 @@ class RDFClass(Base):
     __tablename__ = "classes"
 
     id = Column(Integer, primary_key=True)
-    name = Column(String)
+    name = Column(String, unique=True)
 
     def __repr__(self):
         """Verbose object name."""
@@ -32,7 +32,7 @@ class Instance(Base):
     __tablename__ = "instances"
 
     id = Column(Integer, primary_key=True)
-    name = Column(String)
+    name = Column(String, unique=True)
     type_ = Column(Integer, ForeignKey("classes.id"), nullable=True)
 
     def __repr__(self):
@@ -51,7 +51,7 @@ class Property(Base):
     __tablename__ = "instance_props"
 
     id = Column(Integer, primary_key=True)
-    name = Column(String)
+    name = Column(String, unique=True)
 
     def __repr__(self):
         """Verbose object name."""
@@ -72,7 +72,7 @@ class Terminal(Base):
 
     id = Column(Integer, primary_key=True)
     value = Column(String)
-    unit = Column(String)
+    unit = Column(String, nullable=True)
 
     def __repr__(self):
         """Verbose object name."""
@@ -93,7 +93,7 @@ class AbstractProperty(Base):
     __tablename__ = "abstract_props"
 
     id = Column(Integer, primary_key=True)
-    name = Column(String)
+    name = Column(String, unique=True)
 
     def __repr__(self):
         """Verbose object name."""
@@ -127,21 +127,30 @@ class Graph(Base):
 
     id = Column(Integer, primary_key=True)
     # Subject: can be a class or instance
-    class_ = Column(Integer, ForeignKey("classes.id"), nullable=True, index=True)
-    instance = Column(Integer, ForeignKey("classes.id"), nullable=True, index=True)
+    class_ = Column(Integer, ForeignKey("classes.id"),
+                    nullable=True, index=True)
+    instance = Column(Integer, ForeignKey(
+        "instances.id"), nullable=True, index=True)
     # Predicate: can be instantiated or abstract
-    abs_predicate = Column(Integer, ForeignKey("abstract_props.id"), nullable=True, index=True)
-    inst_predicate = Column(Integer, ForeignKey("instance_props.id"), nullable=True, index=True)
+    abs_predicate = Column(Integer, ForeignKey(
+        "abstract_props.id"), nullable=True, index=True)
+    inst_predicate = Column(Integer, ForeignKey(
+        "instance_props.id"), nullable=True, index=True)
     # Object: can be a class or a terminal or instance
-    abs_object = Column(Integer, ForeignKey("classes.id"), nullable=True, index=True)
-    inst_object = Column(Integer, ForeignKey("instances.id"), nullable=True, index=True)
-    term_object = Column(Integer, ForeignKey("terminals.id"), nullable=True, index=True)
+    abs_object = Column(Integer, ForeignKey(
+        "classes.id"), nullable=True, index=True)
+    inst_object = Column(Integer, ForeignKey(
+        "instances.id"), nullable=True, index=True)
+    term_object = Column(Integer, ForeignKey(
+        "terminals.id"), nullable=True, index=True)
 
     def __repr__(self):
         """Verbose object name."""
         # check which values are not None and return the right string
-        # return "<subject='%s', predicate='%s', object_='%s'>" % (self.subject, self.predicate, self.object_id)
-        raise NotImplementedError()
+        return "<class_='%s', instance='%s', abs_predicate='%s', inst_predicate='%s', abs_object='%s', inst_object='%s', term_object='%s'>"\
+            % (self.class_, self.instance, self.abs_predicate, self.inst_predicate, self.abs_object, self.inst_object, self.term_object)
+        # raise NotImplementedError()
+        # pass
 
 
 if __name__ == "__main__":
