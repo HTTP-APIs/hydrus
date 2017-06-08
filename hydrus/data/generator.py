@@ -199,4 +199,4 @@ def gen_cots(n):
         output.append(obj)
     return output
 
-# print(gen_cots(1))
+print(gen_cots(1))

@@ -4,6 +4,7 @@ import models as models
 from sqlalchemy.orm import sessionmaker
 from metadata.spacecraft_jsonld import spacecraft_data
 from metadata.subsystem_jsonld import subsystem_data
+from keymap import classes_keymap as keymap
 
 
 def filter_objects(data, key='@type', value='http://www.w3.org/2002/07/owl#Class'):

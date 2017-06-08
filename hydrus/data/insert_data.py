@@ -1,22 +1,10 @@
 """Test script to enter data from random objects into old models(Depreciated)."""
 
-from models import Property, Instance, Graph, engine, RDFClass, Terminal, AbstractProperty
+from db_models import Property, Instance, Graph, engine, RDFClass, Terminal, AbstractProperty
 from generator import gen_cots
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import exists
 import pdb
-
-keymap = {
-    "communication": "Spacecraft_Communication",
-    "propulsion": "Spacecraft_Propulsion",
-    "detector": "Spacecraft_Detector",
-    "primary power": "Spacecraft_PrimaryPower",
-    "backup power": "Spacecraft_BackupPower",
-    "thermal": "Spacecraft_Thermal",
-    "structure":  "Spacecraft_Structure",
-    "command and data": "Spacecraft_CDH",
-    "attitude and orbit control": "Spacecraft_AODCS",
-}
 
 
 # Temporary storge for the Graph
