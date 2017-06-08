@@ -1,4 +1,4 @@
-{
+spacecraft_apidoc = {
     "@type": "ApiDocumentation",
     "title": "The name of the API",
     "supportedClass": [

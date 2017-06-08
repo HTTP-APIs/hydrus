@@ -1,4 +1,5 @@
 #UNFINISHED
+from subsystem_apidoc import subsystem_apidoc
 vocab = {
     "@context": {
         "vocab": "http://hydrus.com/vocab#",
@@ -26,7 +27,6 @@ vocab = {
         "code": "hydra:statusCode",
         "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
         "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-        "owl": "http://www.w3.org/2002/07/owl#",
         "skos": "http://www.w3.org/2004/02/skos/core#",
         "label": "rdfs:label",
         "description": "rdfs:comment",
@@ -339,50 +339,6 @@ vocab = {
                 }
             ]
         },
-        {
-            "@id": "vocab:EventCollection",
-            "@type": "hydra:Class",
-            "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
-            "label": "EventCollection",
-            "description": "A collection of events",
-            "supportedOperation": [
-                {
-                    "@id": "_:event_create",
-                    "@type": "http://schema.org/AddAction",
-                    "method": "POST",
-                    "label": "Creates a new Event entity",
-                    "description": null,
-                    "expects": "http://schema.org/Event",
-                    "returns": "http://schema.org/Event",
-                    "statusCodes": [
-                        {
-                          "code": 201,
-                          "description": "If the Event entity was created successfully."
-                        }
-                    ]
-                },
-                {
-                    "@id": "_:event_collection_retrieve",
-                    "@type": "hydra:Operation",
-                    "method": "GET",
-                    "label": "Retrieves all Event entities",
-                    "description": null,
-                    "expects": null,
-                    "returns": "vocab:EventCollection",
-                    "statusCodes": [
-                    ]
-                }
-            ],
-            "supportedProperty": [
-                {
-                    "property": "http://www.w3.org/ns/hydra/core#member",
-                    "hydra:title": "members",
-                    "hydra:description": "The events",
-                    "required": null,
-                    "readonly": false,
-                    "writeonly": false
-                }
-            ]
-        }
+
     ]
 }

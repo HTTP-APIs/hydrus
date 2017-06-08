@@ -3,6 +3,7 @@
 # Write code for views and API here.
 from flask import Flask, jsonify, redirect, request
 from flask_restful import Api, Resource
+from data import crud
 import json
 from models import engine
 from sqlalchemy import text
@@ -21,6 +22,10 @@ def set_response_headers(resp, ct="application/json", status_code=200):
     resp.headers['Content-type'] = ct
     return resp
 
+def hydrafy():
+    """To be implemented"""
+    pass
+
 
 class Index(Resource):
 
@@ -31,21 +36,22 @@ class Index(Resource):
 
 api.add_resource(Index, "/api", endpoint="api")
 
+# Using sqlalchemy
 class Cots(Resource):
     """ Handles all operations(GET, POST, PATCH, DELETE) on
     Commercial Off The Shelves (COTS) spare parts for pico- and nano-satellites."""
 
     def get(self, id):
-        pass
-        
-    def post(self, id):
-        pass
+        return hydrafy(crud.get(id))
 
-    def patch(self, id):
-        pass
+    def post(self, id, object_):
+        return hydrafy(crud.insert(object_))
+
+    def patch(self, id, object_):
+        return hydrafy(crud.update(id, object_))
 
     def delete(self, id):
-        pass
+        return hydrafy(crud.delete(id))
 
 api.add_resource(Cots, "/api/cots/<string:id>", endpoint="cots")
 
