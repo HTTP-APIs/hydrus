@@ -184,7 +184,7 @@ class GraphIII(Graph):
 class GraphIIT(Graph):
     """Graph model for Instance >> InstanceProperty >> Terminal."""
 
-    __tablename__ = 'graphiii'
+    __tablename__ = 'graphiit'
     subject = Column(Integer, ForeignKey("instances.id"))
     predicate = Column(Integer, ForeignKey("property.id"))
     object = Column(Integer, ForeignKey("terminals.id"))
