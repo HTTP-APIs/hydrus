@@ -1,4 +1,4 @@
-""" Don't need this anymore, properties are inserted on runtime depending upon type of subject and object."""
+"""Don't need this anymore, properties are inserted on runtime depending upon type of subject and object."""
 
 # """Definition of all Properties in the SubSystem and Spacecraft vocabulary."""
 #

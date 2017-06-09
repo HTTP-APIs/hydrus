@@ -37,10 +37,6 @@ class Instance(Base):
     name = Column(String)
     type_ = Column(Integer, ForeignKey("classes.id"), nullable=True)
 
-    def __repr__(self):
-        """Verbose object name."""
-        return "<id='%s', name='%s', type_='%s'>" % (self.id, self.name, self.type_.name)
-
 
 class BaseProperty(Base):
     """Model for Basic Property."""
@@ -121,50 +117,86 @@ class Terminal(Base):
 
 
 class Graph(Base):
-    """Model for a graph that store triples of instance from the other models to map relationships.
-
-    Graph triple contains subject, predicate, object.
-
-    #TODO: In the beginning we start with a sparse matrix (a lot of null values) but possibly
-     we will refactor with a more memory-efficient solution. See issue #9
-
-    #TODO: in the future all the nodes will be indexed using an Hexastore (3!) strategy.
-    """
+    """Model for a graph that store triples of instance from the other models to map relationships."""
 
     __tablename__ = "graph"
 
     id = Column(Integer, primary_key=True)
     type = Column(String)
-    # Subject: can be a class or instance
-    class_ = Column(Integer, ForeignKey("classes.id"), nullable=True, index=True)
-    instance = Column(Integer, ForeignKey("classes.id"), nullable=True, index=True)
-    # Predicate: can be instantiated or abstract
-    abs_predicate = Column(Integer, ForeignKey("abstract_props.id"), nullable=True, index=True)
-    inst_predicate = Column(Integer, ForeignKey("instance_props.id"), nullable=True, index=True)
-    # Object: can be a class or a terminal or instance
-    abs_object = Column(Integer, ForeignKey("classes.id"), nullable=True, index=True)
-    inst_object = Column(Integer, ForeignKey("instances.id"), nullable=True, index=True)
-    term_object = Column(Integer, ForeignKey("terminals.id"), nullable=True, index=True)
 
     __mapper_args__ = {
         'polymorphic_identity': 'Graph',
         'polymorphic_on': type
     }
 
-    def __repr__(self):
-        """Verbose object name."""
-        # check which values are not None and return the right string
-        # return "<subject='%s', predicate='%s', object_='%s'>" % (self.subject, self.predicate, self.object_id)
-        raise NotImplementedError()
-
 
 class GraphCAC(Graph):
     """Graph model for Class >> AbstractProperty >> Class."""
 
     __tablename__ = 'graphcac'
-    class_ = Column(Integer, ForeignKey("classes.id"), nullable=True, index=True)
+    subject = Column(Integer, ForeignKey("classes.id"))
+    predicate = Column(Integer, ForeignKey("property.id"))
+    object = Column(Integer, ForeignKey("classes.id"))
 
-    {}
+    __mapper_args__ = {
+        'polymorphic_identity': 'graphcac',
+    }
+
+    def __repr__(self):
+        """Verbose object name."""
+        return "<subject='%s', predicate='%s', object_='%s'>" % (self.subject, self.predicate, self.object)
+
+
+class GraphIAC(Graph):
+    """Graph model for Instance >> AbstractProperty >> Class."""
+
+    __tablename__ = 'graphiac'
+    subject = Column(Integer, ForeignKey("instances.id"))
+    predicate = Column(Integer, ForeignKey("property.id"))
+    object = Column(Integer, ForeignKey("classes.id"))
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'graphiac',
+    }
+
+    def __repr__(self):
+        """Verbose object name."""
+        return "<subject='%s', predicate='%s', object_='%s'>" % (self.subject, self.predicate, self.object)
+
+
+class GraphIII(Graph):
+    """Graph model for Instance >> InstanceProperty >> Instance."""
+
+    __tablename__ = 'graphiii'
+    subject = Column(Integer, ForeignKey("instances.id"))
+    predicate = Column(Integer, ForeignKey("property.id"))
+    object = Column(Integer, ForeignKey("instances.id"))
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'graphiii',
+    }
+
+    def __repr__(self):
+        """Verbose object name."""
+        return "<subject='%s', predicate='%s', object_='%s'>" % (self.subject, self.predicate, self.object)
+
+
+class GraphIIT(Graph):
+    """Graph model for Instance >> InstanceProperty >> Terminal."""
+
+    __tablename__ = 'graphiii'
+    subject = Column(Integer, ForeignKey("instances.id"))
+    predicate = Column(Integer, ForeignKey("property.id"))
+    object = Column(Integer, ForeignKey("terminals.id"))
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'graphiit',
+    }
+
+    def __repr__(self):
+        """Verbose object name."""
+        return "<subject='%s', predicate='%s', object_='%s'>" % (self.subject, self.predicate, self.object)
+
 
 if __name__ == "__main__":
     print("Creating models....")

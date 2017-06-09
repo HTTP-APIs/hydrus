@@ -4,7 +4,7 @@ from db_models import Property, Instance, Graph, engine, RDFClass, Terminal, Abs
 from generator import gen_cots
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import exists
-import pdb
+from keymap import classes_keymap
 
 
 # Temporary storge for the Graph
@@ -19,7 +19,7 @@ session = Session()
 
 for object_ in objects:
     # Query and get Rdf class
-    rdf_class_name = keymap[object_["object"]["category"]]
+    rdf_class_name = classes_keymap[object_["object"]["category"]]
     print("Rdf class name", rdf_class_name)
     rdf_class = session.query(RDFClass).filter(RDFClass.name == rdf_class_name).one()
 
@@ -38,9 +38,9 @@ for object_ in objects:
             # test to set property type (if true abstract)
             try:
                 # Check if property value is existing class
-                abs_test_1 = session.query(exists().where(RDFClass.name==keymap[object_["object"][prop]])).scalar()
+                abs_test_1 = session.query(exists().where(RDFClass.name == classes_keymap[object_["object"][prop]])).scalar()
                 # Check if property value is existing instance
-                abs_test_2 = session.query(exists().where(Instance.name==keymap[object_["object"][prop]])).scalar()
+                abs_test_2 = session.query(exists().where(Instance.name == classes_keymap[object_["object"][prop]])).scalar()
             except:
                 abs_test_1 = False
                 abs_test_2 = False
@@ -80,28 +80,27 @@ for object_ in objects:
                 print("Terminal object id", term_object.id)
 
             # If property is of RDFClass type then object is of abs_object type
-            elif session.query(exists().where(RDFClass.name==keymap[object_["object"][prop]])).scalar():
-                term_object = None
-                abs_object = session.query(RDFClass).filter(RDFClass.name == keymap[object_["object"][prop]]).one()
-                inst_object = None
-                print("Abstract object id", abs_object.id)
-            # Else object is of inst_object type
+            elif session.query(exists().where(RDFClass.name == classes_keymap[object_["object"][prop]])).scalar():
+                    term_object = None
+                    abs_object = session.query(RDFClass).filter(RDFClass.name == classes_keymap[object_["object"][prop]]).one()
+                    inst_object = None
+                    print("Abstract object id", abs_object.id)
+                # Else object is of inst_object type
             else:
                 term_object = None
                 abs_object = None
-                inst_object = session.query(Instance).filter(Instance.name == keymap[object_["object"][prop]]).one()
+                inst_object = session.query(Instance).filter(Instance.name == classes_keymap[object_["object"][prop]]).one()
                 print("Instance property id", inst_object.id)
-
 
             # Create a temporary storage for Our Graph
             triple = Graph(
-                class_ = rdf_class.id,
-                instance = resource.id,
-                abs_predicate = abstract_property.id if abstract_property != None else None,
-                inst_predicate = property_.id if property_ != None else None,
-                term_object = term_object.id if term_object != None else None,
-                abs_object = abs_object.id if abs_object != None else None,
-                inst_object = inst_object.id if inst_object != None else None
+                class_=rdf_class.id,
+                instance=resource.id,
+                abs_predicate=abstract_property.id if abstract_property is not None else None,
+                inst_predicate=property_.id if property_ is not None else None,
+                term_object=term_object.id if term_object is not None else None,
+                abs_object=abs_object.id if abs_object is not None else None,
+                inst_object=inst_object.id if inst_object is not None else None
             )
 
             triple_store.append(triple)

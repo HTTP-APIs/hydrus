@@ -151,8 +151,7 @@ def generateObject(name, subsystem):
         result['minTemperature'] = randomValue(subsystem['minTemperature'])
         result['maxTemperature'] = randomValue(subsystem['maxTemperature'])
 
-        result['hasMonetaryValue'] = (result['maxTemperature'] -
-                          result['minTemperature']) * 20
+        result['hasMonetaryValue'] = (result['maxTemperature'] - result['minTemperature']) * 20
 
         if result['hasPower'] == 0:
             result['type'] = 'passive'
@@ -186,7 +185,7 @@ def generateObject(name, subsystem):
 # gen_cots will generate n number of spacecraft parts with random properties
 
 def gen_cots(n):
-    """Generate n number of spacecraft parts with random properties"""
+    """Generate n number of spacecraft parts with random properties."""
     output = []
     for num in range(n):
         index = random.randint(0, len(subsystems.items())-1)
@@ -195,8 +194,9 @@ def gen_cots(n):
             str(random.choice(['T', 'W', 'KV', 'JFG'])) + ' ' + k
         obj = {}
         obj['name'] = name
-        obj['object'] =generateObject(k, v)
+        obj['object'] = generateObject(k, v)
         output.append(obj)
     return output
+
 
 print(gen_cots(1))

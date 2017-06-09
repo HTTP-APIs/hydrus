@@ -4,11 +4,11 @@ import models as models
 from sqlalchemy.orm import sessionmaker
 from metadata.spacecraft_jsonld import spacecraft_data
 from metadata.subsystem_jsonld import subsystem_data
-from keymap import classes_keymap as keymap
+# from keymap import classes_keymap as keymap
 
 
 def filter_objects(data, key='@type', value='http://www.w3.org/2002/07/owl#Class'):
-    """ Return a filtered list of objects provided given key, value pair and data. """
+    """Return a filtered list of objects provided given key, value pair and data."""
     obj_list = []
     for obj in data['defines']:
         if key in obj.keys():
@@ -18,7 +18,7 @@ def filter_objects(data, key='@type', value='http://www.w3.org/2002/07/owl#Class
 
 
 def get_rdf_lables(obj_list):
-    """ Get rdf:labels from a given list of objects. """
+    """Get rdf:labels from a given list of objects."""
     rdf_labels = []
     for obj in obj_list:
         rdf_labels.append(obj['rdf:label'])
@@ -27,7 +27,7 @@ def get_rdf_lables(obj_list):
 
 
 def gen_classes(labels):
-    """ Generate sqlalchemy Classes model (from models.py) instances for a given set of labels"""
+    """Generate sqlalchemy Classes model (from models.py) instances for a given set of labels."""
     classes = []
     for label in labels:
         classes.append(models.RDFClass(name=label))
