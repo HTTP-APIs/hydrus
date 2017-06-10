@@ -1,5 +1,5 @@
 """Basic CRUD operations for the server."""
-# NOTE: Needs to be changed according to new data models
+
 from db_models import Graph, BaseProperty, RDFClass, Instance, Terminal, engine
 from db_models import GraphIAC, GraphIIT, GraphIII
 from sqlalchemy.orm import sessionmaker, with_polymorphic
@@ -55,8 +55,6 @@ def get(id_):
 
 def insert(object_):
     """Insert an object to database [POST] and returns the inserted object."""
-    class_name = keymap[object_["object"]["category"]]
-
     # NOTE: We are inserting the object, no need to check if similar one already exists.
     #       Data can be redundant/identical, they must have different "@id"
     triple_store = list()
@@ -65,24 +63,48 @@ def insert(object_):
     session.add(instance)
     session.commit()
 
-    for prop in object_["object"]:
-        isAbstract = session.query(exists().where(properties.abstract_prop_name == prop)).scalar()
-
-        if isAbstract:
-            isValidClass = session.query(exists().where(RDFClass.name == object_["object"]["prop"])).scalar()
+    for prop_name in object_["object"]:
+        isAbstractProperty = session.query(exists().where(properties.abstract_prop_name == prop_name)).scalar()
+        isInstanceProperty = session.query(exists().where(properties.instance_prop_name == prop_name)).scalar()
+        # Insert a triple with an abstract property >> GraphIAC
+        if isAbstractProperty:
+            isValidClass = session.query(exists().where(RDFClass.name == object_["object"][prop_name])).scalar()
             if isValidClass:
-                prop = session.query(properties).filter(properties.abstract_prop_name == prop).one()
-                class_ = session.query(RDFClass).filter(RDFClass.name == object_["object"]["prop"]).one()
+                prop = session.query(properties).filter(properties.abstract_prop_name == prop_name).one()
+                class_ = session.query(RDFClass).filter(RDFClass.name == object_["object"][prop_name]).one()
                 triple = GraphIAC(subject=instance.id, predicate=prop.id, object_=class_.id)
-                triple_store.add(triple)
+                triple_store.append(triple)
             else:
                 session.delete(instance)
                 session.commit()
                 return {400: "The class %s is not a valid/defined RDFClass" % object_["object"]["prop"]}
-        else:
-            # For instance with instance relations
-            if type(object_["object"]) is dict:
 
+        # Insert a triple with an instance property
+        elif isInstanceProperty:
+            # When object is an instance >> GraphIII
+            if type(object_["object"][prop]) is dict:
+                object_id = object_["object"][prop]["@id"]
+                isValidObject = session.query(exists().where(Instance.id == object_id)).scalar()
+                if isValidObject:
+                    prop = session.query(properties).filter(properties.instance_prop_name == prop_name).one()
+                    triple = GraphIII(subject=instance.id, predicate=prop.id, object_=object_id)
+                    triple_store.append(triple)
+                else:
+                    session.delete(instance)
+                    session.commit()
+                    return {400: "The instance %s is not a valid Instance" % object_id}
+            else:
+                # NOTE: Add code here to check existing terminals
+                terminal = Terminal(value=object_["object"][prop_name], unit="unit")
+                session.add(terminal)
+                session.commit()
+                prop = session.query(properties).filter(properties.abstract_prop_name == prop_name).one()
+                triple = GraphIIT(subject=instance.id, predicate=prop.id, object_=terminal.id)
+                triple_store.append(triple)
+        else:
+            session.delete(instance)
+            session.commit()
+            return {400: "The property %s is not a valid/defined Property" % prop_name}
     # Insert everything into database
     session.add_all(triple_store)
     session.commit()
@@ -95,16 +117,17 @@ def delete(id):
     dataExists = session.query(exists().where(triples.subject == id and triples.type != "graphcac")).scalar()
 
     if instanceExists:
-        session.query(Instance).filter(Instance.id == id).all()
-        pdb.set_trace()
+        instance = session.query(Instance).filter(Instance.id == id).one()
         if dataExists:
-            session.query(triples).filter(triples.subject.id == id and triples.type_ != "graphcac").all()
-            pdb.set_trace()
+            objects = session.query(triples).filter(triples.subject.id == id).all()
+            [session.delete(triple) for triple in objects]
+        session.delete(instance)
+        session.commit()
 
     # NOTE: Terminals are reusable, it is part of the reason why they are not stored as literals.
     #       One terminal may map to many different instances in the graph, not advisable to delete them.
 
-    return {204: "Object with id %s successfully deleted!" % (id)}
+    return {204: "Object with ID : %s successfully deleted!" % (id)}
 
 
 def update(id, object_):
