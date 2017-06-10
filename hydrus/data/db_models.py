@@ -35,7 +35,7 @@ class Instance(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    type_ = Column(Integer, ForeignKey("classes.id"), nullable=True)
+    type = Column(Integer, ForeignKey("classes.id"), nullable=True)
 
 
 class BaseProperty(Base):
@@ -51,10 +51,6 @@ class BaseProperty(Base):
         'polymorphic_identity': 'PROPERTY'
     }
 
-    def __repr__(self):
-        """Verbose object name."""
-        return "<id='%s', name='%s', type_='%s'>" % (self.id, self.name)
-
 
 class InstanceProperty(BaseProperty):
     """Model for Instance Properties.
@@ -64,7 +60,7 @@ class InstanceProperty(BaseProperty):
     >>> prop2 = Property('hasCost')
     """
 
-    name = Column(String)
+    instance_prop_name = Column(String)
 
     __mapper_args__ = {
         'polymorphic_identity': 'INSTANCE'
@@ -72,7 +68,7 @@ class InstanceProperty(BaseProperty):
 
     def __repr__(self):
         """Verbose object name."""
-        return "<id='%s', name='%s', type_='%s'>" % (self.id, self.name, self.type)
+        return "<id='%s', name='%s', type='%s'>" % (self.id, self.instance_prop_name, self.type)
 
 
 class AbstractProperty(BaseProperty):
@@ -85,7 +81,7 @@ class AbstractProperty(BaseProperty):
      RDFClass('A') Property('isSubSystemOf') RDFClass('B')
     """
 
-    name = Column(String)
+    abstract_prop_name = Column(String)
 
     __mapper_args__ = {
         'polymorphic_identity': 'ABSTRACT'
@@ -93,7 +89,7 @@ class AbstractProperty(BaseProperty):
 
     def __repr__(self):
         """Verbose object name."""
-        return "<id='%s', name='%s', type_='%s'>" % (self.id, self.name, self.type)
+        return "<id='%s', name='%s', type='%s'>" % (self.id, self.abstract_prop_name, self.type)
 
 
 class Terminal(Base):
@@ -125,7 +121,7 @@ class Graph(Base):
     type = Column(String)
 
     __mapper_args__ = {
-        'polymorphic_identity': 'Graph',
+        'polymorphic_identity': 'graph',
         'polymorphic_on': type
     }
 
@@ -134,9 +130,10 @@ class GraphCAC(Graph):
     """Graph model for Class >> AbstractProperty >> Class."""
 
     __tablename__ = 'graphcac'
+    id = Column(Integer, ForeignKey('graph.id'), primary_key=True)
     subject = Column(Integer, ForeignKey("classes.id"))
     predicate = Column(Integer, ForeignKey("property.id"))
-    object = Column(Integer, ForeignKey("classes.id"))
+    object_ = Column(Integer, ForeignKey("classes.id"))
 
     __mapper_args__ = {
         'polymorphic_identity': 'graphcac',
@@ -151,9 +148,10 @@ class GraphIAC(Graph):
     """Graph model for Instance >> AbstractProperty >> Class."""
 
     __tablename__ = 'graphiac'
+    id = Column(Integer, ForeignKey('graph.id'), primary_key=True)
     subject = Column(Integer, ForeignKey("instances.id"))
     predicate = Column(Integer, ForeignKey("property.id"))
-    object = Column(Integer, ForeignKey("classes.id"))
+    object_ = Column(Integer, ForeignKey("classes.id"))
 
     __mapper_args__ = {
         'polymorphic_identity': 'graphiac',
@@ -168,9 +166,10 @@ class GraphIII(Graph):
     """Graph model for Instance >> InstanceProperty >> Instance."""
 
     __tablename__ = 'graphiii'
+    id = Column(Integer, ForeignKey('graph.id'), primary_key=True)
     subject = Column(Integer, ForeignKey("instances.id"))
     predicate = Column(Integer, ForeignKey("property.id"))
-    object = Column(Integer, ForeignKey("instances.id"))
+    object_ = Column(Integer, ForeignKey("instances.id"))
 
     __mapper_args__ = {
         'polymorphic_identity': 'graphiii',
@@ -184,10 +183,11 @@ class GraphIII(Graph):
 class GraphIIT(Graph):
     """Graph model for Instance >> InstanceProperty >> Terminal."""
 
-    __tablename__ = 'graphiii'
+    __tablename__ = 'graphiit'
+    id = Column(Integer, ForeignKey('graph.id'), primary_key=True)
     subject = Column(Integer, ForeignKey("instances.id"))
     predicate = Column(Integer, ForeignKey("property.id"))
-    object = Column(Integer, ForeignKey("terminals.id"))
+    object_ = Column(Integer, ForeignKey("terminals.id"))
 
     __mapper_args__ = {
         'polymorphic_identity': 'graphiit',
