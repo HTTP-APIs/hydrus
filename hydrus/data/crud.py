@@ -1,5 +1,5 @@
 """Basic CRUD operations for the server."""
-
+# NOTE: Needs to be changed according to new data models
 from db_models import Property, Instance, Graph, engine, RDFClass, Terminal, AbstractProperty
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import exists
