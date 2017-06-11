@@ -9,7 +9,7 @@ At the moment there are:
 astronomy = {
 	"@context": {
 		"@base": "http://ontology.projectchronos.eu/astronomy",
-        "hydra": "http://www.w3.org/ns/hydra/context.jsonld",
+        "hydraspec": "http://www.w3.org/ns/hydraspec/context.jsonld",
 		"schema": "https://schema.org/",
 		"skos": "http://www.w3.org/2004/02/skos/core#",
 		"owl": "http://www.w3.org/2002/07/owl#",
@@ -32,11 +32,11 @@ astronomy = {
 		"rdf:label": "AstronomicalObject",
 		"rdf:comment": "an astronomical body (from a natural satellite size up) or a group of astronomical body",
 		"@id": "http://ontology.projectchronos.eu/astronomy/AstronomicalObject",
-		"@type": "hydra:Class"
+		"@type": "hydraspec:Class"
 	}, {
 		"rdf:label": "Planetary_system",
 		"rdf:comment": "Solar System is a planetary system - see solarsystem vocabulary",
-		"@type": "hydra:Class",
+		"@type": "hydraspec:Class",
 		"owl:sameAs": {
 			"@id": "http://live.dbpedia.org/data/Planetary_system.ntriples"
 		},
@@ -47,7 +47,7 @@ astronomy = {
 	}, {
 		"rdf:label": "Star",
 		"rdf:comment": "a star",
-		"@type": "hydra:Class",
+		"@type": "hydraspec:Class",
 		"owl:sameAs": [{
 			"@id": "http://umbel.org/umbel/rc/Star.n3"
 		}, {
@@ -64,12 +64,12 @@ astronomy = {
 		"rdf:label": "PlanetaryBody",
 		"rdf:comment": "a document representing a general planet-shaped body or natural satellite or dust or rock or macroscopic particle of matter",
 		"@id": "http://ontology.projectchronos.eu/astronomy/PlanetaryBody",
-		"@type": "hydra:Class"
+		"@type": "hydraspec:Class"
 	}, {
 		"skos:altLabel": "a general astronomical object with the characteristics of a planet",
 		"rdf:label": "Planet",
 		"rdf:comment": "a document representing a general planet-shaped astronomical body",
-		"@type": "hydra:Class",
+		"@type": "hydraspec:Class",
 		"owl:sameAs": [{
 			"@id": "http://sw.opencyc.org/concept/Mx4rvVjRL5wpEbGdrcN5Y29ycA"
 		}, {
@@ -119,7 +119,7 @@ astronomy = {
 		}],
 		"rdf:label": "Asteroid",
 		"rdf:comment": "a document representing an asteroid",
-		"@type": "hydra:Class",
+		"@type": "hydraspec:Class",
 		"owl:sameAs": {
 			"@id": "http://live.dbpedia.org/data/Asteroid.ntriples"
 		},
@@ -132,7 +132,7 @@ astronomy = {
 		}],
 		"rdf:label": "Meteoroid",
 		"rdf:comment": "a document representing a meteoroid",
-		"@type": "hydra:Class",
+		"@type": "hydraspec:Class",
 		"owl:sameAs": {
 			"@id": "http://umbel.org/umbel/rc/Meteoroid.n3"
 		},
@@ -145,7 +145,7 @@ astronomy = {
 		}],
 		"rdf:label": "Comet",
 		"rdf:comment": "a document representing a comet",
-		"@type": "hydra:Class",
+		"@type": "hydraspec:Class",
 		"owl:sameAs": {
 			"@id": "http://umbel.org/umbel/rc/Comet.n3"
 		},
@@ -161,11 +161,11 @@ astronomy = {
 		"rdf:label": "Natural_satellite",
 		"rdf:comment": "a document representing a natural satellite or moon",
 		"@id": "http://ontology.projectchronos.eu/astronomy/Natural_satellite",
-		"@type": "hydra:Class"
+		"@type": "hydraspec:Class"
 	}, {
 		"rdf:label": "TerrestrialPlanet",
 		"rdf:comment": "a document representing a solid/rocky planet",
-		"@type": "hydra:Class",
+		"@type": "hydraspec:Class",
 		"owl:sameAs": {
 			"@id": "http://umbel.org/umbel/rc/TerrestrialPlanet.n3"
 		},
@@ -176,7 +176,7 @@ astronomy = {
 	}, {
 		"rdf:label": "SolidPlanetaryBody",
 		"rdf:comment": "planet composed primarily of solid substances",
-		"@type": "hydra:Class",
+		"@type": "hydraspec:Class",
 		"owl:sameAs": {
 			"@id": "http://umbel.org/umbel/rc/SolidPlanetaryBody.n3"
 		},
@@ -187,7 +187,7 @@ astronomy = {
 	}, {
 		"rdf:label": "IcyPlanetaryBody",
 		"rdf:comment": "a document representing an icy body",
-		"@type": "hydra:Class",
+		"@type": "hydraspec:Class",
 		"owl:sameAs": {
 			"@id": "http://umbel.org/umbel/rc/IcyPlanetaryBody.n3"
 		},
@@ -198,7 +198,7 @@ astronomy = {
 	}, {
 		"rdf:label": "Ice_giant",
 		"rdf:comment": "a gas giant with less helium/hydrogen and more 'ices', Uranus and Neputne subclass",
-		"@type": "hydra:Class",
+		"@type": "hydraspec:Class",
 		"owl:sameAs": {
 			"@id": "http://live.dbpedia.org/data/Ice_giant.ntriples"
 		},
@@ -210,7 +210,7 @@ astronomy = {
 		"rdf:label": "GasGiant",
 		"rdf:comment": "a Jovian planet, a document representing a Jovian planet",
 		"@id": "http://ontology.projectchronos.eu/astronomy/GasGiant",
-		"@type": "hydra:Class",
+		"@type": "hydraspec:Class",
 		"rdfs:subClassOf": {
 			"@id": "http://ontology.projectchronos.eu/astronomy/PlanetaryBody"
 		},
@@ -221,7 +221,7 @@ astronomy = {
 		"rdf:label": "DwarfPlanet",
 		"rdf:comment": "a trans-neptunian object with planet-like size",
 		"@id": "http://ontology.projectchronos.eu/astronomy/DwarfPlanet",
-		"@type": "hydra:Class",
+		"@type": "hydraspec:Class",
 		"astronomy:orbiting": {
 			"@id": "http://ontology.projectchronos.eu/astronomy/Sun"
 		},
@@ -234,7 +234,7 @@ astronomy = {
 	}, {
 		"rdf:label": "RockyPlanetaryBody",
 		"rdf:comment": "a document representing a rocky body",
-		"@type": "hydra:Class",
+		"@type": "hydraspec:Class",
 		"owl:sameAs": {
 			"@id": "http://umbel.org/umbel/rc/RockyPlanetaryBody.n3"
 		},
@@ -249,11 +249,11 @@ astronomy = {
 		"rdf:label": "SubplanetaryStellarOrbiter",
 		"rdf:comment": "a smaller body orbiting around stars or planets, a document representing smaller body orbiting around stars or planets",
 		"@id": "http://ontology.projectchronos.eu/astronomy/SubplanetaryStellarOrbiter",
-		"@type": "hydra:Class"
+		"@type": "hydraspec:Class"
 	}, {
 		"rdf:label": "FluidPlanetaryBody",
 		"rdf:comment": "a document representing a non-solid planet",
-		"@type": "hydra:Class",
+		"@type": "hydraspec:Class",
 		"owl:sameAs": {
 			"@id": "http://umbel.org/umbel/rc/FluidPlanetaryBody.n3"
 		},
@@ -268,7 +268,7 @@ astronomy = {
 		"rdf:label": "AstronomicalObservatory",
 		"rdf:comment": "a document representing an astronomical observatory",
 		"@id": "http://ontology.projectchronos.eu/astronomy/AstronomicalObservatory",
-		"@type": "hydra:Class"
+		"@type": "hydraspec:Class"
 	}, {
 		"owl:sameAs": {
 			"@id": "http://live.dbpedia.org/ontology/CelestialBody.ntriples"
@@ -276,7 +276,7 @@ astronomy = {
 		"rdf:label": "CelestialBody",
 		"rdf:comment": "a document representing a generic celestial body",
 		"@id": "http://ontology.projectchronos.eu/astronomy/CelestialBody",
-		"@type": "hydra:Class"
+		"@type": "hydraspec:Class"
 	}, {
 		"owl:sameAs": {
 			"@id": "http://live.dbpedia.org/ontology/Outer_space.ntriples"
@@ -284,7 +284,7 @@ astronomy = {
 		"rdf:label": "Outer_space",
 		"rdf:comment": "a document representing the open space outside atmosphere, from Low Earth Orbit to Extra Galactic Space",
 		"@id": "http://ontology.projectchronos.eu/astronomy/Outer_space",
-		"@type": "hydra:Class"
+		"@type": "hydraspec:Class"
 	}, {
 		"rdf:label": "PlanetaryScience",
 		"owl:sameAs": {
@@ -294,7 +294,7 @@ astronomy = {
 			"@id": "http://ontology.projectchronos.eu/sensors/FieldOfResearch"
 		},
 		"@id": "http://ontology.projectchronos.eu/astronomy/PlanetaryScience",
-		"@type": "hydra:Class"
+		"@type": "hydraspec:Class"
 	}, {
 		"rdf:label": "AtmosphericScience",
 		"owl:sameAs": {
@@ -304,7 +304,7 @@ astronomy = {
 			"@id": "http://ontology.projectchronos.eu/sensors/PlanetaryScience"
 		},
 		"@id": "http://ontology.projectchronos.eu/astronomy/AtmosphericScience",
-		"@type": "hydra:Class"
+		"@type": "hydraspec:Class"
 	}, {
 		"rdf:label": "Cosmology",
 		"owl:sameAs": [{
@@ -316,7 +316,7 @@ astronomy = {
 			"@id": "http://ontology.projectchronos.eu/sensors/FieldOfResearch"
 		},
 		"@id": "http://ontology.projectchronos.eu/astronomy/Cosmology",
-		"@type": "hydra:Class"
+		"@type": "hydraspec:Class"
 	}, {
 		"rdf:label": "ExtragalacticAstronomy",
 		"owl:sameAs": {
@@ -326,7 +326,7 @@ astronomy = {
 			"@id": "http://ontology.projectchronos.eu/sensors/FieldOfResearch"
 		},
 		"@id": "http://ontology.projectchronos.eu/astronomy/ExtragalacticAstronomy",
-		"@type": "hydra:Class"
+		"@type": "hydraspec:Class"
 	}, {
 		"rdf:label": "GalacticAstronomy",
 		"owl:sameAs": {
@@ -336,35 +336,35 @@ astronomy = {
 			"@id": "http://ontology.projectchronos.eu/sensors/FieldOfResearch"
 		},
 		"@id": "http://ontology.projectchronos.eu/astronomy/GalacticAstronomy",
-		"@type": "hydra:Class"
+		"@type": "hydraspec:Class"
 	}, {
 		"rdf:label": "PlanetaryAstronomy",
 		"rdfs:subClassOf": {
 			"@id": "http://ontology.projectchronos.eu/sensors/PlanetaryScience"
 		},
 		"@id": "http://ontology.projectchronos.eu/sensors/PlanetaryAstronomy",
-		"@type": "hydra:Class"
+		"@type": "hydraspec:Class"
 	}, {
 		"rdf:label": "PlanetaryGeology",
 		"rdfs:subClassOf": {
 			"@id": "http://ontology.projectchronos.eu/sensors/PlanetaryScience"
 		},
 		"@id": "http://ontology.projectchronos.eu/sensors/PlanetaryGeology",
-		"@type": "hydra:Class"
+		"@type": "hydraspec:Class"
 	}, {
 		"rdf:label": "SolarAstronomy",
 		"rdfs:subClassOf": {
 			"@id": "http://ontology.projectchronos.eu/sensors/FieldOfResearch"
 		},
 		"@id": "http://ontology.projectchronos.eu/sensors/SolarAstronomy",
-		"@type": "hydra:Class"
+		"@type": "hydraspec:Class"
 	}, {
 		"rdf:label": "StellarAstronomy",
 		"rdfs:subClassOf": {
 			"@id": "http://ontology.projectchronos.eu/sensors/FieldOfResearch"
 		},
 		"@id": "http://ontology.projectchronos.eu/sensors/StellarAstronomy",
-		"@type": "hydra:Class"
+		"@type": "hydraspec:Class"
 	}],
 	"@id": ""
 }

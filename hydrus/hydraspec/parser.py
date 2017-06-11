@@ -1,10 +1,9 @@
 """Script to parse OWL annotations and generate Hydra API Documentation."""
-
-from subsystem_jsonld import subsystem_data
-from spacecraft_jsonld import spacecraft_data
-from crud import template
-import pdb
 import json
+import pdb
+
+from hydrus.hydraspec.crud import template
+from hydrus.metadata.subsystem_jsonld import subsystem_data
 
 
 def get_all_classes(owl_data):
@@ -19,7 +18,7 @@ def get_all_classes(owl_data):
 def hydrafy_class(class_, supported_props):
     """Create Hydra specific Class from owl:owlClass JSON-LD."""
     hydra_class = {
-      "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+      "@context": "http://www.w3.org/ns/hydraspec/context.jsonld",
       "@id": "http://api.example.com/doc/#Comment",
       "@type": "Class",
       "title": "The name of the class",
@@ -143,9 +142,9 @@ def terminal_props(class_, properties):
 
 
 def gen_APIDoc(hydra_classes):
-    """Generate Hydra API Documentation for given hydra classes."""
+    """Generate Hydra API Documentation for given hydraspec classes."""
     template = {
-      "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+      "@context": "http://www.w3.org/ns/hydraspec/context.jsonld",
       "@id": "http://api.example.com/doc/",
       "@type": "ApiDocumentation",
       "title": "The name of the API",

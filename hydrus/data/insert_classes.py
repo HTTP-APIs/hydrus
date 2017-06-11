@@ -1,9 +1,9 @@
 """Definition of all Classes in the SubSystem and Spacecraft vocabulary."""
 
-import models as models
+import hydrus.data.db_models as models
 from sqlalchemy.orm import sessionmaker
-from metadata.spacecraft_jsonld import spacecraft_data
-from metadata.subsystem_jsonld import subsystem_data
+from hydrus.metadata.spacecraft_jsonld import spacecraft_data
+from hydrus.metadata.subsystem_jsonld import subsystem_data
 # from keymap import classes_keymap as keymap
 
 

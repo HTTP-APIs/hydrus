@@ -1,9 +1,10 @@
 """Parser for Hydra APIDocumentation creates Classes and Properties."""
-
-import pdb
-from metadata.spacecraft_apidoc import spacecraft_apidoc
-from db_models import RDFClass, engine
 from sqlalchemy.orm import sessionmaker
+
+from hydrus.data.db_models import RDFClass, engine
+from hydrus.hydraspec.spacecraft_apidoc import spacecraft_apidoc
+
+
 # from metadata.subsystem_apidoc import subsystem_apidoc
 
 

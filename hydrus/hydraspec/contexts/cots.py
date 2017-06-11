@@ -1,7 +1,7 @@
 # UNFINISHED
 cots_context = {
   "@context": {
-    "hydra": "http://www.w3.org/ns/hydra/core#",
+    "hydraspec": "http://www.w3.org/ns/hydraspec/core#",
     "vocab": "http://hydrus.com/vocab#",
     "Cots": "http://ontology.projectchronos.eu/subsystems?format=jsonld",
 # COTS PROPERTIES

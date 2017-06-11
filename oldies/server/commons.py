@@ -6,7 +6,7 @@ from data.astronomy import astronomy, solarsystem
 
 ROOT = '/api'
 SERVE = '/api/{class_}/{label_}'
-HYDRA_DOC = "/api/hydra/{endpoint_}"
+HYDRA_DOC = "/api/hydraspec/{endpoint_}"
 
 
 import hashlib

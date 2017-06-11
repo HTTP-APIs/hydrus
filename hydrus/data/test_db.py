@@ -2,8 +2,10 @@ import unittest
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
 import pdb
-from db_models import Base, RDFClass
+
+from hydrus.data.db_models import Base, RDFClass
 
 
 class TestQuery(unittest.TestCase):

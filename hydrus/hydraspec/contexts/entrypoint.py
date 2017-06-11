@@ -1,7 +1,7 @@
 #UNFINISHED
 entrypoint_context = {
   "@context": {
-    "hydra": "http://www.w3.org/ns/hydra/core#",
+    "hydraspec": "http://www.w3.org/ns/hydraspec/core#",
     "vocab": "http://hydrus.com/vocab#",
     "EntryPoint": "vocab:EntryPoint",
     "spacecrafts": {
