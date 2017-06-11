@@ -5,9 +5,6 @@ from db_models import GraphIAC, GraphIIT, GraphIII
 from sqlalchemy.orm import sessionmaker, with_polymorphic
 from sqlalchemy import exists
 from sqlalchemy.exc import IntegrityError
-from keymap import classes_keymap as keymap
-import pdb
-import code
 
 Session = sessionmaker(bind=engine)
 session = Session()
@@ -164,6 +161,5 @@ object__ = {
 }
 # print(update(7, object__))
 # print(insert(object__))
-pdb.set_trace()
-update(4, object__)
+# print(update(4, object__))
 # print(get(4))
