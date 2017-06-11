@@ -44,6 +44,7 @@ class BaseProperty(Base):
     __tablename__ = "property"
 
     id = Column(Integer, primary_key=True)
+    name = Column(String, unique=True, nullable=False)
     type_ = Column(String)
 
     __mapper_args__ = {
@@ -60,15 +61,13 @@ class InstanceProperty(BaseProperty):
     >>> prop2 = Property('hasCost')
     """
 
-    instance_prop_name = Column(String)
-
     __mapper_args__ = {
         'polymorphic_identity': 'INSTANCE'
     }
 
     def __repr__(self):
         """Verbose object name."""
-        return "<id='%s', name='%s', type='%s'>" % (self.id, self.instance_prop_name, self.type_)
+        return "<id='%s', name='%s', type='%s'>" % (self.id, self.name, self.type_)
 
 
 class AbstractProperty(BaseProperty):
@@ -81,15 +80,13 @@ class AbstractProperty(BaseProperty):
      RDFClass('A') Property('isSubSystemOf') RDFClass('B')
     """
 
-    abstract_prop_name = Column(String)
-
     __mapper_args__ = {
         'polymorphic_identity': 'ABSTRACT'
     }
 
     def __repr__(self):
         """Verbose object name."""
-        return "<id='%s', name='%s', type='%s'>" % (self.id, self.abstract_prop_name, self.type_)
+        return "<id='%s', name='%s', type='%s'>" % (self.id, self.name, self.type_)
 
 
 class Terminal(Base):
