@@ -2,7 +2,7 @@ import unittest
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-
+import pdb
 from db_models import Base, RDFClass
 
 
@@ -14,8 +14,7 @@ class TestQuery(unittest.TestCase):
 
     def setup(self):
         engine = create_engine('sqlite:///:memory:')
-
-        model.metadata.create_all(engine)
+        Base.metadata.create_all(engine)
 
     def teardown(self):
         session.remove()

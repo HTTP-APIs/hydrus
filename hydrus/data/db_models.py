@@ -35,7 +35,7 @@ class Instance(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    type = Column(Integer, ForeignKey("classes.id"), nullable=True)
+    type_ = Column(Integer, ForeignKey("classes.id"), nullable=True)
 
 
 class BaseProperty(Base):
@@ -44,10 +44,10 @@ class BaseProperty(Base):
     __tablename__ = "property"
 
     id = Column(Integer, primary_key=True)
-    type = Column(String)
+    type_ = Column(String)
 
     __mapper_args__ = {
-        'polymorphic_on': type,
+        'polymorphic_on': type_,
         'polymorphic_identity': 'PROPERTY'
     }
 
@@ -68,7 +68,7 @@ class InstanceProperty(BaseProperty):
 
     def __repr__(self):
         """Verbose object name."""
-        return "<id='%s', name='%s', type='%s'>" % (self.id, self.instance_prop_name, self.type)
+        return "<id='%s', name='%s', type='%s'>" % (self.id, self.instance_prop_name, self.type_)
 
 
 class AbstractProperty(BaseProperty):
@@ -89,7 +89,7 @@ class AbstractProperty(BaseProperty):
 
     def __repr__(self):
         """Verbose object name."""
-        return "<id='%s', name='%s', type='%s'>" % (self.id, self.abstract_prop_name, self.type)
+        return "<id='%s', name='%s', type='%s'>" % (self.id, self.abstract_prop_name, self.type_)
 
 
 class Terminal(Base):
@@ -141,7 +141,7 @@ class GraphCAC(Graph):
 
     def __repr__(self):
         """Verbose object name."""
-        return "<subject='%s', predicate='%s', object_='%s'>" % (self.subject, self.predicate, self.object)
+        return "<subject='%s', predicate='%s', object_='%s'>" % (self.subject, self.predicate, self.object_)
 
 
 class GraphIAC(Graph):
@@ -159,7 +159,7 @@ class GraphIAC(Graph):
 
     def __repr__(self):
         """Verbose object name."""
-        return "<subject='%s', predicate='%s', object_='%s'>" % (self.subject, self.predicate, self.object)
+        return "<subject='%s', predicate='%s', object_='%s'>" % (self.subject, self.predicate, self.object_)
 
 
 class GraphIII(Graph):
@@ -177,7 +177,7 @@ class GraphIII(Graph):
 
     def __repr__(self):
         """Verbose object name."""
-        return "<subject='%s', predicate='%s', object_='%s'>" % (self.subject, self.predicate, self.object)
+        return "<subject='%s', predicate='%s', object_='%s'>" % (self.subject, self.predicate, self.object_)
 
 
 class GraphIIT(Graph):
@@ -195,7 +195,7 @@ class GraphIIT(Graph):
 
     def __repr__(self):
         """Verbose object name."""
-        return "<subject='%s', predicate='%s', object_='%s'>" % (self.subject, self.predicate, self.object)
+        return "<subject='%s', predicate='%s', object_='%s'>" % (self.subject, self.predicate, self.object_)
 
 
 if __name__ == "__main__":
