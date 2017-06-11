@@ -2,8 +2,8 @@
 
 import db_models as models
 from sqlalchemy.orm import sessionmaker
-from hydrus.data.metadata.spacecraft_jsonld import spacecraft_data
-from hydrus.data.metadata.subsystem_jsonld import subsystem_data
+from hydrus.metadata.spacecraft_jsonld import spacecraft_data
+from hydrus.metadata.subsystem_jsonld import subsystem_data
 # from keymap import classes_keymap as keymap
 
 
