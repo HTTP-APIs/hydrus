@@ -1,10 +1,9 @@
 """Script to parse OWL annotations and generate Hydra API Documentation."""
-
-from subsystem_jsonld import subsystem_data
-from spacecraft_jsonld import spacecraft_data
-from crud import template
-import pdb
 import json
+import pdb
+
+from hydrus.hydraspec.crud import template
+from hydrus.metadata.subsystem_jsonld import subsystem_data
 
 
 def get_all_classes(owl_data):
