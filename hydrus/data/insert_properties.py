@@ -1,5 +1,7 @@
 """Don't need this anymore, properties are inserted on runtime depending upon type of subject and object."""
 
+# TODO: move this into an "example-tutorial" doc
+
 # """Definition of all Properties in the SubSystem and Spacecraft vocabulary."""
 #
 # from models import AbstractProperty, Property, engine

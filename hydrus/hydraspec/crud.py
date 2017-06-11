@@ -6,7 +6,7 @@ def template():
     supportedOperation = [
         {
             "@id": "_:%s_create",
-            "@type": "hydra:Operation",
+            "@type": "hydras:Operation",
             "method": "POST",
             "label": "Creates a new %s entity",
             "description": "null",

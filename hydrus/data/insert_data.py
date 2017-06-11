@@ -1,10 +1,11 @@
 """Test script to enter data from random objects into old models(Depreciated)."""
-
-from db_models import Property, Instance, Graph, engine, RDFClass, Terminal, AbstractProperty
-from generator import gen_cots
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import exists
-from keymap import classes_keymap
+
+
+from hydrus.data.db_models import BaseProperty, Instance, Graph, engine, RDFClass, Terminal, AbstractProperty
+from hydrus.data.generator import gen_cots
+from hydrus.data.keymap import classes_keymap
 
 
 # Temporary storge for the Graph
