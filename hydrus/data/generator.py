@@ -183,20 +183,24 @@ def generateObject(name, subsystem):
 
 # First we will generate data for COTS (spacecraft parts).
 # gen_cots will generate n number of spacecraft parts with random properties
+def gen_random_object():
+    """Generate a random object."""
+    index = random.randint(0, len(subsystems.items())-1)
+    k, v = subsystems.items()[index]
+    name = str(random.randrange(0, 50)) + \
+        str(random.choice(['T', 'W', 'KV', 'JFG'])) + ' ' + k
+    obj = {}
+    obj['name'] = name
+    obj['object'] = generateObject(k, v)
+    return obj
 
 def gen_cots(n):
     """Generate n number of spacecraft parts with random properties."""
     output = []
     for num in range(n):
-        index = random.randint(0, len(subsystems.items())-1)
-        k, v = subsystems.items()[index]
-        name = str(random.randrange(0, 50)) + \
-            str(random.choice(['T', 'W', 'KV', 'JFG'])) + ' ' + k
-        obj = {}
-        obj['name'] = name
-        obj['object'] = generateObject(k, v)
+        obj = gen_random_object()
         output.append(obj)
     return output
 
 
-print(gen_cots(1))
+# print(gen_cots(1))

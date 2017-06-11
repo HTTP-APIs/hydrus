@@ -4,9 +4,9 @@ import json
 from sqlalchemy.orm import sessionmaker, with_polymorphic
 from sqlalchemy import exists
 from sqlalchemy.exc import IntegrityError
-from hydrus.data.db_models import (Graph, BaseProperty, RDFClass, Instance,
+from db_models import (Graph, BaseProperty, RDFClass, Instance,
                                    Terminal, engine, GraphIAC, GraphIIT, GraphIII)
-from hydrus.data.keymap import classes_keymap as keymap
+from keymap import classes_keymap as keymap
 
 Session = sessionmaker(bind=engine)
 session = Session()
@@ -56,6 +56,10 @@ def insert(object_, id_=None):
     """Insert an object to database [POST] and returns the inserted object."""
     # NOTE: We are inserting the object, no need to check if similar one already exists.
     #       Data can be redundant/identical, they must have different "@id"
+
+    # TODO: @chrizandr You're not setting instance.type_ and you're not using keymap
+    # to dereference class types. Try any other category other then thermal for insertion
+    # Also, make sure crud.py passes all the tests in test_db.py (Currently all failing)
     triple_store = list()
     if id_ is not None:
         try:
@@ -75,7 +79,7 @@ def insert(object_, id_=None):
             prop = session.query(properties).filter(properties.name == prop_name).one()
             # Check if it INSTANCE or ABSTRACT Property
             if prop.type_ == "ABSTRACT":
-                class_name = object_["object"][prop_name]
+                class_name = keymap[object_["object"][prop_name]]
                 isValidClass = session.query(exists().where(RDFClass.name == class_name)).scalar()
                 # Check if it is a valid class
                 if isValidClass:
