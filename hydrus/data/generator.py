@@ -203,4 +203,4 @@ def gen_cots(n):
     return output
 
 
-# print(gen_cots(1))
+print(gen_cots(1))

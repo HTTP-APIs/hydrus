@@ -1,10 +1,13 @@
 """Main route for the applciation."""
 
 # Write code for views and API here.
-from flask import Flask
+from flask import Flask, jsonify
 from flask_restful import Api, Resource
 from hydrus.data import crud
 # import json
+from hydrus.metadata.vocab import vocab
+from hydrus.hydraspec.contexts.entrypoint import entrypoint_context
+from hydrus.hydraspec.contexts.cots import cots_context
 # from models import engine
 # from sqlalchemy import text
 
@@ -26,9 +29,10 @@ def set_response_headers(resp, ct="application/json", status_code=200):
     return resp
 
 
-def hydrafy():
-    """To be implemented."""
-    pass
+def hydrafy(object_):
+    """Adds hydra context to objects."""
+    object_["@context"] = cots_context["@context"]
+    return object_
 
 
 class Index(Resource):
@@ -36,8 +40,7 @@ class Index(Resource):
 
     def get(self):
         """Return main entrypoint for the api."""
-        # return set_response_headers(jsonify(entrypoint), 'application/ld+json', 200)
-        pass
+        return set_response_headers(jsonify(entrypoint_context), 'application/ld+json', 200)
 
 
 api.add_resource(Index, "/api", endpoint="api")
@@ -46,11 +49,11 @@ api.add_resource(Index, "/api", endpoint="api")
 class Cots(Resource):
     """Handles all operations(GET, POST, PATCH, DELETE) on Commercial Off The Shelves (COTS) spare parts for pico- and nano-satellites."""
 
-    def get(self, id):
+    def get(self, id_):
         """."""
-        return hydrafy(crud.get(id))
+        return set_response_headers(jsonify(hydrafy(crud.get(id_))))
 
-    def post(self, id, object_):
+    def post(self, id_, object_):
         """."""
         return hydrafy(crud.insert(object_))
 
@@ -65,39 +68,38 @@ class Cots(Resource):
 
 api.add_resource(Cots, "/api/cots/<string:id>", endpoint="cots")
 
-
-class Spacecraft(Resource):
-    """Handles all operations(GET, POST, PATCH, DELETE) on Spacecrafts."""
-
-    def get(self, id):
-        """."""
-        pass
-
-    def post(self, id):
-        """."""
-        pass
-
-    def patch(self, id):
-        """."""
-        pass
-
-    def delete(self, id):
-        """."""
-        pass
-
-
-api.add_resource(Spacecraft, "/api/spacecraft/<string:id>", endpoint="spacecraft")
-
+#
+# class Spacecraft(Resource):
+#     """Handles all operations(GET, POST, PATCH, DELETE) on Spacecrafts."""
+#
+#     def get(self, id):
+#         """."""
+#         pass
+#
+#     def post(self, id):
+#         """."""
+#         pass
+#
+#     def patch(self, id):
+#         """."""
+#         pass
+#
+#     def delete(self, id):
+#         """."""
+#         pass
+#
+#
+# api.add_resource(Spacecraft, "/api/spacecraft/<string:id>", endpoint="spacecraft")
 
 class Vocab(Resource):
     """Returns the main Hydra vocab."""
 
     def get(self):
         """."""
-        pass
+        return set_response_headers(jsonify(vocab), 'application/ld+json', 200)
 
 
-api.add_resource(Vocab, "/api/vocab#", endpoint="vacab")
+api.add_resource(Vocab, "/api/vocab", endpoint="vocab")
 
 
 class Entrypoint(Resource):
@@ -105,21 +107,21 @@ class Entrypoint(Resource):
 
     def get(self):
         """."""
-        pass
+        return set_response_headers(jsonify(entrypoint_context), 'application/ld+json', 200)
 
 
 api.add_resource(Entrypoint, "/api/contexts/EntryPoint.jsonld", endpoint="main_entrypoint")
 
-
-class SpacecraftContext(Resource):
-    """Return SpaceCraft context."""
-
-    def get(self):
-        """."""
-        pass
-
-
-api.add_resource(SpacecraftContext, "/api/contexts/SpaceCraft.jsonld", endpoint="spacecraft_context")
+#
+# class SpacecraftContext(Resource):
+#     """Return SpaceCraft context."""
+#
+#     def get(self):
+#         """."""
+#         pass
+#
+#
+# api.add_resource(SpacecraftContext, "/api/contexts/SpaceCraft.jsonld", endpoint="spacecraft_context")
 
 
 class CotsContext(Resource):
@@ -127,7 +129,7 @@ class CotsContext(Resource):
 
     def get(self):
         """."""
-        pass
+        return set_response_headers(jsonify(cots_context), 'application/ld+json', 200)
 
 
 api.add_resource(CotsContext, "/api/contexts/Cots.jsonld", endpoint="cots_context")
