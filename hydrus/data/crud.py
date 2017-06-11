@@ -4,9 +4,9 @@ import json
 from sqlalchemy.orm import sessionmaker, with_polymorphic
 from sqlalchemy import exists
 from sqlalchemy.exc import IntegrityError
-from db_models import (Graph, BaseProperty, RDFClass, Instance,
+from hydrus.data.db_models import (Graph, BaseProperty, RDFClass, Instance,
                                    Terminal, engine, GraphIAC, GraphIIT, GraphIII)
-from keymap import classes_keymap as keymap
+from hydrus.data.keymap import classes_keymap as keymap
 
 Session = sessionmaker(bind=engine)
 session = Session()

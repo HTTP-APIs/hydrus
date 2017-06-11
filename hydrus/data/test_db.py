@@ -2,8 +2,8 @@ import unittest
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from crud import get, insert, delete, update
-from generator import gen_random_object
+from hydrus.data.crud import get, insert, delete, update
+from hydrus.data.generator import gen_random_object
 
 import pdb
 
