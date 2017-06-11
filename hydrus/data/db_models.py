@@ -44,16 +44,12 @@ class BaseProperty(Base):
     __tablename__ = "property"
 
     id = Column(Integer, primary_key=True)
-    type = Column(String)
+    type_ = Column(String)
 
     __mapper_args__ = {
-        'polymorphic_on': type,
+        'polymorphic_on': type_,
         'polymorphic_identity': 'PROPERTY'
     }
-
-    def __repr__(self):
-        """Verbose object name."""
-        return "<id='%s', name='%s', type_='%s'>" % (self.id, self.name)
 
 
 class InstanceProperty(BaseProperty):
@@ -64,7 +60,7 @@ class InstanceProperty(BaseProperty):
     >>> prop2 = Property('hasCost')
     """
 
-    name = Column(String)
+    instance_prop_name = Column(String)
 
     __mapper_args__ = {
         'polymorphic_identity': 'INSTANCE'
@@ -72,7 +68,7 @@ class InstanceProperty(BaseProperty):
 
     def __repr__(self):
         """Verbose object name."""
-        return "<id='%s', name='%s', type_='%s'>" % (self.id, self.name, self.type)
+        return "<id='%s', name='%s', type='%s'>" % (self.id, self.instance_prop_name, self.type_)
 
 
 class AbstractProperty(BaseProperty):
@@ -85,7 +81,7 @@ class AbstractProperty(BaseProperty):
      RDFClass('A') Property('isSubSystemOf') RDFClass('B')
     """
 
-    name = Column(String)
+    abstract_prop_name = Column(String)
 
     __mapper_args__ = {
         'polymorphic_identity': 'ABSTRACT'
@@ -93,7 +89,7 @@ class AbstractProperty(BaseProperty):
 
     def __repr__(self):
         """Verbose object name."""
-        return "<id='%s', name='%s', type_='%s'>" % (self.id, self.name, self.type)
+        return "<id='%s', name='%s', type='%s'>" % (self.id, self.abstract_prop_name, self.type_)
 
 
 class Terminal(Base):
@@ -125,7 +121,7 @@ class Graph(Base):
     type = Column(String)
 
     __mapper_args__ = {
-        'polymorphic_identity': 'Graph',
+        'polymorphic_identity': 'graph',
         'polymorphic_on': type
     }
 
@@ -134,9 +130,10 @@ class GraphCAC(Graph):
     """Graph model for Class >> AbstractProperty >> Class."""
 
     __tablename__ = 'graphcac'
+    id = Column(Integer, ForeignKey('graph.id'), primary_key=True)
     subject = Column(Integer, ForeignKey("classes.id"))
     predicate = Column(Integer, ForeignKey("property.id"))
-    object = Column(Integer, ForeignKey("classes.id"))
+    object_ = Column(Integer, ForeignKey("classes.id"))
 
     __mapper_args__ = {
         'polymorphic_identity': 'graphcac',
@@ -144,16 +141,17 @@ class GraphCAC(Graph):
 
     def __repr__(self):
         """Verbose object name."""
-        return "<subject='%s', predicate='%s', object_='%s'>" % (self.subject, self.predicate, self.object)
+        return "<subject='%s', predicate='%s', object_='%s'>" % (self.subject, self.predicate, self.object_)
 
 
 class GraphIAC(Graph):
     """Graph model for Instance >> AbstractProperty >> Class."""
 
     __tablename__ = 'graphiac'
+    id = Column(Integer, ForeignKey('graph.id'), primary_key=True)
     subject = Column(Integer, ForeignKey("instances.id"))
     predicate = Column(Integer, ForeignKey("property.id"))
-    object = Column(Integer, ForeignKey("classes.id"))
+    object_ = Column(Integer, ForeignKey("classes.id"))
 
     __mapper_args__ = {
         'polymorphic_identity': 'graphiac',
@@ -161,16 +159,17 @@ class GraphIAC(Graph):
 
     def __repr__(self):
         """Verbose object name."""
-        return "<subject='%s', predicate='%s', object_='%s'>" % (self.subject, self.predicate, self.object)
+        return "<subject='%s', predicate='%s', object_='%s'>" % (self.subject, self.predicate, self.object_)
 
 
 class GraphIII(Graph):
     """Graph model for Instance >> InstanceProperty >> Instance."""
 
     __tablename__ = 'graphiii'
+    id = Column(Integer, ForeignKey('graph.id'), primary_key=True)
     subject = Column(Integer, ForeignKey("instances.id"))
     predicate = Column(Integer, ForeignKey("property.id"))
-    object = Column(Integer, ForeignKey("instances.id"))
+    object_ = Column(Integer, ForeignKey("instances.id"))
 
     __mapper_args__ = {
         'polymorphic_identity': 'graphiii',
@@ -178,16 +177,17 @@ class GraphIII(Graph):
 
     def __repr__(self):
         """Verbose object name."""
-        return "<subject='%s', predicate='%s', object_='%s'>" % (self.subject, self.predicate, self.object)
+        return "<subject='%s', predicate='%s', object_='%s'>" % (self.subject, self.predicate, self.object_)
 
 
 class GraphIIT(Graph):
     """Graph model for Instance >> InstanceProperty >> Terminal."""
 
-    __tablename__ = 'graphiii'
+    __tablename__ = 'graphiit'
+    id = Column(Integer, ForeignKey('graph.id'), primary_key=True)
     subject = Column(Integer, ForeignKey("instances.id"))
     predicate = Column(Integer, ForeignKey("property.id"))
-    object = Column(Integer, ForeignKey("terminals.id"))
+    object_ = Column(Integer, ForeignKey("terminals.id"))
 
     __mapper_args__ = {
         'polymorphic_identity': 'graphiit',
@@ -195,7 +195,7 @@ class GraphIIT(Graph):
 
     def __repr__(self):
         """Verbose object name."""
-        return "<subject='%s', predicate='%s', object_='%s'>" % (self.subject, self.predicate, self.object)
+        return "<subject='%s', predicate='%s', object_='%s'>" % (self.subject, self.predicate, self.object_)
 
 
 if __name__ == "__main__":
