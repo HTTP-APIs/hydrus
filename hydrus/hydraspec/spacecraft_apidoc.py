@@ -45,7 +45,7 @@ spacecraft_apidoc = {
             "supportedOperation": [
                 {
                     "statusCodes": [],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/cubicMillimeters",
                     "label": "Creates a new cubicMillimeters entity",
                     "method": "POST",
@@ -60,7 +60,7 @@ spacecraft_apidoc = {
                             "description": "If the cubicMillimeters entity wasn't found."
                         }
                     ],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/cubicMillimeters",
                     "label": "Replaces an existing cubicMillimeters entity",
                     "method": "PUT",
@@ -70,7 +70,7 @@ spacecraft_apidoc = {
                 },
                 {
                     "statusCodes": [],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "null",
                     "label": "Deletes a cubicMillimeters entity",
                     "method": "DELETE",
@@ -85,7 +85,7 @@ spacecraft_apidoc = {
                             "description": "If the cubicMillimeters entity wasn't found."
                         }
                     ],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/cubicMillimeters",
                     "label": "Retrieves a cubicMillimeters entity",
                     "method": "GET",
@@ -95,7 +95,7 @@ spacecraft_apidoc = {
                 }
             ],
             "description": "unit of measure for volume",
-            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+            "@context": "http://www.w3.org/ns/hydraspec/context.jsonld",
             "@id": "http://ontology.projectchronos.eu/subsystems/cubicMillimeters"
         },
         {
@@ -190,7 +190,7 @@ spacecraft_apidoc = {
             "supportedOperation": [
                 {
                     "statusCodes": [],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Detector",
                     "label": "Creates a new Spacecraft_Detector entity",
                     "method": "POST",
@@ -205,7 +205,7 @@ spacecraft_apidoc = {
                             "description": "If the Spacecraft_Detector entity wasn't found."
                         }
                     ],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Detector",
                     "label": "Replaces an existing Spacecraft_Detector entity",
                     "method": "PUT",
@@ -215,7 +215,7 @@ spacecraft_apidoc = {
                 },
                 {
                     "statusCodes": [],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "null",
                     "label": "Deletes a Spacecraft_Detector entity",
                     "method": "DELETE",
@@ -230,7 +230,7 @@ spacecraft_apidoc = {
                             "description": "If the Spacecraft_Detector entity wasn't found."
                         }
                     ],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Detector",
                     "label": "Retrieves a Spacecraft_Detector entity",
                     "method": "GET",
@@ -240,7 +240,7 @@ spacecraft_apidoc = {
                 }
             ],
             "description": "A space detector is a sensor supported by another device that let it collect data, that is deployed into a spacecraft and works outside Earth lower atmosphere",
-            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+            "@context": "http://www.w3.org/ns/hydraspec/context.jsonld",
             "@id": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Detector"
         },
         {
@@ -344,7 +344,7 @@ spacecraft_apidoc = {
             "supportedOperation": [
                 {
                     "statusCodes": [],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Propulsion",
                     "label": "Creates a new Spacecraft_Propulsion. entity",
                     "method": "POST",
@@ -359,7 +359,7 @@ spacecraft_apidoc = {
                             "description": "If the Spacecraft_Propulsion. entity wasn't found."
                         }
                     ],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Propulsion",
                     "label": "Replaces an existing Spacecraft_Propulsion. entity",
                     "method": "PUT",
@@ -369,7 +369,7 @@ spacecraft_apidoc = {
                 },
                 {
                     "statusCodes": [],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "null",
                     "label": "Deletes a Spacecraft_Propulsion. entity",
                     "method": "DELETE",
@@ -384,7 +384,7 @@ spacecraft_apidoc = {
                             "description": "If the Spacecraft_Propulsion. entity wasn't found."
                         }
                     ],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Propulsion",
                     "label": "Retrieves a Spacecraft_Propulsion. entity",
                     "method": "GET",
@@ -394,7 +394,7 @@ spacecraft_apidoc = {
                 }
             ],
             "description": "Complex devices-subsystems used for impelling (processes of applying a force which results in translational motion) a spacecraft, in the specific http://umbel.org/umbel/rc/ProjectilePropelling",
-            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+            "@context": "http://www.w3.org/ns/hydraspec/context.jsonld",
             "@id": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Propulsion"
         },
         {
@@ -498,7 +498,7 @@ spacecraft_apidoc = {
             "supportedOperation": [
                 {
                     "statusCodes": [],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_PrimaryPower",
                     "label": "Creates a new Spacecraft_PrimaryPower. entity",
                     "method": "POST",
@@ -513,7 +513,7 @@ spacecraft_apidoc = {
                             "description": "If the Spacecraft_PrimaryPower. entity wasn't found."
                         }
                     ],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_PrimaryPower",
                     "label": "Replaces an existing Spacecraft_PrimaryPower. entity",
                     "method": "PUT",
@@ -523,7 +523,7 @@ spacecraft_apidoc = {
                 },
                 {
                     "statusCodes": [],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "null",
                     "label": "Deletes a Spacecraft_PrimaryPower. entity",
                     "method": "DELETE",
@@ -538,7 +538,7 @@ spacecraft_apidoc = {
                             "description": "If the Spacecraft_PrimaryPower. entity wasn't found."
                         }
                     ],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_PrimaryPower",
                     "label": "Retrieves a Spacecraft_PrimaryPower. entity",
                     "method": "GET",
@@ -548,7 +548,7 @@ spacecraft_apidoc = {
                 }
             ],
             "description": "Complex devices-subsystems used for collecting energy.",
-            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+            "@context": "http://www.w3.org/ns/hydraspec/context.jsonld",
             "@id": "http://ontology.projectchronos.eu/subsystems/Spacecraft_PrimaryPower"
         },
         {
@@ -645,7 +645,7 @@ spacecraft_apidoc = {
             "supportedOperation": [
                 {
                     "statusCodes": [],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_BackupPower",
                     "label": "Creates a new Spacecraft_BackupPower entity",
                     "method": "POST",
@@ -660,7 +660,7 @@ spacecraft_apidoc = {
                             "description": "If the Spacecraft_BackupPower entity wasn't found."
                         }
                     ],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_BackupPower",
                     "label": "Replaces an existing Spacecraft_BackupPower entity",
                     "method": "PUT",
@@ -670,7 +670,7 @@ spacecraft_apidoc = {
                 },
                 {
                     "statusCodes": [],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "null",
                     "label": "Deletes a Spacecraft_BackupPower entity",
                     "method": "DELETE",
@@ -685,7 +685,7 @@ spacecraft_apidoc = {
                             "description": "If the Spacecraft_BackupPower entity wasn't found."
                         }
                     ],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_BackupPower",
                     "label": "Retrieves a Spacecraft_BackupPower entity",
                     "method": "GET",
@@ -695,7 +695,7 @@ spacecraft_apidoc = {
                 }
             ],
             "description": "Complex devices-subsystems used for storing energy.",
-            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+            "@context": "http://www.w3.org/ns/hydraspec/context.jsonld",
             "@id": "http://ontology.projectchronos.eu/subsystems/Spacecraft_BackupPower"
         },
         {
@@ -757,7 +757,7 @@ spacecraft_apidoc = {
             "supportedOperation": [
                 {
                     "statusCodes": [],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Thermal",
                     "label": "Creates a new Spacecraft_Thermal entity",
                     "method": "POST",
@@ -772,7 +772,7 @@ spacecraft_apidoc = {
                             "description": "If the Spacecraft_Thermal entity wasn't found."
                         }
                     ],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Thermal",
                     "label": "Replaces an existing Spacecraft_Thermal entity",
                     "method": "PUT",
@@ -782,7 +782,7 @@ spacecraft_apidoc = {
                 },
                 {
                     "statusCodes": [],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "null",
                     "label": "Deletes a Spacecraft_Thermal entity",
                     "method": "DELETE",
@@ -797,7 +797,7 @@ spacecraft_apidoc = {
                             "description": "If the Spacecraft_Thermal entity wasn't found."
                         }
                     ],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Thermal",
                     "label": "Retrieves a Spacecraft_Thermal entity",
                     "method": "GET",
@@ -807,7 +807,7 @@ spacecraft_apidoc = {
                 }
             ],
             "description": "Shields, shells or any device insulation from/reflecting radiation exploiting emission and absorption events",
-            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+            "@context": "http://www.w3.org/ns/hydraspec/context.jsonld",
             "@id": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Thermal"
         },
         {
@@ -874,7 +874,7 @@ spacecraft_apidoc = {
             "supportedOperation": [
                 {
                     "statusCodes": [],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Thermal_PassiveDevice",
                     "label": "Creates a new Spacecraft_Thermal_PassiveDevice entity",
                     "method": "POST",
@@ -889,7 +889,7 @@ spacecraft_apidoc = {
                             "description": "If the Spacecraft_Thermal_PassiveDevice entity wasn't found."
                         }
                     ],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Thermal_PassiveDevice",
                     "label": "Replaces an existing Spacecraft_Thermal_PassiveDevice entity",
                     "method": "PUT",
@@ -899,7 +899,7 @@ spacecraft_apidoc = {
                 },
                 {
                     "statusCodes": [],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "null",
                     "label": "Deletes a Spacecraft_Thermal_PassiveDevice entity",
                     "method": "DELETE",
@@ -914,7 +914,7 @@ spacecraft_apidoc = {
                             "description": "If the Spacecraft_Thermal_PassiveDevice entity wasn't found."
                         }
                     ],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Thermal_PassiveDevice",
                     "label": "Retrieves a Spacecraft_Thermal_PassiveDevice entity",
                     "method": "GET",
@@ -924,7 +924,7 @@ spacecraft_apidoc = {
                 }
             ],
             "description": "They are passive because they mostly transform radiation into heating/cooling ",
-            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+            "@context": "http://www.w3.org/ns/hydraspec/context.jsonld",
             "@id": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Thermal_PassiveDevice"
         },
         {
@@ -984,7 +984,7 @@ spacecraft_apidoc = {
             "supportedOperation": [
                 {
                     "statusCodes": [],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Thermal_ActiveDevice",
                     "label": "Creates a new Spacecraft_Thermal_ActiveDevice entity",
                     "method": "POST",
@@ -999,7 +999,7 @@ spacecraft_apidoc = {
                             "description": "If the Spacecraft_Thermal_ActiveDevice entity wasn't found."
                         }
                     ],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Thermal_ActiveDevice",
                     "label": "Replaces an existing Spacecraft_Thermal_ActiveDevice entity",
                     "method": "PUT",
@@ -1009,7 +1009,7 @@ spacecraft_apidoc = {
                 },
                 {
                     "statusCodes": [],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "null",
                     "label": "Deletes a Spacecraft_Thermal_ActiveDevice entity",
                     "method": "DELETE",
@@ -1024,7 +1024,7 @@ spacecraft_apidoc = {
                             "description": "If the Spacecraft_Thermal_ActiveDevice entity wasn't found."
                         }
                     ],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Thermal_ActiveDevice",
                     "label": "Retrieves a Spacecraft_Thermal_ActiveDevice entity",
                     "method": "GET",
@@ -1034,7 +1034,7 @@ spacecraft_apidoc = {
                 }
             ],
             "description": "Complex devices-subsystems used to protect sensors or electronic devices from over/under-heating, like refrigeration absorption.",
-            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+            "@context": "http://www.w3.org/ns/hydraspec/context.jsonld",
             "@id": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Thermal_ActiveDevice"
         },
         {
@@ -1124,7 +1124,7 @@ spacecraft_apidoc = {
             "supportedOperation": [
                 {
                     "statusCodes": [],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Structure",
                     "label": "Creates a new Spacecraft_Structure entity",
                     "method": "POST",
@@ -1139,7 +1139,7 @@ spacecraft_apidoc = {
                             "description": "If the Spacecraft_Structure entity wasn't found."
                         }
                     ],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Structure",
                     "label": "Replaces an existing Spacecraft_Structure entity",
                     "method": "PUT",
@@ -1149,7 +1149,7 @@ spacecraft_apidoc = {
                 },
                 {
                     "statusCodes": [],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "null",
                     "label": "Deletes a Spacecraft_Structure entity",
                     "method": "DELETE",
@@ -1164,7 +1164,7 @@ spacecraft_apidoc = {
                             "description": "If the Spacecraft_Structure entity wasn't found."
                         }
                     ],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Structure",
                     "label": "Retrieves a Spacecraft_Structure entity",
                     "method": "GET",
@@ -1174,7 +1174,7 @@ spacecraft_apidoc = {
                 }
             ],
             "description": "It's the skeleton and framework of the spacecraft.",
-            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+            "@context": "http://www.w3.org/ns/hydraspec/context.jsonld",
             "@id": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Structure"
         },
         {
@@ -1327,7 +1327,7 @@ spacecraft_apidoc = {
             "supportedOperation": [
                 {
                     "statusCodes": [],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_CDH",
                     "label": "Creates a new Spacecraft_CDH entity",
                     "method": "POST",
@@ -1342,7 +1342,7 @@ spacecraft_apidoc = {
                             "description": "If the Spacecraft_CDH entity wasn't found."
                         }
                     ],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_CDH",
                     "label": "Replaces an existing Spacecraft_CDH entity",
                     "method": "PUT",
@@ -1352,7 +1352,7 @@ spacecraft_apidoc = {
                 },
                 {
                     "statusCodes": [],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "null",
                     "label": "Deletes a Spacecraft_CDH entity",
                     "method": "DELETE",
@@ -1367,7 +1367,7 @@ spacecraft_apidoc = {
                             "description": "If the Spacecraft_CDH entity wasn't found."
                         }
                     ],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_CDH",
                     "label": "Retrieves a Spacecraft_CDH entity",
                     "method": "GET",
@@ -1377,7 +1377,7 @@ spacecraft_apidoc = {
                 }
             ],
             "description": "The DH system shall: Enable HK and science data flow \u2013 Housekeeping data (Temperatures, Pressures, Voltages, Currents, Status,...) \u2013 Attitude data \u2013 Payload data (e.g., Science data) - Receive and distribute commands - Perform TM and TC protocols - Distribute timing signals - Synchronization of data \u2013 Time stamping of data - Provide data storage - Execute commands and schedules - Control subsystems and payloads - Monitor spacecraft health - Make autonomous decisions - Perform data compression.",
-            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+            "@context": "http://www.w3.org/ns/hydraspec/context.jsonld",
             "@id": "http://ontology.projectchronos.eu/subsystems/Spacecraft_CDH"
         },
         {
@@ -1488,7 +1488,7 @@ spacecraft_apidoc = {
             "supportedOperation": [
                 {
                     "statusCodes": [],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Communication",
                     "label": "Creates a new Spacecraft_Communication entity",
                     "method": "POST",
@@ -1503,7 +1503,7 @@ spacecraft_apidoc = {
                             "description": "If the Spacecraft_Communication entity wasn't found."
                         }
                     ],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Communication",
                     "label": "Replaces an existing Spacecraft_Communication entity",
                     "method": "PUT",
@@ -1513,7 +1513,7 @@ spacecraft_apidoc = {
                 },
                 {
                     "statusCodes": [],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "null",
                     "label": "Deletes a Spacecraft_Communication entity",
                     "method": "DELETE",
@@ -1528,7 +1528,7 @@ spacecraft_apidoc = {
                             "description": "If the Spacecraft_Communication entity wasn't found."
                         }
                     ],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Communication",
                     "label": "Retrieves a Spacecraft_Communication entity",
                     "method": "GET",
@@ -1538,7 +1538,7 @@ spacecraft_apidoc = {
                 }
             ],
             "description": "Complex devices-subsystems used for transmitting/receiving radio waves.",
-            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+            "@context": "http://www.w3.org/ns/hydraspec/context.jsonld",
             "@id": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Communication"
         },
         {
@@ -1635,7 +1635,7 @@ spacecraft_apidoc = {
             "supportedOperation": [
                 {
                     "statusCodes": [],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_AODCS",
                     "label": "Creates a new Spacecraft_AODCS entity",
                     "method": "POST",
@@ -1650,7 +1650,7 @@ spacecraft_apidoc = {
                             "description": "If the Spacecraft_AODCS entity wasn't found."
                         }
                     ],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_AODCS",
                     "label": "Replaces an existing Spacecraft_AODCS entity",
                     "method": "PUT",
@@ -1660,7 +1660,7 @@ spacecraft_apidoc = {
                 },
                 {
                     "statusCodes": [],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "null",
                     "label": "Deletes a Spacecraft_AODCS entity",
                     "method": "DELETE",
@@ -1675,7 +1675,7 @@ spacecraft_apidoc = {
                             "description": "If the Spacecraft_AODCS entity wasn't found."
                         }
                     ],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_AODCS",
                     "label": "Retrieves a Spacecraft_AODCS entity",
                     "method": "GET",
@@ -1685,7 +1685,7 @@ spacecraft_apidoc = {
                 }
             ],
             "description": "Complex devices-subsystems used to set the direction and the position of the spacecraft, it controls flight dynamics.",
-            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+            "@context": "http://www.w3.org/ns/hydraspec/context.jsonld",
             "@id": "http://ontology.projectchronos.eu/subsystems/Spacecraft_AODCS"
         },
         {
@@ -1738,7 +1738,7 @@ spacecraft_apidoc = {
             "supportedOperation": [
                 {
                     "statusCodes": [],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_AODCS_ActiveDevice",
                     "label": "Creates a new Spacecraft_AODCS_Active entity",
                     "method": "POST",
@@ -1753,7 +1753,7 @@ spacecraft_apidoc = {
                             "description": "If the Spacecraft_AODCS_Active entity wasn't found."
                         }
                     ],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_AODCS_ActiveDevice",
                     "label": "Replaces an existing Spacecraft_AODCS_Active entity",
                     "method": "PUT",
@@ -1763,7 +1763,7 @@ spacecraft_apidoc = {
                 },
                 {
                     "statusCodes": [],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "null",
                     "label": "Deletes a Spacecraft_AODCS_Active entity",
                     "method": "DELETE",
@@ -1778,7 +1778,7 @@ spacecraft_apidoc = {
                             "description": "If the Spacecraft_AODCS_Active entity wasn't found."
                         }
                     ],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_AODCS_ActiveDevice",
                     "label": "Retrieves a Spacecraft_AODCS_Active entity",
                     "method": "GET",
@@ -1788,7 +1788,7 @@ spacecraft_apidoc = {
                 }
             ],
             "description": "Do NOT use any additional power from the spacecraft generator",
-            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+            "@context": "http://www.w3.org/ns/hydraspec/context.jsonld",
             "@id": "http://ontology.projectchronos.eu/subsystems/Spacecraft_AODCS_ActiveDevice"
         },
         {
@@ -1841,7 +1841,7 @@ spacecraft_apidoc = {
             "supportedOperation": [
                 {
                     "statusCodes": [],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_AODCS_PassiveDevice",
                     "label": "Creates a new Spacecraft_AODCS_PassiveDevice entity",
                     "method": "POST",
@@ -1856,7 +1856,7 @@ spacecraft_apidoc = {
                             "description": "If the Spacecraft_AODCS_PassiveDevice entity wasn't found."
                         }
                     ],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_AODCS_PassiveDevice",
                     "label": "Replaces an existing Spacecraft_AODCS_PassiveDevice entity",
                     "method": "PUT",
@@ -1866,7 +1866,7 @@ spacecraft_apidoc = {
                 },
                 {
                     "statusCodes": [],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "null",
                     "label": "Deletes a Spacecraft_AODCS_PassiveDevice entity",
                     "method": "DELETE",
@@ -1881,7 +1881,7 @@ spacecraft_apidoc = {
                             "description": "If the Spacecraft_AODCS_PassiveDevice entity wasn't found."
                         }
                     ],
-                    "@type": "hydra:Operation",
+                    "@type": "hydraspec:Operation",
                     "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_AODCS_PassiveDevice",
                     "label": "Retrieves a Spacecraft_AODCS_PassiveDevice entity",
                     "method": "GET",
@@ -1891,13 +1891,13 @@ spacecraft_apidoc = {
                 }
             ],
             "description": "DO use any additional power from the spacecraft generator",
-            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+            "@context": "http://www.w3.org/ns/hydraspec/context.jsonld",
             "@id": "http://ontology.projectchronos.eu/subsystems/Spacecraft_AODCS_PassiveDevice"
         }
     ],
     "possibleStatus": [],
     "description": "A short description of the API",
-    "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+    "@context": "http://www.w3.org/ns/hydraspec/context.jsonld",
     "@id": "http://api.example.com/doc/",
     "entrypoint": "URL of the API's main entry point"
 }

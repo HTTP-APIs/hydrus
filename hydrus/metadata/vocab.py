@@ -1,5 +1,5 @@
 #UNFINISHED
-from subsystem_apidoc import subsystem_apidoc
+from hydrus.hydraspec.subsystem_apidoc import subsystem_apidoc
 vocab = {
     "@context": {
         "vocab": "http://hydrus.com/vocab#",

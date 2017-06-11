@@ -56,8 +56,8 @@ class InstanceProperty(BaseProperty):
     """Model for Instance Properties.
 
     Instance Properties are properties that are used as predicate when the subject is an Instance.
-    >>> prop1 = Property('hasWeight')
-    >>> prop2 = Property('hasCost')
+    >>> prop1 = BaseProperty('hasWeight')
+    >>> prop2 = BaseProperty('hasCost')
     """
 
     instance_prop_name = Column(String)
@@ -75,8 +75,8 @@ class AbstractProperty(BaseProperty):
     """Model for Abstract Properties.
 
     Abstract Properties are properties that are used as predicate between two RDF-OWL classes.
-    >>> prop1 = Property('hasWeight')
-    >>> prop2 = Property('hasCost')
+    >>> prop1 = BaseProperty('hasWeight')
+    >>> prop2 = BaseProperty('hasCost')
     Example of a triple:
      RDFClass('A') Property('isSubSystemOf') RDFClass('B')
     """
