@@ -14,13 +14,13 @@ from server.commons import ROOT, SERVE, HYDRA_DOC
 
 template = {
   "@context": {
-     "hydraspec": "http://www.w3.org/ns/hydraspec/context.jsonld",
+     "hydra": "http://www.w3.org/ns/hydra/context.jsonld",
   },
   "@id": None,
-  "hydraspec:apiDocumentation": None,
-  "@type": "hydraspec:Collection",
-  "hydraspec:totalItems": None,
-  "hydraspec:member": []
+  "hydra:apiDocumentation": None,
+  "@type": "hydra:Collection",
+  "hydra:totalItems": None,
+  "hydra:member": []
 }
 
 def collect_astronomy_resources(uri):
@@ -39,8 +39,8 @@ def collect_astronomy_resources(uri):
         ]) for o in objects
     ]
 
-    template['@id'], template['hydraspec:totalItems'], template['hydraspec:member'] = ROOT + '/' + uri, len(members), members
-    template['hydraspec:apiDocumentation'] = HYDRA_DOC.format(endpoint_=uri)
+    template['@id'], template['hydra:totalItems'], template['hydra:member'] = ROOT + '/' + uri, len(members), members
+    template['hydra:apiDocumentation'] = HYDRA_DOC.format(endpoint_=uri)
 
     return template
 

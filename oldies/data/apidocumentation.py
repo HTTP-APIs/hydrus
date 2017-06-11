@@ -4,17 +4,17 @@ Generate documentation dictionaries.
 
 global_doc = {
   "@context": {
-     "hydraspec": "http://www.w3.org/ns/hydraspec/context.jsonld",
+     "hydra": "http://www.w3.org/ns/hydra/context.jsonld",
   },
   "@id": "/api",
-  "@type": "hydraspec:ApiDocumentation",
-  "hydraspec:title": "Astronomical HYDRA",
-  "hydraspec:description": "A demo API for HYDRA framework",
-  "hydraspec:entrypoint": "/api",
-  "hydraspec:supportedClass": [
+  "@type": "hydra:ApiDocumentation",
+  "hydra:title": "Astronomical HYDRA",
+  "hydra:description": "A demo API for HYDRA framework",
+  "hydra:entrypoint": "/api",
+  "hydra:supportedClass": [
     
   ],
-  "hydraspec:possibleStatus": [
+  "hydra:possibleStatus": [
     
   ]
 }
@@ -25,17 +25,17 @@ def make_doc(view):
   """
   return {
     "@context": {
-      "hydraspec": "http://www.w3.org/ns/hydraspec/context.jsonld"
+      "hydra": "http://www.w3.org/ns/hydra/context.jsonld"
     },
-    "@id": "/api/hydraspec/{}".format(view),
-    "@type": "hydraspec:ApiDocumentation",
-    "hydraspec:title": "{}".format(view),
-    "hydraspec:description": "",
-    "hydraspec:entrypoint": "/api/{}".format(view),
-    "hydraspec:supportedClass": [
+    "@id": "/api/hydra/{}".format(view),
+    "@type": "hydra:ApiDocumentation",
+    "hydra:title": "{}".format(view),
+    "hydra:description": "",
+    "hydra:entrypoint": "/api/{}".format(view),
+    "hydra:supportedClass": [
       
     ],
-    "hydraspec:possibleStatus": [
+    "hydra:possibleStatus": [
       
     ]
   }

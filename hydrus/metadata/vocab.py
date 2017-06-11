@@ -3,28 +3,28 @@ from hydrus.hydraspec.subsystem_apidoc import subsystem_apidoc
 vocab = {
     "@context": {
         "vocab": "http://hydrus.com/vocab#",
-        "hydraspec": "http://www.w3.org/ns/hydraspec/core#",
-        "ApiDocumentation": "hydraspec:ApiDocumentation",
+        "hydra": "http://www.w3.org/ns/hydra/core#",
+        "ApiDocumentation": "hydra:ApiDocumentation",
         "property": {
-            "@id": "hydraspec:property",
+            "@id": "hydra:property",
             "@type": "@id"
         },
-        "readonly": "hydraspec:readonly",
-        "writeonly": "hydraspec:writeonly",
-        "supportedClass": "hydraspec:supportedClass",
-        "supportedProperty": "hydraspec:supportedProperty",
-        "supportedOperation": "hydraspec:supportedOperation",
-        "method": "hydraspec:method",
+        "readonly": "hydra:readonly",
+        "writeonly": "hydra:writeonly",
+        "supportedClass": "hydra:supportedClass",
+        "supportedProperty": "hydra:supportedProperty",
+        "supportedOperation": "hydra:supportedOperation",
+        "method": "hydra:method",
         "expects": {
-            "@id": "hydraspec:expects",
+            "@id": "hydra:expects",
             "@type": "@id"
         },
         "returns": {
-            "@id": "hydraspec:returns",
+            "@id": "hydra:returns",
             "@type": "@id"
         },
-        "statusCodes": "hydraspec:statusCodes",
-        "code": "hydraspec:statusCode",
+        "statusCodes": "hydra:statusCodes",
+        "code": "hydra:statusCode",
         "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
         "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
         "skos": "http://www.w3.org/2004/02/skos/core#",
@@ -47,17 +47,17 @@ vocab = {
     "@type": "ApiDocumentation",
     "supportedClass": [
         {
-            "@id": "http://www.w3.org/ns/hydraspec/core#Collection",
-            "@type": "hydraspec:Class",
-            "hydraspec:title": "Collection",
-            "hydraspec:description": null,
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "hydra:title": "Collection",
+            "hydra:description": null,
             "supportedOperation": [
             ],
             "supportedProperty": [
                 {
-                    "property": "http://www.w3.org/ns/hydraspec/core#member",
-                    "hydraspec:title": "members",
-                    "hydraspec:description": "The members of this collection.",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "hydra:title": "members",
+                    "hydra:description": "The members of this collection.",
                     "required": null,
                     "readonly": false,
                     "writeonly": false
@@ -65,10 +65,10 @@ vocab = {
             ]
         },
         {
-            "@id": "http://www.w3.org/ns/hydraspec/core#Resource",
-            "@type": "hydraspec:Class",
-            "hydraspec:title": "Resource",
-            "hydraspec:description": null,
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "hydra:title": "Resource",
+            "hydra:description": null,
             "supportedOperation": [
             ],
             "supportedProperty": [
@@ -76,9 +76,9 @@ vocab = {
         },
         {
             "@id": "http://ontology.projectchronos.eu/spacecraft?format=jsonld",
-            "@type": "hydraspec:Class",
-            "hydraspec:title": "Spacecraft",
-            "hydraspec:description": null,
+            "@type": "hydra:Class",
+            "hydra:title": "Spacecraft",
+            "hydra:description": null,
             "supportedOperation": [
                 {
                     "@id": "_:spacecraft_replace",
@@ -119,7 +119,7 @@ vocab = {
                 },
                 {
                     "@id": "_:spacecraft_retrieve",
-                    "@type": "hydraspec:Operation",
+                    "@type": "hydra:Operation",
                     "method": "GET",
                     "label": "Retrieves a Spacecraft entity",
                     "description": null,
@@ -135,32 +135,32 @@ vocab = {
 
                 # {
                 #     "property": "http://schema.org/name",
-                #     "hydraspec:title": "name",
-                #     "hydraspec:description": "The event's name",
+                #     "hydra:title": "name",
+                #     "hydra:description": "The event's name",
                 #     "required": true,
                 #     "readonly": false,
                 #     "writeonly": false
                 # },
                 # {
                 #     "property": "http://schema.org/description",
-                #     "hydraspec:title": "description",
-                #     "hydraspec:description": "Description of the event",
+                #     "hydra:title": "description",
+                #     "hydra:description": "Description of the event",
                 #     "required": true,
                 #     "readonly": false,
                 #     "writeonly": false
                 # },
                 # {
                 #     "property": "http://schema.org/startDate",
-                #     "hydraspec:title": "start_date",
-                #     "hydraspec:description": "The start date and time of the event in ISO 8601 date format",
+                #     "hydra:title": "start_date",
+                #     "hydra:description": "The start date and time of the event in ISO 8601 date format",
                 #     "required": true,
                 #     "readonly": false,
                 #     "writeonly": false
                 # },
                 # {
                 #     "property": "http://schema.org/endDate",
-                #     "hydraspec:title": "end_date",
-                #     "hydraspec:description": "The end date and time of the event in ISO 8601 date format",
+                #     "hydra:title": "end_date",
+                #     "hydra:description": "The end date and time of the event in ISO 8601 date format",
                 #     "required": true,
                 #     "readonly": false,
                 #     "writeonly": false
@@ -169,9 +169,9 @@ vocab = {
         },
         {
             "@id": "http://ontology.projectchronos.eu/subsystems?format=jsonld",
-            "@type": "hydraspec:Class",
-            "hydraspec:title": "Cots",
-            "hydraspec:description": null,
+            "@type": "hydra:Class",
+            "hydra:title": "Cots",
+            "hydra:description": null,
             "supportedOperation": [
                 {
                     "@id": "_:cots_replace",
@@ -212,7 +212,7 @@ vocab = {
                 },
                 {
                     "@id": "_:cots_retrieve",
-                    "@type": "hydraspec:Operation",
+                    "@type": "hydra:Operation",
                     "method": "GET",
                     "label": "Retrieves a COTS entity",
                     "description": null,
@@ -228,32 +228,32 @@ vocab = {
 
                 # {
                 #     "property": "http://schema.org/name",
-                #     "hydraspec:title": "name",
-                #     "hydraspec:description": "The event's name",
+                #     "hydra:title": "name",
+                #     "hydra:description": "The event's name",
                 #     "required": true,
                 #     "readonly": false,
                 #     "writeonly": false
                 # },
                 # {
                 #     "property": "http://schema.org/description",
-                #     "hydraspec:title": "description",
-                #     "hydraspec:description": "Description of the event",
+                #     "hydra:title": "description",
+                #     "hydra:description": "Description of the event",
                 #     "required": true,
                 #     "readonly": false,
                 #     "writeonly": false
                 # },
                 # {
                 #     "property": "http://schema.org/startDate",
-                #     "hydraspec:title": "start_date",
-                #     "hydraspec:description": "The start date and time of the event in ISO 8601 date format",
+                #     "hydra:title": "start_date",
+                #     "hydra:description": "The start date and time of the event in ISO 8601 date format",
                 #     "required": true,
                 #     "readonly": false,
                 #     "writeonly": false
                 # },
                 # {
                 #     "property": "http://schema.org/endDate",
-                #     "hydraspec:title": "end_date",
-                #     "hydraspec:description": "The end date and time of the event in ISO 8601 date format",
+                #     "hydra:title": "end_date",
+                #     "hydra:description": "The end date and time of the event in ISO 8601 date format",
                 #     "required": true,
                 #     "readonly": false,
                 #     "writeonly": false
@@ -263,14 +263,14 @@ vocab = {
 
         {
             "@id": "vocab:EntryPoint",
-            "@type": "hydraspec:Class",
+            "@type": "hydra:Class",
             "subClassOf": null,
             "label": "EntryPoint",
             "description": "The main entry point or homepage of the API.",
             "supportedOperation": [
                 {
                     "@id": "_:entry_point",
-                    "@type": "hydraspec:Operation",
+                    "@type": "hydra:Operation",
                     "method": "GET",
                     "label": "The APIs main entry point.",
                     "description": null,
@@ -284,7 +284,7 @@ vocab = {
                 {
                     "property": {
                         "@id": "vocab:EntryPoint/spacecrafts",
-                        "@type": "hydraspec:Link",
+                        "@type": "hydra:Link",
                         "label": "events",
                         "description": "The events collection",
                         "domain": "vocab:EntryPoint",
@@ -292,7 +292,7 @@ vocab = {
                         "supportedOperation": [
                             {
                                 "@id": "_:event_collection_retrieve",
-                                "@type": "hydraspec:Operation",
+                                "@type": "hydra:Operation",
                                 "method": "GET",
                                 "label": "Retrieves all Event entities",
                                 "description": null,
@@ -303,8 +303,8 @@ vocab = {
                             }
                         ]
                     },
-                    "hydraspec:title": "events",
-                    "hydraspec:description": "The events collection",
+                    "hydra:title": "events",
+                    "hydra:description": "The events collection",
                     "required": null,
                     "readonly": true,
                     "writeonly": false
@@ -312,7 +312,7 @@ vocab = {
                 {
                     "property": {
                         "@id": "vocab:EntryPoint/cots",
-                        "@type": "hydraspec:Link",
+                        "@type": "hydra:Link",
                         "label": "events",
                         "description": "The events collection",
                         "domain": "vocab:EntryPoint",
@@ -320,7 +320,7 @@ vocab = {
                         "supportedOperation": [
                             {
                                 "@id": "_:event_collection_retrieve",
-                                "@type": "hydraspec:Operation",
+                                "@type": "hydra:Operation",
                                 "method": "GET",
                                 "label": "Retrieves all Event entities",
                                 "description": null,
@@ -331,8 +331,8 @@ vocab = {
                             }
                         ]
                     },
-                    "hydraspec:title": "events",
-                    "hydraspec:description": "The events collection",
+                    "hydra:title": "events",
+                    "hydra:description": "The events collection",
                     "required": null,
                     "readonly": true,
                     "writeonly": false

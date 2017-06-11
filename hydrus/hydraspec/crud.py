@@ -6,7 +6,7 @@ def template():
     supportedOperation = [
         {
             "@id": "_:%s_create",
-            "@type": "hydraspec:Operation",
+            "@type": "hydras:Operation",
             "method": "POST",
             "label": "Creates a new %s entity",
             "description": "null",
@@ -17,7 +17,7 @@ def template():
         },
         {
             "@id": "_:%s_replace",
-            "@type": "hydraspec:Operation",
+            "@type": "hydra:Operation",
             "method": "PUT",
             "label": "Replaces an existing %s entity",
             "description": "null",
@@ -32,7 +32,7 @@ def template():
         },
         {
             "@id": "_:%s_delete",
-            "@type": "hydraspec:Operation",
+            "@type": "hydra:Operation",
             "method": "DELETE",
             "label": "Deletes a %s entity",
             "description": "null",
@@ -43,7 +43,7 @@ def template():
         },
         {
             "@id": "_:%s_retrieve",
-            "@type": "hydraspec:Operation",
+            "@type": "hydra:Operation",
             "method": "GET",
             "label": "Retrieves a %s entity",
             "description": "null",

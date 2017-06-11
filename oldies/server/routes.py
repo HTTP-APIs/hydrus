@@ -20,8 +20,8 @@ app.add_url_rule('/api/<string:resource>', 'resources', read_resources, methods=
 
 
 # routes to documentation
-app.add_url_rule('/api/hydraspec/<string:view>', 'hydradoc_root', hydra_documentation, methods=['GET'])
-app.add_url_rule('/api/hydraspec', 'hydradoc', hydra_documentation, methods=['GET'])
+app.add_url_rule('/api/hydra/<string:view>', 'hydradoc_root', hydra_documentation, methods=['GET'])
+app.add_url_rule('/api/hydra', 'hydradoc', hydra_documentation, methods=['GET'])
 
 
 # route to entrypoint
