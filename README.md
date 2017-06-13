@@ -48,7 +48,7 @@ For the demonstration, the server has the [Subsystems](http://ontology.projectch
 
 Here is an example of a system used to serve data using the components of Hydrus:
 
-[insert image]
+![Use case](docs/wiki/images/use_case1.png?raw=true "Use case")
 
 #### A simple example explaining the use of the above architecture would be:
 * User types in the query “What is the cost of a Thermal Subsystem?”.
