@@ -2,7 +2,19 @@
 
 import random
 
-subsystems = dict({
+classes_keymap = {
+    "communication": "Spacecraft_Communication",
+    "propulsion": "Spacecraft_Propulsion",
+    "detector": "Spacecraft_Detector",
+    "primary power": "Spacecraft_PrimaryPower",
+    "backup power": "Spacecraft_BackupPower",
+    "thermal": "Spacecraft_Thermal",
+    "structure":  "Spacecraft_Structure",
+    "command and data": "Spacecraft_CDH",
+    "attitude and orbit control": "Spacecraft_AODCS",
+}
+
+subsystems = {
     "communication": {
         "slug": "COM",
         "ontology": "http://ontology.projectchronos.eussubsystems/Spacecraft_Communication",
@@ -87,7 +99,7 @@ subsystems = dict({
         "active": ["magnetic torque", "cold gas", "microthrusters"],
         "passive": ["rotation", "gravity", "solar pressure"]
     }
-})
+}
 
 
 def randomValue(interval):
@@ -101,7 +113,7 @@ def generateObject(name, subsystem):
     """Generate random components from given input dictionary."""
     result = {}
     result['hasMass'] = randomValue(subsystem['hasMass'])
-    result['category'] = name
+    result['category'] = classes_keymap[name]
     if 'minWorkingTemperature' in subsystem.keys():
         if not name == 'structure':
             result['hasPower'] = randomValue(subsystem['hasPower'])
@@ -159,7 +171,6 @@ def generateObject(name, subsystem):
             result['type'] = 'active'
         return result
 
-#
 # def gen_all_types():
 #     """Generate one random object for all classes."""
 #     output = []
@@ -177,7 +188,6 @@ def generateObject(name, subsystem):
 #         i += 1
 #         break
 #     return output
-#
 # print(gen_all_types())
 
 
@@ -185,14 +195,15 @@ def generateObject(name, subsystem):
 # gen_cots will generate n number of spacecraft parts with random properties
 def gen_random_object():
     """Generate a random object."""
-    index = random.randint(0, len(subsystems.items())-1)
-    k, v = subsystems.items()[index]
+    index = random.randint(0, len(subsystems.keys())-1)
+    k, v = list(subsystems.items())[index]
     name = str(random.randrange(0, 50)) + \
         str(random.choice(['T', 'W', 'KV', 'JFG'])) + ' ' + k
     obj = {}
     obj['name'] = name
     obj['object'] = generateObject(k, v)
     return obj
+
 
 def gen_cots(n):
     """Generate n number of spacecraft parts with random properties."""
@@ -202,5 +213,6 @@ def gen_cots(n):
         output.append(obj)
     return output
 
-
-print(gen_cots(1))
+import json
+if __name__ == "__main__":
+    print(json.dumps(gen_cots(1), indent=4, sort_keys=True))

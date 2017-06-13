@@ -1,12 +1,10 @@
 """Basic CRUD operations for the server."""
-import json
 
 from sqlalchemy.orm import sessionmaker, with_polymorphic
 from sqlalchemy import exists
 from sqlalchemy.exc import IntegrityError
-from hydrus.data.db_models import (Graph, BaseProperty, RDFClass, Instance,
-                                   Terminal, engine, GraphIAC, GraphIIT, GraphIII)
-from hydrus.data.keymap import classes_keymap as keymap
+from db_models import (Graph, BaseProperty, RDFClass, Instance,
+                       Terminal, engine, GraphIAC, GraphIIT, GraphIII)
 
 Session = sessionmaker(bind=engine)
 session = Session()
@@ -57,19 +55,19 @@ def insert(object_, id_=None):
     # NOTE: We are inserting the object, no need to check if similar one already exists.
     #       Data can be redundant/identical, they must have different "@id"
 
-    # TODO: @chrizandr You're not setting instance.type_ and you're not using keymap
-    # to dereference class types. Try any other category other then thermal for insertion
-    # Also, make sure crud.py passes all the tests in test_db.py (Currently all failing)
+    # Added the keymap to generator, no need to use here
     triple_store = list()
     if id_ is not None:
         try:
-            instance = Instance(name=object_["name"], id=id_)
+            instance = Instance(name=object_["name"], id=id_, type_=object_["object"]["category"])
+            session.add(instance)
+            session.commit()
         except IntegrityError:
             return {400: "Instance with ID : %s already exists" % (str(id_))}
     else:
-        instance = Instance(name=object_["name"], id=id_)
-    session.add(instance)
-    session.commit()
+        instance = Instance(name=object_["name"], type_=object_["object"]["category"])
+        session.add(instance)
+        session.commit()
 
     for prop_name in object_["object"]:
         # Check if it is a valid property
@@ -79,7 +77,7 @@ def insert(object_, id_=None):
             prop = session.query(properties).filter(properties.name == prop_name).one()
             # Check if it INSTANCE or ABSTRACT Property
             if prop.type_ == "ABSTRACT":
-                class_name = keymap[object_["object"][prop_name]]
+                class_name = object_["object"][prop_name]
                 isValidClass = session.query(exists().where(RDFClass.name == class_name)).scalar()
                 # Check if it is a valid class
                 if isValidClass:
@@ -154,18 +152,19 @@ def update(id_, object_):
 
 
 object__ = {
-    'object': {
-        'category': 'thermal',
-        'minWorkingTemperature': -73,
-        'maxWorkingTemperature': 47,
-        'hasPower': 0,
-        'hasMonetaryValue': 4545,
-        'hasVolume': 72,
-        'hasMass': 77
-        },
-    'name': '9KV structure'
+    "name": "12W communication",
+    "object": {
+        "category": "Spacecraft_Communication",
+        "hasMass": 98,
+        "hasMonetaryValue": 6604,
+        "hasPower": -61,
+        "hasVolume": 99,
+        "maxWorkingTemperature": 63,
+        "minWorkingTemperature": -26
+    }
 }
+
 # print(update(7, object__))
-# print(insert(object__))
+print(insert(object__))
 # print(update(4, object__))
 # print(get(4))
