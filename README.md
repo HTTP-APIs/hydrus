@@ -340,11 +340,11 @@ app.run(host=IP, port=port_)
 There are a number of tests in place to ensure that Hydrus functions properly.
 For running tests related to ensure the validity of the database run
 
-`python -m unittest hydrus.data.test_db`
+** `python -m unittest hydrus.data.test_db` **
 
 For running client side tests related to the server, run
 
-`python -m unittest hydrus.test_app`
+** `python -m unittest hydrus.test_app` **
 
 <a name="client"></a>
 ### Using the client
