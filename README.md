@@ -65,11 +65,11 @@ Base.metadata.create_all(hydrus.data.db_models.engine)
 ```
 This will successfully create all required models in the specified database.
 
+---
 <a name="adddata"></a>
 ### Adding data
 Now that the database models have been setup, we need to populate them with data.
 
----
 <a name="classprop"></a>
 #### Adding Classes and Properties
 The first step in adding data is adding the RDFClasses and Properties that the server must support. There are three ways to do this:
