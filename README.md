@@ -68,6 +68,7 @@ This will successfully create all required models in the specified database.
 <a name="adddata"></a>
 ### Adding data
 Now that the database models have been setup, we need to populate them with data.
+
 ---
 <a name="classprop"></a>
 #### Adding Classes and Properties
