@@ -10,6 +10,8 @@ Table of contents
 * [Usage](#usage)
     * [Setting up the database](#dbsetup)
     * [Adding data](#adddata)
+        * [Classes and Properties](#classprop)
+        * [Instances](#instance)
     * [Setting up the server](#servsetup)
     * [Testing the server](#testserv)
     * [Using the client](#useclient)
@@ -64,7 +66,11 @@ This will successfully create all required models in the specified database.
 
 <a name="adddata"></a>
 ### Adding data
-Now that the database models have been setup, we need to populate them with data. The first step in adding data is adding the RDFClasses and Properties that the server must support. There are two ways to do this:
+Now that the database models have been setup, we need to populate them with data.
+
+<a name="classprop"></a>
+#### Adding Classes and Properties
+The first step in adding data is adding the RDFClasses and Properties that the server must support. There are three ways to do this:
 
 The first is to manually add all RDFClasses and Properties. Here are some examples:
 ```python
@@ -96,6 +102,40 @@ session.add(subclassof)
 session.add(cost)
 session.commit()
 session.close()
+```
+The second way to add RDFClasses and Properties is to provide the Hydra APIDocumentation of the API
+```python
+import hydrus
+
+data = {
+    "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+    "@id": "http://api.example.com/doc/",
+    "@type": "ApiDocumentation",
+    "title": "The name of the API",
+    "description": "A short description of the API",
+    "entrypoint": "URL of the API's main entry point",
+    "supportedClass": [
+        # ... Classes known to be supported by the Web API ...
+        {
+            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+            "@id": "http://api.example.com/doc/#Comment",
+            "@type": "Class",
+            "title": "The name of the class",
+            "description": "A short description of the class.",
+            "supportedProperty": [
+            # ... Properties known to be supported by the class ...
+            ]
+        },
+    ],
+    "possibleStatus": [
+        # ... Statuses that should be expected and handled properly ...
+    ]
+}
+
+classes = hydrus.data.doc_parse.get_classes(data)
+properties = hydrus.data.doc_parse.get_all_properties(classes)
+hydrus.data.doc_parse.insert_classes(classes)
+hydrus.data.doc_parse.insert_properties(classes)
 ```
 
 <a name="design"></a>
