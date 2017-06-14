@@ -41,6 +41,26 @@ Usage
 -------------
 This section explains the basic usage and setup of Hydrus.
 
+<a name="dbsetup"></a>
+### Setting up the database
+The databse models use SQLAlchemy as an ORM Layer mapping relations to Python Classs and Objects. A good reference for the ORM can be found [here](http://docs.sqlalchemy.org/en/rel_1_0/orm/tutorial.html)
+
+The `engine` parameter in `hydrus.data.db_models` is used to connect to the database. This needs to be modified according to the type of connection:
+For example, if the database is an SQLite database, the engine parameter would be as follows:
+
+```python
+from sqlalchemy import create_engine
+
+hydrus.data.engine = create_engine('sqlite:///path/to/database/file')
+```
+Once the engine is setup, the creation of the required tables can be done as follows:
+
+```python
+from hydrus.data.db_models import Base
+
+Base.metadata.create_all(engine)
+```
+This will successfully create all required models in the specified database.
 
 <a name="design"></a>
 Design
