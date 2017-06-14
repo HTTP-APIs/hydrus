@@ -51,16 +51,52 @@ For example, if the database is an SQLite database, the engine parameter would b
 ```python
 from sqlalchemy import create_engine
 
-hydrus.data.engine = create_engine('sqlite:///path/to/database/file')
+hydrus.data.db_models.engine = create_engine('sqlite:///path/to/database/file')
 ```
 Once the engine is setup, the creation of the required tables can be done as follows:
 
 ```python
 from hydrus.data.db_models import Base
 
-Base.metadata.create_all(engine)
+Base.metadata.create_all(hydrus.data.db_models.engine)
 ```
 This will successfully create all required models in the specified database.
+
+<a name="adddata"></a>
+### Adding data
+Now that the database models have been setup, we need to populate them with data. The first step in adding data is adding the RDFClasses and Properties that the server must support. There are two ways to do this:
+
+The first is to manually add all RDFClasses and Properties. Here are some examples:
+```python
+'''Adding a new RDFClass'''
+from hydrus.data.db_models import RDFClass, engine
+from sqlalchemy.orm import sessionmaker
+
+thermal = RDFClass(name="Subsystem_Thermal")    # Creates a new RDFClass instance
+
+# Add the instance to the database
+Session = sessionmaker(bind=models.engine)
+session = Session()
+session.add(thermal)
+session.commit()
+session.close()
+```
+```python
+'''Adding a new Property'''
+from hydrus.data.db_models import AbstractProperty, InstanceProperty, engine
+from sqlalchemy.orm import sessionmaker
+
+subclassof = AbstractProperty(name="SubClassOf")    # Creates a new AbstractProperty instance
+cost = InstanceProperty(name="hasMonetaryValue")    # Creates a new InstanceProperty instance
+
+# Add the instance to the database
+Session = sessionmaker(bind=models.engine)
+session = Session()
+session.add(subclassof)
+session.add(cost)
+session.commit()
+session.close()
+```
 
 <a name="design"></a>
 Design
