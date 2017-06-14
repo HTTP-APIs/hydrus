@@ -1,6 +1,5 @@
 """Main route for the applciation."""
 
-# Write code for views and API here.
 from flask import Flask, jsonify
 from flask_restful import Api, Resource
 from hydrus.data import crud
@@ -8,12 +7,9 @@ from hydrus.data import crud
 from hydrus.metadata.vocab import vocab
 from hydrus.hydraspec.contexts.entrypoint import entrypoint_context
 from hydrus.hydraspec.contexts.cots import cots_context
-# from models import engine
-# from sqlalchemy import text
 
 
 # from flask_cors import CORS, cross_origin
-
 app = Flask(__name__)
 api = Api(app)
 
@@ -35,6 +31,8 @@ def hydrafy(object_):
     return object_
 
 
+
+
 class Index(Resource):
     """Class for the EntryPoint."""
 
@@ -46,93 +44,74 @@ class Index(Resource):
 api.add_resource(Index, "/api", endpoint="api")
 
 
+
+
 class Cots(Resource):
     """Handles all operations(GET, POST, PATCH, DELETE) on Commercial Off The Shelves (COTS) spare parts for pico- and nano-satellites."""
 
     def get(self, id_):
-        """."""
+        """GET object with id = id_ from the database."""
         return set_response_headers(jsonify(hydrafy(crud.get(id_))))
 
     def post(self, id_, object_):
-        """."""
-        return hydrafy(crud.insert(object_))
+        """Add object_ to database with optional id_ parameter (The id where the object needs to be inserted).
+        If object with id_ already exists update it."""
+        insert_id = crud.insert(object_, id_)
+        resp = {204: "Object with ID:%s succesfully inserted." % (insert_id)}
+        return resp
 
-    def patch(self, id, object_):
-        """."""
-        return hydrafy(crud.update(id, object_))
+    def patch(self, id_, object_):
+        """Update object at id=id_ with object_ in database."""
+        resp = crud.update(id_, object_)
+        return resp
 
-    def delete(self, id):
-        """."""
-        return hydrafy(crud.delete(id))
-
+    def delete(self, id_):
+        """Delete object with id=id_ from database."""
+        resp = crud.delete(id_)
+        return resp
 
 api.add_resource(Cots, "/api/cots/<string:id>", endpoint="cots")
 
-#
-# class Spacecraft(Resource):
-#     """Handles all operations(GET, POST, PATCH, DELETE) on Spacecrafts."""
-#
-#     def get(self, id):
-#         """."""
-#         pass
-#
-#     def post(self, id):
-#         """."""
-#         pass
-#
-#     def patch(self, id):
-#         """."""
-#         pass
-#
-#     def delete(self, id):
-#         """."""
-#         pass
-#
-#
-# api.add_resource(Spacecraft, "/api/spacecraft/<string:id>", endpoint="spacecraft")
+
+
 
 class Vocab(Resource):
-    """Returns the main Hydra vocab."""
 
     def get(self):
-        """."""
+        """Return the main hydra vocab."""
         return set_response_headers(jsonify(vocab), 'application/ld+json', 200)
 
 
 api.add_resource(Vocab, "/api/vocab", endpoint="vocab")
 
 
+
+
 class Entrypoint(Resource):
-    """Returns application main Entrypoint."""
 
     def get(self):
-        """."""
+        """Return application main Entrypoint."""
         return set_response_headers(jsonify(entrypoint_context), 'application/ld+json', 200)
 
 
-api.add_resource(Entrypoint, "/api/contexts/EntryPoint.jsonld", endpoint="main_entrypoint")
+api.add_resource(Entrypoint, "/api/contexts/EntryPoint.jsonld",
+                 endpoint="main_entrypoint")
 
-#
-# class SpacecraftContext(Resource):
-#     """Return SpaceCraft context."""
-#
-#     def get(self):
-#         """."""
-#         pass
-#
-#
-# api.add_resource(SpacecraftContext, "/api/contexts/SpaceCraft.jsonld", endpoint="spacecraft_context")
+
 
 
 class CotsContext(Resource):
-    """Return COTS context."""
 
     def get(self):
-        """."""
+        """Return COTS context."""
         return set_response_headers(jsonify(cots_context), 'application/ld+json', 200)
 
 
-api.add_resource(CotsContext, "/api/contexts/Cots.jsonld", endpoint="cots_context")
+api.add_resource(CotsContext, "/api/contexts/Cots.jsonld",
+                 endpoint="cots_context")
+
+
+
 
 
 if __name__ == "__main__":
