@@ -4,8 +4,8 @@ from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String
 
-engine = create_engine('sqlite:///database.db')
-
+# engine = create_engine('sqlite:///database.db')
+engine = create_engine("postgresql://postgres:  @localhost:5432/hydra")
 Base = declarative_base()
 
 
@@ -18,7 +18,7 @@ class RDFClass(Base):
     __tablename__ = "classes"
 
     id = Column(Integer, primary_key=True)
-    name = Column(String)
+    name = Column(String, unique=True)
 
     def __repr__(self):
         """Verbose object name."""
