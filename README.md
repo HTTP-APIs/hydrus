@@ -14,6 +14,8 @@ Table of contents
     * [Testing the server](#testserv)
     * [Using the client](#useclient)
 * [Design](#design)
+    * [Database Design](#dbdesign)
+    * [Use cases](#usecase)
 
 <a name="features"></a>
 Features
@@ -43,6 +45,23 @@ This section explains the basic usage and setup of Hydrus.
 <a name="design"></a>
 Design
 -------------
+The design of the Database takes into account the different types of representations possible using the triple format.
+Typically, there are 4 types of triples that are stored in a `Graph`:
+- `Class >> Property >> Class` [GraphCAC]
+- `Resource >> Property >> Class` [GraphIAC]
+- `Resource >> Property >> Resource` [GraphIII]
+- `Resource >> Property >> Value` [GraphIIT]
+
+For a distinction between the different types of `Value`, we created a `Terminal` class, which contains a `value` and it's `unit`.
+There is also a distinction between properties that map to `Resources` and `Terminals` and those that map to `Classes`.
+We call `Properties` that map to `Classes` as `AbstractProperty` and the other as `InstanceProperty`.
+
+Below is the schema diagram for our database design:
+
+![DB Schema](docs/wiki/images/db_schema.svg?raw=true "Schema")
+
+
+<a name="design"></a>
 This section explains Hydrus's design and a use case for the same.
 For the demonstration, the server has the [Subsystems](http://ontology.projectchronos.eu/documentation/subsystems) and [Spacecraft](http://ontology.projectchronos.eu/documentation/spacecraft) vocabularies.
 
