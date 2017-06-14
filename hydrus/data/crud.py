@@ -3,7 +3,7 @@
 from sqlalchemy.orm import sessionmaker, with_polymorphic
 from sqlalchemy import exists
 from sqlalchemy.exc import IntegrityError
-from db_models import (Graph, BaseProperty, RDFClass, Instance, InstanceProperty, AbstractProperty,
+from hydrus.data.db_models import (Graph, BaseProperty, RDFClass, Instance, InstanceProperty, AbstractProperty,
                        Terminal, engine, GraphIAC, GraphIIT, GraphIII)
 
 Session = sessionmaker(bind=engine)
