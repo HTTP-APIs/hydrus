@@ -58,7 +58,7 @@ We call `Properties` that map to `Classes` as `AbstractProperty` and the other a
 
 Below is the schema diagram for our database design:
 
-![DB Schema](docs/wiki/images/db_schema.svg?raw=true "Schema")
+![DB Schema](docs/wiki/images/db_schema.png?raw=true "Schema")
 
 
 <a name="design"></a>
