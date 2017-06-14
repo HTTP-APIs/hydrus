@@ -138,6 +138,45 @@ hydrus.data.doc_parse.insert_classes(classes)
 hydrus.data.doc_parse.insert_properties(classes)
 ```
 
+The final way to add classes and properties to Hydrus is to use RDF/OWL definitions of the classes. This can be done by using the OWL/RDF parser to create Hydra APIDocumentation and then adding data as explained in the previous step.
+```python
+from hydrus.hydraspec import parser
+
+data = {
+    {
+       "@type": [
+          {
+              "@id": "http://www.w3.org/2002/07/owl#ObjectProperty"
+          }
+       ],
+       "@id": "http://api.example.com/doc/#Property",
+       "rdf:label": "Propertyname"
+    },
+    {
+       "@type": "http://www.w3.org/2002/07/owl#Class",
+       "@id": "http://api.example.com/doc/#Class",
+       "rdf:comment": "comment about the class",
+       "rdf:label": "Classname",
+       "rdfs:subClassOf": [
+            # ...List of known class restrictions...
+       ],
+    }
+}
+
+owl_props = parser.get_all_properties(data)     # Get all Owl:Properties
+
+hydra_props = parser.hydrafy_properties(owl_props)      # Convert them to Hydra:Property along with class metadata
+
+owl_classes = parser.get_all_classes(subsystem_data)    # Get all the owl:Classes
+
+hydra_classes = parser.hydrafy_classes(owl_classes, hydra_props)    # Convert each owl:Class into a Hydra:Class with property data
+
+apidoc = gen_APIDoc(hydra_classes)      # Create API Documentation with the Hydra:supportedClass
+```
+
+#### Adding Instances/Resources
+
+
 <a name="design"></a>
 Design
 -------------
