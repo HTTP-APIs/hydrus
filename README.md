@@ -208,11 +208,6 @@ crud.insert(object_=instance)   # This will insert 'instance' into Instance and 
 crud.insert(object_=instance, id_=1)    #This will insert 'instance' with ID = 1  
 ```
 
-<a name="design"></a>
-Design
--------------
-This section explains the design, architecture and the implementation of Hydrus along with a few use cases for the same.
-
 <a name="moddata"></a>
 ### Manipulating data
 We already saw how `insert` work in the previous section, we will now see how the other crud operations work and what are the errors and exceptions for each of them.
@@ -278,7 +273,7 @@ print(json.dumps(output, indent=4))
 #   204: "Object with ID : 1 successfully updated!"
 # }
 ```
-
+---
 <a name="error"></a>
 #### Exceptions
 The CRUD operations have a number of checks and conditions in place to ensure validity of data. Here are the exceptions that are returned for each of the operations when these conditions are violated.
@@ -322,6 +317,15 @@ DELETE
     404: "Instance with ID : 2 NOT FOUND"
 }
 ```
+
+The `update` operation is a combination of a `delete` and an `insert` operation. All exceptions for both the operation are inherited by update.
+
+<a name="design"></a>
+Design
+-------------
+This section explains the design, architecture and the implementation of Hydrus along with a few use cases for the same.
+
+
 <a name="dbdesign"></a>
 ### Database Design
 The design of the Database takes into account the different types of representations possible using the triple format.
