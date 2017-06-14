@@ -135,8 +135,8 @@ def insert(object_, id_=None, session=session):
 
     except Exception as e:
         print(e)
-        # session.delete(instance)
-        # session.commit()
+        session.delete(instance)
+        session.commit()
         return {400: "Something went wrong while inserting properties."}
 
     # Insert everything into database
@@ -159,13 +159,12 @@ def delete(id_, session=session):
         data = data_III + data_IIT + data_IAC
         for item in data:
             session.delete(item)
-#
         session.commit()
 
         instance.delete()
         session.commit()
         ### Deleting terminal data as it is highly unlikely that terminals have a same value
-        print("Deleting unused terminals.")
+        # print("Deleting unused terminals.")
         for data in data_IIT:
             # print(data)
             terminal = session.query(Terminal).filter(Terminal.id == data.object_)

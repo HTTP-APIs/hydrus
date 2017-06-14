@@ -58,7 +58,9 @@ class ViewsTestCase(unittest.TestCase):
         response_patch = self.app.patch(
             "/api/cots/1", object_=gen_random_object())
         response_delete = self.app.delete("/api/cots/1")
-
+        assert response_get.status_code == 200
+        assert response_post.status_code == 200
+        assert response_delete.status_code == 200
         # TO BE IMPLEMENTED
 
 
