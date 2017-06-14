@@ -218,7 +218,7 @@ Apart from `insert`, the CRUD operations also support `get`, `delete` and `updat
 
 GET
 ```python
-from hydru.data import crud
+from hydrus.data import crud
 import json
 
 instance = crud.get(id_=1)     # Return the Resource/Instance with ID = 1
@@ -239,7 +239,7 @@ print(json.dumps(instance, indent=4))
 ```
 DELETE
 ```python
-from hydru.data import crud
+from hydrus.data import crud
 import json
 
 output = crud.delete(id_=1)     # Deletes the Resource/Instance with ID = 1
@@ -251,7 +251,7 @@ print(json.dumps(output, indent=4))
 ```
 UPDATE
 ```python
-from hydru.data import crud
+from hydrus.data import crud
 import json
 
 new_object = {
