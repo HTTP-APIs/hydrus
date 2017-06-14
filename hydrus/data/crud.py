@@ -50,7 +50,7 @@ def get(id_, session=session):
         return {404: "Instance with ID : %s NOT FOUND" % id_}
 
 
-def insert(object_, id_=None):
+def insert(object_, id_=None, session=session):
     """Insert an object to database [POST] and returns the inserted object."""
     # NOTE: We are inserting the object, no need to check if similar one already exists.
     #       Data can be redundant/identical, they must have different "@id"
@@ -206,4 +206,4 @@ object__ = {
 # print(insert(object__, 6))
 # print(delete(6))
 # print(update(4, object__))
-print(get(6))
+# print(get(6))
