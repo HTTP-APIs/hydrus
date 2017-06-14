@@ -100,43 +100,21 @@ def insert(object_, id_=None, session=session):
                     class_ = session.query(RDFClass).filter(RDFClass.name == class_name).one()
                     triple = GraphIAC(subject=instance.id, predicate=property_.id, object_=class_.id)
                     triple_store.append(triple)
-<<<<<<< HEAD
-                # Handle invalid classes
-                else:
-                    session.delete(instance)
-                    session.commit()
-                    return {401: "The class %s is not a valid/defined RDFClass" % object_["object"][prop_name]}
 
-            # Insert a triple with an instance property
-            elif prop.type_ == "INSTANCE":
-                # When object is an instance >> GraphIII
-                if type(object_["object"][prop_name]) is dict:
-                    object_id = object_["object"][prop_name]["@id"]
-                    isValidObject = session.query(exists().where(Instance.id == object_id)).scalar()
-                    if isValidObject:
-                        triple = GraphIII(subject=instance.id, predicate=prop.id, object_=object_id)
-                        triple_store.append(triple)
-=======
                 # For insertion in III
                 elif session.query(exists().where(Instance.name == str(object_["object"][prop_name]))).scalar():
                     if session.query(exists().where(properties.name == prop_name)).scalar():
                         property_ = session.query(properties).filter(properties.name == prop_name).one()
->>>>>>> f0edfbd850aca77685f80f54dd6d25b024b9957c
                     else:
                         property_ = BaseProperty(name=prop_name, type_="ABSTRACT")
                         session.add(property_)
                         session.commit()
-<<<<<<< HEAD
-                        return {403: "The instance %s is not a valid Instance" % object_id}
-                # When object is a terminal >> GraphIIT
-=======
 
                     instance_name = object_["object"][prop_name]
                     instance_object = session.query(Instance).filter(Instance.name == instance_name).one()
                     triple = GraphIII(subject=instance.id, predicate=property_.id, object_=instance_object.id)
                     triple_store.append(triple)
                 # For insertion in IIT
->>>>>>> f0edfbd850aca77685f80f54dd6d25b024b9957c
                 else:
                     # We are not checking for existing terminals as it is highly unlikely two terminals have same value and
                     # this approach allows as to delete unused terminals upon deletion
@@ -153,14 +131,6 @@ def insert(object_, id_=None, session=session):
 
                     triple = GraphIIT(subject=instance.id, predicate=property_.id, object_=terminal.id)
                     triple_store.append(triple)
-<<<<<<< HEAD
-        else:
-            session.delete(instance)
-            session.commit()
-            return {402: "The property %s is not a valid/defined Property" % prop_name}
-=======
-
-
 
     except Exception as e:
         print(e)
@@ -168,7 +138,6 @@ def insert(object_, id_=None, session=session):
         session.commit()
         return {400: "Something went wrong while inserting properties."}
 
->>>>>>> f0edfbd850aca77685f80f54dd6d25b024b9957c
     # Insert everything into database
     session.add_all(triple_store)
     session.commit()
@@ -193,7 +162,7 @@ def delete(id_, session=session):
 
         instance.delete()
         session.commit()
-        ### Deleting terminal data as it is highly unlikely that terminals have a same value
+        # Deleting terminal data as it is highly unlikely that terminals have a same value
         # print("Deleting unused terminals.")
         for data in data_IIT:
             # print(data)
