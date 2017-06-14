@@ -12,6 +12,7 @@ Table of contents
     * [Adding data](#adddata)
         * [Classes and Properties](#classprop)
         * [Instances](#instance)
+    * [Manipulating data](#moddata)
     * [Setting up the server](#servsetup)
     * [Testing the server](#testserv)
     * [Using the client](#useclient)
@@ -67,7 +68,7 @@ This will successfully create all required models in the specified database.
 <a name="adddata"></a>
 ### Adding data
 Now that the database models have been setup, we need to populate them with data.
-
+---
 <a name="classprop"></a>
 #### Adding Classes and Properties
 The first step in adding data is adding the RDFClasses and Properties that the server must support. There are three ways to do this:
@@ -173,9 +174,37 @@ hydra_classes = parser.hydrafy_classes(owl_classes, hydra_props)    # Convert ea
 
 apidoc = gen_APIDoc(hydra_classes)      # Create API Documentation with the Hydra:supportedClass
 ```
-
+---
 #### Adding Instances/Resources
+To add objects to the instances for a given class, we first need to define a standard way of declaring instances.
+We have given an example of a subsystem instance below
+```python
+instance = {
+    "name": "12W communication",    # The name of the instance must be in "name"
+    "object": {
+        # The "object" key contains all the properties and their values for a given instance
+        "maxWorkingTemperature": 63,    # InstanceProperty: Value, Value is automatically converted to Terminal Object
 
+        # In case the Value for a property is another Resource, we use the following syntax
+        "hasDuplicate":{
+            "@id": "subsystem/34"   # The "@id" tag gives the ID of the other instance
+        }
+
+        # In case the property is an AbstractProperty, the class name should be given as Value
+        "category": "Spacecraft_Communication",     # AbstractProperty: Classname, Classname is automatically mapped to relevant RDFClass
+    }
+}
+
+```
+Once we have defined such an `instance`, we can use the built in CRUD operations of Hydrus to add these instances.
+```python
+from hydrus.data import crud
+
+crud.insert(object_=instance)   # This will insert 'instance' into Instance and all other information into Graph.
+
+# Optionally, we can specify the ID of an instance if it is not already used
+crud.insert(object_=instance, id_=1)    #This will insert 'instance' with ID = 1  
+```
 
 <a name="design"></a>
 Design
