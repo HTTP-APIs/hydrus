@@ -88,7 +88,7 @@ def insert(object_, id_=None):
                 else:
                     session.delete(instance)
                     session.commit()
-                    return {400: "The class %s is not a valid/defined RDFClass" % object_["object"][prop_name]}
+                    return {401: "The class %s is not a valid/defined RDFClass" % object_["object"][prop_name]}
 
             # Insert a triple with an instance property
             elif prop.type_ == "INSTANCE":
@@ -102,7 +102,7 @@ def insert(object_, id_=None):
                     else:
                         session.delete(instance)
                         session.commit()
-                        return {400: "The instance %s is not a valid Instance" % object_id}
+                        return {403: "The instance %s is not a valid Instance" % object_id}
                 # When object is a terminal >> GraphIIT
                 else:
                     # NOTE: Add code here to check existing terminals
@@ -114,7 +114,7 @@ def insert(object_, id_=None):
         else:
             session.delete(instance)
             session.commit()
-            return {400: "The property %s is not a valid/defined Property" % prop_name}
+            return {402: "The property %s is not a valid/defined Property" % prop_name}
     # Insert everything into database
     session.add_all(triple_store)
     session.commit()
