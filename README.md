@@ -320,12 +320,38 @@ DELETE
 
 The `update` operation is a combination of a `delete` and an `insert` operation. All exceptions for both the operation are inherited by update.
 
+<a name="servsetup"></a>
+### Setting up the server
+The following section explains how the server needs to be setup to be able to serve the data we added in the previous section.
+
+The generic server is implemented using the [Flask](http://flask.pocoo.org/) micro-framework. To get the server up and running, all you need to do is:
+```python
+from hydru.app import app
+
+IP = "127.0.0.1"
+port_ = 8000
+app.run(host=IP, port=port_)
+
+# The server will be running at http://127.0.0.1:8000/
+```
+
+<a name="test"></a>
+### Running tests
+There are a number of tests in place to ensure that Hydrus functions properly.
+For running tests related to ensure the validity of the database run
+`python -m unittest hydrus.data.test_db`
+
+For running client side tests related to the server, run
+`python -m unittest hydrus.test_app`
+---
+<a name="client"></a>
+### Using the client
+(Under developement) client not yet ready
+
 <a name="design"></a>
 Design
 -------------
 This section explains the design, architecture and the implementation of Hydrus along with a few use cases for the same.
-
-
 <a name="dbdesign"></a>
 ### Database Design
 The design of the Database takes into account the different types of representations possible using the triple format.
