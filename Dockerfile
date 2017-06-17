@@ -8,14 +8,10 @@ RUN pip install -U pip
 RUN pip install -r requirements.txt
 
 RUN rm -rf *
-
+COPY ./init_db.sh /app/
 COPY  ./hydrus/ /app/hydrus/
 
 ENV PYTHONPATH $PYTHONPATH:/app/
-RUN python --version
-RUN python hydrus/data/db_models.py
-RUN python hydrus/data/insert_classes.py
-RUN python hydrus/data/insert_data.py
 
 RUN mv hydrus/uwsgi.ini ./uwsgi.ini
 

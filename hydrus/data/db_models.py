@@ -3,9 +3,12 @@
 from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String
+import os
 
-engine = create_engine('sqlite:///database.db')
-# engine = create_engine("postgresql://postgres:  @localhost:5432/hydra")
+# engine = create_engine('sqlite:///database.db')
+POSTGRES_URL = os.environ["POSTGRES_1_PORT_5432_TCP_ADDR"]
+
+engine = create_engine("postgresql://hydra:hailhydra@%s:5432/hydrus"%(POSTGRES_URL,))
 Base = declarative_base()
 
 
