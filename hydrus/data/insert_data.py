@@ -119,7 +119,7 @@ def insert_data(objects):
 # session.add_all(triple_store)
 # session.commit()
 if __name__ == "__main__":
-    objects = gen_cots(10)
+    objects = gen_cots(100)
     print(objects)
     insertion_ids = insert_data(objects)
     print(insertion_ids)
