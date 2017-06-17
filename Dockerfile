@@ -8,7 +8,7 @@ RUN pip install -U pip
 RUN pip install -r requirements.txt
 
 RUN rm -rf *
-COPY ./init_db.sh /app/
+
 COPY  ./hydrus/ /app/hydrus/
 
 ENV PYTHONPATH $PYTHONPATH:/app/

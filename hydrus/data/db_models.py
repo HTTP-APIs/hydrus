@@ -6,7 +6,7 @@ from sqlalchemy import Column, Integer, String
 import os
 
 # engine = create_engine('sqlite:///database.db')
-POSTGRES_URL = os.environ["POSTGRES_1_PORT_5432_TCP_ADDR"]
+POSTGRES_URL = os.environ.get("POSTGRES_1_PORT_5432_TCP_ADDR", 'localhost')
 
 engine = create_engine("postgresql://hydra:hailhydra@%s:5432/hydrus"%(POSTGRES_URL,))
 Base = declarative_base()
