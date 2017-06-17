@@ -92,7 +92,7 @@ def insert(object_, id_=None, session=session):
                     if session.query(exists().where(properties.name == prop_name)).scalar():
                         property_ = session.query(properties).filter(properties.name == prop_name).one()
                     else:
-                        property_ = BaseProperty(name=prop_name, type_="ABSTRACT")
+                        property_ = AbstractProperty(name=prop_name)
                         session.add(property_)
                         session.commit()
 
@@ -105,7 +105,7 @@ def insert(object_, id_=None, session=session):
                     if session.query(exists().where(properties.name == prop_name)).scalar():
                         property_ = session.query(properties).filter(properties.name == prop_name).one()
                     else:
-                        property_ = BaseProperty(name=prop_name, type_="ABSTRACT")
+                        property_ = AbstractProperty(name=prop_name)
                         session.add(property_)
                         session.commit()
 
@@ -124,7 +124,7 @@ def insert(object_, id_=None, session=session):
                     if session.query(exists().where(properties.name == prop_name)).scalar():
                         property_ = session.query(properties).filter(properties.name == prop_name).one()
                     else:
-                        property_ = BaseProperty(name=prop_name, type_="INSTANCE")
+                        property_ = InstanceProperty(name=prop_name)
                         session.add(property_)
                         session.commit()
 
@@ -202,7 +202,7 @@ object__ = {
 }
 
 # print(update(6, object__))
-# print(insert(object__, 6))
+# print(insert(object__, 1253))
 # print(delete(6))
 # print(update(4, object__))
-# print(get(6))
+print(get(1253))
