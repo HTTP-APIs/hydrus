@@ -11,8 +11,11 @@ def insert_data(objects):
 
     insertion_ids = []
     for object_ in objects:
-        id_ = insert(object_)
-        insertion_ids.append(id_)
+        try:
+            id_ = insert(object_)
+            insertion_ids.append(id_)
+        except:
+            print("Error occured, skipping object.")
     return insertion_ids
 # # Temporary storge for the Graph
 # triple_store = list()
@@ -116,7 +119,8 @@ def insert_data(objects):
 # session.add_all(triple_store)
 # session.commit()
 if __name__ == "__main__":
-    objects = gen_cots(100)
+    objects = gen_cots(10)
+    print(objects)
     insertion_ids = insert_data(objects)
     print(insertion_ids)
     print("Data insertion done!")
