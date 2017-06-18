@@ -1,0 +1,17 @@
+hydrus:
+  restart: always
+  build: ./
+  ports:
+    - "8080:80"
+  links:
+    - postgres:postgres
+
+postgres:
+  restart: always
+  environment:
+    - POSTGRES_USER=hydra
+    - POSTGRES_PASSWORD=hailhydra
+    - POSTGRES_DB=hydrus
+  image: postgres:latest
+  ports:
+    - "5432:5432"
