@@ -14,4 +14,4 @@ postgres:
     - POSTGRES_DB=hydrus
   image: postgres:latest
   ports:
-    - "5432:5432"
+    - "9000:5432"
