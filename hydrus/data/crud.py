@@ -54,90 +54,82 @@ def insert(object_, id_=None, session=session):
     """Insert an object to database [POST] and returns the inserted object."""
     # NOTE: We are inserting the object, no need to check if similar one already exists.
     #       Data can be redundant/identical, they must have different "@id"
+    rdf_class = None
+    instance = None
 
-    # Added the keymap to generator, no need to use here
-    if id_ is not None:
-        if session.query(exists().where(Instance.id == id_)).scalar():
-            print("ID already exists, updating the object instead.")
-            update(id_, object_)
-            # Recreate the instance after deletion if isn't already present
-            if session.query(exists().where(Instance.id == id_)).scalar():
-                instance = session.query(Instance).filter(Instance.id == id_).one()
-            else:
-                rdf_class = session.query(RDFClass).filter(RDFClass.name == object_["object"]["category"]).one()
-                instance = Instance(name=object_["name"], id=id_, type_=rdf_class.id)
-                session.add(instance)
-                session.commit()
-        else:
-            try:
-                rdf_class = session.query(RDFClass).filter(RDFClass.name == object_["object"]["category"]).one()
-                instance = Instance(name=object_["name"], id=id_, type_=rdf_class.id)
-                session.add(instance)
-                session.commit()
-            except IntegrityError:
-                return {400: "Instance with ID : %s already exists" % (str(id_))}
-    else:
+    # Check for class in the begging, no need to do multiple times in all if...else conditions
+    if session.query(exists().where(RDFClass.name == object_["object"]["category"])).scalar():
         rdf_class = session.query(RDFClass).filter(RDFClass.name == object_["object"]["category"]).one()
+    else:
+        return {404: "RDFClass %s NOT FOUND" % object_["object"]["category"]}
+
+    if id_ is not None:
+        # Update the object if ID already exists
+        if session.query(exists().where(Instance.id == id_)).scalar():
+            return update(id_, object_)
+        # Return is initiated, no need to include else
         instance = Instance(name=object_["name"], id=id_, type_=rdf_class.id)
-        session.add(instance)
-        session.commit()
+    else:
+        # When ID is none, we can't pass it to SQLAlchemy
+        instance = Instance(name=object_["name"], type_=rdf_class.id)
+
+    session.add(instance)
+    session.commit()
 
     triple_store = list()
-    try:
-        for prop_name in object_["object"]:
-            if prop_name != "category":
-
-                # For insertion in IAC
-                if session.query(exists().where(RDFClass.name == str(object_["object"][prop_name]))).scalar():
-                    if session.query(exists().where(properties.name == prop_name)).scalar():
-                        property_ = session.query(properties).filter(properties.name == prop_name).one()
-                    else:
-                        property_ = AbstractProperty(name=prop_name)
-                        session.add(property_)
-                        session.commit()
-
-                    class_name = object_["object"][prop_name]
-                    class_ = session.query(RDFClass).filter(RDFClass.name == class_name).one()
-                    triple = GraphIAC(subject=instance.id, predicate=property_.id, object_=class_.id)
-                    triple_store.append(triple)
-                # For insertion in III
-                elif session.query(exists().where(Instance.name == str(object_["object"][prop_name]))).scalar():
-                    if session.query(exists().where(properties.name == prop_name)).scalar():
-                        property_ = session.query(properties).filter(properties.name == prop_name).one()
-                    else:
-                        property_ = AbstractProperty(name=prop_name)
-                        session.add(property_)
-                        session.commit()
-
-                    instance_name = object_["object"][prop_name]
-                    instance_object = session.query(Instance).filter(Instance.name == instance_name).one()
-                    triple = GraphIII(subject=instance.id, predicate=property_.id, object_=instance_object.id)
-                    triple_store.append(triple)
-                # For insertion in IIT
+    # try:
+    for prop_name in object_["object"]:
+        if prop_name != "category":
+            # For insertion in IAC
+            if session.query(exists().where(RDFClass.name == str(object_["object"][prop_name]))).scalar():
+                if session.query(exists().where(AbstractProperty.name == prop_name)).scalar():
+                    property_ = session.query(properties).filter(AbstractProperty.name == prop_name).one()
                 else:
-                    # We are not checking for existing terminals as it is highly unlikely two terminals have same value and
-                    # this approach allows as to delete unused terminals upon deletion
-
-                    terminal = Terminal(value=object_["object"][prop_name], unit="unit")
-                    session.add(terminal)
+                    property_ = AbstractProperty(name=prop_name)
+                    session.add(property_)
                     session.commit()
-                    if session.query(exists().where(properties.name == prop_name)).scalar():
-                        property_ = session.query(properties).filter(properties.name == prop_name).one()
-                    else:
-                        property_ = InstanceProperty(name=prop_name)
-                        session.add(property_)
-                        session.commit()
 
-                    triple = GraphIIT(subject=instance.id, predicate=property_.id, object_=terminal.id)
-                    triple_store.append(triple)
+                class_name = object_["object"][prop_name]
+                class_ = session.query(RDFClass).filter(RDFClass.name == class_name).one()
+                triple = GraphIAC(subject=instance.id, predicate=property_.id, object_=class_.id)
+                triple_store.append(triple)
+            # For insertion in III
+            # NOTE: An instance would have to be a JSON object, not string. Otherwise we may have an instance named 23 which will be added
+            #  everytime the number is used. Use instance = {"@id": 2 }, where 2 is the ID of the instance.
+            elif session.query(exists().where(Instance.name == object_["object"][prop_name]["@id"])).scalar():
+                if session.query(exists().where(InstanceProperty.name == prop_name)).scalar():
+                    property_ = session.query(InstanceProperty).filter(InstanceProperty.name == prop_name).one()
+                else:
+                    property_ = InstanceProperty(name=prop_name)
+                    session.add(property_)
+                    session.commit()
 
+                instance_name = object_["object"][prop_name]
+                instance_object = session.query(Instance).filter(Instance.name == instance_name).one()
+                triple = GraphIII(subject=instance.id, predicate=property_.id, object_=instance_object.id)
+                triple_store.append(triple)
+            # For insertion in IIT
+            else:
+                terminal = Terminal(value=object_["object"][prop_name], unit="unit")
+                session.add(terminal)
+                session.commit()
 
+                if session.query(exists().where(InstanceProperty.name == prop_name)).scalar():
+                    property_ = session.query(InstanceProperty).filter(InstanceProperty.name == prop_name).one()
+                else:
+                    property_ = InstanceProperty(name=prop_name)
+                    session.add(property_)
+                    session.commit()
 
-    except Exception as e:
-        print(e)
-        session.delete(instance)
-        session.commit()
-        return {400: "Something went wrong while inserting properties."}
+                triple = GraphIIT(subject=instance.id, predicate=property_.id, object_=terminal.id)
+                triple_store.append(triple)
+
+    # NOTE: Not good to catch exceptions that can't be handled
+    # except Exception as e:
+    #     print(e)
+    #     session.delete(instance)
+    #     session.commit()
+    #     return {400: "Something went wrong while inserting properties."}
 
     # Insert everything into database
     session.add_all(triple_store)
@@ -163,7 +155,7 @@ def delete(id_, session=session):
 
         instance.delete()
         session.commit()
-        ### Deleting terminal data as it is highly unlikely that terminals have a same value
+        # Deleting terminal data as it is highly unlikely that terminals have a same value
         # print("Deleting unused terminals.")
         for data in data_IIT:
             # print(data)
@@ -202,7 +194,7 @@ object__ = {
 }
 
 # print(update(6, object__))
-# print(insert(object__, 1253))
+print(insert(object__, 1253))
 # print(delete(6))
 # print(update(4, object__))
 print(get(1253))
