@@ -4,7 +4,6 @@ from sqlalchemy.orm import sessionmaker, with_polymorphic
 from sqlalchemy import exists
 from hydrus.data.db_models import (Graph, BaseProperty, RDFClass, Instance, InstanceProperty, AbstractProperty,
                                    Terminal, engine, GraphIAC, GraphIIT, GraphIII)
-import pdb
 
 Session = sessionmaker(bind=engine)
 session = Session()
