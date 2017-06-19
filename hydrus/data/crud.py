@@ -41,6 +41,9 @@ def get(id_, session=session):
             terminal = session.query(Terminal).filter(Terminal.id == data.object_).one()
             object_template["object"][prop_name] = terminal.value + " " + terminal.unit
 
+        category_name = session.query(RDFClass).filter(RDFClass.id == instance.type_).one().name
+        object_template["object"]["category"] = category_name
+
         object_template["name"] = instance.name
         object_template["@id"] = id_
 

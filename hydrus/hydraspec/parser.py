@@ -1,9 +1,9 @@
-"""Script to parse OWL annotations and generate Hydra API Documentation."""
+"""Script to parse OWL annotations and generate a list of supported Hydra classes."""
 import json
 import pdb
 
 from hydrus.hydraspec.crud import template
-from hydrus.metadata.subsystem_jsonld import subsystem_data
+from hydrus.metadata.subsystem_vocab_jsonld import subsystem_data
 
 
 def get_all_classes(owl_data):
@@ -18,7 +18,6 @@ def get_all_classes(owl_data):
 def hydrafy_class(class_, supported_props):
     """Create Hydra specific Class from owl:owlClass JSON-LD."""
     hydra_class = {
-      "@context": "http://www.w3.org/ns/hydra/context.jsonld",
       "@id": "http://api.example.com/doc/#Comment",
       "@type": "Class",
       "title": "The name of the class",
@@ -141,23 +140,11 @@ def terminal_props(class_, properties):
     return additional_props
 
 
-def gen_APIDoc(hydra_classes):
-    """Generate Hydra API Documentation for given hydra classes."""
-    template = {
-      "@context": "http://www.w3.org/ns/hydra/context.jsonld",
-      "@id": "http://api.example.com/doc/",
-      "@type": "ApiDocumentation",
-      "title": "The name of the API",
-      "description": "A short description of the API",
-      "entrypoint": "URL of the API's main entry point",
-      "supportedClass": [
-      ],
-      "possibleStatus": [
-      ]
-    }
-    template["supportedClass"] = hydra_classes
-    return template
+def gen_supported_classes(hydra_classes):
+    """Return a list of supported classes parsed from the OWL vocabulary."""
+    supported_classes = hydrs_classes
 
+    return supported_classes
 
 if __name__ == "__main__":
     # NOTE: Usage must be in the following order
@@ -179,6 +166,6 @@ if __name__ == "__main__":
     hydra_classes = hydrafy_classes(owl_classes, hydra_props)
 
     # Create API Documentation with the Hydra:Class list
-    apidoc = gen_APIDoc(hydra_classes)
+    supported_classes = gen_supported_classes(hydra_classes)
 
-    print(json.dumps(apidoc, indent=4))
+    print(json.dumps(supported_classes, indent=4))
