@@ -2,9 +2,9 @@
 
 from sqlalchemy.orm import sessionmaker, with_polymorphic
 from sqlalchemy import exists
-from sqlalchemy.exc import IntegrityError
 from hydrus.data.db_models import (Graph, BaseProperty, RDFClass, Instance, InstanceProperty, AbstractProperty,
-                       Terminal, engine, GraphIAC, GraphIIT, GraphIII)
+                                   Terminal, engine, GraphIAC, GraphIIT, GraphIII)
+import pdb
 
 Session = sessionmaker(bind=engine)
 session = Session()
@@ -81,48 +81,51 @@ def insert(object_, id_=None, session=session):
     for prop_name in object_["object"]:
         if prop_name != "category":
             # For insertion in IAC
-            if session.query(exists().where(RDFClass.name == str(object_["object"][prop_name]))).scalar():
-                if session.query(exists().where(AbstractProperty.name == prop_name)).scalar():
-                    property_ = session.query(properties).filter(AbstractProperty.name == prop_name).one()
-                else:
-                    property_ = AbstractProperty(name=prop_name)
-                    session.add(property_)
-                    session.commit()
+            if type(object_["object"][prop_name]) == dict:
+                # For insertion in III
+                # NOTE: An instance would have to be a JSON object, not string. Otherwise we may have an instance named 23 which will be added
+                #  everytime the number is used. Use instance = {"@id": 2 }, where 2 is the ID of the instance.
+                if session.query(exists().where(Instance.name == object_["object"][prop_name]["@id"])).scalar():
+                    if session.query(exists().where(InstanceProperty.name == prop_name)).scalar():
+                        property_ = session.query(InstanceProperty).filter(InstanceProperty.name == prop_name).one()
+                    else:
+                        property_ = InstanceProperty(name=prop_name)
+                        session.add(property_)
+                        session.commit()
 
-                class_name = object_["object"][prop_name]
-                class_ = session.query(RDFClass).filter(RDFClass.name == class_name).one()
-                triple = GraphIAC(subject=instance.id, predicate=property_.id, object_=class_.id)
-                triple_store.append(triple)
-            # For insertion in III
-            # NOTE: An instance would have to be a JSON object, not string. Otherwise we may have an instance named 23 which will be added
-            #  everytime the number is used. Use instance = {"@id": 2 }, where 2 is the ID of the instance.
-            elif session.query(exists().where(Instance.name == object_["object"][prop_name]["@id"])).scalar():
-                if session.query(exists().where(InstanceProperty.name == prop_name)).scalar():
-                    property_ = session.query(InstanceProperty).filter(InstanceProperty.name == prop_name).one()
-                else:
-                    property_ = InstanceProperty(name=prop_name)
-                    session.add(property_)
-                    session.commit()
+                    instance_name = object_["object"][prop_name]
+                    instance_object = session.query(Instance).filter(Instance.name == instance_name).one()
+                    triple = GraphIII(subject=instance.id, predicate=property_.id, object_=instance_object.id)
+                    triple_store.append(triple)
 
-                instance_name = object_["object"][prop_name]
-                instance_object = session.query(Instance).filter(Instance.name == instance_name).one()
-                triple = GraphIII(subject=instance.id, predicate=property_.id, object_=instance_object.id)
-                triple_store.append(triple)
-            # For insertion in IIT
             else:
-                terminal = Terminal(value=object_["object"][prop_name], unit="unit")
-                session.add(terminal)
-                session.commit()
+                if session.query(exists().where(RDFClass.name == str(object_["object"][prop_name]))).scalar():
+                    if session.query(exists().where(properties.name == prop_name)).scalar():
+                        property_ = session.query(AbstractProperty).filter(AbstractProperty.name == prop_name).one()
+                    else:
+                        property_ = AbstractProperty(name=prop_name)
+                        session.add(property_)
+                        session.commit()
 
-                if session.query(exists().where(InstanceProperty.name == prop_name)).scalar():
-                    property_ = session.query(InstanceProperty).filter(InstanceProperty.name == prop_name).one()
+                    class_name = object_["object"][prop_name]
+                    class_ = session.query(RDFClass).filter(RDFClass.name == class_name).one()
+                    triple = GraphIAC(subject=instance.id, predicate=property_.id, object_=class_.id)
+                    triple_store.append(triple)
+                # For insertion in IIT
                 else:
-                    property_ = InstanceProperty(name=prop_name)
-                    session.add(property_)
+                    terminal = Terminal(value=object_["object"][prop_name], unit="unit")
+                    session.add(terminal)
                     session.commit()
 
-                triple = GraphIIT(subject=instance.id, predicate=property_.id, object_=terminal.id)
-                triple_store.append(triple)
+                    if session.query(exists().where(properties.name == prop_name)).scalar():
+                        property_ = session.query(InstanceProperty).filter(InstanceProperty.name == prop_name).one()
+                    else:
+                        property_ = InstanceProperty(name=prop_name)
+                        session.add(property_)
+                        session.commit()
+
+                    triple = GraphIIT(subject=instance.id, predicate=property_.id, object_=terminal.id)
+                    triple_store.append(triple)
 
     # NOTE: Not good to catch exceptions that can't be handled
     # except Exception as e:
@@ -194,7 +197,7 @@ object__ = {
 }
 
 # print(update(6, object__))
-print(insert(object__, 1253))
+print(insert(object__, 12222))
 # print(delete(6))
 # print(update(4, object__))
-print(get(1253))
+print(get(12222))
