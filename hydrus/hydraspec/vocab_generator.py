@@ -1,4 +1,4 @@
-"""Genrate a vocabulary based on parsed classes, server url, item_type and item_semantic_url."""
+"""Genrate hydra vocabulary using parsed classes, server url, item_type and item_semantic_url."""
 
 import json
 from hydrus.metadata.subsystem_parsed_classes import parsed_classes
