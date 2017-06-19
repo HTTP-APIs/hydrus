@@ -51,8 +51,6 @@ def get(id_, session=session):
 
 def insert(object_, id_=None, session=session):
     """Insert an object to database [POST] and returns the inserted object."""
-    # NOTE: We are inserting the object, no need to check if similar one already exists.
-    #       Data can be redundant/identical, they must have different "@id"
     rdf_class = None
     instance = None
 
