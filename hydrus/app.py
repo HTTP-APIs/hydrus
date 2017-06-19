@@ -6,6 +6,7 @@ from hydrus.data import crud
 # import json
 from hydrus.metadata.vocab import vocab
 from hydrus.hydraspec.contexts.entrypoint import entrypoint_context
+from hydrus.metadata.entrypoint import entrypoint
 from hydrus.hydraspec.contexts.cots import cots_context
 
 
@@ -38,7 +39,7 @@ class Index(Resource):
 
     def get(self):
         """Return main entrypoint for the api."""
-        return set_response_headers(jsonify(entrypoint_context), 'application/ld+json', 200)
+        return set_response_headers(jsonify(entrypoint), 'application/ld+json', 200)
 
 
 api.add_resource(Index, "/api", endpoint="api")
