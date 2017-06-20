@@ -15,7 +15,7 @@ app = Flask(__name__)
 api = Api(app)
 
 
-def set_response_headers(resp, ct="application/json", status_code=200):
+def set_response_headers(resp, ct="application/ld+json", status_code=200):
     """
     Set the response headers.
 
@@ -122,7 +122,7 @@ class Item(Resource):
         return set_response_headers(jsonify(resp))
 
 ### Needs to be changed manually
-api.add_resource(Cots, "/api/cots/<string:id_>", endpoint="cots")
+api.add_resource(Item, "/api/cots/<string:id_>", endpoint="cots")
 
 class ItemCollection(Resource):
     """Handle operation related to ItemCollection (a collection of items)."""
@@ -131,9 +131,9 @@ class ItemCollection(Resource):
         """Retrieve a collection of items from the database."""
         # Needs to be discussed.
         pass
-        
+
 ### Needs to be added manually.
-api.add_resource(Cots, "/api/cots", endpoint="cots_collection")
+api.add_resource(ItemCollection, "/api/cots", endpoint="cots_collection")
 
 
 class Vocab(Resource):
