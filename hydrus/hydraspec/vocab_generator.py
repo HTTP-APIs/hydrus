@@ -3,7 +3,9 @@
 import json
 from hydrus.metadata.subsystem_parsed_classes import parsed_classes
 
+
 def gen_vocab(parsed_classes, server_url, item_type, item_semantic_url):
+    """Generate Hydra Vocabulary."""
     SERVER_URL = server_url
     ITEM_TYPE = item_type
     ITEM_SEMANTIC_URL = item_semantic_url
@@ -188,6 +190,8 @@ def gen_vocab(parsed_classes, server_url, item_type, item_semantic_url):
 
     return json.dumps(vocab_template, indent=4)
 
-# DEMO
-print(gen_vocab(parsed_classes, "http://hydrus.com/", "Cots",
+
+if __name__ == "__main__":
+    # DEMO
+    print(gen_vocab(parsed_classes, "http://hydrus.com/", "Cots",
           "http://ontology.projectchronos.eu/subsystems?format=jsonld"))
