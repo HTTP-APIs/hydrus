@@ -3,16 +3,15 @@
 from sqlalchemy.orm import sessionmaker, with_polymorphic
 from sqlalchemy import exists
 from sqlalchemy.orm.exc import NoResultFound
-from hydrus.data.db_models import (Graph, BaseProperty, RDFClass, Instance, InstanceProperty,
+from hydrus.data.db_models import (Graph, BaseProperty, RDFClass, Instance,
                                    Terminal, engine, GraphIAC, GraphIIT, GraphIII)
-
 Session = sessionmaker(bind=engine)
 session = Session()
 triples = with_polymorphic(Graph, '*')
 properties = with_polymorphic(BaseProperty, "*")
 
 
-def get(id_, session=session):
+def get(id_, type_, session=session):
     """Retrieve an Instance with given ID from the database [GET]."""
     object_template = {
         "object": {
@@ -21,9 +20,14 @@ def get(id_, session=session):
         "@id": ""
     }
     try:
-        instance = session.query(Instance).filter(Instance.id == id_).one()
+        rdf_class = session.query(RDFClass).filter(RDFClass.name == type_).one()
     except NoResultFound:
-        return {404: "Instance with ID : %s NOT FOUND" % id_}
+        return {401: "The class %s is not a valid/defined RDFClass" % type_}
+
+    try:
+        instance = session.query(Instance).filter(Instance.id == id_, Instance.type_ == rdf_class.id).one()
+    except NoResultFound:
+        return {404: "Instance with ID : %s of Type : %s, NOT FOUND" % (id_, type_)}
 
     data_IAC = session.query(triples).filter(triples.GraphIAC.subject == id_).all()
     data_III = session.query(triples).filter(triples.GraphIII.subject == id_).all()
@@ -36,7 +40,7 @@ def get(id_, session=session):
 
     for data in data_III:
         prop_name = session.query(properties).filter(properties.id == data.predicate).one().name
-        object_ = get(data.object_)     # Recursive call should get the instance needed
+        object_ = get(data.object_, type_)     # Recursive call should get the instance needed
         object_template["object"][prop_name] = object_
 
     for data in data_IIT:
@@ -46,6 +50,7 @@ def get(id_, session=session):
 
     object_template["name"] = instance.name
     object_template["@id"] = id_
+    object_template["@type"] = type_
 
     return object_template
 
@@ -57,10 +62,9 @@ def insert(object_, id_=None, session=session):
 
     # Check for class in the begging
     try:
-        rdf_class = session.query(RDFClass).filter(RDFClass.name == object_["object"]["category"]).one()
-        object_["object"].pop("category")
+        rdf_class = session.query(RDFClass).filter(RDFClass.name == object_["@type"]).one()
     except NoResultFound:
-        return {401: "The class %s is not a valid/defined RDFClass" % object_["object"]["category"]}
+        return {401: "The class %s is not a valid/defined RDFClass" % object_["@type"]}
 
     if id_ is not None:
         # Update the object if ID already exists
@@ -147,15 +151,20 @@ def insert(object_, id_=None, session=session):
                     return {402: "%s is not an Instance Property" % prop_name}
 
     session.commit()
+    # pdb.set_trace()
     return {204: "Object successfully added!"}
 
 
-def delete(id_, session=session):
+def delete(id_, type_, session=session):
     """Delete an Instance and all its relations from DB given id [DELETE]."""
     try:
-        instance = session.query(Instance).filter(Instance.id == id_).one()
+        rdf_class = session.query(RDFClass).filter(RDFClass.name == type_).one()
     except NoResultFound:
-        return {404: "Instance with ID : %s NOT FOUND" % id_}
+        return {401: "The class %s is not a valid/defined RDFClass" % type_}
+    try:
+        instance = session.query(Instance).filter(Instance.id == id_ and type_ == rdf_class.id).one()
+    except NoResultFound:
+        return {404: "Instance with ID : %s and Type : %s, NOT FOUND" % (id_, type_)}
 
     data_IIT = session.query(triples).filter(triples.GraphIIT.subject == id_).all()
     data_IAC = session.query(triples).filter(triples.GraphIAC.subject == id_).all()
@@ -165,34 +174,42 @@ def delete(id_, session=session):
     for item in data:
         session.delete(item)
 
-    session.delete(instance)
-    # Deleting terminal data as it is highly unlikely that terminals have a same value
-    # print("Deleting unused terminals.")
     for data in data_IIT:
-        terminal = session.query(Terminal).filter(Terminal.id == data.object_)
+        terminal = session.query(Terminal).filter(Terminal.id == data.object_).one()
         session.delete(terminal)
 
+    session.delete(instance)
     session.commit()
     return {204: "Object with ID : %s successfully deleted!" % (id_)}
 
 
-def update(id_, object_, session=session):
+def update(id_, type_, object_, session=session):
     """Update an object properties based on the given object [PUT]."""
-    instanceExists = session.query(exists().where(Instance.id == id_)).scalar()
-    if instanceExists:
-        delete(id_)
-        insert(object_, id_)
-        return {204: "Object with ID : %s successfully updated!" % (id_)}
+    # Keep the object as fail safe
+    instance = get(id_, type_)
+    if "object" in instance:
+        instance.pop("@id")
+        # Try deleteing the object
+        delete_status = delete(id_=id_, type_=type_)
+        if 204 in delete_status:
+            # Try inserting the new data
+            insert_status = insert(object_=object_, id_=id_)
+            if 204 in insert_status:
+                return {204: "Object with ID : %s successfully updated!" % (id_)}
+            else:
+                insert(id_, instance)
+                return insert_status
+        else:
+            return delete_status
     else:
-        return {404: "Instance with ID : %s NOT FOUND" % id_}
+        return instance
 
 
 object__ = {
     "name": "12W communication",
+    "@type": "Spacecraft_Communication",
     "object": {
-        "category": "Spacecraft_Communication",
         "hasMass": 9000,
-        "isComponentOf": {"@id": 1},
         "hasMonetaryValue": 4,
         "hasPower": -61,
         "hasVolume": 99,
@@ -201,8 +218,9 @@ object__ = {
     }
 }
 
-# print(update(6, object__))
-# print(insert(object__, 1))
-print(delete(1))
-# print(update(4, object__))
-print(get(12212))
+if __name__ == "__main__":
+    # print(update(6, object__))
+    # print(insert(object__, 1))
+    # print(delete(1))
+    # print(update(4, object__))
+    print(get(1, "Spacecraft_Communication"))
