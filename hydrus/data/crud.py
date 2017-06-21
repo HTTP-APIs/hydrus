@@ -40,7 +40,8 @@ def get(id_, type_, session=session):
 
     for data in data_III:
         prop_name = session.query(properties).filter(properties.id == data.predicate).one().name
-        object_ = get(data.object_, type_)     # Recursive call should get the instance needed
+        instance = session.query(Instance).filter(Instance.id == data.object_).one()
+        object_ = get(id_=instance.id, type_=instance.type_, session=session)     # Recursive call should get the instance needed
         object_template["object"][prop_name] = object_
 
     for data in data_IIT:
@@ -186,18 +187,18 @@ def delete(id_, type_, session=session):
 def update(id_, type_, object_, session=session):
     """Update an object properties based on the given object [PUT]."""
     # Keep the object as fail safe
-    instance = get(id_, type_)
+    instance = get(id_, type_, session)
     if "object" in instance:
         instance.pop("@id")
         # Try deleteing the object
-        delete_status = delete(id_=id_, type_=type_)
+        delete_status = delete(id_=id_, type_=type_, session=session)
         if 204 in delete_status:
             # Try inserting the new data
-            insert_status = insert(object_=object_, id_=id_)
+            insert_status = insert(object_=object_, id_=id_, session=session)
             if 204 in insert_status:
                 return {204: "Object with ID : %s successfully updated!" % (id_)}
             else:
-                insert(id_, instance)
+                insert(id_=id_, object_=instance, session=session)
                 return insert_status
         else:
             return delete_status
