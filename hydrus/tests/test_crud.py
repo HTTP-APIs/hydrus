@@ -190,6 +190,11 @@ class TestCRUD(unittest.TestCase):
         assert 204 in insert_response_1
         assert 402 in insert_response_2
 
+    @classmethod
+    def tearDownClass(self):
+        """Undo the setUp steps for the Class."""
+        self.session.close()
+
 
 if __name__ == '__main__':
     unittest.main()
