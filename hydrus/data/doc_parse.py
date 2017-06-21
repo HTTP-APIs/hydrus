@@ -3,15 +3,15 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import exists
 
 from hydrus.data.db_models import RDFClass, BaseProperty, engine
-from hydrus.hydraspec.spacecraft_apidoc import spacecraft_apidoc
-from hydrus.hydraspec.subsystem_apidoc import subsystem_apidoc
+from hydrus.metadata.vocab import vocab
 
 
 def get_classes(apidoc):
     """Get all the classes in the APIDocumentation."""
     classes = list()
     for class_ in apidoc["supportedClass"]:
-        classes.append(class_)
+        if class_["@id"] not in ["http://www.w3.org/ns/hydra/core#Collection", "http://www.w3.org/ns/hydra/core#Resource", "vocab:EntryPoint"]:
+            classes.append(class_)
     return classes
 
 
@@ -27,43 +27,41 @@ def get_all_properties(classes):
     return set(prop_names)
 
 
-def insert_classes(classes):
+def insert_classes(classes, session):
     """Insert all the classes as defined in the APIDocumentation into DB."""
-    Session = sessionmaker(bind=engine)
-    session = Session()
-    class_list = [RDFClass(name=class_["title"]) for class_ in classes
-                  if not session.query(exists().where(RDFClass.name == class_["title"])).scalar()]
+    class_list = [RDFClass(name=class_["label"].strip('.')) for class_ in classes
+                  if "label" in class_ and
+                  not session.query(exists().where(RDFClass.name == class_["label"].strip('.'))).scalar()]
+
+    class_list = class_list + [RDFClass(name=class_["title"].strip('.')) for class_ in classes
+                               if "title" in class_ and
+                               not session.query(exists().where(RDFClass.name == class_["title"].strip('.'))).scalar()]
     session.add_all(class_list)
     session.commit()
-    session.close()
     return None
 
 
-def insert_properties(properties):
+def insert_properties(properties, session):
     """Insert all the properties as defined in the APIDocumentation into DB."""
-    Session = sessionmaker(bind=engine)
-    session = Session()
     prop_list = [BaseProperty(name=prop) for prop in properties
                  if not session.query(exists().where(BaseProperty.name == prop)).scalar()]
     session.add_all(prop_list)
     session.commit()
-    session.close()
     return None
 
 
 if __name__ == "__main__":
-    # Get the API Doc for both vocabularies
-    spacecraft_data = spacecraft_apidoc
-    subsystem_data = subsystem_apidoc
+    Session = sessionmaker(bind=engine)
+    session = Session()
+
     # Extract all classes with supportedProperty from both
-    spacecraft_classes = get_classes(spacecraft_data)
-    spacecraft_properties = get_all_properties(spacecraft_classes)
+    classes = get_classes(vocab)
+
     # Extract all properties from both
-    subsystem_classes = get_classes(subsystem_data)
-    subsystem_properties = get_all_properties(subsystem_classes)
+    # import pdb; pdb.set_trace()
+    properties = get_all_properties(classes)
     # Add all the classes
-    insert_classes(spacecraft_classes)
-    insert_classes(subsystem_classes)
+    insert_classes(classes, session)
+
     # Add all the properties
-    insert_properties(spacecraft_properties)
-    insert_properties(subsystem_properties)
+    insert_properties(properties, session)

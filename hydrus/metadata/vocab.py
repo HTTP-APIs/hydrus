@@ -75,50 +75,50 @@ vocab = {
             "@id": "vocab:EntryPoint",
             "label": "EntryPoint"
         },
-        {
-            "supportedProperty": [
-                {
-                    "property": "http://www.w3.org/ns/hydra/core#member",
-                    "required": "null",
-                    "readonly": "false",
-                    "hydra:description": "The cots",
-                    "writeonly": "false",
-                    "hydra:title": "members"
-                }
-            ],
-            "@type": "hydra:Class",
-            "supportedOperation": [
-                {
-                    "expects": "http://ontology.projectchronos.eu/subsystems?format=jsonld",
-                    "returns": "http://ontology.projectchronos.eu/subsystems?format=jsonld",
-                    "method": "POST",
-                    "label": "Creates a new Cots entity",
-                    "statusCodes": [
-                        {
-                            "code": 201,
-                            "description": "If the Cots entity was created successfully."
-                        }
-                    ],
-                    "description": "null",
-                    "@id": "_:cots_create",
-                    "@type": "http://schema.org/AddAction"
-                },
-                {
-                    "expects": "null",
-                    "returns": "vocab:CotsCollection",
-                    "method": "GET",
-                    "label": "Retrieves all Cots entities",
-                    "statusCodes": [],
-                    "description": "null",
-                    "@id": "_:cots_collection_retrieve",
-                    "@type": "hydra:Operation"
-                }
-            ],
-            "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
-            "description": "A collection of cots",
-            "@id": "vocab:CotsCollection",
-            "label": "CotsCollection"
-        },
+        # {
+        #     "supportedProperty": [
+        #         {
+        #             "property": "http://www.w3.org/ns/hydra/core#member",
+        #             "required": "null",
+        #             "readonly": "false",
+        #             "hydra:description": "The cots",
+        #             "writeonly": "false",
+        #             "hydra:title": "members"
+        #         }
+        #     ],
+        #     "@type": "hydra:Class",
+        #     "supportedOperation": [
+        #         {
+        #             "expects": "http://ontology.projectchronos.eu/subsystems?format=jsonld",
+        #             "returns": "http://ontology.projectchronos.eu/subsystems?format=jsonld",
+        #             "method": "POST",
+        #             "label": "Creates a new Cots entity",
+        #             "statusCodes": [
+        #                 {
+        #                     "code": 201,
+        #                     "description": "If the Cots entity was created successfully."
+        #                 }
+        #             ],
+        #             "description": "null",
+        #             "@id": "_:cots_create",
+        #             "@type": "http://schema.org/AddAction"
+        #         },
+        #         {
+        #             "expects": "null",
+        #             "returns": "vocab:CotsCollection",
+        #             "method": "GET",
+        #             "label": "Retrieves all Cots entities",
+        #             "statusCodes": [],
+        #             "description": "null",
+        #             "@id": "_:cots_collection_retrieve",
+        #             "@type": "hydra:Operation"
+        #         }
+        #     ],
+        #     "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
+        #     "description": "A collection of cots",
+        #     "@id": "vocab:CotsCollection",
+        #     "label": "CotsCollection"
+        # },
         {
             "supportedProperty": [
                 {
@@ -2317,7 +2317,7 @@ vocab = {
             "@type": "Class"
         }
     ],
-    "@id": "http://hydrus.com//api/vocab",
+    "@id": "http://hydrus.com/api/vocab",
     "@type": "ApiDocumentation",
     "@context": {
         "vocab": "http://hydrus.com//api/vocab#",
