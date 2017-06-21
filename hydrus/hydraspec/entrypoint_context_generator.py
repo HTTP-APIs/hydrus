@@ -1,7 +1,9 @@
 """Genrate EntryPoint Context using server url, item_type."""
 import json
 
+
 def gen_entrypoint_context(server_url, item_type):
+    """Generate context for the EntryPoint."""
     SERVER_URL = server_url
     ITEM_TYPE = item_type
 
@@ -19,4 +21,6 @@ def gen_entrypoint_context(server_url, item_type):
 
     return json.dumps(entrypoint_context_template, indent=4)
 
-print(gen_entrypoint_context("http://hydrus.com/", "Cots"))
+
+if __name__ == "__main__":
+    print(gen_entrypoint_context("http://hydrus.com/", "Cots"))

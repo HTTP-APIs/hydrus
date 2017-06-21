@@ -1,6 +1,6 @@
 """Script to parse OWL annotations and generate a list of supported Hydra classes."""
 import json
-import pdb
+import sys
 
 from hydrus.hydraspec.crud import template
 from hydrus.metadata.subsystem_vocab_jsonld import subsystem_data
@@ -36,7 +36,7 @@ def hydrafy_class(class_, supported_props):
             operation["@id"] = operation["@id"] % (hydra_class["title"])
             operation["label"] = operation["label"] % (hydra_class["title"])
         except:
-            pdb.set_trace()
+            print("Unexpected error:", sys.exc_info()[0])
         if operation["method"] in ["POST", "PUT"]:
             operation["expects"] = operation["expects"] % (hydra_class["@id"])
         if operation["method"] in ["POST", "PUT", "GET"]:
@@ -142,9 +142,10 @@ def terminal_props(class_, properties):
 
 def gen_supported_classes(hydra_classes):
     """Return a list of supported classes parsed from the OWL vocabulary."""
-    supported_classes = hydrs_classes
+    supported_classes = hydra_classes
 
     return supported_classes
+
 
 if __name__ == "__main__":
     # NOTE: Usage must be in the following order

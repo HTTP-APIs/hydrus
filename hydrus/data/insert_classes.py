@@ -30,7 +30,7 @@ def gen_classes(labels):
     """Generate sqlalchemy Classes model (from models.py) instances for a given set of labels."""
     classes = []
     for label in labels:
-        classes.append(models.RDFClass(name=label))
+        classes.append(models.RDFClass(name=label.strip('.')))
     return classes
 
 
