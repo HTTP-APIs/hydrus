@@ -282,10 +282,10 @@ def get_collection(type_, session=session):
     return collection_template
 
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
     # print(update(6, object__))
     # print(insert(object__, 1))
     # print(delete(1))
     # print(update(4, object__))
     # print(get(1, "Spacecraft_Communication"))
-    print(get_collection("Spacecraft_Communication"))
+    # print(get_collection("Spacecraft_Communication"))

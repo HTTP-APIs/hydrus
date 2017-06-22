@@ -3,6 +3,7 @@ import json
 from hydrus.metadata.subsystem_parsed_classes import parsed_classes
 
 def gen_supported_operation(item_type):
+    """Generate a supported operation from op_template given item type."""
     ITEM_TYPE = item_type
     op_template = {
         ITEM_TYPE.lower(): {
@@ -10,8 +11,11 @@ def gen_supported_operation(item_type):
             "@type": "@id"
         }
     }
-    return op_template
+    return op_template\
+
+
 def gen_supported_ops(parsed_classes):
+    """Generate list of supported operations from parsed classes for entrypoint context."""
     supported_ops = []
     for class_ in parsed_classes:
         supported_ops.append(gen_supported_operation(class_["title"]))

@@ -4,6 +4,7 @@ from hydrus.metadata.subsystem_parsed_classes import parsed_classes
 
 
 def gen_supported_operation(item_type):
+    """Generate a supported operation from the op_template given the item_type."""
     ITEM_TYPE = item_type
     op_template = {
         ITEM_TYPE.lower(): "api/%s/" % (ITEM_TYPE)
@@ -11,6 +12,7 @@ def gen_supported_operation(item_type):
     return op_template
 
 def gen_supported_ops(parsed_classes):
+    """Generate a list of supported operation for entrypoint from parsed classes."""
     supported_ops = []
     for class_ in parsed_classes:
         supported_ops.append(gen_supported_operation(class_["title"]))

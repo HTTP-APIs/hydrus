@@ -42,7 +42,7 @@ def get_supported_properties(parsed_classes, category, vocab):
     for object_ in parsed_classes:
         if object_["title"] == category:
             obj = object_
-    print(obj, category)
+    # print(obj, category)
 
     supported_props = []
     if obj is not None:
@@ -58,7 +58,6 @@ def get_supported_properties(parsed_classes, category, vocab):
 
             if prop not in supported_props:
                 supported_props.append(prop)
-    print(supported_props)
     return supported_props
 
 
@@ -80,6 +79,7 @@ def gen_context(parsed_classes, server_url, object_):
     return context_template
 
 def gen_collection_context(server_url, object_ , semantic_ref_url):
+    """Generate context for Collection objects."""
     SEMANTIC_REF_URL = semantic_ref_url
     SERVER_URL = server_url
     COLLECTION_TYPE = object_["@id"].rsplit('/', 1)[-1]
@@ -91,12 +91,11 @@ def gen_collection_context(server_url, object_ , semantic_ref_url):
     COLLECTION_TYPE: SEMANTIC_REF_URL.split("?")[0]+"/"+COLLECTION_TYPE+"?format=jsonld",
     "members": "http://www.w3.org/ns/hydra/core#member"
   }
-  
+
     return template
 
 def hydrafy(parsed_classes, object_, collection = False):
     """Add hydra context to objects."""
-    # print(gen_context(parsed_classes, "http://hydrus.com/", object_, "subsystems"))
     if collection:
         context = gen_collection_context("http://hydrus.com/", object_, "http://ontology.projectchronos.eu/subsystems?format=jsonld")
     else:

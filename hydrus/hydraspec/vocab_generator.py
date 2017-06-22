@@ -48,6 +48,8 @@ def gen_entrypoint_supported_props():
 
 
 def gen_item_collection(semantic_ref_name, item_type):
+    """Generate ItemCollection for item_type from collection_template
+     from Markus Lanthler's event api example."""
     SEMANTIC_REF_NAME = semantic_ref_name
     ITEM_TYPE = item_type
 
@@ -102,6 +104,7 @@ def gen_item_collection(semantic_ref_name, item_type):
 
 
 def gen_item_collection_list(semantic_ref_name):
+    """Generate a list of item collections for the vocab."""
     collections = []
     for class_ in parsed_classes:
         collections.append(gen_item_collection(
