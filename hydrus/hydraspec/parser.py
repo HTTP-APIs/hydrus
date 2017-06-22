@@ -19,7 +19,7 @@ def hydrafy_class(class_, supported_props, semantic_ref_name=None):
     """Create Hydra specific Class from owl:owlClass JSON-LD."""
     hydra_class = {
         "@id": "http://api.example.com/doc/#Comment",
-        "@type": "Class",
+        "@type": "hydra:Class",
         "title": "The name of the class",
         "description": "A short description of the class.",
         "supportedProperty": [],
@@ -27,11 +27,7 @@ def hydrafy_class(class_, supported_props, semantic_ref_name=None):
     }
     # If there is a semantic reference name give in the vocabulary then use that else use full links.
 
-    if semantic_ref_name is not None:
-        hydra_class["@id"] = semantic_ref_name + \
-            ":" + class_["@id"].rsplit('/', 1)[-1]
-    else:
-        hydra_class["@id"] = class_["@id"]
+    hydra_class["@id"] = class_["@id"]
 
     hydra_class["title"] = class_["rdf:label"]
     hydra_class["description"] = class_["rdf:comment"]

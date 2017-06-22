@@ -36,12 +36,13 @@ def set_response_headers(resp, ct="application/json", status_code=200):
     return resp
 
 
-def get_supported_properties(category, vocab):
+def get_supported_properties(parsed_classes, category, vocab):
     """Filter supported properties with their title (title, property) for a specific class from the parsed classes."""
     obj = None
     for object_ in parsed_classes:
         if object_["title"] == category:
             obj = object_
+    print(obj, category)
 
     supported_props = []
     if obj is not None:
@@ -51,17 +52,17 @@ def get_supported_properties(category, vocab):
         for obj_ in obj["supportedProperty"]:
             try:
                 prop = (obj_["title"], obj_["property"])
+
             except KeyError:
-                # If title key is not present take the last part of url as title
                 prop = (obj_["property"].rsplit('/', 1)[-1], obj_["property"])
 
             if prop not in supported_props:
                 supported_props.append(prop)
-
+    print(supported_props)
     return supported_props
 
 
-def gen_context(server_url, object_):
+def gen_context(parsed_classes, server_url, object_):
     """Generate dynamic contexts for every item."""
     SERVER_URL = server_url
 
@@ -72,16 +73,34 @@ def gen_context(server_url, object_):
 
     object_category = object_["@type"]
     # Get supported properties
-    supported_props = get_supported_properties(object_category, vocab)
+    supported_props = get_supported_properties(parsed_classes, object_category, vocab)
     for title, value in supported_props:
         context_template[title] = value
 
     return context_template
 
+def gen_collection_context(server_url, object_ , semantic_ref_url):
+    SEMANTIC_REF_URL = semantic_ref_url
+    SERVER_URL = server_url
+    COLLECTION_TYPE = object_["@id"].rsplit('/', 1)[-1]
 
-def hydrafy(object_):
+    template = {
+    "hydra": "http://www.w3.org/ns/hydra/core#",
+    "vocab": SERVER_URL + "api/vocab#",
+    COLLECTION_TYPE+"Collection": "vocab:%sCollection" %(COLLECTION_TYPE,),
+    COLLECTION_TYPE: SEMANTIC_REF_URL.split("?")[0]+"/"+COLLECTION_TYPE+"?format=jsonld",
+    "members": "http://www.w3.org/ns/hydra/core#member"
+  }
+  
+    return template
+
+def hydrafy(parsed_classes, object_, collection = False):
     """Add hydra context to objects."""
-    context = gen_context("http://hydrus.com/", object_)
+    # print(gen_context(parsed_classes, "http://hydrus.com/", object_, "subsystems"))
+    if collection:
+        context = gen_collection_context("http://hydrus.com/", object_, "http://ontology.projectchronos.eu/subsystems?format=jsonld")
+    else:
+        context = gen_context(parsed_classes, "http://hydrus.com/", object_)
     object_["@context"] = context
     return object_
 
@@ -104,7 +123,7 @@ class Item(Resource):
         """GET object with id = id_ from the database."""
         response = crud.get(id_, type_)
         if "object" in response:
-            return set_response_headers(jsonify(hydrafy(response)))
+            return set_response_headers(jsonify(hydrafy(parsed_classes, response)))
         else:
             status_code = int(list(response.keys())[0])
             return set_response_headers(jsonify(response), status_code=status_code)
@@ -146,7 +165,7 @@ class ItemCollection(Resource):
         """Retrieve a collection of items from the database."""
         response = crud.get_collection(type_)
         if "members" in response:
-            return set_response_headers(jsonify(response))
+            return set_response_headers(jsonify(hydrafy(parsed_classes, response, collection=True)))
         else:
             status_code = int(list(response.keys())[0])
             return set_response_headers(jsonify(response), status_code=status_code)
