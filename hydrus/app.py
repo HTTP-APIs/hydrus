@@ -67,7 +67,7 @@ def gen_context(server_url, object_):
 
     context_template = {
         "hydra": "http://www.w3.org/ns/hydra/core#",
-        "vocab": SERVER_URL+"api/vocab#",
+        "vocab": SERVER_URL + "api/vocab#",
     }
 
     object_category = object_["@type"]
@@ -136,20 +136,25 @@ class Item(Resource):
 
 
 # Needs to be changed manually
-api.add_resource(Item, "/api/<string:type_>/<int:id_>", endpoint="cots")
+api.add_resource(Item, "/api/<string:type_>/<int:id_>", endpoint="item")
 
 
 class ItemCollection(Resource):
     """Handle operation related to ItemCollection (a collection of items)."""
 
-    def get(self):
+    def get(self, type_):
         """Retrieve a collection of items from the database."""
-        # Needs to be discussed.
-        pass
+        response = crud.get_collection(type_)
+        if "members" in response:
+            return set_response_headers(jsonify(response))
+        else:
+            status_code = int(list(response.keys())[0])
+            return set_response_headers(jsonify(response), status_code=status_code)
 
 
 # Needs to be added manually.
-# api.add_resource(Cots, "/api/cots", endpoint="cots_collection")
+api.add_resource(ItemCollection, "/api/<string:type_>",
+                 endpoint="item_collection")
 
 
 class Vocab(Resource):
