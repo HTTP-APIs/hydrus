@@ -4,16 +4,122 @@ import json
 from hydrus.metadata.subsystem_parsed_classes import parsed_classes
 
 
-def gen_vocab(parsed_classes, server_url, item_type, item_semantic_url):
+def gen_entrypoint_supported_prop(item_type):
+    """Generate SupportedProperty for item_type from property template
+     from Markus Lanthler's event api example."""
+    ITEM_TYPE = item_type
+    prop_template = {
+        "property": {
+            "@id": "vocab:EntryPoint/" + ITEM_TYPE,
+            "@type": "hydra:Link",
+            "label": ITEM_TYPE,
+            "description": "The %s collection" % (ITEM_TYPE,),
+            "domain": "vocab:EntryPoint",
+            "range": "vocab:%sCollection" % (ITEM_TYPE,),
+            "supportedOperation": [
+                {
+                    "@id": "_:%s_collection_retrieve" % (ITEM_TYPE.lower(),),
+                    "@type": "hydra:Operation",
+                    "method": "GET",
+                    "label": "Retrieves all %s entities" % (ITEM_TYPE,),
+                    "description": "null",
+                    "expects": "null",
+                    "returns": "vocab:%sCollection" % (ITEM_TYPE,),
+                    "statusCodes": [
+                    ]
+                }
+            ]
+        },
+        "hydra:title": ITEM_TYPE.lower(),
+        "hydra:description": "The %s collection" % (ITEM_TYPE,),
+        "required": "null",
+        "readonly": "true",
+        "writeonly": "false"
+    }
+    return prop_template
+
+
+def gen_entrypoint_supported_props():
+    """Generate supported properties from parsed_classes for Entrypoint["supportedProperty"]."""
+    supported_props = []
+    for class_ in parsed_classes:
+        supported_props.append(gen_entrypoint_supported_prop(class_["title"]))
+    return supported_props
+
+
+def gen_item_collection(semantic_ref_name, item_type):
+    SEMANTIC_REF_NAME = semantic_ref_name
+    ITEM_TYPE = item_type
+
+    collection_template = {
+        "@id": "vocab:%sCollection" % (ITEM_TYPE,),
+        "@type": "hydra:Class",
+        "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
+        "label": "%sCollection" % (ITEM_TYPE),
+        "description": "A collection of %s" % (ITEM_TYPE.lower()),
+        "supportedOperation": [
+            {
+                "@id": "_:%s_create" % (ITEM_TYPE.lower()),
+                "@type": "http://schema.org/AddAction",
+                "method": "POST",
+                "label": "Creates a new %s entity" % (ITEM_TYPE),
+                "description": "null",
+                "expects": SEMANTIC_REF_NAME + ":" + ITEM_TYPE,
+                "returns": SEMANTIC_REF_NAME + ":" + ITEM_TYPE,
+                "statusCodes": [
+                    {
+                        "code": 201,
+                        "description": "If the %s entity was created successfully." % (ITEM_TYPE,)
+                    }
+                ]
+            },
+            {
+                "@id": "_:%s_collection_retrieve" % (ITEM_TYPE.lower(),),
+                "@type": "hydra:Operation",
+                "method": "GET",
+                "label": "Retrieves all %s entities" % (ITEM_TYPE,),
+                "description": "null",
+                "expects": "null",
+                "returns": "vocab:%sCollection" % (ITEM_TYPE),
+                "statusCodes": [
+                ]
+            }
+        ],
+        "supportedProperty": [
+            {
+                "property": "http://www.w3.org/ns/hydra/core#member",
+                "hydra:title": "members",
+                "hydra:description": "The %s" % (ITEM_TYPE.lower(),),
+                "required": "null",
+                "readonly": "false",
+                "writeonly": "false"
+
+            }
+        ]
+    }
+
+    return collection_template
+
+
+def gen_item_collection_list(semantic_ref_name):
+    collections = []
+    for class_ in parsed_classes:
+        collections.append(gen_item_collection(
+            semantic_ref_name, class_["title"]))
+    return collections
+
+
+def gen_vocab(parsed_classes, server_url, semantic_ref_name, semantic_ref_url):
     """Generate Hydra Vocabulary."""
     SERVER_URL = server_url
-    ITEM_TYPE = item_type
-    ITEM_SEMANTIC_URL = item_semantic_url
+    SEMANTIC_REF_NAME = semantic_ref_name
+    SEMANTIC_REF_URL = semantic_ref_url
 
     vocab_template = {
         "@context": {
             "vocab": SERVER_URL + "/api/vocab#",
             "hydra": "http://www.w3.org/ns/hydra/core#",
+            semantic_ref_name: semantic_ref_url,
             "ApiDocumentation": "hydra:ApiDocumentation",
             "property": {
                 "@id": "hydra:property",
@@ -40,14 +146,6 @@ def gen_vocab(parsed_classes, server_url, item_type, item_semantic_url):
             "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
             "label": "rdfs:label",
             "description": "rdfs:comment",
-            "domain": {
-                "@id": "rdfs:domain",
-                "@type": "@id"
-            },
-            "range": {
-                "@id": "rdfs:range",
-                "@type": "@id"
-            },
             "subClassOf": {
                 "@id": "rdfs:subClassOf",
                 "@type": "@id"
@@ -103,95 +201,25 @@ def gen_vocab(parsed_classes, server_url, item_type, item_semantic_url):
                         ]
                     }
                 ],
-                "supportedProperty": [
-                    {
-                        "property": {
-                            "@id": "vocab:EntryPoint/" + ITEM_TYPE,
-                            "@type": "hydra:Link",
-                            "label": ITEM_TYPE,
-                            "description": "The %s collection" % (ITEM_TYPE,),
-                            "domain": "vocab:EntryPoint",
-                            "range": "vocab:%sCollection" % (ITEM_TYPE,),
-                            "supportedOperation": [
-                                {
-                                    "@id": "_:%s_collection_retrieve" % (ITEM_TYPE.lower(),),
-                                    "@type": "hydra:Operation",
-                                    "method": "GET",
-                                    "label": "Retrieves all %s entities" % (ITEM_TYPE,),
-                                    "description": "null",
-                                    "expects": "null",
-                                    "returns": "vocab:%sCollection" % (ITEM_TYPE,),
-                                    "statusCodes": [
-                                    ]
-                                }
-                            ]
-                        },
-                        "hydra:title": ITEM_TYPE.lower(),
-                        "hydra:description": "The %s collection" % (ITEM_TYPE,),
-                        "required": "null",
-                        "readonly": "true",
-                        "writeonly": "false"
-                    }
-                ]
-            },
-            {
-                "@id": "vocab:%sCollection" % (ITEM_TYPE,),
-                "@type": "hydra:Class",
-                "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
-                "label": "%sCollection" % (ITEM_TYPE),
-                "description": "A collection of %s" % (ITEM_TYPE.lower()),
-                "supportedOperation": [
-                    {
-                        "@id": "_:%s_create" % (ITEM_TYPE.lower()),
-                        "@type": "http://schema.org/AddAction",
-                        "method": "POST",
-                        "label": "Creates a new %s entity" % (ITEM_TYPE),
-                        "description": "null",
-                        "expects": ITEM_SEMANTIC_URL,
-                        "returns": ITEM_SEMANTIC_URL,
-                        "statusCodes": [
-                            {
-                                "code": 201,
-                                "description": "If the %s entity was created successfully." % (ITEM_TYPE,)
-                            }
-                        ]
-                    },
-                    {
-                        "@id": "_:%s_collection_retrieve" % (ITEM_TYPE.lower(),),
-                        "@type": "hydra:Operation",
-                        "method": "GET",
-                        "label": "Retrieves all %s entities" % (ITEM_TYPE,),
-                        "description": "null",
-                        "expects": "null",
-                        "returns": "vocab:%sCollection" % (ITEM_TYPE),
-                        "statusCodes": [
-                        ]
-                    }
-                ],
-                "supportedProperty": [
-                    {
-                        "property": "http://www.w3.org/ns/hydra/core#member",
-                        "hydra:title": "members",
-                        "hydra:description": "The %s" % (ITEM_TYPE.lower(),),
-                        "required": "null",
-                        "readonly": "false",
-                        "writeonly": "false"
-
-                    }
-                ]
+                "supportedProperty": gen_entrypoint_supported_props()
             },
             # Parsed classed from hydrus.hydraspec.parser will be added here
 
         ]
     }
-
+    #Add parsed hydra classes to the vocabulary
     for class_ in parsed_classes:
         vocab_template["supportedClass"].append(class_)
+
+    #Add different item collections to the hydra vocabulary
+    collection_list = gen_item_collection_list(semantic_ref_name)
+    for collection_item in collection_list:
+        vocab_template["supportedClass"].append(collection_item)
 
     return json.dumps(vocab_template, indent=4)
 
 
 if __name__ == "__main__":
     # DEMO
-    print(gen_vocab(parsed_classes, "http://hydrus.com/", "Cots",
+    print(gen_vocab(parsed_classes, "http://hydrus.com/", "subsystems",
           "http://ontology.projectchronos.eu/subsystems?format=jsonld"))

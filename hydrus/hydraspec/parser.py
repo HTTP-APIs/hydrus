@@ -15,18 +15,24 @@ def get_all_classes(owl_data):
     return classes
 
 
-def hydrafy_class(class_, supported_props):
+def hydrafy_class(class_, supported_props, semantic_ref_name=None):
     """Create Hydra specific Class from owl:owlClass JSON-LD."""
     hydra_class = {
-      "@id": "http://api.example.com/doc/#Comment",
-      "@type": "Class",
-      "title": "The name of the class",
-      "description": "A short description of the class.",
-      "supportedProperty": [],
-      "supportedOperation": []
+        "@id": "http://api.example.com/doc/#Comment",
+        "@type": "Class",
+        "title": "The name of the class",
+        "description": "A short description of the class.",
+        "supportedProperty": [],
+        "supportedOperation": []
     }
+    # If there is a semantic reference name give in the vocabulary then use that else use full links.
 
-    hydra_class["@id"] = class_["@id"]
+    if semantic_ref_name is not None:
+        hydra_class["@id"] = semantic_ref_name + \
+            ":" + class_["@id"].rsplit('/', 1)[-1]
+    else:
+        hydra_class["@id"] = class_["@id"]
+
     hydra_class["title"] = class_["rdf:label"]
     hydra_class["description"] = class_["rdf:comment"]
 
@@ -38,27 +44,43 @@ def hydrafy_class(class_, supported_props):
         except:
             print("Unexpected error:", sys.exc_info()[0])
         if operation["method"] in ["POST", "PUT"]:
-            operation["expects"] = operation["expects"] % (hydra_class["@id"])
-        if operation["method"] in ["POST", "PUT", "GET"]:
-            operation["returns"] = operation["returns"] % (hydra_class["@id"])
-        if operation["method"] in ["PUT", "GET"]:
-            operation["statusCodes"][0]["description"] = operation["statusCodes"][0]["description"] % (hydra_class["title"])
 
-    additional_props = terminal_props(class_, supported_props)
+            # If there is a semantic reference name give in the vocabulary then use that else use full links.
+            if semantic_ref_name is not None:
+                operation["expects"] = operation["expects"] % (
+                     hydra_class["@id"].rsplit('/', 1)[-1])
+            else:
+                operation["expects"] = operation["expects"] % (
+                    hydra_class["@id"])
+        if operation["method"] in ["POST", "PUT", "GET"]:
+            # If there is a semantic reference name give in the vocabulary then use that else use full links.
+            if semantic_ref_name is not None:
+                operation["returns"] = operation["returns"] % (
+                    hydra_class["@id"].rsplit('/', 1)[-1])
+            else:
+                operation["returns"] = operation["returns"] % (
+                    hydra_class["@id"])
+        if operation["method"] in ["PUT", "GET"]:
+            operation["statusCodes"][0]["description"] = operation["statusCodes"][0]["description"] % (
+                hydra_class["title"])
+
+    additional_props = terminal_props(
+        class_, supported_props, semantic_ref_name)
     hydra_class["supportedProperty"] = supported_props + additional_props
     hydra_class["supportedOperation"] = supported_ops
 
     return hydra_class
 
 
-def hydrafy_classes(classes, properties):
+def hydrafy_classes(classes, properties, semantic_ref_name=None):
     """Return list of Hydrafied classes along with supported properties."""
     hydra_classes = list()
     for class_ in classes:
         supported_props = list()
         parent_class = set()
         if "rdfs:subClassOf" in class_:
-            parent_class = set([x["@id"] for x in class_["rdfs:subClassOf"] if "@id" in x])
+            parent_class = set([x["@id"]
+                                for x in class_["rdfs:subClassOf"] if "@id" in x])
         # NOTE: Properties of the parent classes are inherited by child classes
 
         for prop in properties:
@@ -67,9 +89,11 @@ def hydrafy_classes(classes, properties):
                 supported_props.append(prop["property"])
             elif class_["@id"] in class_list:    # Check if the class supports the property
                 supported_props.append(prop["property"])
-            elif len(parent_class.intersection(set(class_list))) > 0:   # Check if any of the parent classes supports the property
+            # Check if any of the parent classes supports the property
+            elif len(parent_class.intersection(set(class_list))) > 0:
                 supported_props.append(prop["property"])
-        hydra_classes.append(hydrafy_class(class_, supported_props))
+        hydra_classes.append(hydrafy_class(
+            class_, supported_props, semantic_ref_name))
     return hydra_classes
 
 
@@ -89,16 +113,22 @@ def get_all_properties(owl_data):
     return properties
 
 
-def hydrafy_property(prop):
+def hydrafy_property(prop, semantic_ref_name=None):
     """Create Hydra specific Property from owl:ObjectProperty JSON-LD."""
     hydra_prop = {
-      "@type": "SupportedProperty",
-      "property": "#property",
-      "required": "false",
-      "readonly": "false",
-      "writeonly": "false"
+        "@type": "SupportedProperty",
+        "property": "#property",
+        "required": "false",
+        "readonly": "false",
+        "writeonly": "false"
     }
-    hydra_prop["property"] = prop["@id"]
+    # If there is a semantic reference name give in the vocabulary then use that else use full links.
+    if semantic_ref_name is not None:
+        hydra_prop["property"] = semantic_ref_name + \
+            ":" + prop["@id"].rsplit('/', 1)[-1]
+    else:
+        hydra_prop["property"] = prop["@id"]
+
     if "rdf:label" in prop:
         hydra_prop["title"] = prop["rdf:label"]
     if "rdf:comment" in prop:
@@ -109,7 +139,7 @@ def hydrafy_property(prop):
     return hydra_prop
 
 
-def hydrafy_properties(properties):
+def hydrafy_properties(properties, semantic_ref_name=None):
     """Return list of Hydrafied properties along with the classes they are supported in."""
     hydra_props = list()
     for prop in properties:
@@ -122,13 +152,13 @@ def hydrafy_properties(properties):
             ranges = [x["@id"] for x in prop["rdf:range"]]
         ops = [[d, r] for d in domains for r in ranges]
         hydra_props.append({
-            "property": hydrafy_property(prop),
+            "property": hydrafy_property(prop, semantic_ref_name),
             "classes": ops,
         })
     return hydra_props
 
 
-def terminal_props(class_, properties):
+def terminal_props(class_, properties, semantic_ref_name=None):
     """Create terminal properties for non-descriptive property restrictions."""
     additional_props = list()
     supported_props = [x["property"] for x in properties]
@@ -136,7 +166,8 @@ def terminal_props(class_, properties):
         for restriction in class_["rdfs:subClassOf"]:
             if "owl:onProperty" in restriction:
                 if restriction["owl:onProperty"]["@id"] not in supported_props:
-                    additional_props.append(hydrafy_property(restriction["owl:onProperty"]))
+                    additional_props.append(hydrafy_property(
+                        restriction["owl:onProperty"], semantic_ref_name))
     return additional_props
 
 
@@ -152,19 +183,21 @@ if __name__ == "__main__":
         # get_all_properties() >> hydrafy_properties() >> properties
         # get_all_classes() + properties >> hydrafy_classes() >> classes
         # classes >> gen_APIDoc()
+    SEMANTIC_REF_NAME = "subsystems"
 
     data = subsystem_data
     # Get all the owl:ObjectProperty objects from the vocab
     owl_props = get_all_properties(data)
 
     # Convert each owl:ObjectProperty into a Hydra:SupportedProperty, also get classes that support it based on domain and range.
-    hydra_props = hydrafy_properties(owl_props)
+    hydra_props = hydrafy_properties(owl_props, SEMANTIC_REF_NAME)
 
     # Get all the owl:Class objects from the vocab
     owl_classes = get_all_classes(subsystem_data)
 
     # Convert each owl:Class into a Hydra:Class, also get supportedProperty for each
-    hydra_classes = hydrafy_classes(owl_classes, hydra_props)
+    hydra_classes = hydrafy_classes(
+        owl_classes, hydra_props, SEMANTIC_REF_NAME)
 
     # Create API Documentation with the Hydra:Class list
     supported_classes = gen_supported_classes(hydra_classes)
