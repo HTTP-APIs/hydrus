@@ -3492,6 +3492,6 @@ vocab = {
             "@type": "hydra:Class"
         }
     ],
-    "@id": "http://hydrus.com//api/vocab",
+    "@id": "http://hydrus.com/api/vocab",
     "@type": "ApiDocumentation"
 }

@@ -195,9 +195,19 @@ class Contexts(Resource):
     def get(self, category):
         """Return the context for the specified class."""
         if "Collection" in category:
-            return gen_collection_context(parsed_classes, "http://hydrus.com/", category)
+            response = gen_collection_context(parsed_classes, "http://hydrus.com/", category)
+            if "@context" in response:
+                return set_response_headers(jsonify(response))
+            else:
+                status_code = int(list(response.keys())[0])
+                return set_response_headers(jsonify(response), status_code=status_code)
         else:
-            return gen_context(parsed_classes, "http://hydrus.com/", category)
+            response = gen_context(parsed_classes, "http://hydrus.com/", category)
+            if "@context" in response:
+                return set_response_headers(jsonify(response))
+            else:
+                status_code = int(list(response.keys())[0])
+                return set_response_headers(jsonify(response), status_code=status_code)
 
 
 api.add_resource(Contexts, "/api/contexts/<string:category>.jsonld", endpoint="contexts")

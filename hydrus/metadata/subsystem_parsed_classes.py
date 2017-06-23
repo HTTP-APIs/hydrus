@@ -188,15 +188,15 @@ parsed_classes = [
     },
     {
         "description": "Complex devices-subsystems used for impelling (processes of applying a force which results in translational motion) a spacecraft, in the specific http://umbel.org/umbel/rc/ProjectilePropelling",
-        "title": "Spacecraft_Propulsion.",
+        "title": "Spacecraft_Propulsion",
         "supportedOperation": [
             {
                 "returns": "Spacecraft_Propulsion",
                 "description": "null",
                 "statusCodes": [],
                 "expects": "Spacecraft_Propulsion",
-                "label": "Creates a new Spacecraft_Propulsion. entity",
-                "@id": "_:Spacecraft_Propulsion._create",
+                "label": "Creates a new Spacecraft_Propulsion entity",
+                "@id": "_:Spacecraft_Propulsion_create",
                 "@type": "hydras:Operation",
                 "method": "POST"
             },
@@ -206,12 +206,12 @@ parsed_classes = [
                 "statusCodes": [
                     {
                         "code": 404,
-                        "description": "If the Spacecraft_Propulsion. entity wasn't found."
+                        "description": "If the Spacecraft_Propulsion entity wasn't found."
                     }
                 ],
                 "expects": "Spacecraft_Propulsion",
-                "label": "Replaces an existing Spacecraft_Propulsion. entity",
-                "@id": "_:Spacecraft_Propulsion._replace",
+                "label": "Replaces an existing Spacecraft_Propulsion entity",
+                "@id": "_:Spacecraft_Propulsion_replace",
                 "@type": "hydra:Operation",
                 "method": "PUT"
             },
@@ -220,8 +220,8 @@ parsed_classes = [
                 "description": "null",
                 "statusCodes": [],
                 "expects": "null",
-                "label": "Deletes a Spacecraft_Propulsion. entity",
-                "@id": "_:Spacecraft_Propulsion._delete",
+                "label": "Deletes a Spacecraft_Propulsion entity",
+                "@id": "_:Spacecraft_Propulsion_delete",
                 "@type": "hydra:Operation",
                 "method": "DELETE"
             },
@@ -231,12 +231,12 @@ parsed_classes = [
                 "statusCodes": [
                     {
                         "code": 404,
-                        "description": "If the Spacecraft_Propulsion. entity wasn't found."
+                        "description": "If the Spacecraft_Propulsion entity wasn't found."
                     }
                 ],
                 "expects": "null",
-                "label": "Retrieves a Spacecraft_Propulsion. entity",
-                "@id": "_:Spacecraft_Propulsion._retrieve",
+                "label": "Retrieves a Spacecraft_Propulsion entity",
+                "@id": "_:Spacecraft_Propulsion_retrieve",
                 "@type": "hydra:Operation",
                 "method": "GET"
             }
@@ -430,15 +430,15 @@ parsed_classes = [
     },
     {
         "description": "Complex devices-subsystems used for collecting energy.",
-        "title": "Spacecraft_PrimaryPower.",
+        "title": "Spacecraft_PrimaryPower",
         "supportedOperation": [
             {
                 "returns": "Spacecraft_PrimaryPower",
                 "description": "null",
                 "statusCodes": [],
                 "expects": "Spacecraft_PrimaryPower",
-                "label": "Creates a new Spacecraft_PrimaryPower. entity",
-                "@id": "_:Spacecraft_PrimaryPower._create",
+                "label": "Creates a new Spacecraft_PrimaryPower entity",
+                "@id": "_:Spacecraft_PrimaryPower_create",
                 "@type": "hydras:Operation",
                 "method": "POST"
             },
@@ -448,12 +448,12 @@ parsed_classes = [
                 "statusCodes": [
                     {
                         "code": 404,
-                        "description": "If the Spacecraft_PrimaryPower. entity wasn't found."
+                        "description": "If the Spacecraft_PrimaryPower entity wasn't found."
                     }
                 ],
                 "expects": "Spacecraft_PrimaryPower",
-                "label": "Replaces an existing Spacecraft_PrimaryPower. entity",
-                "@id": "_:Spacecraft_PrimaryPower._replace",
+                "label": "Replaces an existing Spacecraft_PrimaryPower entity",
+                "@id": "_:Spacecraft_PrimaryPower_replace",
                 "@type": "hydra:Operation",
                 "method": "PUT"
             },
@@ -462,8 +462,8 @@ parsed_classes = [
                 "description": "null",
                 "statusCodes": [],
                 "expects": "null",
-                "label": "Deletes a Spacecraft_PrimaryPower. entity",
-                "@id": "_:Spacecraft_PrimaryPower._delete",
+                "label": "Deletes a Spacecraft_PrimaryPower entity",
+                "@id": "_:Spacecraft_PrimaryPower_delete",
                 "@type": "hydra:Operation",
                 "method": "DELETE"
             },
@@ -473,12 +473,12 @@ parsed_classes = [
                 "statusCodes": [
                     {
                         "code": 404,
-                        "description": "If the Spacecraft_PrimaryPower. entity wasn't found."
+                        "description": "If the Spacecraft_PrimaryPower entity wasn't found."
                     }
                 ],
                 "expects": "null",
-                "label": "Retrieves a Spacecraft_PrimaryPower. entity",
-                "@id": "_:Spacecraft_PrimaryPower._retrieve",
+                "label": "Retrieves a Spacecraft_PrimaryPower entity",
+                "@id": "_:Spacecraft_PrimaryPower_retrieve",
                 "@type": "hydra:Operation",
                 "method": "GET"
             }

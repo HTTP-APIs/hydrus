@@ -336,15 +336,15 @@ parsed_classes = [
                 "readonly": "false"
             }
         ],
-        "title": "Spacecraft_Propulsion.",
+        "title": "Spacecraft_Propulsion",
         "supportedOperation": [
             {
                 "statusCodes": [],
                 "@type": "hydraspec:Operation",
                 "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Propulsion",
-                "label": "Creates a new Spacecraft_Propulsion. entity",
+                "label": "Creates a new Spacecraft_Propulsion entity",
                 "method": "POST",
-                "@id": "_:Spacecraft_Propulsion._create",
+                "@id": "_:Spacecraft_Propulsion_create",
                 "description": "null",
                 "expects": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Propulsion"
             },
@@ -352,14 +352,14 @@ parsed_classes = [
                 "statusCodes": [
                     {
                         "code": 404,
-                        "description": "If the Spacecraft_Propulsion. entity wasn't found."
+                        "description": "If the Spacecraft_Propulsion entity wasn't found."
                     }
                 ],
                 "@type": "hydraspec:Operation",
                 "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Propulsion",
-                "label": "Replaces an existing Spacecraft_Propulsion. entity",
+                "label": "Replaces an existing Spacecraft_Propulsion entity",
                 "method": "PUT",
-                "@id": "_:Spacecraft_Propulsion._replace",
+                "@id": "_:Spacecraft_Propulsion_replace",
                 "description": "null",
                 "expects": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Propulsion"
             },
@@ -367,9 +367,9 @@ parsed_classes = [
                 "statusCodes": [],
                 "@type": "hydraspec:Operation",
                 "returns": "null",
-                "label": "Deletes a Spacecraft_Propulsion. entity",
+                "label": "Deletes a Spacecraft_Propulsion entity",
                 "method": "DELETE",
-                "@id": "_:Spacecraft_Propulsion._delete",
+                "@id": "_:Spacecraft_Propulsion_delete",
                 "description": "null",
                 "expects": "null"
             },
@@ -377,14 +377,14 @@ parsed_classes = [
                 "statusCodes": [
                     {
                         "code": 404,
-                        "description": "If the Spacecraft_Propulsion. entity wasn't found."
+                        "description": "If the Spacecraft_Propulsion entity wasn't found."
                     }
                 ],
                 "@type": "hydraspec:Operation",
                 "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_Propulsion",
-                "label": "Retrieves a Spacecraft_Propulsion. entity",
+                "label": "Retrieves a Spacecraft_Propulsion entity",
                 "method": "GET",
-                "@id": "_:Spacecraft_Propulsion._retrieve",
+                "@id": "_:Spacecraft_Propulsion_retrieve",
                 "description": "null",
                 "expects": "null"
             }
@@ -489,15 +489,15 @@ parsed_classes = [
                 "readonly": "false"
             }
         ],
-        "title": "Spacecraft_PrimaryPower.",
+        "title": "Spacecraft_PrimaryPower",
         "supportedOperation": [
             {
                 "statusCodes": [],
                 "@type": "hydraspec:Operation",
                 "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_PrimaryPower",
-                "label": "Creates a new Spacecraft_PrimaryPower. entity",
+                "label": "Creates a new Spacecraft_PrimaryPower entity",
                 "method": "POST",
-                "@id": "_:Spacecraft_PrimaryPower._create",
+                "@id": "_:Spacecraft_PrimaryPower_create",
                 "description": "null",
                 "expects": "http://ontology.projectchronos.eu/subsystems/Spacecraft_PrimaryPower"
             },
@@ -505,14 +505,14 @@ parsed_classes = [
                 "statusCodes": [
                     {
                         "code": 404,
-                        "description": "If the Spacecraft_PrimaryPower. entity wasn't found."
+                        "description": "If the Spacecraft_PrimaryPower entity wasn't found."
                     }
                 ],
                 "@type": "hydraspec:Operation",
                 "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_PrimaryPower",
-                "label": "Replaces an existing Spacecraft_PrimaryPower. entity",
+                "label": "Replaces an existing Spacecraft_PrimaryPower entity",
                 "method": "PUT",
-                "@id": "_:Spacecraft_PrimaryPower._replace",
+                "@id": "_:Spacecraft_PrimaryPower_replace",
                 "description": "null",
                 "expects": "http://ontology.projectchronos.eu/subsystems/Spacecraft_PrimaryPower"
             },
@@ -520,9 +520,9 @@ parsed_classes = [
                 "statusCodes": [],
                 "@type": "hydraspec:Operation",
                 "returns": "null",
-                "label": "Deletes a Spacecraft_PrimaryPower. entity",
+                "label": "Deletes a Spacecraft_PrimaryPower entity",
                 "method": "DELETE",
-                "@id": "_:Spacecraft_PrimaryPower._delete",
+                "@id": "_:Spacecraft_PrimaryPower_delete",
                 "description": "null",
                 "expects": "null"
             },
@@ -530,14 +530,14 @@ parsed_classes = [
                 "statusCodes": [
                     {
                         "code": 404,
-                        "description": "If the Spacecraft_PrimaryPower. entity wasn't found."
+                        "description": "If the Spacecraft_PrimaryPower entity wasn't found."
                     }
                 ],
                 "@type": "hydraspec:Operation",
                 "returns": "http://ontology.projectchronos.eu/subsystems/Spacecraft_PrimaryPower",
-                "label": "Retrieves a Spacecraft_PrimaryPower. entity",
+                "label": "Retrieves a Spacecraft_PrimaryPower entity",
                 "method": "GET",
-                "@id": "_:Spacecraft_PrimaryPower._retrieve",
+                "@id": "_:Spacecraft_PrimaryPower_retrieve",
                 "description": "null",
                 "expects": "null"
             }
