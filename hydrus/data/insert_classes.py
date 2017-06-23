@@ -2,8 +2,8 @@
 
 import db_models as models
 from sqlalchemy.orm import sessionmaker
-from hydrus.metadata.spacecraft_jsonld import spacecraft_data
-from hydrus.metadata.subsystem_jsonld import subsystem_data
+from hydrus.metadata.spacecraft_vocab_jsonld import spacecraft_data
+from hydrus.metadata.subsystem_vocab_jsonld import subsystem_data
 # from keymap import classes_keymap as keymap
 
 
@@ -30,7 +30,7 @@ def gen_classes(labels):
     """Generate sqlalchemy Classes model (from models.py) instances for a given set of labels."""
     classes = []
     for label in labels:
-        classes.append(models.RDFClass(name=label))
+        classes.append(models.RDFClass(name=label.strip('.')))
     return classes
 
 

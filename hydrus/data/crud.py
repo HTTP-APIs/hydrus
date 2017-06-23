@@ -2,161 +2,245 @@
 
 from sqlalchemy.orm import sessionmaker, with_polymorphic
 from sqlalchemy import exists
-from sqlalchemy.exc import IntegrityError
-from db_models import (Graph, BaseProperty, RDFClass, Instance,
-                       Terminal, engine, GraphIAC, GraphIIT, GraphIII)
-
+from sqlalchemy.orm.exc import NoResultFound
+from hydrus.data.db_models import (Graph, BaseProperty, RDFClass, Instance,
+                                   Terminal, engine, GraphIAC, GraphIIT, GraphIII)
 Session = sessionmaker(bind=engine)
 session = Session()
 triples = with_polymorphic(Graph, '*')
 properties = with_polymorphic(BaseProperty, "*")
 
 
-def get(id_):
+def get(id_, type_, session=session):
     """Retrieve an Instance with given ID from the database [GET]."""
     object_template = {
         "object": {
-            },
+        },
         "name": "",
         "@id": ""
     }
-    instanceExists = session.query(exists().where(Instance.id == id_)).scalar()
-    if instanceExists:
-        instance = session.query(Instance).filter(Instance.id == id_).one()
-        data_IAC = session.query(triples).filter(triples.GraphIAC.subject == id_).all()
-        data_III = session.query(triples).filter(triples.GraphIII.subject == id_).all()
-        data_IIT = session.query(triples).filter(triples.GraphIIT.subject == id_).all()
+    try:
+        rdf_class = session.query(RDFClass).filter(
+            RDFClass.name == type_).one()
+    except NoResultFound:
+        return {401: "The class %s is not a valid/defined RDFClass" % type_}
 
-        for data in data_IAC:
-            prop_name = session.query(properties).filter(properties.id == data.predicate).one().name
-            class_name = session.query(RDFClass).filter(RDFClass.id == data.object_).one().name
-            object_template["object"][prop_name] = class_name
+    try:
+        instance = session.query(Instance).filter(
+            Instance.id == id_, Instance.type_ == rdf_class.id).one()
+    except NoResultFound:
+        return {404: "Instance with ID : %s of Type : %s, NOT FOUND" % (id_, type_)}
 
-        for data in data_III:
-            prop_name = session.query(properties).filter(properties.id == data.predicate).one().name
-            object_ = get(data.object_)     # Recursive call should get the instance needed
-            object_template["object"][prop_name] = object_
+    data_IAC = session.query(triples).filter(
+        triples.GraphIAC.subject == id_).all()
+    data_III = session.query(triples).filter(
+        triples.GraphIII.subject == id_).all()
+    data_IIT = session.query(triples).filter(
+        triples.GraphIIT.subject == id_).all()
 
-        for data in data_IIT:
-            prop_name = session.query(properties).filter(properties.id == data.predicate).one().name
-            terminal = session.query(Terminal).filter(Terminal.id == data.object_).one()
-            object_template["object"][prop_name] = terminal.value + " " + terminal.unit
+    for data in data_IAC:
+        prop_name = session.query(properties).filter(
+            properties.id == data.predicate).one().name
+        class_name = session.query(RDFClass).filter(
+            RDFClass.id == data.object_).one().name
+        object_template["object"][prop_name] = class_name
 
-        object_template["name"] = instance.name
-        object_template["@id"] = id_
+    for data in data_III:
+        prop_name = session.query(properties).filter(
+            properties.id == data.predicate).one().name
+        instance = session.query(Instance).filter(
+            Instance.id == data.object_).one()
+        # Recursive call should get the instance needed
+        object_ = get(id_=instance.id, type_=instance.type_, session=session)
+        object_template["object"][prop_name] = object_
 
-        return object_template
-    else:
-        return {404: "Instance with ID : %s NOT FOUND" % id_}
+    for data in data_IIT:
+        prop_name = session.query(properties).filter(
+            properties.id == data.predicate).one().name
+        terminal = session.query(Terminal).filter(
+            Terminal.id == data.object_).one()
+        object_template["object"][prop_name] = terminal.value + \
+            " " + terminal.unit
+
+    object_template["name"] = instance.name
+    object_template["@id"] = id_
+    object_template["@type"] = type_
+
+    return object_template
 
 
-def insert(object_, id_=None):
+def insert(object_, id_=None, session=session):
     """Insert an object to database [POST] and returns the inserted object."""
-    # NOTE: We are inserting the object, no need to check if similar one already exists.
-    #       Data can be redundant/identical, they must have different "@id"
+    rdf_class = None
+    instance = None
 
-    # Added the keymap to generator, no need to use here
-    triple_store = list()
+    # Check for class in the begging
+    try:
+        rdf_class = session.query(RDFClass).filter(
+            RDFClass.name == object_["@type"]).one()
+    except NoResultFound:
+        return {401: "The class %s is not a valid/defined RDFClass" % object_["@type"]}
+
     if id_ is not None:
-        try:
-            instance = Instance(name=object_["name"], id=id_, type_=object_["object"]["category"])
-            session.add(instance)
-            session.commit()
-        except IntegrityError:
-            return {400: "Instance with ID : %s already exists" % (str(id_))}
+        # Update the object if ID already exists
+        if session.query(exists().where(Instance.id == id_)).scalar():
+            # return update(id_, object_)   # Updates should be using PUT not POST
+            return {400: "Instance with ID : %s already exists" % str(id_)}
+
+        instance = Instance(name=object_["name"], id=id_, type_=rdf_class.id)
     else:
-        instance = Instance(name=object_["name"], type_=object_["object"]["category"])
-        session.add(instance)
-        session.commit()
+        instance = Instance(name=object_["name"], type_=rdf_class.id)
+
+    session.add(instance)
+    session.commit()
 
     for prop_name in object_["object"]:
-        # Check if it is a valid property
-        isValidProperty = session.query(exists().where(properties.name == prop_name)).scalar()
-        # Handle invalid properties in the data
-        if isValidProperty:
-            prop = session.query(properties).filter(properties.name == prop_name).one()
-            # Check if it INSTANCE or ABSTRACT Property
-            if prop.type_ == "ABSTRACT":
-                class_name = object_["object"][prop_name]
-                isValidClass = session.query(exists().where(RDFClass.name == class_name)).scalar()
-                # Check if it is a valid class
-                if isValidClass:
-                    class_ = session.query(RDFClass).filter(RDFClass.name == class_name).one()
-                    triple = GraphIAC(subject=instance.id, predicate=prop.id, object_=class_.id)
-                    triple_store.append(triple)
-                # Handle invalid classes
+        # NOTE: An instance would have to be a JSON object, not string. Otherwise we may have an instance named 23 which will be added
+        #  everytime the number is used. Use instance = {"@id": 2 }, where 2 is the ID of the instance.
+        try:
+            property_ = session.query(properties).filter(
+                properties.name == prop_name).one()
+        except NoResultFound:
+            # Adds new Property
+            property_ = BaseProperty(name=prop_name)
+            session.add(property_)
+            session.flush()
+            # @xadahiya, if you comment the above lines and uncomment these, it will use only the properties in DB
+            # session.close()
+            # session.delete(instance)
+            # session.commit()
+            # return {402: "%s is not a defined Property" % prop_name}
+
+        # For insertion in III
+        if type(object_["object"][prop_name]) == dict:
+            try:
+                instance_id = object_["object"][prop_name]["@id"]
+                instance_object = session.query(Instance).filter(
+                    Instance.id == instance_id).one()
+            except (KeyError, NoResultFound) as e:
+                print(e)
+                session.close()
+                session.delete(instance)
+                session.commit()
+                return {403: "The instance for %s is not valid" % prop_name}
+
+            if property_.type_ == "PROPERTY" or property_.type_ == "INSTANCE":
+                property_.type_ = "INSTANCE"
+                session.add(property_)
+                triple = GraphIII(
+                    subject=instance.id, predicate=property_.id, object_=instance_object.id)
+                # Add things directly to session, if anything fails whole transaction is aborted
+                session.add(triple)
+            else:
+                session.close()
+                session.delete(instance)
+                session.commit()
+                return {402: "%s is not an Instance Property" % prop_name}
+
+        else:
+            # For insertion in IAC
+            if session.query(exists().where(RDFClass.name == str(object_["object"][prop_name]))).scalar():
+                if property_.type_ == "PROPERTY" or property_.type_ == "ABSTRACT":
+                    property_.type_ = "ABSTRACT"
+                    session.add(property_)
+                    class_ = session.query(RDFClass).filter(
+                        RDFClass.name == object_["object"][prop_name]).one()
+                    triple = GraphIAC(subject=instance.id,
+                                      predicate=property_.id, object_=class_.id)
+                    session.add(triple)
                 else:
+                    session.close()
                     session.delete(instance)
                     session.commit()
-                    return {400: "The class %s is not a valid/defined RDFClass" % object_["object"][prop_name]}
+                    return {402: "%s is not an Abstract Property" % prop_name}
 
-            # Insert a triple with an instance property
-            elif prop.type_ == "INSTANCE":
-                # When object is an instance >> GraphIII
-                if type(object_["object"][prop_name]) is dict:
-                    object_id = object_["object"][prop_name]["@id"]
-                    isValidObject = session.query(exists().where(Instance.id == object_id)).scalar()
-                    if isValidObject:
-                        triple = GraphIII(subject=instance.id, predicate=prop.id, object_=object_id)
-                        triple_store.append(triple)
-                    else:
-                        session.delete(instance)
-                        session.commit()
-                        return {400: "The instance %s is not a valid Instance" % object_id}
-                # When object is a terminal >> GraphIIT
+            # For insertion in IIT
+            else:
+                terminal = Terminal(
+                    value=object_["object"][prop_name], unit="unit")
+                session.add(terminal)
+                session.flush()     # Assigns ID without committing
+
+                if property_.type_ == "PROPERTY" or property_.type_ == "INSTANCE":
+                    property_.type_ = "INSTANCE"
+                    session.add(property_)
+                    triple = GraphIIT(
+                        subject=instance.id, predicate=property_.id, object_=terminal.id)
+                    # Add things directly to session, if anything fails whole transaction is aborted
+                    session.add(triple)
                 else:
-                    # NOTE: Add code here to check existing terminals
-                    terminal = Terminal(value=object_["object"][prop_name], unit="unit")
-                    session.add(terminal)
+                    session.close()
+                    session.delete(instance)
                     session.commit()
-                    triple = GraphIIT(subject=instance.id, predicate=prop.id, object_=terminal.id)
-                    triple_store.append(triple)
-        else:
-            session.delete(instance)
-            session.commit()
-            return {400: "The property %s is not a valid/defined Property" % prop_name}
-    # Insert everything into database
-    session.add_all(triple_store)
+                    return {402: "%s is not an Instance Property" % prop_name}
+
     session.commit()
-    return instance.id
+    # pdb.set_trace()
+    return {204: "Object successfully added!"}
 
 
-def delete(id_):
+def delete(id_, type_, session=session):
     """Delete an Instance and all its relations from DB given id [DELETE]."""
-    # NOTE: Terminals are reusable, it is part of the reason why they are not stored as literals.
-    #       One terminal may map to many different instances in the graph, not advisable to delete them.
-    instanceExists = session.query(exists().where(Instance.id == id_)).scalar()
-    if instanceExists:
-        instance = session.query(Instance).filter(Instance.id == id_).one()
-        data_IIT = session.query(triples).filter(triples.GraphIIT.subject == id_).all()
-        data_IAC = session.query(triples).filter(triples.GraphIAC.subject == id_).all()
-        data_III = session.query(triples).filter(triples.GraphIII.subject == id_).all()
-        data = data_III + data_IAC + data_IIT
-        [session.delete(triple) for triple in data]
-        session.delete(instance)
-        session.commit()
-        return {204: "Object with ID : %s successfully deleted!" % (id_)}
-    else:
-        return {404: "Instance with ID : %s NOT FOUND" % id_}
+    try:
+        rdf_class = session.query(RDFClass).filter(
+            RDFClass.name == type_).one()
+    except NoResultFound:
+        return {401: "The class %s is not a valid/defined RDFClass" % type_}
+    try:
+        instance = session.query(Instance).filter(
+            Instance.id == id_ and type_ == rdf_class.id).one()
+    except NoResultFound:
+        return {404: "Instance with ID : %s and Type : %s, NOT FOUND" % (id_, type_)}
+
+    data_IIT = session.query(triples).filter(
+        triples.GraphIIT.subject == id_).all()
+    data_IAC = session.query(triples).filter(
+        triples.GraphIAC.subject == id_).all()
+    data_III = session.query(triples).filter(
+        triples.GraphIII.subject == id_).all()
+
+    data = data_III + data_IIT + data_IAC
+    for item in data:
+        session.delete(item)
+
+    for data in data_IIT:
+        terminal = session.query(Terminal).filter(
+            Terminal.id == data.object_).one()
+        session.delete(terminal)
+
+    session.delete(instance)
+    session.commit()
+    return {204: "Object with ID : %s successfully deleted!" % (id_)}
 
 
-def update(id_, object_):
+def update(id_, type_, object_, session=session):
     """Update an object properties based on the given object [PUT]."""
-    instanceExists = session.query(exists().where(Instance.id == id_)).scalar()
-    if instanceExists:
-        delete(id_)
-        insert(object_, id_)
-        return {204: "Object with ID : %s successfully updated!" % (id_)}
+    # Keep the object as fail safe
+    instance = get(id_, type_, session)
+    if "object" in instance:
+        instance.pop("@id")
+        # Try deleteing the object
+        delete_status = delete(id_=id_, type_=type_, session=session)
+        if 204 in delete_status:
+            # Try inserting the new data
+            insert_status = insert(object_=object_, id_=id_, session=session)
+            if 204 in insert_status:
+                return {204: "Object with ID : %s successfully updated!" % (id_)}
+            else:
+                insert(id_=id_, object_=instance, session=session)
+                return insert_status
+        else:
+            return delete_status
     else:
-        return {404: "Instance with ID : %s NOT FOUND" % id_}
+        return instance
 
 
 object__ = {
     "name": "12W communication",
+    "@type": "Spacecraft_Communication",
     "object": {
-        "category": "Spacecraft_Communication",
-        "hasMass": 98,
-        "hasMonetaryValue": 6604,
+        "hasMass": 9000,
+        "hasMonetaryValue": 4,
         "hasPower": -61,
         "hasVolume": 99,
         "maxWorkingTemperature": 63,
@@ -164,7 +248,44 @@ object__ = {
     }
 }
 
-# print(update(7, object__))
-print(insert(object__))
-# print(update(4, object__))
-# print(get(4))
+
+def get_collection(type_, session=session):
+    """Retrieve a type of collection from the database."""
+    collection_template = {
+        "@id": "/api/" + type_,
+        #TODO
+        "@context":None,
+        "@type": type_ + "Collection",
+        "members": []
+    }
+    try:
+        rdf_class = session.query(RDFClass).filter(
+            RDFClass.name == type_).one()
+    except NoResultFound:
+        return {401: "The class %s is not a valid/defined RDFClass" % type_}
+
+    try:
+        instances = session.query(Instance).filter(
+            Instance.type_ == rdf_class.id).all()
+    except NoResultFound:
+        instances = []
+        return {404: "Instance with ID : %s of Type : %s, NOT FOUND" % (id_, type_)}
+
+    if len(instances) > 0:
+        for instance_ in instances:
+            object_template = {
+                "@id": "/api/" + type_ + "/"+ str(instance_.id),
+                "@type": type_
+
+            }
+            collection_template["members"].append(object_template)
+    return collection_template
+
+
+# if __name__ == "__main__":
+    # print(update(6, object__))
+    # print(insert(object__, 1))
+    # print(delete(1))
+    # print(update(4, object__))
+    # print(get(1, "Spacecraft_Communication"))
+    # print(get_collection("Spacecraft_Communication"))

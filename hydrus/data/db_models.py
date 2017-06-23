@@ -3,9 +3,13 @@
 from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String
+import os
 
-engine = create_engine('sqlite:///database.db')
+# engine = create_engine('sqlite:///database.db')
+POSTGRES_IP = os.environ.get("POSTGRES_1_PORT_5432_TCP_ADDR", 'localhost')
 
+engine = create_engine("postgresql://hydra:hailhydra@%s:5432/hydrus"%(POSTGRES_IP,))
+# engine = create_engine("postgresql://postgres:  @%s:5432/hydra"%(POSTGRES_IP,))
 Base = declarative_base()
 
 
@@ -18,7 +22,7 @@ class RDFClass(Base):
     __tablename__ = "classes"
 
     id = Column(Integer, primary_key=True)
-    name = Column(String)
+    name = Column(String, unique=True)
 
     def __repr__(self):
         """Verbose object name."""

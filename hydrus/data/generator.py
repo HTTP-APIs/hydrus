@@ -113,7 +113,6 @@ def generateObject(name, subsystem):
     """Generate random components from given input dictionary."""
     result = {}
     result['hasMass'] = randomValue(subsystem['hasMass'])
-    result['category'] = classes_keymap[name]
     if 'minWorkingTemperature' in subsystem.keys():
         if not name == 'structure':
             result['hasPower'] = randomValue(subsystem['hasPower'])
@@ -201,6 +200,7 @@ def gen_random_object():
         str(random.choice(['T', 'W', 'KV', 'JFG'])) + ' ' + k
     obj = {}
     obj['name'] = name
+    obj['@type'] = classes_keymap[k]
     obj['object'] = generateObject(k, v)
     return obj
 
