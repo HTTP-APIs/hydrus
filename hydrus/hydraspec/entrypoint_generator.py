@@ -1,7 +1,7 @@
 """Genrate EntryPoint using server url, item_type."""
 import json
 from hydrus.metadata.subsystem_parsed_classes import parsed_classes
-
+import pprint
 
 def gen_supported_operation(item_type):
     """Generate a supported operation from the op_template given the item_type."""
@@ -38,4 +38,5 @@ def gen_entrypoint(server_url):
 
 
 if __name__ == "__main__":
-    print(gen_entrypoint("http://hydrus.com/"))
+    pp = pprint.PrettyPrinter(indent=4)
+    pp.pprint(gen_entrypoint("http://192.168.99.100:8080/"))

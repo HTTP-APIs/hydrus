@@ -1,6 +1,8 @@
 """Genrate EntryPoint Context using server url, item_type."""
 import json
 from hydrus.metadata.subsystem_parsed_classes import parsed_classes
+import pprint
+
 
 def gen_supported_operation(item_type):
     """Generate a supported operation from op_template given item type."""
@@ -30,7 +32,7 @@ def gen_entrypoint_context(server_url):
     entrypoint_context_template = {
         "@context": {
             "hydra": "http://www.w3.org/ns/hydra/core#",
-            "vocab": SERVER_URL + "/api/vocab#",
+            "vocab": SERVER_URL + "api/vocab#",
             "EntryPoint": "vocab:EntryPoint",
             ##Supported Operations will be appended here
         }
@@ -42,4 +44,5 @@ def gen_entrypoint_context(server_url):
 
 
 if __name__ == "__main__":
-    print(gen_entrypoint_context("http://hydrus.com/"))
+    pp = pprint.PrettyPrinter(indent=4)
+    pp.pprint(gen_entrypoint_context("http://192.168.99.100:8080/"))

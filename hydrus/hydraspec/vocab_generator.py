@@ -22,8 +22,8 @@ def gen_entrypoint_supported_prop(item_type):
                     "@type": "hydra:Operation",
                     "method": "GET",
                     "label": "Retrieves all %s entities" % (ITEM_TYPE,),
-                    "description": "null",
-                    "expects": "null",
+                    "description": None,
+                    "expects": None,
                     "returns": "vocab:%sCollection" % (ITEM_TYPE,),
                     "statusCodes": [
                     ]
@@ -32,9 +32,9 @@ def gen_entrypoint_supported_prop(item_type):
         },
         "hydra:title": ITEM_TYPE.lower(),
         "hydra:description": "The %s collection" % (ITEM_TYPE,),
-        "required": "null",
-        "readonly": "true",
-        "writeonly": "false"
+        "required": None,
+        "readonly": True,
+        "writeonly": False
     }
     return prop_template
 
@@ -65,7 +65,7 @@ def gen_item_collection(semantic_ref_name, item_type):
                 "@type": "http://schema.org/AddAction",
                 "method": "POST",
                 "label": "Creates a new %s entity" % (ITEM_TYPE),
-                "description": "null",
+                "description": None,
                 "expects": SEMANTIC_REF_NAME + ":" + ITEM_TYPE,
                 "returns": SEMANTIC_REF_NAME + ":" + ITEM_TYPE,
                 "statusCodes": [
@@ -80,8 +80,8 @@ def gen_item_collection(semantic_ref_name, item_type):
                 "@type": "hydra:Operation",
                 "method": "GET",
                 "label": "Retrieves all %s entities" % (ITEM_TYPE,),
-                "description": "null",
-                "expects": "null",
+                "description": None,
+                "expects": None,
                 "returns": "vocab:%sCollection" % (ITEM_TYPE),
                 "statusCodes": [
                 ]
@@ -92,9 +92,9 @@ def gen_item_collection(semantic_ref_name, item_type):
                 "property": "http://www.w3.org/ns/hydra/core#member",
                 "hydra:title": "members",
                 "hydra:description": "The %s" % (ITEM_TYPE.lower(),),
-                "required": "null",
-                "readonly": "false",
-                "writeonly": "false"
+                "required": None,
+                "readonly": False,
+                "writeonly": False
 
             }
         ]
@@ -120,7 +120,7 @@ def gen_vocab(parsed_classes, server_url, semantic_ref_name, semantic_ref_url):
 
     vocab_template = {
         "@context": {
-            "vocab": SERVER_URL + "/api/vocab#",
+            "vocab": SERVER_URL + "api/vocab#",
             "hydra": "http://www.w3.org/ns/hydra/core#",
             semantic_ref_name: semantic_ref_url,
             "ApiDocumentation": "hydra:ApiDocumentation",
@@ -130,6 +130,7 @@ def gen_vocab(parsed_classes, server_url, semantic_ref_name, semantic_ref_url):
             },
             "readonly": "hydra:readonly",
             "writeonly": "hydra:writeonly",
+            title:"hydra:title",
             "supportedClass": "hydra:supportedClass",
             "supportedProperty": "hydra:supportedProperty",
             "supportedOperation": "hydra:supportedOperation",
@@ -169,7 +170,7 @@ def gen_vocab(parsed_classes, server_url, semantic_ref_name, semantic_ref_url):
                 "@id": "http://www.w3.org/ns/hydra/core#Collection",
                 "@type": "hydra:Class",
                 "hydra:title": "Collection",
-                "hydra:description": "null",
+                "hydra:description": None,
                 "supportedOperation": [
                 ],
                 "supportedProperty": [
@@ -177,9 +178,9 @@ def gen_vocab(parsed_classes, server_url, semantic_ref_name, semantic_ref_url):
                         "property": "http://www.w3.org/ns/hydra/core#member",
                         "hydra:title": "members",
                         "hydra:description": "The members of this collection.",
-                        "required": "null",
-                        "readonly": "false",
-                        "writeonly": "false"
+                        "required": None,
+                        "readonly": False,
+                        "writeonly": False
                     }
                 ]
             },
@@ -187,7 +188,7 @@ def gen_vocab(parsed_classes, server_url, semantic_ref_name, semantic_ref_url):
                 "@id": "http://www.w3.org/ns/hydra/core#Resource",
                 "@type": "hydra:Class",
                 "hydra:title": "Resource",
-                "hydra:description": "null",
+                "hydra:description": None,
                 "supportedOperation": [
                 ],
                 "supportedProperty": [
@@ -196,7 +197,7 @@ def gen_vocab(parsed_classes, server_url, semantic_ref_name, semantic_ref_url):
             {
                 "@id": "vocab:EntryPoint",
                 "@type": "hydra:Class",
-                "subClassOf": "null",
+                "subClassOf": None,
                 "label": "EntryPoint",
                 "description": "The main entry point or homepage of the API.",
                 "supportedOperation": [
@@ -205,8 +206,8 @@ def gen_vocab(parsed_classes, server_url, semantic_ref_name, semantic_ref_url):
                         "@type": "hydra:Operation",
                         "method": "GET",
                         "label": "The APIs main entry point.",
-                        "description": "null",
-                        "expects": "null",
+                        "description": None,
+                        "expects": None,
                         "returns": "vocab:EntryPoint",
                         "statusCodes": [
                         ]
@@ -233,4 +234,4 @@ def gen_vocab(parsed_classes, server_url, semantic_ref_name, semantic_ref_url):
 if __name__ == "__main__":
     # DEMO
     print(gen_vocab(parsed_classes, "http://hydrus.com/", "subsystems",
-          "http://ontology.projectchronos.eu/subsystems?format=jsonld"))
+          "http://ontology.projectchronos.eu/subsystems"))
