@@ -2,7 +2,9 @@
 
 entrypoint_context = {
     "@context": {
-        "vocab": "http://hydrus.com//api/vocab#",
+        "hydra": "http://www.w3.org/ns/hydra/core#",
+        "vocab": "http://192.168.99.100:8080/api/vocab#",
+        "EntryPoint": "vocab:EntryPoint",
         "spacecraft_thermal_activedevice": {
             "@id": "vocab:EntryPoint/Spacecraft_Thermal_ActiveDevice",
             "@type": "@id"

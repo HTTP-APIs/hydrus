@@ -9,8 +9,9 @@ from hydrus.hydraspec.contexts.entrypoint import entrypoint_context
 from hydrus.metadata.entrypoint import entrypoint
 from hydrus.metadata.subsystem_parsed_classes import parsed_classes
 
-# from flask_cors import CORS, cross_origin
+from flask_cors import CORS, cross_origin
 app = Flask(__name__)
+CORS(app)
 api = Api(app)
 
 
@@ -23,7 +24,7 @@ def validObject(object_):
     return False
 
 
-def set_response_headers(resp, ct="application/json", status_code=200):
+def set_response_headers(resp, ct="application/ld+json", status_code=200):
     # NOTE: This isn't needed, flask automatically does this when you return a Python dict
     #       Just use : "return response_dict, status_code"
     """
@@ -33,6 +34,7 @@ def set_response_headers(resp, ct="application/json", status_code=200):
     """
     resp.status_code = status_code
     resp.headers['Content-type'] = ct
+    resp.headers['Link'] = '<http://192.168.99.100:8080/api/vocab>; rel="http://www.w3.org/ns/hydra/core#apiDocumentation"'
     return resp
 
 
@@ -82,7 +84,7 @@ def gen_collection_context(server_url, object_ , semantic_ref_url):
     """Generate context for Collection objects."""
     SEMANTIC_REF_URL = semantic_ref_url
     SERVER_URL = server_url
-    COLLECTION_TYPE = object_["@id"].rsplit('/', 1)[-1]
+    COLLECTION_TYPE = object_["@id"].split('/')[-2]
 
     template = {
     "hydra": "http://www.w3.org/ns/hydra/core#",
@@ -97,9 +99,9 @@ def gen_collection_context(server_url, object_ , semantic_ref_url):
 def hydrafy(parsed_classes, object_, collection = False):
     """Add hydra context to objects."""
     if collection:
-        context = gen_collection_context("http://hydrus.com/", object_, "http://ontology.projectchronos.eu/subsystems?format=jsonld")
+        context = gen_collection_context("http://192.168.99.100:8080/", object_, "http://ontology.projectchronos.eu/subsystems?format=jsonld")
     else:
-        context = gen_context(parsed_classes, "http://hydrus.com/", object_)
+        context = gen_context(parsed_classes, "http://192.168.99.100:8080/", object_)
     object_["@context"] = context
     return object_
 

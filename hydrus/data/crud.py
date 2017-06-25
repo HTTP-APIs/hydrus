@@ -252,8 +252,7 @@ object__ = {
 def get_collection(type_, session=session):
     """Retrieve a type of collection from the database."""
     collection_template = {
-        "@id": "/api/" + type_,
-        #TODO
+        "@id": "/api/" + type_ + "/",
         "@context":None,
         "@type": type_ + "Collection",
         "members": []

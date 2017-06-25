@@ -152,7 +152,15 @@ def gen_vocab(parsed_classes, server_url, semantic_ref_name, semantic_ref_url):
             "subClassOf": {
                 "@id": "rdfs:subClassOf",
                 "@type": "@id"
-            }
+            },
+            "domain": {
+              "@id": "rdfs:domain",
+              "@type": "@id"
+            },
+            "range": {
+              "@id": "rdfs:range",
+              "@type": "@id"
+            },
         },
         "@id": SERVER_URL + "/api/vocab",
         "@type": "ApiDocumentation",
