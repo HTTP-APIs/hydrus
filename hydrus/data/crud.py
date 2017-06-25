@@ -63,8 +63,8 @@ def get(id_, type_, session=session):
             " " + terminal.unit
 
     object_template["name"] = instance.name
-    object_template["@id"] = id_
-    object_template["@type"] = type_
+    object_template["@id"] = "/api/"+type_+"/"+str(id_)
+    object_template["@type"] = rdf_class.name
 
     return object_template
 
