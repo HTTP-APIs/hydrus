@@ -25,8 +25,8 @@ def gen_entrypoint(server_url):
     SERVER_URL = server_url
 
     entrypoint_template = {
-      "@context": SERVER_URL + "api/contexts/EntryPoint.jsonld",
-      "@id": SERVER_URL + "api/",
+      "@context": "/api/contexts/EntryPoint.jsonld",
+      "@id": "/api",
       "@type": "EntryPoint",
     }
 
