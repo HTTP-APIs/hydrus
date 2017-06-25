@@ -3,6 +3,8 @@ hydrus:
   build: ./
   ports:
     - "8080:80"
+  environment:
+    - HYDRUS_SERVER_URL=http:http://54.169.232.177:8080/api/
   links:
     - postgres:postgres
 

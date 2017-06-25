@@ -12,9 +12,10 @@ itsdangerous==0.24
 lifter==0.4.1
 packaging==16.8
 persisting-theory==0.2.1
-psycopg2==2.7.1
+psycopg2
 pyparsing==2.2.0
 python-dateutil==2.6.0
 pytz==2017.2
 six==1.10.0
 thespian==3.5.2
+flask-cors

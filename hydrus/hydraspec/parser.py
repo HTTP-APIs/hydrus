@@ -4,6 +4,19 @@ import sys
 
 from hydrus.hydraspec.crud import template
 from hydrus.metadata.subsystem_vocab_jsonld import subsystem_data
+import pprint
+
+
+def fix_keyword(keyword):
+    """Fix keyword occurances in OWL vocab. """
+    if keyword == "null":
+        return None
+    elif keyword == "false":
+        return False
+    elif keyword == "true":
+        return True
+    else:
+        return keyword
 
 
 def get_all_classes(owl_data):
@@ -27,10 +40,10 @@ def hydrafy_class(class_, supported_props, semantic_ref_name=None):
     }
     # If there is a semantic reference name give in the vocabulary then use that else use full links.
 
-    hydra_class["@id"] = class_["@id"]
+    hydra_class["@id"] = fix_keyword(class_["@id"])
 
-    hydra_class["title"] = class_["rdf:label"]
-    hydra_class["description"] = class_["rdf:comment"]
+    hydra_class["title"] = fix_keyword(class_["rdf:label"])
+    hydra_class["description"] = fix_keyword(class_["rdf:comment"])
 
     supported_ops = template()
     for operation in supported_ops:
@@ -75,12 +88,12 @@ def hydrafy_classes(classes, properties, semantic_ref_name=None):
         supported_props = list()
         parent_class = set()
         if "rdfs:subClassOf" in class_:
-            parent_class = set([x["@id"]
+            parent_class = set([fix_keyword(x["@id"])
                                 for x in class_["rdfs:subClassOf"] if "@id" in x])
         # NOTE: Properties of the parent classes are inherited by child classes
 
         for prop in properties:
-            class_list = [x[0] for x in prop["classes"]]
+            class_list = [fix_keyword(x[0]) for x in prop["classes"]]
             if "NONE" in class_list:
                 supported_props.append(prop["property"])
             elif class_["@id"] in class_list:    # Check if the class supports the property
@@ -107,30 +120,28 @@ def get_all_properties(owl_data):
                 properties.append(obj)
 
     return properties
-
-
 def hydrafy_property(prop, semantic_ref_name=None):
     """Create Hydra specific Property from owl:ObjectProperty JSON-LD."""
     hydra_prop = {
         "@type": "SupportedProperty",
         "property": "#property",
-        "required": "false",
-        "readonly": "false",
-        "writeonly": "false"
+        "required": False,
+        "readonly": False,
+        "writeonly": False
     }
     # If there is a semantic reference name give in the vocabulary then use that else use full links.
     if semantic_ref_name is not None:
         hydra_prop["property"] = semantic_ref_name + \
             ":" + prop["@id"].rsplit('/', 1)[-1]
     else:
-        hydra_prop["property"] = prop["@id"]
+        hydra_prop["property"] = fix_keyword(prop["@id"])
 
     if "rdf:label" in prop:
-        hydra_prop["title"] = prop["rdf:label"]
+        hydra_prop["title"] = fix_keyword(prop["rdf:label"])
     if "rdf:comment" in prop:
-        hydra_prop["description"] = prop["rdf:comment"]
+        hydra_prop["description"] = fix_keyword(prop["rdf:comment"])
     if "skos:prefLabel" in prop:
-        hydra_prop["description"] = prop["skos:prefLabel"]
+        hydra_prop["description"] = fix_keyword(prop["skos:prefLabel"])
 
     return hydra_prop
 
@@ -139,14 +150,14 @@ def hydrafy_properties(properties, semantic_ref_name=None):
     """Return list of Hydrafied properties along with the classes they are supported in."""
     hydra_props = list()
     for prop in properties:
-        domains = ["NONE"]
-        ranges = ["NONE"]
+        domains = [None]
+        ranges = [None]
         # NOTE: No domain or range implies the property is applicable to every class.
         if "rdf:domain" in prop:
-            domains = [x["@id"] for x in prop["rdf:domain"]]
+            domains = [fix_keyword(x["@id"]) for x in prop["rdf:domain"]]
         if "rdf:range" in prop:
-            ranges = [x["@id"] for x in prop["rdf:range"]]
-        ops = [[d, r] for d in domains for r in ranges]
+            ranges = [fix_keyword(x["@id"]) for x in prop["rdf:range"]]
+        ops = [[fix_keyword(d), fix_keyword(r)] for d in domains for r in ranges]
         hydra_props.append({
             "property": hydrafy_property(prop, semantic_ref_name),
             "classes": ops,
@@ -157,7 +168,7 @@ def hydrafy_properties(properties, semantic_ref_name=None):
 def terminal_props(class_, properties, semantic_ref_name=None):
     """Create terminal properties for non-descriptive property restrictions."""
     additional_props = list()
-    supported_props = [x["property"] for x in properties]
+    supported_props = [fix_keyword(x["property"]) for x in properties]
     if "rdfs:subClassOf" in class_:
         for restriction in class_["rdfs:subClassOf"]:
             if "owl:onProperty" in restriction:
@@ -197,5 +208,6 @@ if __name__ == "__main__":
 
     # Create API Documentation with the Hydra:Class list
     supported_classes = gen_supported_classes(hydra_classes)
-
-    print(json.dumps(supported_classes, indent=4))
+    # print(fix_keyword("null"))
+    pp = pprint.PrettyPrinter(indent=4)
+    pp.pprint(supported_classes)
