@@ -1,7 +1,12 @@
 """Genrate hydra vocabulary using parsed classes, server url, item_type and item_semantic_url."""
 
-import json
 from hydrus.metadata.subsystem_parsed_classes import parsed_classes
+import pprint
+import os
+
+global SERVER_URL
+SERVER_URL = os.environ.get("HYDRUS_SERVER_URL", "localhost/")
+
 
 
 def gen_entrypoint_supported_prop(item_type):
@@ -130,7 +135,7 @@ def gen_vocab(parsed_classes, server_url, semantic_ref_name, semantic_ref_url):
             },
             "readonly": "hydra:readonly",
             "writeonly": "hydra:writeonly",
-            title:"hydra:title",
+            "title":"hydra:title",
             "supportedClass": "hydra:supportedClass",
             "supportedProperty": "hydra:supportedProperty",
             "supportedOperation": "hydra:supportedOperation",
@@ -163,7 +168,7 @@ def gen_vocab(parsed_classes, server_url, semantic_ref_name, semantic_ref_url):
               "@type": "@id"
             },
         },
-        "@id": SERVER_URL + "/api/vocab",
+        "@id": SERVER_URL + "api/vocab",
         "@type": "ApiDocumentation",
         "supportedClass": [
             {
@@ -228,10 +233,11 @@ def gen_vocab(parsed_classes, server_url, semantic_ref_name, semantic_ref_url):
     for collection_item in collection_list:
         vocab_template["supportedClass"].append(collection_item)
 
-    return json.dumps(vocab_template, indent=4)
+    return vocab_template
 
 
 if __name__ == "__main__":
     # DEMO
-    print(gen_vocab(parsed_classes, "http://hydrus.com/", "subsystems",
+    pp = pprint.PrettyPrinter(indent=4)
+    pp.pprint(gen_vocab(parsed_classes, SERVER_URL, "subsystems",
           "http://ontology.projectchronos.eu/subsystems"))

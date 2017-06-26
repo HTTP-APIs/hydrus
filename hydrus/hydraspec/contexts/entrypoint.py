@@ -2,68 +2,33 @@
 import os
 SERVER_URL = os.environ.get("HYDRUS_SERVER_URL", "localhost/")
 
-entrypoint_context = {
-    "@context": {
-        "hydra": "http://www.w3.org/ns/hydra/core#",
-        "vocab": SERVER_URL + "api/vocab#",
-        "EntryPoint": "vocab:EntryPoint",
-        "spacecraft_thermal_activedevice": {
-            "@id": "vocab:EntryPoint/Spacecraft_Thermal_ActiveDevice",
-            "@type": "@id"
-        },
-        "spacecraft_thermal": {
-            "@id": "vocab:EntryPoint/Spacecraft_Thermal",
-            "@type": "@id"
-        },
-        "spacecraft_cdh": {
-            "@id": "vocab:EntryPoint/Spacecraft_CDH",
-            "@type": "@id"
-        },
-        "spacecraft_structure": {
-            "@id": "vocab:EntryPoint/Spacecraft_Structure",
-            "@type": "@id"
-        },
-        "spacecraft_backuppower": {
-            "@id": "vocab:EntryPoint/Spacecraft_BackupPower",
-            "@type": "@id"
-        },
-        "spacecraft_communication": {
-            "@id": "vocab:EntryPoint/Spacecraft_Communication",
-            "@type": "@id"
-        },
-        "spacecraft_primarypower": {
-            "@id": "vocab:EntryPoint/Spacecraft_PrimaryPower",
-            "@type": "@id"
-        },
-        "spacecraft_aodcs_passivedevice": {
-            "@id": "vocab:EntryPoint/Spacecraft_AODCS_PassiveDevice",
-            "@type": "@id"
-        },
-        "spacecraft_aodcs": {
-            "@id": "vocab:EntryPoint/Spacecraft_AODCS",
-            "@type": "@id"
-        },
-        "spacecraft_propulsion": {
-            "@id": "vocab:EntryPoint/Spacecraft_Propulsion",
-            "@type": "@id"
-        },
-        "hydra": "http://www.w3.org/ns/hydra/core#",
-        "cubicmillimeters": {
-            "@id": "vocab:EntryPoint/cubicMillimeters",
-            "@type": "@id"
-        },
-        "EntryPoint": "vocab:EntryPoint",
-        "spacecraft_detector": {
-            "@id": "vocab:EntryPoint/Spacecraft_Detector",
-            "@type": "@id"
-        },
-        "spacecraft_aodcs_active": {
-            "@id": "vocab:EntryPoint/Spacecraft_AODCS_Active",
-            "@type": "@id"
-        },
-        "spacecraft_thermal_passivedevice": {
-            "@id": "vocab:EntryPoint/Spacecraft_Thermal_PassiveDevice",
-            "@type": "@id"
-        }
-    }
-}
+
+entrypoint_context = {'@context': {'EntryPoint': 'vocab:EntryPoint',
+                                   'hydra': 'http://www.w3.org/ns/hydra/core#',
+                                   'spacecraft_aodcs': {'@id': 'vocab:EntryPoint/Spacecraft_AODCS',
+                                                        '@type': '@id'},
+                                   'spacecraft_aodcs_active': {'@id': 'vocab:EntryPoint/Spacecraft_AODCS_Active',
+                                                               '@type': '@id'},
+                                   'spacecraft_aodcs_passivedevice': {'@id': 'vocab:EntryPoint/Spacecraft_AODCS_PassiveDevice',
+                                                                      '@type': '@id'},
+                                   'spacecraft_backuppower': {'@id': 'vocab:EntryPoint/Spacecraft_BackupPower',
+                                                              '@type': '@id'},
+                                   'spacecraft_cdh': {'@id': 'vocab:EntryPoint/Spacecraft_CDH',
+                                                      '@type': '@id'},
+                                   'spacecraft_communication': {'@id': 'vocab:EntryPoint/Spacecraft_Communication',
+                                                                '@type': '@id'},
+                                   'spacecraft_detector': {'@id': 'vocab:EntryPoint/Spacecraft_Detector',
+                                                           '@type': '@id'},
+                                   'spacecraft_primarypower': {'@id': 'vocab:EntryPoint/Spacecraft_PrimaryPower',
+                                                               '@type': '@id'},
+                                   'spacecraft_propulsion': {'@id': 'vocab:EntryPoint/Spacecraft_Propulsion',
+                                                             '@type': '@id'},
+                                   'spacecraft_structure': {'@id': 'vocab:EntryPoint/Spacecraft_Structure',
+                                                            '@type': '@id'},
+                                   'spacecraft_thermal': {'@id': 'vocab:EntryPoint/Spacecraft_Thermal',
+                                                          '@type': '@id'},
+                                   'spacecraft_thermal_activedevice': {'@id': 'vocab:EntryPoint/Spacecraft_Thermal_ActiveDevice',
+                                                                       '@type': '@id'},
+                                   'spacecraft_thermal_passivedevice': {'@id': 'vocab:EntryPoint/Spacecraft_Thermal_PassiveDevice',
+                                                                        '@type': '@id'},
+                                   'vocab': SERVER_URL + 'api/vocab#'}}

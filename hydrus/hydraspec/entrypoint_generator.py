@@ -1,5 +1,5 @@
 """Genrate EntryPoint using server url, item_type."""
-import json
+
 from hydrus.metadata.subsystem_parsed_classes import parsed_classes
 import pprint
 
@@ -7,7 +7,7 @@ def gen_supported_operation(item_type):
     """Generate a supported operation from the op_template given the item_type."""
     ITEM_TYPE = item_type
     op_template = {
-        ITEM_TYPE.lower(): "/api/%s/" % (ITEM_TYPE)
+        ITEM_TYPE.lower(): "/api/%s" % (ITEM_TYPE)
     }
     return op_template
 
@@ -34,7 +34,7 @@ def gen_entrypoint(server_url):
     for op in supported_ops:
         entrypoint_template[op.keys()[0]] = op[op.keys()[0]]
 
-    return json.dumps(entrypoint_template, indent=4)
+    return entrypoint_template
 
 
 if __name__ == "__main__":
