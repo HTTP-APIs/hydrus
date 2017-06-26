@@ -51,7 +51,7 @@ subsystem_data = {
          "skos:altLabel": "is used for"
       },
       {
-         "@type": "http://www.w3.org/2002/07/owl#Class",
+         "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
          "@id": "http://ontology.projectchronos.eu/subsystems/cubicMillimeters",
          "rdf:comment": "unit of measure for volume",
          "rdf:label": "cubicMillimeters"

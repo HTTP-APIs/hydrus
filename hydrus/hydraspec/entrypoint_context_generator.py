@@ -1,7 +1,11 @@
 """Genrate EntryPoint Context using server url, item_type."""
-import json
+
 from hydrus.metadata.subsystem_parsed_classes import parsed_classes
 import pprint
+import os
+global SERVER_URL
+SERVER_URL = os.environ.get("HYDRUS_SERVER_URL", "localhost/")
+
 
 
 def gen_supported_operation(item_type):
@@ -40,9 +44,9 @@ def gen_entrypoint_context(server_url):
     supported_ops = gen_supported_ops(parsed_classes)
     for op in supported_ops:
         entrypoint_context_template["@context"][op.keys()[0]] = op[op.keys()[0]]
-    return json.dumps(entrypoint_context_template, indent=4)
+    return entrypoint_context_template
 
 
 if __name__ == "__main__":
     pp = pprint.PrettyPrinter(indent=4)
-    pp.pprint(gen_entrypoint_context("http://192.168.99.100:8080/"))
+    pp.pprint(gen_entrypoint_context(SERVER_URL))
