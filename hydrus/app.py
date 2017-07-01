@@ -1,23 +1,25 @@
 """Main route for the applciation."""
 
+import os
+import json
 from flask import Flask, jsonify, request
 from flask_restful import Api, Resource
+from hydrus.metadata.spacecraft_parsed_classes import parsed_classes
+from hydrus.hydraspec.vocab_generator import gen_vocab
+from hydrus.hydraspec.entrypoint_generator import gen_entrypoint
+from hydrus.hydraspec.entrypoint_context_generator import gen_entrypoint_context
 from hydrus.data import crud
-import json
-from hydrus.metadata.vocab import vocab
-from hydrus.hydraspec.contexts.entrypoint import entrypoint_context
-from hydrus.metadata.entrypoint import entrypoint
-from hydrus.metadata.subsystem_parsed_classes import parsed_classes
-import os
 from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
 CORS(app)
 api = Api(app)
 
-global SERVER_URL
+global SERVER_URL, SEMANTIC_REF_NAME, SEMANTIC_REF_URL, PARSED_CLASSES
 SERVER_URL = os.environ.get("HYDRUS_SERVER_URL", "localhost/")
-
+SEMANTIC_REF_NAME = "subsystems"
+SEMANTIC_REF_URL = "http://ontology.projectchronos.eu/subsystems"
+PARSED_CLASSES = parsed_classes
 def validObject(object_):
     """Check if the data passed in POST is of valid format or not."""
     if "name" in object_:
@@ -119,7 +121,7 @@ class Index(Resource):
 
     def get(self):
         """Return main entrypoint for the api."""
-        return set_response_headers(jsonify(entrypoint))
+        return set_response_headers(jsonify(gen_entrypoint(SERVER_URL, PARSED_CLASSES)))
 
 
 api.add_resource(Index, "/api", endpoint="api")
@@ -132,7 +134,7 @@ class Item(Resource):
         """GET object with id = id_ from the database."""
         response = crud.get(id_, type_)
         if "object" in response:
-            return set_response_headers(jsonify(hydrafy(parsed_classes, response)))
+            return set_response_headers(jsonify(hydrafy(PARSED_CLASSES, response)))
         else:
             status_code = int(list(response.keys())[0])
             return set_response_headers(jsonify(response), status_code=status_code)
@@ -174,7 +176,7 @@ class ItemCollection(Resource):
         """Retrieve a collection of items from the database."""
         response = crud.get_collection(type_)
         if "members" in response:
-            return set_response_headers(jsonify(hydrafy(parsed_classes, response, collection=True)))
+            return set_response_headers(jsonify(hydrafy(PARSED_CLASSES, response, collection=True)))
         else:
             status_code = int(list(response.keys())[0])
             return set_response_headers(jsonify(response), status_code=status_code)
@@ -186,7 +188,7 @@ api.add_resource(ItemCollection, "/api/<string:type_>",
 
 class Contexts(Resource):
     """Dynamically genereated contexts."""
-    global SERVER_URL
+
     def get(self, category):
         """Return the context for the specified class."""
         if "Collection" in category:
@@ -197,7 +199,7 @@ class Contexts(Resource):
                 status_code = int(list(response.keys())[0])
                 return set_response_headers(jsonify(response), status_code=status_code)
         else:
-            response = gen_context(parsed_classes, SERVER_URL, category)
+            response = gen_context(PARSED_CLASSES, SERVER_URL, category)
             if "@context" in response:
                 return set_response_headers(jsonify(response))
             else:
@@ -214,7 +216,7 @@ class Vocab(Resource):
 
     def get(self):
         """Return the main hydra vocab."""
-        return set_response_headers(jsonify(vocab))
+        return set_response_headers(jsonify(gen_vocab(PARSED_CLASSES, SERVER_URL, SEMANTIC_REF_NAME, SEMANTIC_REF_URL)))
 
 
 api.add_resource(Vocab, "/api/vocab", endpoint="vocab")
@@ -225,7 +227,7 @@ class Entrypoint(Resource):
 
     def get(self):
         """Return application main Entrypoint."""
-        return set_response_headers(jsonify(entrypoint_context))
+        return set_response_headers(jsonify(gen_entrypoint_context(SERVER_URL, parsed_classes)))
 
 
 api.add_resource(Entrypoint, "/api/contexts/EntryPoint.jsonld",

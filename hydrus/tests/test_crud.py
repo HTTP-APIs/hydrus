@@ -6,9 +6,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import hydrus.data.crud as crud
 from hydrus.data.db_models import Base
-from hydrus.metadata.vocab import vocab
+from hydrus.hydraspec.vocab_generator import gen_vocab
 import hydrus.data.doc_parse as parser
-
+from hydrus.app import SERVER_URL, SEMANTIC_REF_URL, SEMANTIC_REF_NAME, PARSED_CLASSES
 
 def object_1():
     """Return a copy of an object."""
@@ -63,7 +63,7 @@ class TestCRUD(unittest.TestCase):
         self.session = session
 
         print("Adding Classes...")
-        classes = parser.get_classes(vocab)
+        classes = parser.get_classes(gen_vocab(PARSED_CLASSES, SERVER_URL, SEMANTIC_REF_NAME, SEMANTIC_REF_URL))
         parser.insert_classes(classes, self.session)
 
         print("Adding Properties...")
@@ -86,7 +86,7 @@ class TestCRUD(unittest.TestCase):
         object_ = crud.get(id_=id_, type_=object_["@type"], session=self.session)
         assert 204 in response
         assert "object" in object_
-        assert int(object_["@id"]) == id_
+        assert int(object_["@id"].split("/")[-1]) == id_
 
     def test_update(self):
         """Test CRUD update."""
@@ -98,7 +98,7 @@ class TestCRUD(unittest.TestCase):
         test_object = crud.get(id_=id_, type_=object_["@type"], session=self.session)
         assert 204 in insert_response
         assert 204 in update_response
-        assert test_object["@id"] == id_
+        assert int(test_object["@id"].split("/")[-1]) == id_
 
     def test_delete(self):
         """Test CRUD delete."""

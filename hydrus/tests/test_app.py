@@ -6,6 +6,8 @@ import tempfile
 import os
 import hydrus.app as views
 import json
+from hydrus.app import SERVER_URL, SEMANTIC_REF_URL, SEMANTIC_REF_NAME, PARSED_CLASSES
+
 
 
 class ViewsTestCase(unittest.TestCase):
@@ -24,12 +26,12 @@ class ViewsTestCase(unittest.TestCase):
 
     def test_Index(self):
         """Test for the index."""
-        response_get = self.app.get("/api/")
+        response_get = self.app.get("/api")
         self.endpoints = json.loads(response_get.data.decode('utf-8'))
-        response_post = self.app.post("/api/", data={})
-        response_delete = self.app.delete("/api/")
+        response_post = self.app.post("/api", data={})
+        response_delete = self.app.delete("/api")
         assert "@context" in self.endpoints
-        assert self.endpoints["@id"] == "http://hydrus.com/api/"
+        assert self.endpoints["@id"] == "/api"
         assert self.endpoints["@type"] == "EntryPoint"
         assert response_get.status_code == 200
         assert response_post.status_code == 405
@@ -53,7 +55,7 @@ class ViewsTestCase(unittest.TestCase):
         response_post = self.app.post("/api/vocab#", data={})
         response_delete = self.app.delete("/api/vocab#")
         assert "@context" in response_get_data
-        assert response_get_data["@id"] == "http://hydrus.com/api/vocab"
+        assert response_get_data["@id"] == SERVER_URL+"api/vocab"
         assert response_get_data["@type"] == "ApiDocumentation"
         assert response_get.status_code == 200
         assert response_post.status_code == 405
@@ -61,7 +63,7 @@ class ViewsTestCase(unittest.TestCase):
 
     def test_Endpoints_Collections(self):
         """Test all endpoints to get the collection."""
-        index = self.app.get("/api/")
+        index = self.app.get("/api")
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
         for endpoint in endpoints:
@@ -80,7 +82,7 @@ class ViewsTestCase(unittest.TestCase):
 
     def test_Endpoints_Contexts(self):
         """Test all endpoints contexts are generated properly."""
-        index = self.app.get("/api/")
+        index = self.app.get("/api")
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
         for endpoint in endpoints:
