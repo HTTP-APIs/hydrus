@@ -32,7 +32,6 @@ def gen_entrypoint(server_url, parsed_classes):
     supported_ops = gen_supported_ops(parsed_classes)
     for op in supported_ops:
         entrypoint_template[list(op.keys())[0]] = op[list(op.keys())[0]]
-
     return entrypoint_template
 
 

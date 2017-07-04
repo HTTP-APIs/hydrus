@@ -20,6 +20,13 @@ SERVER_URL = os.environ.get("HYDRUS_SERVER_URL", "localhost/")
 SEMANTIC_REF_NAME = "subsystems"
 SEMANTIC_REF_URL = "http://ontology.projectchronos.eu/subsystems"
 PARSED_CLASSES = parsed_classes
+
+## Save data in memory to improve performance
+global VOCAB, ENTRYPOINT, ENTRYPOINT_CONTEXT
+VOCAB = gen_vocab(PARSED_CLASSES, SERVER_URL, SEMANTIC_REF_NAME, SEMANTIC_REF_URL)
+ENTRYPOINT = gen_entrypoint(SERVER_URL, PARSED_CLASSES)
+ENTRYPOINT_CONTEXT = gen_entrypoint_context(SERVER_URL, parsed_classes)
+
 def validObject(object_):
     """Check if the data passed in POST is of valid format or not."""
     if "name" in object_:
@@ -121,7 +128,7 @@ class Index(Resource):
 
     def get(self):
         """Return main entrypoint for the api."""
-        return set_response_headers(jsonify(gen_entrypoint(SERVER_URL, PARSED_CLASSES)))
+        return set_response_headers(jsonify(ENTRYPOINT))
 
 
 api.add_resource(Index, "/api", endpoint="api")
@@ -216,7 +223,7 @@ class Vocab(Resource):
 
     def get(self):
         """Return the main hydra vocab."""
-        return set_response_headers(jsonify(gen_vocab(PARSED_CLASSES, SERVER_URL, SEMANTIC_REF_NAME, SEMANTIC_REF_URL)))
+        return set_response_headers(jsonify(VOCAB))
 
 
 api.add_resource(Vocab, "/api/vocab", endpoint="vocab")
@@ -227,7 +234,7 @@ class Entrypoint(Resource):
 
     def get(self):
         """Return application main Entrypoint."""
-        return set_response_headers(jsonify(gen_entrypoint_context(SERVER_URL, parsed_classes)))
+        return set_response_headers(jsonify(ENTRYPOINT_CONTEXT))
 
 
 api.add_resource(Entrypoint, "/api/contexts/EntryPoint.jsonld",
