@@ -55,9 +55,9 @@ Once we have docker up and running setting up the demo server is a piece of cake
 <a name="usage"></a>
 Usage
 -------------
-To understand how to use Hydrus and how things work, head over to the [Usage](Usage) page of the wiki.
+To understand how to use Hydrus and how things work, head over to the [Usage](https://github.com/HTTP-APIs/hydrus/wiki/Usage) page of the wiki.
 
 <a name="design"></a>
 Design
 -------------
-Head over to the [Design](Design) page to understand the design principles and use cases of Hydrus.
+Head over to the [Design](https://github.com/HTTP-APIs/hydrus/wiki/Design) page to understand the design principles and use cases of Hydrus.
