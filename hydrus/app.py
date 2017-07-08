@@ -4,7 +4,7 @@ import os
 import json
 from flask import Flask, jsonify, request
 from flask_restful import Api, Resource
-from hydrus.metadata.spacecraft_parsed_classes import parsed_classes
+from hydrus.metadata.subsystem_parsed_classes import parsed_classes
 from hydrus.hydraspec.vocab_generator import gen_vocab
 from hydrus.hydraspec.entrypoint_generator import gen_entrypoint
 from hydrus.hydraspec.entrypoint_context_generator import gen_entrypoint_context
@@ -17,8 +17,8 @@ api = Api(app)
 
 global SERVER_URL, SEMANTIC_REF_NAME, SEMANTIC_REF_URL, PARSED_CLASSES
 SERVER_URL = os.environ.get("HYDRUS_SERVER_URL", "localhost/")
-SEMANTIC_REF_NAME = "subsystems"
-SEMANTIC_REF_URL = "http://ontology.projectchronos.eu/subsystems"
+SEMANTIC_REF_NAME = "drone"
+SEMANTIC_REF_URL = "http://drone.com"
 PARSED_CLASSES = parsed_classes
 
 ## Save data in memory to improve performance
@@ -89,7 +89,7 @@ def gen_context(parsed_classes, server_url, category):
     }
 
     # Get supported properties
-    supported_props = get_supported_properties(parsed_classes, category, vocab)
+    supported_props = get_supported_properties(PARSED_CLASSES, category, VOCAB)
     for title, value in supported_props:
         context_template["@context"][title] = value
 
