@@ -43,9 +43,13 @@ def gen_classes(labels):
 # spacecraft_labels = get_rdf_lables(filter_objects(spacecraft_data))
 # spacecraft_classes = gen_classes(spacecraft_labels)
 # print(spacecraft_labels)
-
-drone_labels = ['Order']
+#
+drone_labels = ['order']
 drone_classes = gen_classes(drone_labels)
+
+# NOTE: Order is skipped from server_labels because it's present in drone_labels
+server_labels = ['drone', 'message', 'logs', 'status', 'datastream']
+server_classes = gen_classes(server_labels)
 
 if __name__ == "__main__":
     Session = sessionmaker(bind=models.engine)
@@ -58,7 +62,11 @@ if __name__ == "__main__":
     # session.add_all(spacecraft_classes)
     # session.commit()
     # print("Spacecraft classes added succesfully")
-
+    #
     session.add_all(drone_classes)
     session.commit()
     print("Drone Classes added successfully.")
+
+    session.add_all(server_classes)
+    session.commit()
+    print("Server classes added successfully.")

@@ -64,7 +64,6 @@ def gen_item_collection(semantic_ref_name, item_):
                 "@id": "_:%s_create" % (ITEM_TYPE.lower()),
                 "@type": "http://schema.org/AddAction",
                 "method": "POST",
-                "label": "Creates a new %s entity" % (ITEM_TYPE),
                 "description": None,
                 "expects": [x["expects"] for x in ITEM_["supportedOperation"]][0] if [x["expects"] for x in ITEM_["supportedOperation"]][0] else None ,
                 "returns": [x["returns"] for x in ITEM_["supportedOperation"]][0] if [x["returns"] for x in ITEM_["supportedOperation"]][0] else None,
