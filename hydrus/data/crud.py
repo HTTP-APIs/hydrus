@@ -17,7 +17,8 @@ def get(id_, type_, session=session):
         "object": {
         },
         "name": "",
-        "@id": ""
+        "@id": "",
+        "@type": "",
     }
     try:
         rdf_class = session.query(RDFClass).filter(
@@ -176,7 +177,7 @@ def insert(object_, id_=None, session=session):
 
     session.commit()
     # pdb.set_trace()
-    return {204: "Object successfully added!"}
+    return {204: "Object with id %s successfully added!" %(instance.id)}
 
 
 def delete(id_, type_, session=session):
@@ -235,20 +236,6 @@ def update(id_, type_, object_, session=session):
         return instance
 
 
-object__ = {
-    "name": "12W communication",
-    "@type": "Spacecraft_Communication",
-    "object": {
-        "hasMass": 9000,
-        "hasMonetaryValue": 4,
-        "hasPower": -61,
-        "hasVolume": 99,
-        "maxWorkingTemperature": 63,
-        "minWorkingTemperature": -26
-    }
-}
-
-
 def get_collection(type_, session=session):
     """Retrieve a type of collection from the database."""
     collection_template = {
@@ -281,9 +268,25 @@ def get_collection(type_, session=session):
     return collection_template
 
 
-# if __name__ == "__main__":
+    object__ = {
+    "name": "12W communication",
+    "@type": "Spacecraft_Communication",
+    "object": {
+    "hasMass": 9000,
+    "hasMonetaryValue": 4,
+    "hasPower": -61,
+    "hasVolume": 99,
+    "maxWorkingTemperature": 63,
+    "minWorkingTemperature": -26
+    }
+    }
+
+
+object_2 = {'name': 'Not defined :p', '@type': 'Order', 'object': {'Speed': '2334', 'Destination': 'india'}, '@context': {'Speed': 'http://auto.schema.org/speed', 'Destination': 'http://schema.org/geo'}}
+
+if __name__ == "__main__":
     # print(update(6, object__))
-    # print(insert(object__, 1))
+    print(insert(object_2))
     # print(delete(1))
     # print(update(4, object__))
     # print(get(1, "Spacecraft_Communication"))

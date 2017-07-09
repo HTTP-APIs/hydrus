@@ -35,23 +35,30 @@ def gen_classes(labels):
 
 
 # Generate classes for subsystem data
-subsystem_labels = get_rdf_lables(filter_objects(subsystem_data))
-subsystem_classes = gen_classes(subsystem_labels)
-print(subsystem_labels)
+# subsystem_labels = get_rdf_lables(filter_objects(subsystem_data))
+# subsystem_classes = gen_classes(subsystem_labels)
+# print(subsystem_labels)
+#
+# # Generate classes for the spacecraft data
+# spacecraft_labels = get_rdf_lables(filter_objects(spacecraft_data))
+# spacecraft_classes = gen_classes(spacecraft_labels)
+# print(spacecraft_labels)
 
-# Generate classes for the spacecraft data
-spacecraft_labels = get_rdf_lables(filter_objects(spacecraft_data))
-spacecraft_classes = gen_classes(spacecraft_labels)
-print(spacecraft_labels)
+drone_labels = ['Order']
+drone_classes = gen_classes(drone_labels)
 
 if __name__ == "__main__":
     Session = sessionmaker(bind=models.engine)
     session = Session()
 
-    session.add_all(subsystem_classes)
-    session.commit()
-    print("Subsystem classes added successfully")
+    # session.add_all(subsystem_classes)
+    # session.commit()
+    # print("Subsystem classes added successfully")
+    #
+    # session.add_all(spacecraft_classes)
+    # session.commit()
+    # print("Spacecraft classes added succesfully")
 
-    session.add_all(spacecraft_classes)
+    session.add_all(drone_classes)
     session.commit()
-    print("Spacecraft classes added succesfully")
+    print("Drone Classes added successfully.")
