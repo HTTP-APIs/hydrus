@@ -15,6 +15,7 @@ from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
 CORS(app)
+app.url_map.strict_slashes = False
 api = Api(app)
 
 global SERVER_URL, SEMANTIC_REF_NAME, SEMANTIC_REF_URL, PARSED_CLASSES
@@ -71,7 +72,7 @@ def struct_object(object_, type_):
         return obj_temp
 
 
-def set_response_headers(resp, ct="application/ld+json", status_code=200):
+def set_response_headers(resp, ct="application/ld+json", headers = [], status_code=200):
     # NOTE: This isn't needed, flask automatically does this when you return a Python dict
     #       Just use : "return response_dict, status_code"
     """
@@ -80,6 +81,12 @@ def set_response_headers(resp, ct="application/ld+json", status_code=200):
     Default : { Content-type:"JSON-LD", status_code:200}
     """
     resp.status_code = status_code
+    # resp.autocorrect_location_header = False
+    print(headers)
+    for header in headers:
+        print(header)
+        resp.headers[list(header.keys())[0]] = header[list(header.keys())[0]]
+
     resp.headers['Content-type'] = ct
     resp.headers['Link'] = '<' + SERVER_URL + \
         'api/vocab>; rel="http://www.w3.org/ns/hydra/core#apiDocumentation"'
@@ -168,7 +175,7 @@ class Index(Resource):
         return set_response_headers(jsonify(ENTRYPOINT))
 
 
-api.add_resource(Index, "/api/", endpoint="api")
+api.add_resource(Index, "/api", endpoint="api")
 
 
 class Item(Resource):
@@ -186,10 +193,17 @@ class Item(Resource):
     def post(self, id_, type_):
         """Add object_ to database with optional id_ parameter (The id where the object needs to be inserted)."""
         object_ = json.loads(request.data.decode('utf-8'))
+        object_ = struct_object(object_, type_)
+        # print(object_)
+
         if validObject(object_):
-            response = crud.insert(object_=object_, id_=id_)
+            response = crud.insert(object_=object_)
+
+            object_id = response[list(response.keys())[0]].split(" ")[3]
+            headers_ = [{"Location":SERVER_URL+"api/"+type_+ "/"+ object_id},]
             status_code = int(list(response.keys())[0])
-            return set_response_headers(jsonify(response), status_code=status_code)
+
+            return set_response_headers(jsonify(response), headers = headers_, status_code=status_code)
         else:
             return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
 
@@ -198,8 +212,10 @@ class Item(Resource):
         object_ = json.loads(request.data.decode('utf-8'))
         if validObject(object_):
             response = crud.update(object_=object_, id_=id_, type_=type_)
+            headers_ = [{"Location":SERVER_URL+"api/"+type_+ "/"+ id_},]
+
             status_code = int(list(response.keys())[0])
-            return set_response_headers(jsonify(response), status_code=status_code)
+            return set_response_headers(jsonify(response), headers=headers_, status_code=status_code)
         else:
             return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
 
@@ -227,23 +243,25 @@ class ItemCollection(Resource):
             return set_response_headers(jsonify(response), status_code=status_code)
 
     def post(self, type_):
-        """Add object_ to database with optional id_ parameter (The id where the object needs to be inserted)."""
+        """Add item to ItemCollection."""
         object_ = json.loads(request.data.decode('utf-8'))
         object_ = struct_object(object_, type_)
         # print(object_)
 
         if validObject(object_):
             response = crud.insert(object_=object_)
-            print(response)
+
+            object_id = response[list(response.keys())[0]].split(" ")[3]
+            headers_ = [{"Location":SERVER_URL+"api/"+type_+ "/"+ object_id},]
             status_code = int(list(response.keys())[0])
-            print(jsonify(response))
-            return set_response_headers(jsonify(response), status_code=status_code)
+
+            return set_response_headers(jsonify(response), headers = headers_, status_code=status_code)
         else:
             return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
 
 
 # Needs to be added manually.
-api.add_resource(ItemCollection, "/api/<string:type_>/",
+api.add_resource(ItemCollection, "/api/<string:type_>",
                  endpoint="item_collection")
 
 
@@ -280,7 +298,7 @@ class Vocab(Resource):
         return set_response_headers(jsonify(VOCAB))
 
 
-api.add_resource(Vocab, "/api/vocab/", endpoint="vocab")
+api.add_resource(Vocab, "/api/vocab", endpoint="vocab")
 
 
 class Entrypoint(Resource):
