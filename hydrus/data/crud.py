@@ -17,13 +17,14 @@ def get(id_, type_, session=session):
         "object": {
         },
         "name": "",
-        "@id": ""
+        "@id": "",
+        "@type": "",
     }
     try:
         rdf_class = session.query(RDFClass).filter(
             RDFClass.name == type_).one()
     except NoResultFound:
-        return {401: "The class %s is not a valid/defined RDFClass" % type_}
+        return {400: "The class %s is not a valid/defined RDFClass" % type_}
 
     try:
         instance = session.query(Instance).filter(
@@ -63,7 +64,7 @@ def get(id_, type_, session=session):
             " " + terminal.unit
 
     object_template["name"] = instance.name
-    object_template["@id"] = "/api/"+type_+"/"+str(id_)
+    object_template["@id"] = "/api/" + type_ + "/" + str(id_)
     object_template["@type"] = rdf_class.name
 
     return object_template
@@ -79,7 +80,7 @@ def insert(object_, id_=None, session=session):
         rdf_class = session.query(RDFClass).filter(
             RDFClass.name == object_["@type"]).one()
     except NoResultFound:
-        return {401: "The class %s is not a valid/defined RDFClass" % object_["@type"]}
+        return {400: "The class %s is not a valid/defined RDFClass" % object_["@type"]}
 
     if id_ is not None:
         # Update the object if ID already exists
@@ -109,7 +110,7 @@ def insert(object_, id_=None, session=session):
             # session.close()
             # session.delete(instance)
             # session.commit()
-            # return {402: "%s is not a defined Property" % prop_name}
+            # return {400: "%s is not a defined Property" % prop_name}
 
         # For insertion in III
         if type(object_["object"][prop_name]) == dict:
@@ -122,7 +123,7 @@ def insert(object_, id_=None, session=session):
                 session.close()
                 session.delete(instance)
                 session.commit()
-                return {403: "The instance for %s is not valid" % prop_name}
+                return {400: "The instance for %s is not valid" % prop_name}
 
             if property_.type_ == "PROPERTY" or property_.type_ == "INSTANCE":
                 property_.type_ = "INSTANCE"
@@ -135,7 +136,7 @@ def insert(object_, id_=None, session=session):
                 session.close()
                 session.delete(instance)
                 session.commit()
-                return {402: "%s is not an Instance Property" % prop_name}
+                return {400: "%s is not an Instance Property" % prop_name}
 
         else:
             # For insertion in IAC
@@ -152,7 +153,7 @@ def insert(object_, id_=None, session=session):
                     session.close()
                     session.delete(instance)
                     session.commit()
-                    return {402: "%s is not an Abstract Property" % prop_name}
+                    return {400: "%s is not an Abstract Property" % prop_name}
 
             # For insertion in IIT
             else:
@@ -172,11 +173,11 @@ def insert(object_, id_=None, session=session):
                     session.close()
                     session.delete(instance)
                     session.commit()
-                    return {402: "%s is not an Instance Property" % prop_name}
+                    return {400: "%s is not an Instance Property" % prop_name}
 
     session.commit()
     # pdb.set_trace()
-    return {204: "Object successfully added!"}
+    return {201: "Object with id %s successfully added!" % (instance.id)}
 
 
 def delete(id_, type_, session=session):
@@ -185,7 +186,7 @@ def delete(id_, type_, session=session):
         rdf_class = session.query(RDFClass).filter(
             RDFClass.name == type_).one()
     except NoResultFound:
-        return {401: "The class %s is not a valid/defined RDFClass" % type_}
+        return {400: "The class %s is not a valid/defined RDFClass" % type_}
     try:
         instance = session.query(Instance).filter(
             Instance.id == id_ and type_ == rdf_class.id).one()
@@ -210,7 +211,7 @@ def delete(id_, type_, session=session):
 
     session.delete(instance)
     session.commit()
-    return {204: "Object with ID : %s successfully deleted!" % (id_)}
+    return {200: "Object with ID : %s successfully deleted!" % (id_)}
 
 
 def update(id_, type_, object_, session=session):
@@ -221,39 +222,24 @@ def update(id_, type_, object_, session=session):
         instance.pop("@id")
         # Try deleteing the object
         delete_status = delete(id_=id_, type_=type_, session=session)
-        if 204 in delete_status:
+        if 200 in delete_status:
             # Try inserting the new data
             insert_status = insert(object_=object_, id_=id_, session=session)
-            if 204 in insert_status:
-                return {204: "Object with ID : %s successfully updated!" % (id_)}
+            if 200 in insert_status:
+                return {200: "Object with ID : %s successfully updated!" % (id_)}
             else:
-                insert(id_=id_, object_=instance, session=session)
                 return insert_status
         else:
             return delete_status
     else:
-        return instance
-
-
-object__ = {
-    "name": "12W communication",
-    "@type": "Spacecraft_Communication",
-    "object": {
-        "hasMass": 9000,
-        "hasMonetaryValue": 4,
-        "hasPower": -61,
-        "hasVolume": 99,
-        "maxWorkingTemperature": 63,
-        "minWorkingTemperature": -26
-    }
-}
+        return {400: "Something went wrong, try again."}
 
 
 def get_collection(type_, session=session):
     """Retrieve a type of collection from the database."""
     collection_template = {
         "@id": "/api/" + type_ + "/",
-        "@context":None,
+        "@context": None,
         "@type": type_ + "Collection",
         "members": []
     }
@@ -261,7 +247,7 @@ def get_collection(type_, session=session):
         rdf_class = session.query(RDFClass).filter(
             RDFClass.name == type_).one()
     except NoResultFound:
-        return {401: "The class %s is not a valid/defined RDFClass" % type_}
+        return {400: "The class %s is not a valid/defined RDFClass" % type_}
 
     try:
         instances = session.query(Instance).filter(
@@ -273,17 +259,33 @@ def get_collection(type_, session=session):
     if len(instances) > 0:
         for instance_ in instances:
             object_template = {
-                "@id": "/api/" + type_ + "/"+ str(instance_.id),
+                "@id": "/api/" + type_ + "/" + str(instance_.id),
                 "@type": type_
 
             }
             collection_template["members"].append(object_template)
     return collection_template
 
+    object__ = {
+        "name": "12W communication",
+        "@type": "Spacecraft_Communication",
+        "object": {
+            "hasMass": 9000,
+            "hasMonetaryValue": 4,
+            "hasPower": -61,
+            "hasVolume": 99,
+            "maxWorkingTemperature": 63,
+            "minWorkingTemperature": -26
+        }
+    }
 
-# if __name__ == "__main__":
+
+object_2 = {'name': 'Not defined :p', '@type': 'Order', 'object': {'Speed': '2334', 'Destination': 'india'},
+            '@context': {'Speed': 'http://auto.schema.org/speed', 'Destination': 'http://schema.org/geo'}}
+
+if __name__ == "__main__":
     # print(update(6, object__))
-    # print(insert(object__, 1))
+    print(insert(object_2))
     # print(delete(1))
     # print(update(4, object__))
     # print(get(1, "Spacecraft_Communication"))
