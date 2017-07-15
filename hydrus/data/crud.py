@@ -238,7 +238,6 @@ def update(id_, type_, object_, session=session):
     """Update an object properties based on the given object [PUT]."""
     # Keep the object as fail safe
     instance = get(id_, type_, session)
-    # print(instance)
 
     # Try deleteing the object
     delete_status = delete(id_=id_, type_=type_, session=session)
@@ -249,6 +248,8 @@ def update(id_, type_, object_, session=session):
         if 201 in insert_status:
             return {200: "Object with ID : %s successfully updated!" % (id_)}
         else:
+            # Add the old object back
+            insert(object_=instance, id_=id_, session=session)
             return insert_status
     else:
         return delete_status
@@ -269,20 +270,17 @@ def get_collection(type_, session=session):
         return {400: "The class %s is not a valid/defined RDFClass" % type_}
 
     try:
-        instances = session.query(Instance).filter(
-            Instance.type_ == rdf_class.id).all()
+        instances = session.query(Instance).filter(Instance.type_ == rdf_class.id).all()
     except NoResultFound:
+        # No error, just means that there are no instances
         instances = []
-        return {404: "Instance with ID : %s of Type : %s, NOT FOUND" % (id_, type_)}
 
-    if len(instances) > 0:
-        for instance_ in instances:
-            object_template = {
-                "@id": "/api/" + type_ + "/" + str(instance_.id),
-                "@type": type_
-
-            }
-            collection_template["members"].append(object_template)
+    for instance_ in instances:
+        object_template = {
+            "@id": "/api/" + type_ + "/" + str(instance_.id),
+            "@type": type_
+        }
+        collection_template["members"].append(object_template)
     return collection_template
 
 

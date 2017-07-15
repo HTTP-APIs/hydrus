@@ -3,8 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import exists
 
 from hydrus.data.db_models import RDFClass, BaseProperty, engine
-from hydrus.hydraspec.vocab_generator import gen_vocab
-from hydrus.app import SERVER_URL, SEMANTIC_REF_URL, SEMANTIC_REF_NAME, PARSED_CLASSES
+from hydrus.metadata.server_doc import server_doc
 
 
 def get_classes(apidoc):
@@ -56,7 +55,7 @@ if __name__ == "__main__":
     session = Session()
 
     # Extract all classes with supportedProperty from both
-    classes = get_classes(gen_vocab(PARSED_CLASSES, SERVER_URL, SEMANTIC_REF_NAME, SEMANTIC_REF_URL))
+    classes = get_classes(server_doc)
 
     # Extract all properties from both
     # import pdb; pdb.set_trace()
