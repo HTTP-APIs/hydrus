@@ -46,11 +46,12 @@ def gen_entrypoint_supported_props(parsed_classes):
     return supported_props
 
 
-def gen_item_collection(semantic_ref_name, item_type):
+def gen_item_collection(semantic_ref_name, item_):
     """Generate ItemCollection for item_type from collection_template
      from Markus Lanthler's event api example."""
     SEMANTIC_REF_NAME = semantic_ref_name
-    ITEM_TYPE = item_type
+    ITEM_  = item_
+    ITEM_TYPE = ITEM_["title"]
 
     collection_template = {
         "@id": "vocab:%sCollection" % (ITEM_TYPE,),
@@ -63,10 +64,9 @@ def gen_item_collection(semantic_ref_name, item_type):
                 "@id": "_:%s_create" % (ITEM_TYPE.lower()),
                 "@type": "http://schema.org/AddAction",
                 "method": "POST",
-                "label": "Creates a new %s entity" % (ITEM_TYPE),
                 "description": None,
-                "expects": SEMANTIC_REF_NAME + ":" + ITEM_TYPE,
-                "returns": SEMANTIC_REF_NAME + ":" + ITEM_TYPE,
+                "expects": [x["expects"] for x in ITEM_["supportedOperation"]][0] if [x["expects"] for x in ITEM_["supportedOperation"]][0] else None ,
+                "returns": [x["returns"] for x in ITEM_["supportedOperation"]][0] if [x["returns"] for x in ITEM_["supportedOperation"]][0] else None,
                 "statusCodes": [
                     {
                         "code": 201,
@@ -107,7 +107,7 @@ def gen_item_collection_list(semantic_ref_name, parsed_classes):
     collections = []
     for class_ in parsed_classes:
         collections.append(gen_item_collection(
-            semantic_ref_name, class_["title"]))
+            semantic_ref_name, class_))
     return collections
 
 
@@ -121,7 +121,7 @@ def gen_vocab(parsed_classes, server_url, semantic_ref_name, semantic_ref_url):
         "@context": {
             "vocab": SERVER_URL + "api/vocab#",
             "hydra": "http://www.w3.org/ns/hydra/core#",
-            semantic_ref_name: semantic_ref_url,
+            SEMANTIC_REF_NAME: SEMANTIC_REF_URL,
             "ApiDocumentation": "hydra:ApiDocumentation",
             "property": {
                 "@id": "hydra:property",

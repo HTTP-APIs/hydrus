@@ -52,14 +52,16 @@ class ViewsTestCase(unittest.TestCase):
         """Test the vocab."""
         response_get = self.app.get("/api/vocab#")
         response_get_data = json.loads(response_get.data.decode('utf-8'))
-        response_post = self.app.post("/api/vocab#", data={})
-        response_delete = self.app.delete("/api/vocab#")
         assert "@context" in response_get_data
-        assert response_get_data["@id"] == SERVER_URL+"api/vocab"
         assert response_get_data["@type"] == "ApiDocumentation"
+        assert response_get_data["@id"] == SERVER_URL+"api/vocab"
         assert response_get.status_code == 200
-        assert response_post.status_code == 405
+
+        response_delete = self.app.delete("/api/vocab#")
         assert response_delete.status_code == 405
+
+        response_put = self.app.put("/api/vocab#", data=json.dumps(dict(foo = 'bar')))
+        assert response_post.status_code == 405
 
     def test_Endpoints_Collections(self):
         """Test all endpoints to get the collection."""
@@ -69,10 +71,10 @@ class ViewsTestCase(unittest.TestCase):
         for endpoint in endpoints:
             if endpoint not in ["@id", "@context", "@type"]:
                 response_get = self.app.get(endpoints[endpoint])
-                response_post = self.app.post(endpoints[endpoint])
+                response_post = self.app.post(endpoints[endpoint], data=json.dumps(dict(foo = 'bar')))
                 response_delete = self.app.delete(endpoints[endpoint])
                 assert response_get.status_code == 200
-                assert response_post.status_code == 405
+                assert response_post.status_code == 400
                 assert response_delete.status_code == 405
                 response_get_data = json.loads(response_get.data.decode('utf-8'))
                 assert "@context" in response_get_data
@@ -88,6 +90,7 @@ class ViewsTestCase(unittest.TestCase):
         for endpoint in endpoints:
             if endpoint not in ["@id", "@context", "@type"]:
                 response_get = self.app.get(endpoints[endpoint])
+                print(response_get.data.decode('utf-8'))
                 context = json.loads(response_get.data.decode('utf-8'))["@context"]
                 response_context = self.app.get(context)
                 response_context_data = json.loads(response_context.data.decode('utf-8'))
