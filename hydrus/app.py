@@ -34,43 +34,11 @@ ENTRYPOINT_CONTEXT = gen_entrypoint_context(SERVER_URL, parsed_classes)
 
 def validObject(object_):
     """Check if the data passed in POST is of valid format or not."""
-    if "name" in object_:
-        if "@type" in object_:
-            # NOTE: To support hydra console POST request the object entities need to be outside of object
-            # if "object" in object_
-            return True
+    if "@type" in object_:
+        # NOTE: To support hydra console POST request the object entities need to be outside of object
+        # if "object" in object_
+        return True
     return False
-
-
-def struct_object(object_, type_):
-    """ Restructure objects submitted by Hydra Console."""
-    if validObject(object_):
-        return object_
-    else:
-        obj_temp = {
-            "name": None,
-            "@type": "",
-            "object": {
-            }}
-
-        obj_temp["@type"] = type_
-
-        try:
-            obj_temp["name"] = object_["name"]
-        except:
-            pass
-
-        try:
-            obj_temp["@context"] = object_["@context"]
-        except:
-            pass
-
-        restricted_keys = ["name", "@context", "@type"]
-        for prop in object_.keys():
-            if prop not in restricted_keys:
-                obj_temp["object"][prop] = object_[prop]
-        return obj_temp
-
 
 def set_response_headers(resp, ct="application/ld+json", headers = [], status_code=200):
     # NOTE: This isn't needed, flask automatically does this when you return a Python dict
@@ -193,7 +161,6 @@ class Item(Resource):
     def post(self, id_, type_):
         """Add object_ to database with optional id_ parameter (The id where the object needs to be inserted)."""
         object_ = json.loads(request.data.decode('utf-8'))
-        object_ = struct_object(object_, type_)
         # print(object_)
 
         if validObject(object_):
@@ -245,7 +212,6 @@ class ItemCollection(Resource):
     def post(self, type_):
         """Add item to ItemCollection."""
         object_ = json.loads(request.data.decode('utf-8'))
-        object_ = struct_object(object_, type_)
         # print(object_)
 
         if validObject(object_):
