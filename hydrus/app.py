@@ -47,10 +47,11 @@ class Index(Resource):
 
     def get(self):
         """Return main entrypoint for the api."""
+        print(API_DOC.entrypoint.get())
         return set_response_headers(jsonify(API_DOC.entrypoint.get()))
 
 
-api.add_resource(Index, "/"+API_NAME, endpoint="api")
+api.add_resource(Index, "/"+API_NAME+"/", endpoint="api")
 
 
 class Item(Resource):
@@ -172,13 +173,14 @@ class Vocab(Resource):
 
 api.add_resource(Vocab, "/"+API_NAME+"/vocab", endpoint="vocab")
 
-
 class Entrypoint(Resource):
     """Hydra EntryPoint."""
 
     def get(self):
         """Return application main Entrypoint."""
-        return set_response_headers(jsonify(API_DOC.entrypoint.context.generate()))
+        response = {"@context": API_DOC.entrypoint.context.generate()}
+        return set_response_headers(jsonify(response))
+
 
 
 api.add_resource(Entrypoint, "/"+API_NAME+"/contexts/EntryPoint.jsonld",

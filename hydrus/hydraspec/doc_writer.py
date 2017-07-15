@@ -251,8 +251,8 @@ class HydraEntryPoint():
     def get(self):
         """Create the EntryPoint object to be returnd for the get function."""
         object_ = {
-            "@context": self.url+"contexts/EntryPoint.jsonld",
-            "@id": '/'+self.api,
+            "@context": "/"+self.api+"/"+"contexts/EntryPoint.jsonld",
+            "@id": "/"+self.api,
             "@type": "EntryPoint",
         }
         for item in self.entrypoint.supportedProperty:
