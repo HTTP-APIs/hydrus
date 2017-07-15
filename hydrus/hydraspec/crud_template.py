@@ -9,7 +9,7 @@ def template():
             "@type": "hydras:Operation",
             "method": "POST",
             "label": "Creates a new %s entity",
-            "description": "null",
+            "description": None,
             "expects": "%s",
             "returns": "%s",
             "statusCodes": [
@@ -20,7 +20,7 @@ def template():
             "@type": "hydra:Operation",
             "method": "PUT",
             "label": "Replaces an existing %s entity",
-            "description": "null",
+            "description": None,
             "expects": "%s",
             "returns": "%s",
             "statusCodes": [
@@ -35,9 +35,9 @@ def template():
             "@type": "hydra:Operation",
             "method": "DELETE",
             "label": "Deletes a %s entity",
-            "description": "null",
-            "expects": "null",
-            "returns": "null",
+            "description": None,
+            "expects": None,
+            "returns": None,
             "statusCodes": [
             ]
         },
@@ -46,8 +46,8 @@ def template():
             "@type": "hydra:Operation",
             "method": "GET",
             "label": "Retrieves a %s entity",
-            "description": "null",
-            "expects": "null",
+            "description": None,
+            "expects": None,
             "returns": "%s",
             "statusCodes": [
                 {

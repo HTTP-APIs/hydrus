@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import exists
 
 from hydrus.data.db_models import RDFClass, BaseProperty, engine
-from hydrus.metadata.vocab import vocab
+from hydrus.metadata.server_doc import server_doc
 
 
 def get_classes(apidoc):
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     session = Session()
 
     # Extract all classes with supportedProperty from both
-    classes = get_classes(vocab)
+    classes = get_classes(server_doc)
 
     # Extract all properties from both
     # import pdb; pdb.set_trace()

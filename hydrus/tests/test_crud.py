@@ -6,22 +6,24 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import hydrus.data.crud as crud
 from hydrus.data.db_models import Base
-from hydrus.metadata.vocab import vocab
-import hydrus.data.doc_parse as parser
-
+from hydrus.hydraspec.vocab_generator import gen_vocab
+from hydrus.data.insert_classes import gen_classes
 
 def object_1():
     """Return a copy of an object."""
     object_ = {
-        "name": "12W communication",
+        "name": "helllo",
         "@type": "Spacecraft_Communication",
-        "object": {
-            "hasMass": 9000,
-            "hasMonetaryValue": 4,
-            "hasPower": -61,
-            "hasVolume": 99,
-            "maxWorkingTemperature": 63,
-            "minWorkingTemperature": -26
+        "status": {
+            "name": "xa",
+            "@type": "status",
+            "Identifier": -1000,
+            "Speed": 0,
+            "Position": "0,0",
+            "Battery": 100,
+            "Destination": "0,0",
+            "Sensor": "temprature",
+            "Status": "Started"
         }
     }
     return object_
@@ -30,15 +32,18 @@ def object_1():
 def object_2():
     """Return a copy of another object."""
     object_ = {
-        "name": "150W communication",
+        "name": "helllo2",
         "@type": "Spacecraft_Communication",
-        "object": {
-            "hasMass": 00,
-            "hasMonetaryValue": 40,
-            "hasPower": -61,
-            "hasVolume": 95,
-            "maxWorkingTemperature": 60,
-            "minWorkingTemperature": -20
+        "status": {
+            "name": "xadjal",
+            "@type": "status",
+            "Identifier": -1000,
+            "Speed": 0,
+            "Position": "0,1",
+            "Battery": 100,
+            "Destination": "1,0",
+            "Sensor": "temprature",
+            "Status": "Stopped"
         }
     }
     return object_
@@ -63,12 +68,12 @@ class TestCRUD(unittest.TestCase):
         self.session = session
 
         print("Adding Classes...")
-        classes = parser.get_classes(vocab)
-        parser.insert_classes(classes, self.session)
+        test_labels = ["Spacecraft_Communication", "status"]
+        test_classes = gen_classes(test_labels)
 
-        print("Adding Properties...")
-        properties = parser.get_all_properties(classes)
-        parser.insert_properties(properties, self.session)
+        self.session.add_all(test_classes)
+        self.session.commit()
+        print("Test Classes added successfully.")
 
         print("Setup done, running tests...")
 
@@ -76,7 +81,7 @@ class TestCRUD(unittest.TestCase):
         """Test CRUD insert."""
         object_ = object_1()
         response = crud.insert(object_=object_, id_=1, session=self.session)
-        assert 204 in response
+        assert 201 in response
 
     def test_get(self):
         """Test CRUD get."""
@@ -84,21 +89,20 @@ class TestCRUD(unittest.TestCase):
         id_ = 2
         response = crud.insert(object_=object_, id_=id_, session=self.session)
         object_ = crud.get(id_=id_, type_=object_["@type"], session=self.session)
-        assert 204 in response
-        assert "object" in object_
-        assert int(object_["@id"]) == id_
+        assert 201 in response
+        assert int(object_["@id"].split("/")[-1]) == id_
 
     def test_update(self):
         """Test CRUD update."""
         object_ = object_1()
         new_object = object_2()
-        id_ = 3
+        id_ = 30
         insert_response = crud.insert(object_=object_, id_=id_, session=self.session)
         update_response = crud.update(id_=id_, type_=object_["@type"], object_=new_object, session=self.session)
         test_object = crud.get(id_=id_, type_=object_["@type"], session=self.session)
-        assert 204 in insert_response
-        assert 204 in update_response
-        assert test_object["@id"] == id_
+        assert 201 in insert_response
+        assert 200 in update_response
+        assert int(test_object["@id"].split("/")[-1]) == id_
 
     def test_delete(self):
         """Test CRUD delete."""
@@ -107,8 +111,8 @@ class TestCRUD(unittest.TestCase):
         insert_response = crud.insert(object_=object_, id_=id_, session=self.session)
         delete_response = crud.delete(id_=id_, type_=object_["@type"], session=self.session)
         get_response = crud.get(id_=id_, type_=object_["@type"], session=self.session)
-        assert 204 in insert_response
-        assert 204 in delete_response
+        assert 201 in insert_response
+        assert 200 in delete_response
         assert 404 in get_response
 
     def test_get_id(self):
@@ -123,16 +127,16 @@ class TestCRUD(unittest.TestCase):
         id_ = 1
         type_ = "dummyClass"
         get_response = crud.get(id_=id_, type_=type_, session=self.session)
-        assert 401 in get_response
+        assert 400 in get_response
 
     def test_delete_type(self):
         """Test CRUD delete when wrong/undefined class is given."""
         object_ = object_1()
-        id_ = 5
+        id_ = 50
         insert_response = crud.insert(object_=object_, id_=id_, session=self.session)
         delete_response = crud.delete(id_=id_, type_="dummyClass", session=self.session)
-        assert 204 in insert_response
-        assert 401 in delete_response
+        assert 201 in insert_response
+        assert 400 in delete_response
 
     def test_delete_id(self):
         """Test CRUD delete when wrong/undefined ID is given."""
@@ -140,7 +144,7 @@ class TestCRUD(unittest.TestCase):
         id_ = 6
         insert_response = crud.insert(object_=object_, id_=id_, session=self.session)
         delete_response = crud.delete(id_=999, type_=object_["@type"], session=self.session)
-        assert 204 in insert_response
+        assert 201 in insert_response
         assert 404 in delete_response
 
     def test_insert_type(self):
@@ -149,7 +153,7 @@ class TestCRUD(unittest.TestCase):
         id_ = 7
         object_["@type"] = "dummyClass"
         insert_response = crud.insert(object_=object_, id_=id_, session=self.session)
-        assert 401 in insert_response
+        assert 400 in insert_response
 
     def test_insert_id(self):
         """Test CRUD insert when used ID is given."""
@@ -158,37 +162,28 @@ class TestCRUD(unittest.TestCase):
         insert_response = crud.insert(object_=object_, id_=id_, session=self.session)
         assert 400 in insert_response
 
-    def test_insert_instance(self):
-        """Test CRUD insert when used invalid instance is given."""
-        object_ = object_1()
-        id_ = 8
-        object_["object"]["hasDuplicate"] = {"@id": 999}
-        insert_response_1 = crud.insert(object_=object_, id_=id_, session=self.session)
-        object_["object"]["hasDuplicate"] = {"id": 999}
-        insert_response_2 = crud.insert(object_=object_, id_=id_, session=self.session)
-        assert 403 in insert_response_1
-        assert 403 in insert_response_2
 
     def test_insert_abstractproperty(self):
         """Test CRUD when AbstractProperty is given instance."""
         object_ = object_1()
         id_ = 9
-        object_["object"]["dummyAbstractProperty"] = "Spacecraft_Communication"
+        object_["dummyAbstractProperty"] = "Spacecraft_Communication"
         insert_response_1 = crud.insert(object_=object_, id_=id_, session=self.session)
-        object_["object"]["dummyAbstractProperty"] = 4
+        object_["dummyAbstractProperty"] = 4
         insert_response_2 = crud.insert(object_=object_, id_=id_+1, session=self.session)
-        assert 204 in insert_response_1
-        assert 402 in insert_response_2
+        assert 201 in insert_response_1
+        assert 400 in insert_response_2
 
     def test_insert_instanceproperty(self):
         """Test CRUD when InstanceProperty is given Class."""
         object_ = object_1()
         id_ = 10
         insert_response_1 = crud.insert(object_=object_, id_=id_, session=self.session)
-        object_["object"]["hasMass"] = "Spacecraft_Communication"
+        object_["hasMass"] = "Spacecraft_Communication"
         insert_response_2 = crud.insert(object_=object_, id_=id_+1, session=self.session)
-        assert 204 in insert_response_1
-        assert 402 in insert_response_2
+        print(insert_response_1,insert_response_2)
+        assert 201 in insert_response_1
+        assert 201 in insert_response_2
 
     @classmethod
     def tearDownClass(self):

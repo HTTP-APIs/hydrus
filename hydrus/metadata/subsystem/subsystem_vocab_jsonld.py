@@ -51,7 +51,7 @@ subsystem_data = {
          "skos:altLabel": "is used for"
       },
       {
-         "@type": "http://www.w3.org/2002/07/owl#Class",
+         "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
          "@id": "http://ontology.projectchronos.eu/subsystems/cubicMillimeters",
          "rdf:comment": "unit of measure for volume",
          "rdf:label": "cubicMillimeters"
@@ -481,7 +481,7 @@ subsystem_data = {
          },
          "rdf:comment": "Complex devices-subsystems used for impelling (processes of applying a force which results in translational motion) a spacecraft, in the specific http://umbel.org/umbel/rc/ProjectilePropelling",
          "spacecraft:isComponentOf": "http://ontology.projectchronos.eu/spacecraft/Spacecraft",
-         "rdf:label": "Spacecraft_Propulsion.",
+         "rdf:label": "Spacecraft_Propulsion",
          "rdfs:subClassOf": [
             {
                "@id": "http://ontology.projectchronos.eu/spacecraft/Subsystem_Spacecraft"
@@ -565,7 +565,7 @@ subsystem_data = {
          "spacecraft:isComponentOf": {
             "@id": "http://ontology.projectchronos.eu/spacecraft/Spacecraft"
          },
-         "rdf:label": "Spacecraft_PrimaryPower.",
+         "rdf:label": "Spacecraft_PrimaryPower",
          "rdfs:subClassOf": [
             {
                "@id": "http://ontology.projectchronos.eu/spacecraft/Subsystem_Spacecraft"
