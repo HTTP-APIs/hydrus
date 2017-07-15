@@ -119,7 +119,7 @@ def insert(object_, id_=None, session=session):
             if type(object_[prop_name]) == dict:
                 try:
                     # # create a new instance for prop name
-                    instance_object_result = insert(object_[prop_name])
+                    instance_object_result = insert(object_[prop_name], session=session)
                     if 201 in instance_object_result:
                         instance_object_id = int(instance_object_result[list(
                             instance_object_result)[0]].split(" ")[3])
@@ -225,7 +225,7 @@ def delete(id_, type_, session=session):
         III_instance_type = session.query(properties).filter(
             properties.id == data.predicate).one()
         # Recursive call for delete
-        III_del_status = delete(III_instance.id, III_instance_type.name)
+        III_del_status = delete(III_instance.id, III_instance_type.name, session=session)
         if 200 in III_del_status:
             session.delete(III_instance)
 
@@ -289,7 +289,7 @@ def get_collection(type_, session=session):
 if __name__ == "__main__":
 
     drone_specs = {
-        "name": "helllo",
+        # "name": "helllo",
         "@type": "Spacecraft_Communication",
         "status": {
             "name": "xa",
@@ -304,11 +304,11 @@ if __name__ == "__main__":
         }
     }
     # print(update(6, object__))
-    # print(insert(drone_specs))
+    # print(insert(drone_specs,333))
     # print(update(4, object__))
     # print(get(142, "Spacecraft_Communication"))
     # print(get(146, "Spacecraft_Communication"))
-    # print(delete(142, "Spacecraft_Communication"))
+    print(delete(142, "Spacecraft_Communication"))
     # print(get(142, "Spacecraft_Communication"))
     # print(update(142, "Spacecraft_Communication", drone_specs))
     # print(get(146, "Spacecraft_Communication"))

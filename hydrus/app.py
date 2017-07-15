@@ -19,7 +19,7 @@ app.url_map.strict_slashes = False
 api = Api(app)
 
 global SERVER_URL, SEMANTIC_REF_NAME, SEMANTIC_REF_URL, PARSED_CLASSES
-SERVER_URL = os.environ.get("HYDRUS_SERVER_URL", "localhost/")
+SERVER_URL = os.environ.get("HYDRUS_SERVER_URL", "localhost:8080/")
 SEMANTIC_REF_NAME = "drone"
 SEMANTIC_REF_URL = "http://drone.com"
 PARSED_CLASSES = parsed_classes
@@ -50,9 +50,9 @@ def set_response_headers(resp, ct="application/ld+json", headers = [], status_co
     """
     resp.status_code = status_code
     # resp.autocorrect_location_header = False
-    print(headers)
+    # print(headers)
     for header in headers:
-        print(header)
+        # print(header)
         resp.headers[list(header.keys())[0]] = header[list(header.keys())[0]]
 
     resp.headers['Content-type'] = ct
@@ -146,6 +146,16 @@ class Index(Resource):
 api.add_resource(Index, "/api", endpoint="api")
 
 
+class Vocab(Resource):
+    """Vocabulary for Hydra."""
+
+    def get(self):
+        """Return the main hydra vocab."""
+        return set_response_headers(jsonify(VOCAB))
+
+
+api.add_resource(Vocab, "/api/vocab", endpoint="vocab")
+
 class Item(Resource):
     """Handles all operations(GET, POST, PATCH, DELETE) on Items (item can be anything depending upon the vocabulary)."""
 
@@ -161,7 +171,6 @@ class Item(Resource):
     def post(self, id_, type_):
         """Add object_ to database with optional id_ parameter (The id where the object needs to be inserted)."""
         object_ = json.loads(request.data.decode('utf-8'))
-        # print(object_)
 
         if validObject(object_):
             response = crud.insert(object_=object_)
@@ -255,16 +264,6 @@ class Contexts(Resource):
 api.add_resource(
     Contexts, "/api/contexts/<string:category>.jsonld", endpoint="contexts")
 
-
-class Vocab(Resource):
-    """Vocabulary for Hydra."""
-
-    def get(self):
-        """Return the main hydra vocab."""
-        return set_response_headers(jsonify(VOCAB))
-
-
-api.add_resource(Vocab, "/api/vocab", endpoint="vocab")
 
 
 class Entrypoint(Resource):
