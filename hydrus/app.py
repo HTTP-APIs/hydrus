@@ -68,7 +68,6 @@ class Item(Resource):
     def post(self, id_, type_):
         """Add object_ to database with optional id_ parameter (The id where the object needs to be inserted)."""
         object_ = json.loads(request.data.decode('utf-8'))
-        # print(object_)
 
         if validObject(object_):
             response = crud.insert(object_=object_)

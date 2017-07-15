@@ -65,7 +65,6 @@ def get(id_, type_, session=session):
         except:
             # If terminal is none
             object_template[prop_name] = ""
-    object_template["name"] = instance.name
     object_template["@id"] = "/api/" + type_ + "/" + str(id_)
     object_template["@type"] = rdf_class.name
 
@@ -90,14 +89,14 @@ def insert(object_, id_=None, session=session):
             # return update(id_, object_)   # Updates should be using PUT not POST
             return {400: "Instance with ID : %s already exists" % str(id_)}
 
-        instance = Instance(name=object_["name"], id=id_, type_=rdf_class.id)
+        instance = Instance(id=id_, type_=rdf_class.id)
     else:
-        instance = Instance(name=object_["name"], type_=rdf_class.id)
+        instance = Instance(type_=rdf_class.id)
     session.add(instance)
     session.commit()
 
     for prop_name in object_:
-        if prop_name not in ["@type", "name"]:
+        if prop_name != "@type":
             # NOTE: An instance would have to be a JSON object, not string. Otherwise we may have an instance named 23 which will be added
             #  everytime the number is used. Use instance = {"@id": 2 }, where 2 is the ID of the instance.
             try:
@@ -119,7 +118,7 @@ def insert(object_, id_=None, session=session):
             if type(object_[prop_name]) == dict:
                 try:
                     # # create a new instance for prop name
-                    instance_object_result = insert(object_[prop_name])
+                    instance_object_result = insert(object_[prop_name], session=session)
                     if 201 in instance_object_result:
                         instance_object_id = int(instance_object_result[list(
                             instance_object_result)[0]].split(" ")[3])
@@ -225,7 +224,7 @@ def delete(id_, type_, session=session):
         III_instance_type = session.query(properties).filter(
             properties.id == data.predicate).one()
         # Recursive call for delete
-        III_del_status = delete(III_instance.id, III_instance_type.name)
+        III_del_status = delete(III_instance.id, III_instance_type.name, session=session)
         if 200 in III_del_status:
             session.delete(III_instance)
 
@@ -287,10 +286,8 @@ def get_collection(type_, session=session):
 if __name__ == "__main__":
 
     drone_specs = {
-        "name": "helllo",
         "@type": "Spacecraft_Communication",
         "status": {
-            "name": "xa",
             "@type": "object",
             "Identifier": -1000,
             "Speed": 0,
@@ -304,7 +301,7 @@ if __name__ == "__main__":
     # print(update(6, object__))
     # print(insert(drone_specs))
     # print(update(4, object__))
-    # print(get(142, "Spacecraft_Communication"))
+    print(get(182, "Spacecraft_Communication"))
     # print(get(146, "Spacecraft_Communication"))
     # print(delete(142, "Spacecraft_Communication"))
     # print(get(142, "Spacecraft_Communication"))

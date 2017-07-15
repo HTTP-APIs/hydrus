@@ -43,7 +43,6 @@ class Instance(Base):
     __tablename__ = "instances"
 
     id = Column(Integer, primary_key=True)
-    name = Column(String)
     type_ = Column(Integer, ForeignKey("classes.id"), nullable=True)
 
 
