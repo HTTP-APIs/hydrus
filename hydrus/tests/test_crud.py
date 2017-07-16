@@ -6,7 +6,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import hydrus.data.crud as crud
 from hydrus.data.db_models import Base
-from hydrus.hydraspec.vocab_generator import gen_vocab
 from hydrus.data.insert_classes import gen_classes
 
 def object_1():

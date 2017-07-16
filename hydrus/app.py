@@ -4,8 +4,8 @@ import os
 import json
 from flask import Flask, jsonify, request
 from flask_restful import Api, Resource
-# from hydrus.metadata.server_doc_gen import server_doc
-from hydrus.metadata.drone_doc_gen import drone_doc
+from hydrus.metadata.server_doc_gen import server_doc
+# from hydrus.metadata.drone_doc_gen import drone_doc
 
 from hydrus.data import crud
 from flask_cors import CORS
@@ -17,8 +17,8 @@ api = Api(app)
 
 SERVER_URL = os.environ.get("HYDRUS_SERVER_URL", "localhost/")
 API_NAME = "serverapi"
-# API_DOC = server_doc(API_NAME, SERVER_URL)
-API_DOC = drone_doc(API_NAME, SERVER_URL)
+API_DOC = server_doc(API_NAME, SERVER_URL)
+# API_DOC = drone_doc(API_NAME, SERVER_URL)
 
 
 def validObject(object_):
@@ -50,7 +50,6 @@ class Index(Resource):
 
     def get(self):
         """Return main entrypoint for the api."""
-        print(API_DOC.entrypoint.get())
         return set_response_headers(jsonify(API_DOC.entrypoint.get()))
 
 
@@ -131,11 +130,11 @@ class ItemCollection(Resource):
             collection = API_DOC.collections[type_]["collection"]
             type_ = collection.class_.title
             object_["@type"] = type_
-        print(object_)
+        # print(object_)
 
         if validObject(object_):
             response = crud.insert(object_=object_)
-            print(response)
+            # print(response)
             object_id = response[list(response.keys())[0]].split(" ")[3]
             headers_ = [{"Location": SERVER_URL+"api/"+type_+"/"+object_id}]
             status_code = int(list(response.keys())[0])
