@@ -1,6 +1,6 @@
 """API Doc generator for the drone side API."""
 
-from hyrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp
+from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp
 import json
 
 
@@ -14,7 +14,7 @@ def drone_doc(API, BASE_URL):
                        BASE_URL)
 
     # Status Class
-    status = HydraClass("Status", "Status", "Class for drone status objects")
+    status = HydraClass("http://hydrus.com/Status", "Status", "Class for drone status objects")
     # Properties
     status.add_supported_prop(HydraClassProp("http://auto.schema.org/speed", "Speed", True, False, False))
     status.add_supported_prop(HydraClassProp("http://schema.org/geo", "Position", True, False, False))
@@ -22,7 +22,7 @@ def drone_doc(API, BASE_URL):
     status.add_supported_prop(HydraClassProp("https://schema.org/status", "SensorStatus", True, False, False))
 
     # Drone Class
-    drone = HydraClass("Drone", "Drone", "Class for a drone", endpoint=True)
+    drone = HydraClass("http://hydrus.com/Drone", "Drone", "Class for a drone", endpoint=True)
     # Properties
     drone.add_supported_prop(HydraClassProp("vocab:Status", "DroneStatus", True, False, False))
     drone.add_supported_prop(HydraClassProp("http://schema.org/name", "name", True, False, False))
@@ -42,7 +42,7 @@ def drone_doc(API, BASE_URL):
                                         None,
                                         [{"statusCode": 200, "description": "Command issued"}]))
 
-    data = HydraClass("Data", "Data", "Class for a data entry", endpoint=True)
+    data = HydraClass("http://hydrus.com/Data", "Data", "Class for a data entry", endpoint=True)
     data.add_supported_prop(HydraClassProp("http://schema.org/QuantitativeValue", "Temperature", True, False, False))
     data.add_supported_prop(HydraClassProp("http://schema.org/identifier", "DroneID", True, False, False))
     data.add_supported_prop(HydraClassProp("http://schema.org/geo", "Position", True, False, False))
