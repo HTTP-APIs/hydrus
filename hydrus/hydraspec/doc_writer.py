@@ -302,7 +302,6 @@ class Context():
                 "supportedClass": "hydra:supportedClass",
                 "supportedProperty": "hydra:supportedProperty",
                 "supportedOperation": "hydra:supportedOperation",
-                "code": "hydra:statusCode",
                 "statusCodes": "hydra:statusCodes",
                 "label": "rdfs:label",
                 "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
