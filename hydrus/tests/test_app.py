@@ -6,7 +6,7 @@ import tempfile
 import os
 import hydrus.app as views
 import json
-from hydrus.app import SERVER_URL, SEMANTIC_REF_URL, SEMANTIC_REF_NAME, PARSED_CLASSES
+from hydrus.app import API_NAME, SERVER_URL
 
 
 
@@ -26,12 +26,12 @@ class ViewsTestCase(unittest.TestCase):
 
     def test_Index(self):
         """Test for the index."""
-        response_get = self.app.get("/api")
+        response_get = self.app.get("/"+API_NAME)
         self.endpoints = json.loads(response_get.data.decode('utf-8'))
-        response_post = self.app.post("/api", data={})
-        response_delete = self.app.delete("/api")
+        response_post = self.app.post("/"+API_NAME, data={})
+        response_delete = self.app.delete("/"+API_NAME)
         assert "@context" in self.endpoints
-        assert self.endpoints["@id"] == "/api"
+        assert self.endpoints["@id"] == "/"+API_NAME
         assert self.endpoints["@type"] == "EntryPoint"
         assert response_get.status_code == 200
         assert response_post.status_code == 405
@@ -39,10 +39,10 @@ class ViewsTestCase(unittest.TestCase):
 
     def test_EntryPoint_context(self):
         """Test for the EntryPoint context."""
-        response_get = self.app.get("/api/contexts/EntryPoint.jsonld")
+        response_get = self.app.get("/"+API_NAME +"/contexts/EntryPoint.jsonld")
         response_get_data = json.loads(response_get.data.decode('utf-8'))
-        response_post = self.app.post("/api/contexts/EntryPoint.jsonld", data={})
-        response_delete = self.app.delete("/api/contexts/EntryPoint.jsonld")
+        response_post = self.app.post("/"+API_NAME +"/contexts/EntryPoint.jsonld", data={})
+        response_delete = self.app.delete("/"+API_NAME +"/contexts/EntryPoint.jsonld")
         assert response_get.status_code == 200
         assert "@context" in response_get_data
         assert response_post.status_code == 405
@@ -50,31 +50,32 @@ class ViewsTestCase(unittest.TestCase):
 
     def test_Vocab(self):
         """Test the vocab."""
-        response_get = self.app.get("/api/vocab#")
+        response_get = self.app.get("/"+API_NAME +"/vocab#")
         response_get_data = json.loads(response_get.data.decode('utf-8'))
         assert "@context" in response_get_data
+        # print(response_get_data["@id"], SERVER_URL+API_NAME +"/vocab#")
         assert response_get_data["@type"] == "ApiDocumentation"
-        assert response_get_data["@id"] == SERVER_URL+"api/vocab"
+        assert response_get_data["@id"] == SERVER_URL+API_NAME +"/vocab"
         assert response_get.status_code == 200
 
-        response_delete = self.app.delete("/api/vocab#")
+        response_delete = self.app.delete("/"+API_NAME +"/vocab#")
         assert response_delete.status_code == 405
 
-        response_put = self.app.put("/api/vocab#", data=json.dumps(dict(foo = 'bar')))
-        assert response_post.status_code == 405
+        response_put = self.app.put("/"+API_NAME +"/vocab#", data=json.dumps(dict(foo = 'bar')))
+        assert response_put.status_code == 405
 
     def test_Endpoints_Collections(self):
         """Test all endpoints to get the collection."""
-        index = self.app.get("/api")
+        index = self.app.get("/"+API_NAME)
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
         for endpoint in endpoints:
-            if endpoint not in ["@id", "@context", "@type"]:
+            if endpoint not in ["@id", "@context", "@type"] and "Collection" in endpoints[endpoint]:
                 response_get = self.app.get(endpoints[endpoint])
                 response_post = self.app.post(endpoints[endpoint], data=json.dumps(dict(foo = 'bar')))
                 response_delete = self.app.delete(endpoints[endpoint])
                 assert response_get.status_code == 200
-                assert response_post.status_code == 400
+                assert response_post.status_code == 201
                 assert response_delete.status_code == 405
                 response_get_data = json.loads(response_get.data.decode('utf-8'))
                 assert "@context" in response_get_data
@@ -84,13 +85,13 @@ class ViewsTestCase(unittest.TestCase):
 
     def test_Endpoints_Contexts(self):
         """Test all endpoints contexts are generated properly."""
-        index = self.app.get("/api")
+        index = self.app.get("/"+API_NAME)
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
         for endpoint in endpoints:
-            if endpoint not in ["@id", "@context", "@type"]:
+            if endpoint not in ["@id", "@context", "@type"] and "Collection" in endpoints[endpoint]:
                 response_get = self.app.get(endpoints[endpoint])
-                print(response_get.data.decode('utf-8'))
+                # print(response_get.data.decode('utf-8'))
                 context = json.loads(response_get.data.decode('utf-8'))["@context"]
                 response_context = self.app.get(context)
                 response_context_data = json.loads(response_context.data.decode('utf-8'))

@@ -68,9 +68,7 @@ class HydraDoc():
             "@context": self.context.generate(),
             "@id": self.base_url + self.API + "/vocab",
             "@type": "ApiDocumentation",
-            "title": self.title,
             "description": self.desc,
-            "entrypoint": '/'+self.entrypoint.api,
             "supportedClass": [x.generate() for x in parsed_classes + self.other_classes + collections + [self.entrypoint]],
             "possibleStatus": [x.generate() for x in self.status]
         }
@@ -133,8 +131,8 @@ class HydraClassProp():
           "title": self.title,
           "property": self.prop,
           "required": self.required,
-          "readable": self.read,
-          "writeable": self.write
+          "readonly": self.read,
+          "writeonly": self.write
         }
         return prop
 
@@ -184,9 +182,10 @@ class HydraCollection():
                     "@id": "_:%s_create" % (self.class_.title.lower()),
                     "@type": "http://schema.org/AddAction",
                     "method": "POST",
-                    "description": None,
-                    "expects": self.class_.title,
-                    "returns": self.class_.title,
+                    "label": "Create new %s entitity" % (self.class_.title),
+
+                    "expects": self.class_.id_,
+                    "returns": self.class_.id_,
                     "statusCodes": [
                         {
                             "code": 201,
@@ -251,8 +250,8 @@ class HydraEntryPoint():
     def get(self):
         """Create the EntryPoint object to be returnd for the get function."""
         object_ = {
-            "@context": self.url+"contexts/EntryPoint.jsonld",
-            "@id": '/'+self.api,
+            "@context": "/"+self.api+"/"+"contexts/EntryPoint.jsonld",
+            "@id": "/"+self.api,
             "@type": "EntryPoint",
         }
         for item in self.entrypoint.supportedProperty:
@@ -303,7 +302,7 @@ class Context():
                 "supportedClass": "hydra:supportedClass",
                 "supportedProperty": "hydra:supportedProperty",
                 "supportedOperation": "hydra:supportedOperation",
-                "code": "hydra:statusCode",
+                "statusCodes": "hydra:statusCodes",
                 "label": "rdfs:label",
                 "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
                 "vocab": address + "/vocab#",
@@ -377,20 +376,7 @@ class EntryPointCollection():
                 "label": self.name,
                 "description": "The %s collection" % (self.name,),
                 "domain": "vocab:EntryPoint",
-                "range": "vocab:%sCollection" % (self.name,),
-                "supportedOperation": [
-                    {
-                        "@id": "_:%s_collection_retrieve" % (self.name.lower(),),
-                        "@type": "hydra:Operation",
-                        "method": "GET",
-                        "label": "Retrieves all %s entities" % (self.name,),
-                        "description": None,
-                        "expects": None,
-                        "returns": "vocab:%sCollection" % (self.name,),
-                        "statusCodes": [
-                        ]
-                    }
-                ]
+                "range": "vocab:%s" % (self.name,),
             },
             "hydra:title": self.name.lower(),
             "hydra:description": "The %s collection" % (self.name,),
@@ -420,7 +406,7 @@ class EntryPointClass():
                 "label": self.name,
                 "description": self.desc,
                 "domain": "vocab:EntryPoint",
-                "range": "vocab:%sCollection" % (self.name),
+                "range": "vocab:%s" % (self.name),
                 "supportedOperation": []
             },
             "hydra:title": self.name.lower(),

@@ -14,7 +14,7 @@ def server_doc(API, BASE_URL):
                        BASE_URL)
 
     # Status Class
-    status = HydraClass("Status", "Status", "Class for drone status objects")
+    status = HydraClass("http://hydrus.com/Status", "Status", "Class for drone status objects")
     # Properties
     status.add_supported_prop(HydraClassProp("http://auto.schema.org/speed", "Speed", True, False, False))
     status.add_supported_prop(HydraClassProp("http://schema.org/geo", "Position", True, False, False))
@@ -22,7 +22,7 @@ def server_doc(API, BASE_URL):
     status.add_supported_prop(HydraClassProp("https://schema.org/status", "SensorStatus", True, False, False))
 
     # Drone Class
-    drone = HydraClass("Drone", "Drone", "Class for a drone")
+    drone = HydraClass("http://hydrus.com/Drone", "Drone", "Class for a drone")
     # Properties
     drone.add_supported_prop(HydraClassProp("vocab:Status", "DroneStatus", True, False, False))
     drone.add_supported_prop(HydraClassProp("http://schema.org/name", "name", True, False, False))
@@ -41,11 +41,11 @@ def server_doc(API, BASE_URL):
                                         "vocab:Drone",
                                         [{"statusCode": 200, "description": "Drone Returned"}]))
 
-    command = HydraClass("Command", "Command", "Class for drone commands")
+    command = HydraClass("http://hydrus.com/Command", "Command", "Class for drone commands")
     command.add_supported_prop(HydraClassProp("http://schema.org/UpdateAction", "Update", False, True, False))
     command.add_supported_prop(HydraClassProp("vocab:Status", "Status", False, False, False))
 
-    log = HydraClass("LogEntry", "LogEntry", "Class for a log entry")
+    log = HydraClass("http://hydrus.com/LogEntry", "LogEntry", "Class for a log entry")
     # Subject
     log.add_supported_prop(HydraClassProp("http://schema.org/identifier", "DroneID", True, True, False))
     # Predicate
@@ -63,7 +63,7 @@ def server_doc(API, BASE_URL):
                                       [{"statusCode": 404, "description": "Log entry not found"},
                                        {"statusCode": 200, "description": "Log entry returned"}]))
 
-    data = HydraClass("Data", "Data", "Class for a data entry")
+    data = HydraClass("http://hydrus.com/Data", "Data", "Class for a data entry")
     data.add_supported_prop(HydraClassProp("http://schema.org/QuantitativeValue", "Temperature", True, False, False))
     data.add_supported_prop(HydraClassProp("http://schema.org/identifier", "DroneID", True, False, False))
     data.add_supported_prop(HydraClassProp("http://schema.org/geo", "Position", True, False, False))
@@ -79,7 +79,7 @@ def server_doc(API, BASE_URL):
                                        None,
                                        [{"statusCode": 201, "description": "Data added"}]))
 
-    area = HydraClass("Area", "Area", "Class for Area of Interest of the server", endpoint=True)
+    area = HydraClass("http://hydrus.com/Area", "Area", "Class for Area of Interest of the server", endpoint=True)
     # Using two positions to have a bounding box
     area.add_supported_prop(HydraClassProp("http://schema.org/geo", "TopLeft", True, True, True))
     area.add_supported_prop(HydraClassProp("http://schema.org/geo", "BottomRight", True, True, True))
@@ -96,11 +96,11 @@ def server_doc(API, BASE_URL):
                                        [{"statusCode": 404, "description": "Area of not found"},
                                         {"statusCode": 200, "description": "Area of returned"}]))
 
-    message = HydraClass("Message", "Message", "Class for messages received by the GUI interface")
+    message = HydraClass("http://hydrus.com/Message", "Message", "Class for messages received by the GUI interface")
     message.add_supported_prop(HydraClassProp("http://schema.org/Text", "MessageString", True, True, False))
 
     api_doc.add_supported_class(drone, collection=True)
-    api_doc.add_supported_class(status, collection=False)
+    api_doc.add_supported_class(status, collection=True)
     api_doc.add_supported_class(data, collection=True)
     api_doc.add_supported_class(log, collection=True)
     api_doc.add_supported_class(area, collection=False)

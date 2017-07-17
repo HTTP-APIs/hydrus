@@ -96,7 +96,7 @@ def insert(object_, id_=None, session=session):
     session.commit()
 
     for prop_name in object_:
-        if prop_name != "@type":
+        if prop_name not in ["@type", "@context"]:
             # NOTE: An instance would have to be a JSON object, not string. Otherwise we may have an instance named 23 which will be added
             #  everytime the number is used. Use instance = {"@id": 2 }, where 2 is the ID of the instance.
             try:
@@ -254,10 +254,10 @@ def update(id_, type_, object_, session=session):
         return delete_status
 
 
-def get_collection(type_, session=session):
+def get_collection(API_NAME, type_, session=session):
     """Retrieve a type of collection from the database."""
     collection_template = {
-        "@id": "/api/" + type_ + "/",
+        "@id": "/"+API_NAME+"/"+ type_ + "Collection/",
         "@context": None,
         "@type": type_ + "Collection",
         "members": []
