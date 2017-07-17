@@ -1,21 +1,35 @@
-hydrus:
-  restart: always
-  build: ./
-  ports:
-    - "8080:80"
-  environment:
-    # - HYDRUS_SERVER_URL=http://localhost/ ## For linux local
-    - HYDRUS_SERVER_URL=http://192.168.99.100:8080/ ## For windows 10
-    # - HYDRUS_SERVER_URL=http://54.169.232.177:8080/
-  links:
-    - postgres:postgres
+version: "2"
 
-postgres:
-  restart: always
-  environment:
-    - POSTGRES_USER=hydra
-    - POSTGRES_PASSWORD=hailhydra
-    - POSTGRES_DB=hydrus
-  image: postgres:latest
-  ports:
-    - "9000:5432"
+services:
+  hydrus_server:
+    restart: always
+    build: ./
+    ports:
+      - "8080:80"
+    environment:
+      # - HYDRUS_SERVER_URL=http://localhost:8080/ ## For linux local
+      - HYDRUS_SERVER_URL=http://192.168.99.100:8080/ ## For windows 10
+      # - HYDRUS_SERVER_URL=http://54.169.232.177:8080/
+      - API_NAME=serverapi
+      - DB_URL=postgresql://hydra:hailhydra@postgres_db:5432/hydrus
+    networks:
+      main:
+        aliases:
+          - hydrus_server
+
+  postgres:
+    restart: always
+    environment:
+      - POSTGRES_USER=hydra
+      - POSTGRES_PASSWORD=hailhydra
+      - POSTGRES_DB=hydrus
+    image: postgres:latest
+    ports:
+      - "9000:5432"
+    networks:
+      main:
+        aliases:
+          - postgres_db
+
+networks:
+  main:
