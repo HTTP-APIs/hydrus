@@ -5,12 +5,12 @@ services:
     restart: always
     build: ./
     ports:
-      - "8080:80"
+      - "8081:80"
     environment:
       # - HYDRUS_SERVER_URL=http://localhost:8080/ ## For linux local
-      - HYDRUS_SERVER_URL=http://192.168.99.100:8080/ ## For windows 10
+      - HYDRUS_SERVER_URL=http://192.168.99.100:8081/ ## For windows 10
       # - HYDRUS_SERVER_URL=http://54.169.232.177:8080/
-      - API_NAME=serverapi
+      - API_NAME=api
       - DB_URL=postgresql://hydra:hailhydra@postgres_db:5432/hydrus
     networks:
       main:
