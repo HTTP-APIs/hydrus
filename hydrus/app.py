@@ -5,6 +5,8 @@ import json
 from flask import Flask, jsonify, request
 from flask_restful import Api, Resource
 from hydrus.metadata.server_doc_gen import server_doc
+# from hydrus.metadata.drone_doc_gen import drone_doc
+
 from hydrus.data import crud
 from flask_cors import CORS
 
@@ -16,6 +18,7 @@ api = Api(app)
 SERVER_URL = os.environ.get("HYDRUS_SERVER_URL", "localhost/")
 API_NAME = "serverapi"
 API_DOC = server_doc(API_NAME, SERVER_URL)
+# API_DOC = drone_doc(API_NAME, SERVER_URL)
 
 
 def validObject(object_):
@@ -50,7 +53,7 @@ class Index(Resource):
         return set_response_headers(jsonify(API_DOC.entrypoint.get()))
 
 
-api.add_resource(Index, "/"+API_NAME, endpoint="api")
+api.add_resource(Index, "/"+API_NAME+"/", endpoint="api")
 
 
 class Item(Resource):
@@ -109,20 +112,29 @@ class ItemCollection(Resource):
         """Retrieve a collection of items from the database."""
         if type_ in API_DOC.collections:
             collection = API_DOC.collections[type_]["collection"]
-            response = crud.get_collection(collection.class_.title)
+            response = crud.get_collection(API_NAME, collection.class_.title)
             if "members" in response:
                 return set_response_headers(jsonify(hydrafy(response)))
             else:
                 status_code = int(list(response.keys())[0])
+                response = crud.get_collection(API_NAME, type_)
+
                 return set_response_headers(jsonify(response), status_code=status_code)
 
     def post(self, type_):
         """Add item to ItemCollection."""
         object_ = json.loads(request.data.decode('utf-8'))
         # print(object_)
+        # Fix @type from hydra console
+        if type_ in API_DOC.collections:
+            collection = API_DOC.collections[type_]["collection"]
+            type_ = collection.class_.title
+            object_["@type"] = type_
+        # print(object_)
 
         if validObject(object_):
             response = crud.insert(object_=object_)
+            # print(response)
             object_id = response[list(response.keys())[0]].split(" ")[3]
             headers_ = [{"Location": SERVER_URL+"api/"+type_+"/"+object_id}]
             status_code = int(list(response.keys())[0])
@@ -172,13 +184,14 @@ class Vocab(Resource):
 
 api.add_resource(Vocab, "/"+API_NAME+"/vocab", endpoint="vocab")
 
-
 class Entrypoint(Resource):
     """Hydra EntryPoint."""
 
     def get(self):
         """Return application main Entrypoint."""
-        return set_response_headers(jsonify(API_DOC.entrypoint.context.generate()))
+        response = {"@context": API_DOC.entrypoint.context.generate()}
+        return set_response_headers(jsonify(response))
+
 
 
 api.add_resource(Entrypoint, "/"+API_NAME+"/contexts/EntryPoint.jsonld",

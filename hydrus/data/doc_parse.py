@@ -65,3 +65,4 @@ if __name__ == "__main__":
 
     # Add all the properties
     insert_properties(properties, session)
+    print("Properties inserted successfully")
