@@ -187,9 +187,9 @@ class HydraCollection():
         if post:
             post_op = HydraCollectionOp("_:%s_create" % (self.class_.title.lower()),
                                         "http://schema.org/AddAction",
-                                        "POST", "Create new %s entitity" % (self.class_.title),
+                                        "PUT", "Create new %s entitity" % (self.class_.title),
                                         self.class_.id_, self.class_.id_,
-                                        [{"code": 201,
+                                        [{"statusCode": 201,
                                          "description": "If the %s entity was created successfully." % (self.class_.title)}]
                                         )
             self.supportedOperation.append(post_op)
@@ -211,12 +211,12 @@ class HydraCollection():
 class HydraCollectionOp():
     """Operation class for Collection operations."""
 
-    def __init__(self, id_, type_, method, label, expects, returns, status=[]):
+    def __init__(self, id_, type_, method, desc, expects, returns, status=[]):
         """Create method."""
         self.id_ = id_
         self.type_ = type_
         self.method = method
-        self.label = label
+        self.desc = desc
         self.returns = returns
         self.expects = expects
         self.status = status
@@ -227,7 +227,7 @@ class HydraCollectionOp():
             "@id": self.id_,
             "@type": self.type_,
             "method": self.method,
-            "label": self.label,
+            "description": self.desc,
             "expects": self.expects,
             "returns": self.returns,
             "statusCodes": self.status
@@ -273,6 +273,126 @@ class HydraEntryPoint():
             uri = item.id_
             object_[item.name] = uri.replace("vocab:EntryPoint", '/'+self.api)
         return object_
+
+
+class EntryPointCollection():
+    """Class for a Collection Entry to the EntryPoint object."""
+
+    def __init__(self, collection):
+        """Create method."""
+        self.name = collection.name
+        self.supportedOperation = collection.supportedOperation
+        self.id_ = "vocab:EntryPoint/" + self.name
+
+    def generate(self):
+        """Get as a python dict."""
+        object_ = {
+            "property": {
+                "@id": self.id_,
+                "@type": "hydra:Link",
+                "label": self.name,
+                "description": "The %s collection" % (self.name,),
+                "domain": "vocab:EntryPoint",
+                "range": "vocab:%s" % (self.name,),
+                "supportedOperation": []
+            },
+            "hydra:title": self.name.lower(),
+            "hydra:description": "The %s collection" % (self.name,),
+            "required": None,
+            "readonly": True,
+            "writeonly": False
+        }
+        for op in self.supportedOperation:
+            operation = EntryPointOp("_:"+op.id_.lower(), op.method, op.desc, op.expects, op.returns, op.status, type_=op.type_)
+            object_["property"]["supportedOperation"].append(operation.generate())
+        return object_
+
+
+class EntryPointClass():
+    """Class for a Operation Entry to the EntryPoint object."""
+
+    def __init__(self, class_):
+        """Create method."""
+        self.name = class_.title
+        self.desc = class_.desc
+        self.supportedOperation = class_.supportedOperation
+        self.id_ = "vocab:EntryPoint/" + self.name
+
+    def generate(self):
+        """Get as Python Dict."""
+        object_ = {
+            "property": {
+                "@id": self.id_,
+                "@type": "hydra:Link",
+                "label": self.name,
+                "description": self.desc,
+                "domain": "vocab:EntryPoint",
+                "range": "vocab:%s" % (self.name),
+                "supportedOperation": []
+            },
+            "hydra:title": self.name.lower(),
+            "hydra:description": "The %s Class" % (self.name),
+            "required": None,
+            "readonly": True,
+            "writeonly": False
+        }
+        for op in self.supportedOperation:
+            operation = EntryPointOp("_:"+op.title.lower(), op.method, None, op.expects, op.returns, op.status, label=op.title)
+            object_["property"]["supportedOperation"].append(operation.generate())
+        return object_
+
+
+class EntryPointOp():
+    """supportedOperation for EntryPoint."""
+
+    def __init__(self, id_, method, desc, expects, returns, statusCodes=[], type_=None, label=""):
+        """Create method."""
+        self.id_ = id_
+        self.method = method
+        self.desc = desc
+        self.expects = expects
+        self.returns = returns
+        self.statusCodes = statusCodes
+        self.label = label
+        self.type_ = type_
+
+    def generate(self):
+        """Get as Python Dict."""
+        prop = {
+            "@id": self.id_,
+            "@type": "hydra:Operation",
+            "method": self.method,
+            "description": self.desc,
+            "expects": self.expects,
+            "returns": self.returns,
+            "statusCodes": self.statusCodes
+        }
+        if self.type_ is not None:
+            prop["@type"] = self.type_
+        if len(self.label) > 0:
+            prop["label"] = self.label
+        return prop
+
+
+class HydraStatus():
+    """Class for possibleStatus in Hydra Doc."""
+
+    def __init__(self, code, title, desc):
+        """Create method."""
+        self.code = code
+        self.title = title
+        self.desc = desc
+
+    def generate(self):
+        """Get as Python dict."""
+        status = {
+          "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+          "@type": "Status",
+          "statusCode": self.code,
+          "title": self.title,
+          "description": self.desc,
+        }
+        return status
 
 
 class Context():
@@ -371,114 +491,3 @@ class Context():
     def add(self, key, value):
         """Add entry to context."""
         self.context[key] = value
-
-
-class EntryPointCollection():
-    """Class for a Collection Entry to the EntryPoint object."""
-
-    def __init__(self, collection):
-        """Create method."""
-        self.name = collection.name
-        self.id_ = "vocab:EntryPoint/" + self.name
-
-    def generate(self):
-        """Get as a python dict."""
-        object_ = {
-            "property": {
-                "@id": self.id_,
-                "@type": "hydra:Link",
-                "label": self.name,
-                "description": "The %s collection" % (self.name,),
-                "domain": "vocab:EntryPoint",
-                "range": "vocab:%s" % (self.name,),
-            },
-            "hydra:title": self.name.lower(),
-            "hydra:description": "The %s collection" % (self.name,),
-            "required": None,
-            "readonly": True,
-            "writeonly": False
-        }
-        return object_
-
-
-class EntryPointClass():
-    """Class for a Operation Entry to the EntryPoint object."""
-
-    def __init__(self, class_):
-        """Create method."""
-        self.name = class_.title
-        self.desc = class_.desc
-        self.supportedOperation = class_.supportedOperation
-        self.id_ = "vocab:EntryPoint/" + self.name
-
-    def generate(self):
-        """Get as Python Dict."""
-        object_ = {
-            "property": {
-                "@id": self.id_,
-                "@type": "hydra:Link",
-                "label": self.name,
-                "description": self.desc,
-                "domain": "vocab:EntryPoint",
-                "range": "vocab:%s" % (self.name),
-                "supportedOperation": []
-            },
-            "hydra:title": self.name.lower(),
-            "hydra:description": "The %s Class" % (self.name),
-            "required": None,
-            "readonly": True,
-            "writeonly": False
-        }
-        for op in self.supportedOperation:
-            operation = EntryPointOp("_:"+op.title.lower(), op.method, op.title, None, op.expects, op.returns, op.status)
-            object_["property"]["supportedOperation"].append(operation.generate())
-        return object_
-
-
-class EntryPointOp():
-    """supportedOperation for EntryPoint."""
-
-    def __init__(self, id_, method, label, desc, expects, returns, statusCodes=[]):
-        """Create method."""
-        self.id_ = id_
-        self.method = method
-        self.label = label
-        self.desc = desc
-        self.expects = expects
-        self.returns = returns
-        self.statusCodes = statusCodes
-
-    def generate(self):
-        """Get as Python Dict."""
-        prop = {
-            "@id": self.id_,
-            "@type": "hydra:Operation",
-            "method": self.method,
-            "label": self.label,
-            "description": self.desc,
-            "expects": self.expects,
-            "returns": self.returns,
-            "statusCodes": self.statusCodes
-        }
-        return prop
-
-
-class HydraStatus():
-    """Class for possibleStatus in Hydra Doc."""
-
-    def __init__(self, code, title, desc):
-        """Create method."""
-        self.code = code
-        self.title = title
-        self.desc = desc
-
-    def generate(self):
-        """Get as Python dict."""
-        status = {
-          "@context": "http://www.w3.org/ns/hydra/context.jsonld",
-          "@type": "Status",
-          "statusCode": self.code,
-          "title": self.title,
-          "description": self.desc,
-        }
-        return status

@@ -3,8 +3,8 @@
 from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp
 import json
 
-# NOTE: @xadahiya: I'll add notes to different parts so that there is no confusion between Doc and Simulation
 
+# NOTE: @xadahiya: I'll add notes to different parts so that there is no confusion between Doc and Simulation
 def drone_doc(API, BASE_URL):
     """Generate API Doc for drone."""
     # Main API Doc
@@ -16,12 +16,12 @@ def drone_doc(API, BASE_URL):
 
     # State Class
     # NOTE: Each drone will have only one State Class, this can't be deleted. Only read and update.
-    status = HydraClass("State", "State", "Class for drone status objects")
+    state = HydraClass("State", "State", "Class for drone state objects")
     # Properties
-    status.add_supported_prop(HydraClassProp("http://auto.schema.org/speed", "Speed", True, False, False))
-    status.add_supported_prop(HydraClassProp("http://schema.org/geo", "Position", True, False, False))
-    status.add_supported_prop(HydraClassProp("http://schema.org/fuelCapacity", "Battery", True, True, False))
-    status.add_supported_prop(HydraClassProp("https://schema.org/status", "SensorStatus", True, False, False))
+    state.add_supported_prop(HydraClassProp("http://auto.schema.org/speed", "Speed", True, False, False))
+    state.add_supported_prop(HydraClassProp("http://schema.org/geo", "Position", True, False, False))
+    state.add_supported_prop(HydraClassProp("http://schema.org/fuelCapacity", "Battery", True, True, False))
+    state.add_supported_prop(HydraClassProp("https://schema.org/status", "SensorStatus", True, False, False))
 
     # Drone Class
     # NOTE: The actual changes to the drone are to be made at the /api/Drone URI.
@@ -35,12 +35,14 @@ def drone_doc(API, BASE_URL):
     drone.add_supported_prop(HydraClassProp("http://schema.org/device", "Sensor", True, True, False))
     drone.add_supported_prop(HydraClassProp("http://schema.org/identifier", "DroneID", True, True, False))
     # Operations
+    # The server may need to get the state of the drone, or mechanics may get new state at certain intervals and send to server
     drone.add_supported_op(HydraClassOp("GetState",
                                         "GET",
                                         None,
                                         "vocab:State",
                                         [{"statusCode": 404, "description": "Data not found"},
                                          {"statusCode": 200, "description": "State Returned"}]))
+    # When new commands are issued, mechanics will need to change the state of the drone
     drone.add_supported_op(HydraClassOp("UpdateState",
                                         "POST",
                                         "vocab:State",
@@ -49,15 +51,23 @@ def drone_doc(API, BASE_URL):
 
     # Command Class
     # NOTE: Commands are stored in a collection. You may GET a command or you may DELETE it, there is not UPDATE.
-    command = HydraClass("Command", "Command", "Class for drone commands")
+    command = HydraClass("Command", "Command", "Class for drone commands", endpoint=True)
     command.add_supported_prop(HydraClassProp("http://schema.org/UpdateAction", "Update", False, True, False))
-    command.add_supported_prop(HydraClassProp("http://hydrus.com/Status", "Status", False, False, False))
+    command.add_supported_prop(HydraClassProp("vocab:State", "State", False, False, False))
+    # Used by mechanics to get newly added commands
     command.add_supported_op(HydraClassOp("GetCommand",
                                           "GET",
                                           None,
                                           "vocab:Command",
                                           [{"statusCode": 404, "description": "Data not found"},
                                            {"statusCode": 200, "description": "Command Returned"}]))
+    # Used by server to add new commands
+    command.add_supported_op(HydraClassOp("AddCommand",
+                                          "PUT",
+                                          "vocab:Command",
+                                          None,
+                                          [{"statusCode": 200, "description": "Command added"}]))
+    # Used by mechanics to delete command after it has been executed
     command.add_supported_op(HydraClassOp("DeleteCommand",
                                           "DELETE",
                                           None,
@@ -84,7 +94,7 @@ def drone_doc(API, BASE_URL):
                                        None,
                                        [{"statusCode": 200, "description": "Data updated"}]))
 
-    api_doc.add_supported_class(status, collection=False)
+    api_doc.add_supported_class(state, collection=False)
     api_doc.add_supported_class(drone, collection=False)
     api_doc.add_supported_class(command, collection=True)
     api_doc.add_supported_class(data, collection=False)

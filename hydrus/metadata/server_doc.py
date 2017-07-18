@@ -3,7 +3,6 @@
 server_doc = {
     "@context": {
         "ApiDocumentation": "hydra:ApiDocumentation",
-        "code": "hydra:statusCode",
         "description": "hydra:description",
         "domain": {
             "@id": "rdfs:domain",
@@ -34,6 +33,7 @@ server_doc = {
             "@type": "@id"
         },
         "statusCode": "hydra:statusCode",
+        "statusCodes": "hydra:statusCodes",
         "subClassOf": {
             "@id": "rdfs:subClassOf",
             "@type": "@id"
@@ -42,64 +42,286 @@ server_doc = {
         "supportedOperation": "hydra:supportedOperation",
         "supportedProperty": "hydra:supportedProperty",
         "title": "hydra:title",
-        "vocab": "http://hydrus.com/serverapi/vocab#",
+        "vocab": "http://localhost/serverapi/vocab#",
         "writeonly": "hydra:writeonly"
     },
-    "@id": "http://hydrus.com/serverapi/vocab",
+    "@id": "http://localhost/serverapi/vocab",
     "@type": "ApiDocumentation",
     "description": "API Documentation for the server side system",
-    "entrypoint": "/serverapi",
     "possibleStatus": [],
     "supportedClass": [
         {
-            "@id": "vocab:Status",
+            "@id": "vocab:Command",
             "@type": "hydra:Class",
-            "description": "Class for drone status objects",
+            "description": "Class for drone commands",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://schema.org/UpdateAction",
+                    "readonly": "false",
+                    "required": "false",
+                    "title": "Update",
+                    "writeonly": "true"
+                },
+                {
+                    "@type": "SupportedProperty",
+                    "property": "vocab:State",
+                    "readonly": "false",
+                    "required": "false",
+                    "title": "State",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Command"
+        },
+        {
+            "@id": "vocab:Drone",
+            "@type": "hydra:Class",
+            "description": "Class for a drone",
+            "supportedOperation": [
+                {
+                    "@type": "hydra:Operation",
+                    "expects": "vocab:State",
+                    "method": "POST",
+                    "possibleStatus": [
+                        {
+                            "description": "Drone State updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "SubmitState"
+                },
+                {
+                    "@type": "hydra:Operation",
+                    "expects": "null",
+                    "method": "GET",
+                    "possibleStatus": [
+                        {
+                            "description": "Data not found",
+                            "statusCode": 404
+                        },
+                        {
+                            "description": "Drone Returned",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "vocab:Drone",
+                    "title": "GetDrone"
+                }
+            ],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "vocab:State",
+                    "readonly": "true",
+                    "required": "false",
+                    "title": "DroneState",
+                    "writeonly": "false"
+                },
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://schema.org/name",
+                    "readonly": "true",
+                    "required": "false",
+                    "title": "name",
+                    "writeonly": "false"
+                },
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://schema.org/model",
+                    "readonly": "true",
+                    "required": "false",
+                    "title": "model",
+                    "writeonly": "false"
+                },
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://auto.schema.org/speed",
+                    "readonly": "true",
+                    "required": "false",
+                    "title": "MaxSpeed",
+                    "writeonly": "false"
+                },
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://schema.org/device",
+                    "readonly": "true",
+                    "required": "false",
+                    "title": "Sensor",
+                    "writeonly": "true"
+                }
+            ],
+            "title": "Drone"
+        },
+        {
+            "@id": "vocab:vocab:Message",
+            "@type": "hydra:Class",
+            "description": "Class for messages received by the GUI interface",
+            "supportedOperation": [
+                {
+                    "@type": "hydra:Operation",
+                    "expects": "null",
+                    "method": "GET",
+                    "possibleStatus": [
+                        {
+                            "description": "Message not found",
+                            "statusCode": 404
+                        },
+                        {
+                            "description": "Message returned",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "vocab:Message",
+                    "title": "GetMessage"
+                }
+            ],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://schema.org/Text",
+                    "readonly": "true",
+                    "required": "false",
+                    "title": "MessageString",
+                    "writeonly": "true"
+                }
+            ],
+            "title": "Message"
+        },
+        {
+            "@id": "vocab:State",
+            "@type": "hydra:Class",
+            "description": "Class for drone state objects",
             "supportedOperation": [],
             "supportedProperty": [
                 {
                     "@type": "SupportedProperty",
                     "property": "http://auto.schema.org/speed",
-                    "readable": "true",
+                    "readonly": "true",
                     "required": "false",
                     "title": "Speed",
-                    "writeable": "false"
+                    "writeonly": "false"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/geo",
-                    "readable": "true",
+                    "readonly": "true",
                     "required": "false",
                     "title": "Position",
-                    "writeable": "false"
+                    "writeonly": "false"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/fuelCapacity",
-                    "readable": "true",
+                    "readonly": "true",
                     "required": "false",
                     "title": "Battery",
-                    "writeable": "true"
+                    "writeonly": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "https://schema.org/status",
-                    "readable": "true",
+                    "readonly": "true",
                     "required": "false",
                     "title": "SensorStatus",
-                    "writeable": "false"
+                    "writeonly": "false"
                 }
             ],
-            "title": "Status"
+            "title": "State"
         },
         {
-            "@id": "vocab:Area",
+            "@id": "vocab:vocab:LogEntry",
+            "@type": "hydra:Class",
+            "description": "Class for a log entry",
+            "supportedOperation": [
+                {
+                    "@type": "hydra:Operation",
+                    "expects": "null",
+                    "method": "GET",
+                    "possibleStatus": [
+                        {
+                            "description": "Log entry not found",
+                            "statusCode": 404
+                        },
+                        {
+                            "description": "Log entry returned",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "vocab:LogEntry",
+                    "title": "GetLog"
+                }
+            ],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://schema.org/identifier",
+                    "readonly": "true",
+                    "required": "false",
+                    "title": "DroneID",
+                    "writeonly": "true"
+                },
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://schema.org/UpdateAction",
+                    "readonly": "false",
+                    "required": "false",
+                    "title": "Update",
+                    "writeonly": "true"
+                },
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://schema.org/ReplyAction",
+                    "readonly": "false",
+                    "required": "false",
+                    "title": "Get",
+                    "writeonly": "true"
+                },
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://schema.org/SendAction",
+                    "readonly": "false",
+                    "required": "false",
+                    "title": "Send",
+                    "writeonly": "true"
+                },
+                {
+                    "@type": "SupportedProperty",
+                    "property": "vocab:State",
+                    "readonly": "false",
+                    "required": "false",
+                    "title": "State",
+                    "writeonly": "true"
+                },
+                {
+                    "@type": "SupportedProperty",
+                    "property": "vocab:Data",
+                    "readonly": "false",
+                    "required": "false",
+                    "title": "Data",
+                    "writeonly": "true"
+                },
+                {
+                    "@type": "SupportedProperty",
+                    "property": "vocab:Command",
+                    "readonly": "false",
+                    "required": "false",
+                    "title": "Command",
+                    "writeonly": "true"
+                }
+            ],
+            "title": "LogEntry"
+        },
+        {
+            "@id": "vocab:vocab:Area",
             "@type": "hydra:Class",
             "description": "Class for Area of Interest of the server",
             "supportedOperation": [
                 {
                     "@type": "hydra:Operation",
-                    "expects": "http://hydrus.com/Area",
+                    "expects": "vocab:Area",
                     "method": "PUT",
                     "possibleStatus": [
                         {
@@ -116,15 +338,15 @@ server_doc = {
                     "method": "GET",
                     "possibleStatus": [
                         {
-                            "description": "Area of not found",
+                            "description": "Area of interest not found",
                             "statusCode": 404
                         },
                         {
-                            "description": "Area of returned",
+                            "description": "Area of interest returned",
                             "statusCode": 200
                         }
                     ],
-                    "returns": "http://hydrus.com/Area",
+                    "returns": "vocab:Area",
                     "title": "GetArea"
                 }
             ],
@@ -132,142 +354,24 @@ server_doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/geo",
-                    "readable": "true",
+                    "readonly": "true",
                     "required": "true",
                     "title": "TopLeft",
-                    "writeable": "true"
+                    "writeonly": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/geo",
-                    "readable": "true",
+                    "readonly": "true",
                     "required": "true",
                     "title": "BottomRight",
-                    "writeable": "true"
+                    "writeonly": "true"
                 }
             ],
             "title": "Area"
         },
         {
-            "@id": "vocab:Message",
-            "@type": "hydra:Class",
-            "description": "Class for messages received by the GUI interface",
-            "supportedOperation": [],
-            "supportedProperty": [
-                {
-                    "@type": "SupportedProperty",
-                    "property": "http://schema.org/Text",
-                    "readable": "true",
-                    "required": "false",
-                    "title": "MessageString",
-                    "writeable": "true"
-                }
-            ],
-            "title": "Message"
-        },
-        {
-            "@id": "vocab:Command",
-            "@type": "hydra:Class",
-            "description": "Class for drone commands",
-            "supportedOperation": [],
-            "supportedProperty": [
-                {
-                    "@type": "SupportedProperty",
-                    "property": "http://schema.org/UpdateAction",
-                    "readable": "false",
-                    "required": "false",
-                    "title": "Update",
-                    "writeable": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:Status",
-                    "readable": "false",
-                    "required": "false",
-                    "title": "Status",
-                    "writeable": "false"
-                }
-            ],
-            "title": "Command"
-        },
-        {
-            "@id": "vocab:Drone",
-            "@type": "hydra:Class",
-            "description": "Class for a drone",
-            "supportedOperation": [
-                {
-                    "@type": "hydra:Operation",
-                    "expects": "vocab:Status",
-                    "method": "PUT",
-                    "possibleStatus": [
-                        {
-                            "description": "Drone Status updated",
-                            "statusCode": 200
-                        }
-                    ],
-                    "returns": "null",
-                    "title": "SubmitStatus"
-                },
-                {
-                    "@type": "hydra:Operation",
-                    "expects": "null",
-                    "method": "GET",
-                    "possibleStatus": [
-                        {
-                            "description": "Drone Returned",
-                            "statusCode": 200
-                        }
-                    ],
-                    "returns": "vocab:Drone",
-                    "title": "GetDrone"
-                }
-            ],
-            "supportedProperty": [
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:Status",
-                    "readable": "true",
-                    "required": "false",
-                    "title": "DroneStatus",
-                    "writeable": "false"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "http://schema.org/name",
-                    "readable": "true",
-                    "required": "false",
-                    "title": "name",
-                    "writeable": "false"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "http://schema.org/model",
-                    "readable": "true",
-                    "required": "false",
-                    "title": "model",
-                    "writeable": "false"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "http://auto.schema.org/speed",
-                    "readable": "true",
-                    "required": "false",
-                    "title": "MaxSpeed",
-                    "writeable": "false"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "http://schema.org/device",
-                    "readable": "true",
-                    "required": "false",
-                    "title": "Sensor",
-                    "writeable": "true"
-                }
-            ],
-            "title": "Drone"
-        },
-        {
-            "@id": "vocab:Data",
+            "@id": "vocab:vocab:Data",
             "@type": "hydra:Class",
             "description": "Class for a data entry",
             "supportedOperation": [
@@ -287,131 +391,35 @@ server_doc = {
                     ],
                     "returns": "vocab:Data",
                     "title": "ReadData"
-                },
-                {
-                    "@type": "hydra:Operation",
-                    "expects": "vocab:Data",
-                    "method": "POST",
-                    "possibleStatus": [
-                        {
-                            "description": "Data added",
-                            "statusCode": 201
-                        }
-                    ],
-                    "returns": "null",
-                    "title": "SubmitData"
                 }
             ],
             "supportedProperty": [
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/QuantitativeValue",
-                    "readable": "true",
+                    "readonly": "true",
                     "required": "false",
                     "title": "Temperature",
-                    "writeable": "false"
+                    "writeonly": "false"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/identifier",
-                    "readable": "true",
+                    "readonly": "true",
                     "required": "false",
                     "title": "DroneID",
-                    "writeable": "false"
+                    "writeonly": "false"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/geo",
-                    "readable": "true",
+                    "readonly": "true",
                     "required": "false",
                     "title": "Position",
-                    "writeable": "false"
+                    "writeonly": "false"
                 }
             ],
             "title": "Data"
-        },
-        {
-            "@id": "vocab:LogEntry",
-            "@type": "hydra:Class",
-            "description": "Class for a log entry",
-            "supportedOperation": [
-                {
-                    "@type": "hydra:Operation",
-                    "expects": "null",
-                    "method": "GET",
-                    "possibleStatus": [
-                        {
-                            "description": "Log entry not found",
-                            "statusCode": 404
-                        },
-                        {
-                            "description": "Log entry returned",
-                            "statusCode": 200
-                        }
-                    ],
-                    "returns": "voab:LogEntry",
-                    "title": "GetLog"
-                }
-            ],
-            "supportedProperty": [
-                {
-                    "@type": "SupportedProperty",
-                    "property": "http://schema.org/identifier",
-                    "readable": "true",
-                    "required": "false",
-                    "title": "DroneID",
-                    "writeable": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "http://schema.org/UpdateAction",
-                    "readable": "false",
-                    "required": "false",
-                    "title": "Update",
-                    "writeable": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "http://schema.org/ReplyAction",
-                    "readable": "false",
-                    "required": "false",
-                    "title": "Get",
-                    "writeable": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "http://schema.org/SendAction",
-                    "readable": "false",
-                    "required": "false",
-                    "title": "Send",
-                    "writeable": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:Status",
-                    "readable": "false",
-                    "required": "false",
-                    "title": "Status",
-                    "writeable": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:Data",
-                    "readable": "false",
-                    "required": "false",
-                    "title": "Data",
-                    "writeable": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:Command",
-                    "readable": "false",
-                    "required": "false",
-                    "title": "Command",
-                    "writeable": "true"
-                }
-            ],
-            "title": "LogEntry"
         },
         {
             "@id": "http://www.w3.org/ns/hydra/core#Resource",
@@ -430,13 +438,56 @@ server_doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "http://www.w3.org/ns/hydra/core#member",
-                    "readable": "false",
+                    "readonly": "false",
                     "required": "null",
                     "title": "members",
-                    "writeable": "false"
+                    "writeonly": "false"
                 }
             ],
             "title": "Collection"
+        },
+        {
+            "@id": "vocab:DataCollection",
+            "@type": "hydra:Class",
+            "description": "A collection of data",
+            "label": "DataCollection",
+            "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
+            "supportedOperation": [
+                {
+                    "@id": "_:data_collection_retrieve",
+                    "@type": "hydra:Operation",
+                    "description": "Retrieves all Data entities",
+                    "expects": "null",
+                    "method": "GET",
+                    "returns": "vocab:DataCollection",
+                    "statusCodes": []
+                },
+                {
+                    "@id": "_:data_create",
+                    "@type": "http://schema.org/AddAction",
+                    "description": "Create new Data entitity",
+                    "expects": "vocab:vocab:Data",
+                    "method": "PUT",
+                    "returns": "vocab:vocab:Data",
+                    "statusCodes": [
+                        {
+                            "description": "If the Data entity was created successfully.",
+                            "statusCode": 201
+                        }
+                    ]
+                }
+            ],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "description": "The data",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "false",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ]
         },
         {
             "@id": "vocab:LogEntryCollection",
@@ -446,80 +497,37 @@ server_doc = {
             "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
             "supportedOperation": [
                 {
-                    "@id": "_:logentry_create",
-                    "@type": "http://schema.org/AddAction",
-                    "description": "null",
-                    "expects": "LogEntry",
-                    "method": "POST",
-                    "returns": "LogEntry",
-                    "statusCodes": [
-                        {
-                            "code": 201,
-                            "description": "If the LogEntry entity was created successfully."
-                        }
-                    ]
-                },
-                {
                     "@id": "_:logentry_collection_retrieve",
                     "@type": "hydra:Operation",
-                    "description": "null",
+                    "description": "Retrieves all LogEntry entities",
                     "expects": "null",
-                    "label": "Retrieves all LogEntry entities",
                     "method": "GET",
                     "returns": "vocab:LogEntryCollection",
                     "statusCodes": []
-                }
-            ],
-            "supportedProperty": [
-                {
-                    "hydra:description": "The logentry",
-                    "hydra:title": "members",
-                    "property": "http://www.w3.org/ns/hydra/core#member",
-                    "readonly": "false",
-                    "required": "null",
-                    "writeonly": "false"
-                }
-            ]
-        },
-        {
-            "@id": "vocab:DroneCollection",
-            "@type": "hydra:Class",
-            "description": "A collection of drone",
-            "label": "DroneCollection",
-            "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
-            "supportedOperation": [
-                {
-                    "@id": "_:drone_create",
-                    "@type": "http://schema.org/AddAction",
-                    "description": "null",
-                    "expects": "Drone",
-                    "method": "POST",
-                    "returns": "Drone",
-                    "statusCodes": [
-                        {
-                            "code": 201,
-                            "description": "If the Drone entity was created successfully."
-                        }
-                    ]
                 },
                 {
-                    "@id": "_:drone_collection_retrieve",
-                    "@type": "hydra:Operation",
-                    "description": "null",
-                    "expects": "null",
-                    "label": "Retrieves all Drone entities",
-                    "method": "GET",
-                    "returns": "vocab:DroneCollection",
-                    "statusCodes": []
+                    "@id": "_:logentry_create",
+                    "@type": "http://schema.org/AddAction",
+                    "description": "Create new LogEntry entitity",
+                    "expects": "vocab:vocab:LogEntry",
+                    "method": "PUT",
+                    "returns": "vocab:vocab:LogEntry",
+                    "statusCodes": [
+                        {
+                            "description": "If the LogEntry entity was created successfully.",
+                            "statusCode": 201
+                        }
+                    ]
                 }
             ],
             "supportedProperty": [
                 {
-                    "hydra:description": "The drone",
-                    "hydra:title": "members",
+                    "@type": "SupportedProperty",
+                    "description": "The logentry",
                     "property": "http://www.w3.org/ns/hydra/core#member",
                     "readonly": "false",
-                    "required": "null",
+                    "required": "false",
+                    "title": "members",
                     "writeonly": "false"
                 }
             ]
@@ -532,80 +540,80 @@ server_doc = {
             "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
             "supportedOperation": [
                 {
-                    "@id": "_:message_create",
-                    "@type": "http://schema.org/AddAction",
-                    "description": "null",
-                    "expects": "Message",
-                    "method": "POST",
-                    "returns": "Message",
-                    "statusCodes": [
-                        {
-                            "code": 201,
-                            "description": "If the Message entity was created successfully."
-                        }
-                    ]
-                },
-                {
                     "@id": "_:message_collection_retrieve",
                     "@type": "hydra:Operation",
-                    "description": "null",
+                    "description": "Retrieves all Message entities",
                     "expects": "null",
-                    "label": "Retrieves all Message entities",
                     "method": "GET",
                     "returns": "vocab:MessageCollection",
                     "statusCodes": []
+                },
+                {
+                    "@id": "_:message_create",
+                    "@type": "http://schema.org/AddAction",
+                    "description": "Create new Message entitity",
+                    "expects": "vocab:vocab:Message",
+                    "method": "PUT",
+                    "returns": "vocab:vocab:Message",
+                    "statusCodes": [
+                        {
+                            "description": "If the Message entity was created successfully.",
+                            "statusCode": 201
+                        }
+                    ]
                 }
             ],
             "supportedProperty": [
                 {
-                    "hydra:description": "The message",
-                    "hydra:title": "members",
+                    "@type": "SupportedProperty",
+                    "description": "The message",
                     "property": "http://www.w3.org/ns/hydra/core#member",
                     "readonly": "false",
-                    "required": "null",
+                    "required": "false",
+                    "title": "members",
                     "writeonly": "false"
                 }
             ]
         },
         {
-            "@id": "vocab:DataCollection",
+            "@id": "vocab:DroneCollection",
             "@type": "hydra:Class",
-            "description": "A collection of data",
-            "label": "DataCollection",
+            "description": "A collection of drone",
+            "label": "DroneCollection",
             "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
             "supportedOperation": [
                 {
-                    "@id": "_:data_create",
-                    "@type": "http://schema.org/AddAction",
-                    "description": "null",
-                    "expects": "Data",
-                    "method": "POST",
-                    "returns": "Data",
-                    "statusCodes": [
-                        {
-                            "code": 201,
-                            "description": "If the Data entity was created successfully."
-                        }
-                    ]
+                    "@id": "_:drone_collection_retrieve",
+                    "@type": "hydra:Operation",
+                    "description": "Retrieves all Drone entities",
+                    "expects": "null",
+                    "method": "GET",
+                    "returns": "vocab:DroneCollection",
+                    "statusCodes": []
                 },
                 {
-                    "@id": "_:data_collection_retrieve",
-                    "@type": "hydra:Operation",
-                    "description": "null",
-                    "expects": "null",
-                    "label": "Retrieves all Data entities",
-                    "method": "GET",
-                    "returns": "vocab:DataCollection",
-                    "statusCodes": []
+                    "@id": "_:drone_create",
+                    "@type": "http://schema.org/AddAction",
+                    "description": "Create new Drone entitity",
+                    "expects": "vocab:Drone",
+                    "method": "PUT",
+                    "returns": "vocab:Drone",
+                    "statusCodes": [
+                        {
+                            "description": "If the Drone entity was created successfully.",
+                            "statusCode": 201
+                        }
+                    ]
                 }
             ],
             "supportedProperty": [
                 {
-                    "hydra:description": "The data",
-                    "hydra:title": "members",
+                    "@type": "SupportedProperty",
+                    "description": "The drone",
                     "property": "http://www.w3.org/ns/hydra/core#member",
                     "readonly": "false",
-                    "required": "null",
+                    "required": "false",
+                    "title": "members",
                     "writeonly": "false"
                 }
             ]
@@ -618,15 +626,137 @@ server_doc = {
                 {
                     "@id": "_:entry_point",
                     "@type": "hydra:Operation",
-                    "description": "null",
+                    "description": "The APIs main entry point.",
                     "expects": "null",
-                    "label": "The APIs main entry point.",
                     "method": "GET",
-                    "returns": "vocab:EntryPoint",
-                    "statusCodes": []
+                    "returns": "null",
+                    "statusCodes": "vocab:EntryPoint"
                 }
             ],
             "supportedProperty": [
+                {
+                    "hydra:description": "The Drone Class",
+                    "hydra:title": "drone",
+                    "property": {
+                        "@id": "vocab:EntryPoint/Drone",
+                        "@type": "hydra:Link",
+                        "description": "Class for a drone",
+                        "domain": "vocab:EntryPoint",
+                        "label": "Drone",
+                        "range": "vocab:Drone",
+                        "supportedOperation": [
+                            {
+                                "@id": "_:submitstate",
+                                "@type": "hydra:Operation",
+                                "description": "null",
+                                "expects": "vocab:State",
+                                "label": "SubmitState",
+                                "method": "POST",
+                                "returns": "null",
+                                "statusCodes": [
+                                    {
+                                        "description": "Drone State updated",
+                                        "statusCode": 200
+                                    }
+                                ]
+                            },
+                            {
+                                "@id": "_:getdrone",
+                                "@type": "hydra:Operation",
+                                "description": "null",
+                                "expects": "null",
+                                "label": "GetDrone",
+                                "method": "GET",
+                                "returns": "vocab:Drone",
+                                "statusCodes": [
+                                    {
+                                        "description": "Data not found",
+                                        "statusCode": 404
+                                    },
+                                    {
+                                        "description": "Drone Returned",
+                                        "statusCode": 200
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "readonly": "true",
+                    "required": "null",
+                    "writeonly": "false"
+                },
+                {
+                    "hydra:description": "The Message Class",
+                    "hydra:title": "message",
+                    "property": {
+                        "@id": "vocab:EntryPoint/Message",
+                        "@type": "hydra:Link",
+                        "description": "Class for messages received by the GUI interface",
+                        "domain": "vocab:EntryPoint",
+                        "label": "Message",
+                        "range": "vocab:Message",
+                        "supportedOperation": [
+                            {
+                                "@id": "_:getmessage",
+                                "@type": "hydra:Operation",
+                                "description": "null",
+                                "expects": "null",
+                                "label": "GetMessage",
+                                "method": "GET",
+                                "returns": "vocab:Message",
+                                "statusCodes": [
+                                    {
+                                        "description": "Message not found",
+                                        "statusCode": 404
+                                    },
+                                    {
+                                        "description": "Message returned",
+                                        "statusCode": 200
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "readonly": "true",
+                    "required": "null",
+                    "writeonly": "false"
+                },
+                {
+                    "hydra:description": "The LogEntry Class",
+                    "hydra:title": "logentry",
+                    "property": {
+                        "@id": "vocab:EntryPoint/LogEntry",
+                        "@type": "hydra:Link",
+                        "description": "Class for a log entry",
+                        "domain": "vocab:EntryPoint",
+                        "label": "LogEntry",
+                        "range": "vocab:LogEntry",
+                        "supportedOperation": [
+                            {
+                                "@id": "_:getlog",
+                                "@type": "hydra:Operation",
+                                "description": "null",
+                                "expects": "null",
+                                "label": "GetLog",
+                                "method": "GET",
+                                "returns": "vocab:LogEntry",
+                                "statusCodes": [
+                                    {
+                                        "description": "Log entry not found",
+                                        "statusCode": 404
+                                    },
+                                    {
+                                        "description": "Log entry returned",
+                                        "statusCode": 200
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "readonly": "true",
+                    "required": "null",
+                    "writeonly": "false"
+                },
                 {
                     "hydra:description": "The Area Class",
                     "hydra:title": "area",
@@ -636,13 +766,13 @@ server_doc = {
                         "description": "Class for Area of Interest of the server",
                         "domain": "vocab:EntryPoint",
                         "label": "Area",
-                        "range": "vocab:AreaCollection",
+                        "range": "vocab:Area",
                         "supportedOperation": [
                             {
                                 "@id": "_:updatearea",
                                 "@type": "hydra:Operation",
                                 "description": "null",
-                                "expects": "http://hydrus.com/Area",
+                                "expects": "vocab:Area",
                                 "label": "UpdateArea",
                                 "method": "PUT",
                                 "returns": "null",
@@ -660,14 +790,14 @@ server_doc = {
                                 "expects": "null",
                                 "label": "GetArea",
                                 "method": "GET",
-                                "returns": "http://hydrus.com/Area",
+                                "returns": "vocab:Area",
                                 "statusCodes": [
                                     {
-                                        "description": "Area of not found",
+                                        "description": "Area of interest not found",
                                         "statusCode": 404
                                     },
                                     {
-                                        "description": "Area of returned",
+                                        "description": "Area of interest returned",
                                         "statusCode": 200
                                     }
                                 ]
@@ -679,43 +809,72 @@ server_doc = {
                     "writeonly": "false"
                 },
                 {
-                    "hydra:description": "The Drone Class",
-                    "hydra:title": "drone",
+                    "hydra:description": "The Data Class",
+                    "hydra:title": "data",
                     "property": {
-                        "@id": "vocab:EntryPoint/Drone",
+                        "@id": "vocab:EntryPoint/Data",
                         "@type": "hydra:Link",
-                        "description": "Class for a drone",
+                        "description": "Class for a data entry",
                         "domain": "vocab:EntryPoint",
-                        "label": "Drone",
-                        "range": "vocab:DroneCollection",
+                        "label": "Data",
+                        "range": "vocab:Data",
                         "supportedOperation": [
                             {
-                                "@id": "_:submitstatus",
-                                "@type": "hydra:Operation",
-                                "description": "null",
-                                "expects": "vocab:Status",
-                                "label": "SubmitStatus",
-                                "method": "PUT",
-                                "returns": "null",
-                                "statusCodes": [
-                                    {
-                                        "description": "Drone Status updated",
-                                        "statusCode": 200
-                                    }
-                                ]
-                            },
-                            {
-                                "@id": "_:getdrone",
+                                "@id": "_:readdata",
                                 "@type": "hydra:Operation",
                                 "description": "null",
                                 "expects": "null",
-                                "label": "GetDrone",
+                                "label": "ReadData",
                                 "method": "GET",
-                                "returns": "vocab:Drone",
+                                "returns": "vocab:Data",
                                 "statusCodes": [
                                     {
-                                        "description": "Drone Returned",
+                                        "description": "Data not found",
+                                        "statusCode": 404
+                                    },
+                                    {
+                                        "description": "Data returned",
                                         "statusCode": 200
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "readonly": "true",
+                    "required": "null",
+                    "writeonly": "false"
+                },
+                {
+                    "hydra:description": "The DataCollection collection",
+                    "hydra:title": "datacollection",
+                    "property": {
+                        "@id": "vocab:EntryPoint/DataCollection",
+                        "@type": "hydra:Link",
+                        "description": "The DataCollection collection",
+                        "domain": "vocab:EntryPoint",
+                        "label": "DataCollection",
+                        "range": "vocab:DataCollection",
+                        "supportedOperation": [
+                            {
+                                "@id": "_:_:data_collection_retrieve",
+                                "@type": "hydra:Operation",
+                                "description": "Retrieves all Data entities",
+                                "expects": "null",
+                                "method": "GET",
+                                "returns": "vocab:DataCollection",
+                                "statusCodes": []
+                            },
+                            {
+                                "@id": "_:_:data_create",
+                                "@type": "http://schema.org/AddAction",
+                                "description": "Create new Data entitity",
+                                "expects": "vocab:vocab:Data",
+                                "method": "PUT",
+                                "returns": "vocab:vocab:Data",
+                                "statusCodes": [
+                                    {
+                                        "description": "If the Data entity was created successfully.",
+                                        "statusCode": 201
                                     }
                                 ]
                             }
@@ -734,44 +893,30 @@ server_doc = {
                         "description": "The LogEntryCollection collection",
                         "domain": "vocab:EntryPoint",
                         "label": "LogEntryCollection",
-                        "range": "vocab:LogEntryCollectionCollection",
+                        "range": "vocab:LogEntryCollection",
                         "supportedOperation": [
                             {
-                                "@id": "_:logentrycollection_collection_retrieve",
+                                "@id": "_:_:logentry_collection_retrieve",
                                 "@type": "hydra:Operation",
-                                "description": "null",
+                                "description": "Retrieves all LogEntry entities",
                                 "expects": "null",
-                                "label": "Retrieves all LogEntryCollection entities",
                                 "method": "GET",
-                                "returns": "vocab:LogEntryCollectionCollection",
+                                "returns": "vocab:LogEntryCollection",
                                 "statusCodes": []
-                            }
-                        ]
-                    },
-                    "readonly": "true",
-                    "required": "null",
-                    "writeonly": "false"
-                },
-                {
-                    "hydra:description": "The DroneCollection collection",
-                    "hydra:title": "dronecollection",
-                    "property": {
-                        "@id": "vocab:EntryPoint/DroneCollection",
-                        "@type": "hydra:Link",
-                        "description": "The DroneCollection collection",
-                        "domain": "vocab:EntryPoint",
-                        "label": "DroneCollection",
-                        "range": "vocab:DroneCollectionCollection",
-                        "supportedOperation": [
+                            },
                             {
-                                "@id": "_:dronecollection_collection_retrieve",
-                                "@type": "hydra:Operation",
-                                "description": "null",
-                                "expects": "null",
-                                "label": "Retrieves all DroneCollection entities",
-                                "method": "GET",
-                                "returns": "vocab:DroneCollectionCollection",
-                                "statusCodes": []
+                                "@id": "_:_:logentry_create",
+                                "@type": "http://schema.org/AddAction",
+                                "description": "Create new LogEntry entitity",
+                                "expects": "vocab:vocab:LogEntry",
+                                "method": "PUT",
+                                "returns": "vocab:vocab:LogEntry",
+                                "statusCodes": [
+                                    {
+                                        "description": "If the LogEntry entity was created successfully.",
+                                        "statusCode": 201
+                                    }
+                                ]
                             }
                         ]
                     },
@@ -788,17 +933,30 @@ server_doc = {
                         "description": "The MessageCollection collection",
                         "domain": "vocab:EntryPoint",
                         "label": "MessageCollection",
-                        "range": "vocab:MessageCollectionCollection",
+                        "range": "vocab:MessageCollection",
                         "supportedOperation": [
                             {
-                                "@id": "_:messagecollection_collection_retrieve",
+                                "@id": "_:_:message_collection_retrieve",
                                 "@type": "hydra:Operation",
-                                "description": "null",
+                                "description": "Retrieves all Message entities",
                                 "expects": "null",
-                                "label": "Retrieves all MessageCollection entities",
                                 "method": "GET",
-                                "returns": "vocab:MessageCollectionCollection",
+                                "returns": "vocab:MessageCollection",
                                 "statusCodes": []
+                            },
+                            {
+                                "@id": "_:_:message_create",
+                                "@type": "http://schema.org/AddAction",
+                                "description": "Create new Message entitity",
+                                "expects": "vocab:vocab:Message",
+                                "method": "PUT",
+                                "returns": "vocab:vocab:Message",
+                                "statusCodes": [
+                                    {
+                                        "description": "If the Message entity was created successfully.",
+                                        "statusCode": 201
+                                    }
+                                ]
                             }
                         ]
                     },
@@ -807,25 +965,38 @@ server_doc = {
                     "writeonly": "false"
                 },
                 {
-                    "hydra:description": "The DataCollection collection",
-                    "hydra:title": "datacollection",
+                    "hydra:description": "The DroneCollection collection",
+                    "hydra:title": "dronecollection",
                     "property": {
-                        "@id": "vocab:EntryPoint/DataCollection",
+                        "@id": "vocab:EntryPoint/DroneCollection",
                         "@type": "hydra:Link",
-                        "description": "The DataCollection collection",
+                        "description": "The DroneCollection collection",
                         "domain": "vocab:EntryPoint",
-                        "label": "DataCollection",
-                        "range": "vocab:DataCollectionCollection",
+                        "label": "DroneCollection",
+                        "range": "vocab:DroneCollection",
                         "supportedOperation": [
                             {
-                                "@id": "_:datacollection_collection_retrieve",
+                                "@id": "_:_:drone_collection_retrieve",
                                 "@type": "hydra:Operation",
-                                "description": "null",
+                                "description": "Retrieves all Drone entities",
                                 "expects": "null",
-                                "label": "Retrieves all DataCollection entities",
                                 "method": "GET",
-                                "returns": "vocab:DataCollectionCollection",
+                                "returns": "vocab:DroneCollection",
                                 "statusCodes": []
+                            },
+                            {
+                                "@id": "_:_:drone_create",
+                                "@type": "http://schema.org/AddAction",
+                                "description": "Create new Drone entitity",
+                                "expects": "vocab:Drone",
+                                "method": "PUT",
+                                "returns": "vocab:Drone",
+                                "statusCodes": [
+                                    {
+                                        "description": "If the Drone entity was created successfully.",
+                                        "statusCode": 201
+                                    }
+                                ]
                             }
                         ]
                     },
@@ -836,6 +1007,5 @@ server_doc = {
             ],
             "title": "EntryPoint"
         }
-    ],
-    "title": "API Doc for the server side API"
+    ]
 }
