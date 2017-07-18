@@ -184,6 +184,7 @@ class Vocab(Resource):
 
 api.add_resource(Vocab, "/"+API_NAME+"/vocab", endpoint="vocab")
 
+
 class Entrypoint(Resource):
     """Hydra EntryPoint."""
 
@@ -191,7 +192,6 @@ class Entrypoint(Resource):
         """Return application main Entrypoint."""
         response = {"@context": API_DOC.entrypoint.context.generate()}
         return set_response_headers(jsonify(response))
-
 
 
 api.add_resource(Entrypoint, "/"+API_NAME+"/contexts/EntryPoint.jsonld",
