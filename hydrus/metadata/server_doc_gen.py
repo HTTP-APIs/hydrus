@@ -41,7 +41,7 @@ def server_doc(API, BASE_URL):
                                         "GET",
                                         None,
                                         "vocab:Drone",
-                                        [{"statusCode": 404, "description": "Data not found"},
+                                        [{"statusCode": 404, "description": "Drone not found"},
                                          {"statusCode": 200, "description": "Drone Returned"}]))
 
     # No need for endpoint. Server mechanics will create and add send them to the drone
