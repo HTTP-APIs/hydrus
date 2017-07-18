@@ -257,7 +257,7 @@ def update(id_, type_, object_, session=session):
 def get_collection(API_NAME, type_, session=session):
     """Retrieve a type of collection from the database."""
     collection_template = {
-        "@id": "/"+API_NAME+"/"+ type_ + "Collection/",
+        "@id": "/"+API_NAME+"/" + type_ + "Collection/",
         "@context": None,
         "@type": type_ + "Collection",
         "members": []
@@ -281,6 +281,66 @@ def get_collection(API_NAME, type_, session=session):
         }
         collection_template["members"].append(object_template)
     return collection_template
+
+
+def get_single(type_, session=session):
+    """Get instance of classes with single objects."""
+    try:
+        rdf_class = session.query(RDFClass).filter(RDFClass.name == type_).one()
+    except NoResultFound:
+        return {400: "The class %s is not a valid/defined RDFClass" % type_}
+
+    try:
+        instance = session.query(Instance).filter(Instance.type_ == rdf_class.id).one()
+    except NoResultFound:
+        return {404: "Instance of type %s not found" % type_}
+
+    return get(instance.id_, instance.type_, session)
+
+
+def insert_single(object_, session=session):
+    """Insert instance of classes with single objects."""
+    try:
+        rdf_class = session.query(RDFClass).filter(RDFClass.name == object_["@type"]).one()
+    except NoResultFound:
+        return {400: "The class %s is not a valid/defined RDFClass" % object_["@type"]}
+
+    try:
+        session.query(Instance).filter(Instance.type_ == rdf_class.id).one()
+    except NoResultFound:
+        return insert(object_, session)
+
+    return {400: "Instance of type %s already exists" % object_["@type"]}
+
+
+def update_single(object_, session=session):
+    """Update instance of classes with single objects."""
+    try:
+        rdf_class = session.query(RDFClass).filter(RDFClass.name == object_["@type"]).one()
+    except NoResultFound:
+        return {400: "The class %s is not a valid/defined RDFClass" % object_["@type"]}
+
+    try:
+        instance = session.query(Instance).filter(Instance.type_ == rdf_class.id).one()
+    except NoResultFound:
+        return {404: "Instance of type %s not found" % object_["@type"]}
+
+    return update(instance.id, object_["@type"], object_, session)
+
+
+def delete_single(type_, session=session):
+    """Delete instance of classes with single objects."""
+    try:
+        rdf_class = session.query(RDFClass).filter(RDFClass.name == type_).one()
+    except NoResultFound:
+        return {400: "The class %s is not a valid/defined RDFClass" % type_}
+
+    try:
+        instance = session.query(Instance).filter(Instance.type_ == rdf_class.id).one()
+    except NoResultFound:
+        return {404: "Instance of type %s not found" % type_}
+
+    return delete(instance.id, type_, session)
 
 
 if __name__ == "__main__":

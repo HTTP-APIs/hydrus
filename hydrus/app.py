@@ -2,10 +2,11 @@
 
 import os
 import json
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, abort
 from flask_restful import Api, Resource
-## Will modify docs for each container using docker.
+# Will modify docs for each container using docker.
 from hydrus.metadata.doc_gen import doc_gen
+from hydrus.metadata.drone.server_doc_gen import server_doc
 
 from hydrus.data import crud
 from flask_cors import CORS
@@ -17,8 +18,8 @@ api = Api(app)
 
 SERVER_URL = os.environ.get("HYDRUS_SERVER_URL", "localhost/")
 API_NAME = os.environ.get("API_NAME", "api")
-API_DOC = doc_gen(API_NAME, SERVER_URL)
-# API_DOC = drone_doc(API_NAME, SERVER_URL)
+# API_DOC = doc_gen(API_NAME, SERVER_URL)
+API_DOC = server_doc(API_NAME, SERVER_URL)
 
 
 def validObject(object_):
@@ -61,44 +62,51 @@ class Item(Resource):
 
     def get(self, id_, type_):
         """GET object with id = id_ from the database."""
-        response = crud.get(id_, type_)
-        if "object" in response:
-            return set_response_headers(jsonify(hydrafy(response)))
-        else:
-            status_code = int(list(response.keys())[0])
-            return set_response_headers(jsonify(response), status_code=status_code)
+        if checkEndpoint("GET", type_):
+            response = crud.get(id_, type_)
+            if len(response.keys()) == 1:
+                status_code = int(list(response.keys())[0])
+                return set_response_headers(jsonify(response), status_code=status_code)
+            else:
+                return set_response_headers(jsonify(hydrafy(response)))
+        abort(404)
 
     def post(self, id_, type_):
         """Add object_ to database with optional id_ parameter (The id where the object needs to be inserted)."""
-        object_ = json.loads(request.data.decode('utf-8'))
-
-        if validObject(object_):
-            response = crud.insert(object_=object_)
-
-            object_id = response[list(response.keys())[0]].split(" ")[3]
-            headers_ = [{"Location": SERVER_URL+API_NAME+"/"+type_+"/"+object_id}]
-            status_code = int(list(response.keys())[0])
-
-            return set_response_headers(jsonify(response), headers=headers_, status_code=status_code)
-        else:
+        if checkEndpoint("POST", type_):
+            object_ = json.loads(request.data.decode('utf-8'))
+            obj_type = getType(type_, "POST")
+            if object_["@type"] == obj_type:
+                if validObject(object_):
+                    response = crud.insert(object_=object_)
+                    object_id = response[list(response.keys())[0]].split(" ")[3]
+                    headers_ = [{"Location": SERVER_URL+API_NAME+"/"+type_+"/"+object_id}]
+                    status_code = int(list(response.keys())[0])
+                    return set_response_headers(jsonify(response), headers=headers_, status_code=status_code)
             return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
+        abort(404)
 
     def put(self, id_, type_):
         """Update object at id=id_ with object_ in database."""
-        object_ = json.loads(request.data.decode('utf-8'))
-        if validObject(object_):
-            response = crud.update(object_=object_, id_=id_, type_=type_)
-            headers_ = [{"Location": SERVER_URL+API_NAME+"/"+type_+"/"+id_}]
-
-            status_code = int(list(response.keys())[0])
-            return set_response_headers(jsonify(response), headers=headers_, status_code=status_code)
-        else:
+        if checkEndpoint("PUT", type_):
+            object_ = json.loads(request.data.decode('utf-8'))
+            obj_type = getType(type_, "PUT")
+            if object_["@type"] == obj_type:
+                if validObject(object_):
+                    response = crud.update(object_=object_, id_=id_, type_=type_)
+                    headers_ = [{"Location": SERVER_URL+API_NAME+"/"+type_+"/"+id_}]
+                    status_code = int(list(response.keys())[0])
+                    return set_response_headers(jsonify(response), headers=headers_, status_code=status_code)
             return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
+        abort(404)
 
     def delete(self, id_, type_):
         """Delete object with id=id_ from database."""
-        resp = crud.delete(id_, type_)
-        return set_response_headers(jsonify(resp))
+        if checkEndpoint("DELETE", type_):
+            response = crud.delete(id_, type_)
+            status_code = int(list(response.keys())[0])
+            return set_response_headers(jsonify(response), status_code=status_code)
+        abort(404)
 
 
 # Needs to be changed manually
@@ -110,41 +118,84 @@ class ItemCollection(Resource):
 
     def get(self, type_):
         """Retrieve a collection of items from the database."""
-        if type_ in API_DOC.collections:
-            collection = API_DOC.collections[type_]["collection"]
-            response = crud.get_collection(API_NAME, collection.class_.title)
-            if "members" in response:
-                return set_response_headers(jsonify(hydrafy(response)))
-            else:
-                status_code = int(list(response.keys())[0])
-                response = crud.get_collection(API_NAME, type_)
+        if checkEndpoint("GET", type_):
+            # Collections
+            if type_ in API_DOC.collections:
+                collection = API_DOC.collections[type_]["collection"]
+                response = crud.get_collection(API_NAME, collection.class_.title)
+                if "members" in response:
+                    return set_response_headers(jsonify(hydrafy(response)))
+                else:
+                    status_code = int(list(response.keys())[0])
+                    response = crud.get_collection(API_NAME, type_)
+                    return set_response_headers(jsonify(response), status_code=status_code)
 
-                return set_response_headers(jsonify(response), status_code=status_code)
+            # Non Collection classes
+            elif type_ in API_DOC.parsed_classes and type_+"Collection" not in API_DOC.collections:
+                response = crud.get_single(type_)
+                if len(response.keys()) == 1:
+                    status_code = int(list(response.keys())[0])
+                    return set_response_headers(jsonify(response), status_code=status_code)
+                else:
+                    return set_response_headers(jsonify(hydrafy(response)))
+        abort(404)
+
+    def put(self, type_):
+        """Add item to ItemCollection."""
+        if checkEndpoint("PUT", type_):
+            object_ = json.loads(request.data.decode('utf-8'))
+            # Collections
+            if type_ in API_DOC.collections:
+                collection = API_DOC.collections[type_]["collection"]
+                obj_type = collection.class_.title
+                if object_["@type"] == obj_type:
+                    if validObject(object_):
+                        response = crud.insert(object_=object_)
+                        object_id = response[list(response.keys())[0]].split(" ")[3]
+                        headers_ = [{"Location": SERVER_URL+"api/"+type_+"/"+object_id}]
+                        status_code = int(list(response.keys())[0])
+                        return set_response_headers(jsonify(response), headers=headers_, status_code=status_code)
+                return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
+            # Non Collection classes
+            elif type_ in API_DOC.parsed_classes and type_+"Collection" not in API_DOC.collections:
+                obj_type = getType(type_, "PUT")
+                if object_["@type"] == obj_type:
+                    if validObject(object_):
+                        response = crud.insert_single(object_=object_)
+                        headers_ = [{"Location": SERVER_URL+API_NAME+"/"+type_+"/"}]
+                        status_code = int(list(response.keys())[0])
+                        return set_response_headers(jsonify(response), headers=headers_, status_code=status_code)
+                return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
+        abort(404)
 
     def post(self, type_):
-        """Add item to ItemCollection."""
-        object_ = json.loads(request.data.decode('utf-8'))
-        # print(object_)
-        # Fix @type from hydra console
-        if type_ in API_DOC.collections:
-            collection = API_DOC.collections[type_]["collection"]
-            type_ = collection.class_.title
-            object_["@type"] = type_
-        # print(object_)
+        """Update Non Collection class item."""
+        if checkEndpoint("POST", type_):
+            object_ = json.loads(request.data.decode('utf-8'))
+            # No update operation in Collections
+            # Non Collection classes
+            if type_ in API_DOC.parsed_classes and type_+"Collection" not in API_DOC.collections:
+                obj_type = getType(type_, "POST")
+                if object_["@type"] == obj_type:
+                    if validObject(object_):
+                        response = crud.update_single(object_=object_)
+                        headers_ = [{"Location": SERVER_URL+API_NAME+"/"+type_+"/"}]
+                        status_code = int(list(response.keys())[0])
+                        return set_response_headers(jsonify(response), headers=headers_, status_code=status_code)
+                return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
+        abort(404)
 
-        if validObject(object_):
-            response = crud.insert(object_=object_)
-            # print(response)
-            object_id = response[list(response.keys())[0]].split(" ")[3]
-            headers_ = [{"Location": SERVER_URL+"api/"+type_+"/"+object_id}]
-            status_code = int(list(response.keys())[0])
+    def delete(self, type_):
+        """Delete a non Collection class item."""
+        if checkEndpoint("DELETE", type_):
+            # No Delete Operation for collections
+            if type_ in API_DOC.parsed_classes and type_+"Collection" not in API_DOC.collections:
+                response = crud.delete_single(type_)
+                status_code = int(list(response.keys())[0])
+                return set_response_headers(jsonify(response), status_code=status_code)
+        abort(404)
 
-            return set_response_headers(jsonify(response), headers=headers_, status_code=status_code)
-        else:
-            return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
 
-
-# Needs to be added manually.
 api.add_resource(ItemCollection, "/"+API_NAME+"/<string:type_>",
                  endpoint="item_collection")
 
@@ -197,7 +248,28 @@ class Entrypoint(Resource):
 api.add_resource(Entrypoint, "/"+API_NAME+"/contexts/EntryPoint.jsonld",
                  endpoint="main_entrypoint")
 
-# Cots context added dynamically
+
+def checkEndpoint(method, type_):
+    """Check if endpoint and method is supported in the API."""
+    for endpoint in API_DOC.entrypoint.supportedProperty:
+        if type_ == endpoint.name:
+            for operation in endpoint.supportedOperation:
+                if operation.method == method:
+                    return True
+    return False
+
+
+def getType(name, method):
+    """Return the @type of object allowed for POST/PUT."""
+    for endpoint in API_DOC.entrypoint.supportedProperty:
+        if name == endpoint.name:
+            for operation in endpoint.supportedOperation:
+                if operation.method == method:
+                    type_ = operation.expects
+                    if "http" not in type_:
+                        return type_.replace("vocab:", "")
+                    return type_
+
 
 if __name__ == "__main__":
     app.run(host='127.0.0.1', debug=True, port=8080)

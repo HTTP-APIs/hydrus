@@ -22,7 +22,8 @@ class HydraDoc():
         # self.doc["supportedClass"].append(class_.get())
         self.parsed_classes[class_.title] = {
             "context": Context(address=self.base_url+self.API, class_=class_),
-            "class": class_
+            "class": class_,
+            "collection": collection
         }
         if collection:
             collection = HydraCollection(class_, collectionGet, collectionPost)
