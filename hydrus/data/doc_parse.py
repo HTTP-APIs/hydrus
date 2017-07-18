@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import exists
 
 from hydrus.data.db_models import RDFClass, BaseProperty, engine
-from hydrus.metadata.server_doc import server_doc
+from hydrus.metadata.doc import doc
 
 
 def get_classes(apidoc):
@@ -62,7 +62,7 @@ if __name__ == "__main__":
     properties = get_all_properties(classes)
     # Add all the classes
     insert_classes(classes, session)
-
+    print("Classes inserted successfully")    
     # Add all the properties
     insert_properties(properties, session)
     print("Properties inserted successfully")
