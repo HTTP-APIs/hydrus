@@ -4,8 +4,8 @@ import os
 import json
 from flask import Flask, jsonify, request
 from flask_restful import Api, Resource
-from hydrus.metadata.server_doc_gen import server_doc
-# from hydrus.metadata.drone_doc_gen import drone_doc
+## Will modify docs for each container using docker.
+from hydrus.metadata.doc_gen import doc_gen
 
 from hydrus.data import crud
 from flask_cors import CORS
@@ -16,8 +16,8 @@ app.url_map.strict_slashes = False
 api = Api(app)
 
 SERVER_URL = os.environ.get("HYDRUS_SERVER_URL", "localhost/")
-API_NAME = "serverapi"
-API_DOC = server_doc(API_NAME, SERVER_URL)
+API_NAME = os.environ.get("API_NAME", "api")
+API_DOC = doc_gen(API_NAME, SERVER_URL)
 # API_DOC = drone_doc(API_NAME, SERVER_URL)
 
 
