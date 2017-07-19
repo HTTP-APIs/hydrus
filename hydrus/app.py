@@ -88,10 +88,12 @@ class Item(Resource):
             class_type = API_DOC.collections[type_]["collection"].class_.title
             if checkClassOp(class_type, "GET"):
                 response = crud.get(id_, class_type)
+                # import pdb; pdb.set_trace()
                 if len(response.keys()) == 1:
                     status_code = int(list(response.keys())[0])
                     return set_response_headers(jsonify(response), status_code=status_code)
                 else:
+                    response["@id"] = '/'+API_NAME+'/'+type_+'/'+str(id_)
                     return set_response_headers(jsonify(hydrafy(response)))
         abort(405)
 

@@ -65,7 +65,6 @@ def get(id_, type_, session=session):
         except:
             # If terminal is none
             object_template[prop_name] = ""
-    object_template["@id"] = "/api/" + type_ + "/" + str(id_)
     object_template["@type"] = rdf_class.name
 
     return object_template
@@ -276,7 +275,7 @@ def get_collection(API_NAME, type_, session=session):
 
     for instance_ in instances:
         object_template = {
-            "@id": "/api/" + type_ + "/" + str(instance_.id),
+            "@id": "/api/" + type_ + "Collection/" + str(instance_.id),
             "@type": type_
         }
         collection_template["members"].append(object_template)
