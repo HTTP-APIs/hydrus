@@ -294,8 +294,7 @@ def get_single(type_, session=session):
         instance = session.query(Instance).filter(Instance.type_ == rdf_class.id).one()
     except NoResultFound:
         return {404: "Instance of type %s not found" % type_}
-
-    return get(instance.id_, instance.type_, session)
+    return get(instance.id, rdf_class.name, session)
 
 
 def insert_single(object_, session=session):
