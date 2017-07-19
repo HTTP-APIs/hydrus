@@ -22,7 +22,7 @@ def server_doc(API, BASE_URL):
     state.add_supported_prop(HydraClassProp("https://schema.org/status", "SensorStatus", True, False, False))
 
     # Drone Class
-    drone = HydraClass("Drone", "Drone", "Class for a drone", endpoint=True)
+    drone = HydraClass("Drone", "Drone", "Class for a drone")
     # Properties
     drone.add_supported_prop(HydraClassProp("vocab:State", "DroneState", True, False, False))
     drone.add_supported_prop(HydraClassProp("http://schema.org/name", "name", True, False, False))
@@ -50,7 +50,7 @@ def server_doc(API, BASE_URL):
     command.add_supported_prop(HydraClassProp("vocab:State", "State", False, False, False))
 
     # Logs to be accessed mostly by the GUI. Mechanics should add logs for every event.
-    log = HydraClass("vocab:LogEntry", "LogEntry", "Class for a log entry", endpoint=True)
+    log = HydraClass("vocab:LogEntry", "LogEntry", "Class for a log entry")
     # Subject
     log.add_supported_prop(HydraClassProp("http://schema.org/identifier", "DroneID", True, True, False))
     # Predicate
@@ -71,7 +71,7 @@ def server_doc(API, BASE_URL):
 
     # Data is stored as a collection. Each data object can be read.
     # New data added to the collection
-    data = HydraClass("vocab:Data", "Data", "Class for a data entry", endpoint=True)
+    data = HydraClass("vocab:Data", "Data", "Class for a data entry")
     data.add_supported_prop(HydraClassProp("http://schema.org/QuantitativeValue", "Temperature", True, False, False))
     data.add_supported_prop(HydraClassProp("http://schema.org/identifier", "DroneID", True, False, False))
     data.add_supported_prop(HydraClassProp("http://schema.org/geo", "Position", True, False, False))
@@ -100,7 +100,7 @@ def server_doc(API, BASE_URL):
                                        [{"statusCode": 404, "description": "Area of interest not found"},
                                         {"statusCode": 200, "description": "Area of interest returned"}]))
 
-    message = HydraClass("vocab:Message", "Message", "Class for messages received by the GUI interface", endpoint=True)
+    message = HydraClass("vocab:Message", "Message", "Class for messages received by the GUI interface")
     message.add_supported_prop(HydraClassProp("http://schema.org/Text", "MessageString", True, True, False))
     message.add_supported_op(HydraClassOp("GetMessage",
                                           "GET",

@@ -92,75 +92,6 @@ drone_doc = {
             "title": "State"
         },
         {
-            "@id": "vocab:Command",
-            "@type": "hydra:Class",
-            "description": "Class for drone commands",
-            "supportedOperation": [
-                {
-                    "@type": "hydra:Operation",
-                    "expects": "null",
-                    "method": "GET",
-                    "possibleStatus": [
-                        {
-                            "description": "Data not found",
-                            "statusCode": 404
-                        },
-                        {
-                            "description": "Command Returned",
-                            "statusCode": 200
-                        }
-                    ],
-                    "returns": "vocab:Command",
-                    "title": "GetCommand"
-                },
-                {
-                    "@type": "hydra:Operation",
-                    "expects": "vocab:Command",
-                    "method": "PUT",
-                    "possibleStatus": [
-                        {
-                            "description": "Command added",
-                            "statusCode": 200
-                        }
-                    ],
-                    "returns": "null",
-                    "title": "AddCommand"
-                },
-                {
-                    "@type": "hydra:Operation",
-                    "expects": "null",
-                    "method": "DELETE",
-                    "possibleStatus": [
-                        {
-                            "description": "Command deleted",
-                            "statusCode": 200
-                        }
-                    ],
-                    "returns": "null",
-                    "title": "DeleteCommand"
-                }
-            ],
-            "supportedProperty": [
-                {
-                    "@type": "SupportedProperty",
-                    "property": "http://schema.org/UpdateAction",
-                    "readonly": "false",
-                    "required": "false",
-                    "title": "Update",
-                    "writeonly": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:State",
-                    "readonly": "false",
-                    "required": "false",
-                    "title": "State",
-                    "writeonly": "false"
-                }
-            ],
-            "title": "Command"
-        },
-        {
             "@id": "vocab:Drone",
             "@type": "hydra:Class",
             "description": "Class for a drone",
@@ -313,6 +244,75 @@ drone_doc = {
             "title": "Data"
         },
         {
+            "@id": "vocab:Command",
+            "@type": "hydra:Class",
+            "description": "Class for drone commands",
+            "supportedOperation": [
+                {
+                    "@type": "hydra:Operation",
+                    "expects": "null",
+                    "method": "GET",
+                    "possibleStatus": [
+                        {
+                            "description": "Data not found",
+                            "statusCode": 404
+                        },
+                        {
+                            "description": "Command Returned",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "vocab:Command",
+                    "title": "GetCommand"
+                },
+                {
+                    "@type": "hydra:Operation",
+                    "expects": "vocab:Command",
+                    "method": "PUT",
+                    "possibleStatus": [
+                        {
+                            "description": "Command added",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "AddCommand"
+                },
+                {
+                    "@type": "hydra:Operation",
+                    "expects": "null",
+                    "method": "DELETE",
+                    "possibleStatus": [
+                        {
+                            "description": "Command deleted",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "DeleteCommand"
+                }
+            ],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://schema.org/UpdateAction",
+                    "readonly": "false",
+                    "required": "false",
+                    "title": "Update",
+                    "writeonly": "true"
+                },
+                {
+                    "@type": "SupportedProperty",
+                    "property": "vocab:State",
+                    "readonly": "false",
+                    "required": "false",
+                    "title": "State",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Command"
+        },
+        {
             "@id": "http://www.w3.org/ns/hydra/core#Collection",
             "@type": "hydra:Class",
             "description": "null",
@@ -396,72 +396,6 @@ drone_doc = {
                 }
             ],
             "supportedProperty": [
-                {
-                    "hydra:description": "The Command Class",
-                    "hydra:title": "command",
-                    "property": {
-                        "@id": "vocab:EntryPoint/Command",
-                        "@type": "hydra:Link",
-                        "description": "Class for drone commands",
-                        "domain": "vocab:EntryPoint",
-                        "label": "Command",
-                        "range": "vocab:Command",
-                        "supportedOperation": [
-                            {
-                                "@id": "_:getcommand",
-                                "@type": "hydra:Operation",
-                                "description": "null",
-                                "expects": "null",
-                                "label": "GetCommand",
-                                "method": "GET",
-                                "returns": "vocab:Command",
-                                "statusCodes": [
-                                    {
-                                        "description": "Data not found",
-                                        "statusCode": 404
-                                    },
-                                    {
-                                        "description": "Command Returned",
-                                        "statusCode": 200
-                                    }
-                                ]
-                            },
-                            {
-                                "@id": "_:addcommand",
-                                "@type": "hydra:Operation",
-                                "description": "null",
-                                "expects": "vocab:Command",
-                                "label": "AddCommand",
-                                "method": "PUT",
-                                "returns": "null",
-                                "statusCodes": [
-                                    {
-                                        "description": "Command added",
-                                        "statusCode": 200
-                                    }
-                                ]
-                            },
-                            {
-                                "@id": "_:deletecommand",
-                                "@type": "hydra:Operation",
-                                "description": "null",
-                                "expects": "null",
-                                "label": "DeleteCommand",
-                                "method": "DELETE",
-                                "returns": "null",
-                                "statusCodes": [
-                                    {
-                                        "description": "Command deleted",
-                                        "statusCode": 200
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    "readonly": "true",
-                    "required": "null",
-                    "writeonly": "false"
-                },
                 {
                     "hydra:description": "The Drone Class",
                     "hydra:title": "drone",

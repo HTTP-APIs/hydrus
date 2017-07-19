@@ -51,7 +51,7 @@ def drone_doc(API, BASE_URL):
 
     # Command Class
     # NOTE: Commands are stored in a collection. You may GET a command or you may DELETE it, there is not UPDATE.
-    command = HydraClass("Command", "Command", "Class for drone commands", endpoint=True)
+    command = HydraClass("Command", "Command", "Class for drone commands")
     command.add_supported_prop(HydraClassProp("http://schema.org/UpdateAction", "Update", False, True, False))
     command.add_supported_prop(HydraClassProp("vocab:State", "State", False, False, False))
     # Used by mechanics to get newly added commands
