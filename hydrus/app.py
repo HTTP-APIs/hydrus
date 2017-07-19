@@ -6,7 +6,7 @@ from flask import Flask, jsonify, request, abort
 from flask_restful import Api, Resource
 # Will modify docs for each container using docker.
 from hydrus.metadata.doc_gen import doc_gen
-from hydrus.metadata.drone.server_doc_gen import server_doc
+# from hydrus.metadata.drone.server_doc_gen import server_doc
 
 from hydrus.data import crud
 from flask_cors import CORS
@@ -18,32 +18,10 @@ api = Api(app)
 
 SERVER_URL = os.environ.get("HYDRUS_SERVER_URL", "localhost/")
 API_NAME = os.environ.get("API_NAME", "api")
-# API_DOC = doc_gen(API_NAME, SERVER_URL)
-API_DOC = server_doc(API_NAME, SERVER_URL)
+API_DOC = doc_gen(API_NAME, SERVER_URL)
+# API_DOC = server_doc(API_NAME, SERVER_URL)
 
-# drone = {
-#     "@type": "Drone",
-#     "name": "assas",
-#     "model": "test",
-#     "MaxSpeed": "essd",
-#     "Sensor": "sdsd",
-#     "DroneState":{
-#         "@type": "State",
-#         "Speed": "45",
-#         "Position": "55",
-#         "Battery": "22",
-#         "SensorStatus": "active"
-#     }
-# }
-#
-# area = {
-#     "@type": "Area",
-#     "TopLeft": "2,2",
-#     "BottomRight": "3,3"
-# }
-# status = crud.insert(area)
-# import pdb
-# pdb.set_trace()
+
 def validObject(object_):
     """Check if the data passed in POST is of valid format or not."""
     if "@type" in object_:
