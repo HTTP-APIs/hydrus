@@ -101,6 +101,7 @@ class Item(Resource):
                 obj_type = getType(class_type, "PUT")
                 if validObject(object_):
                     if object_["@type"] == obj_type:
+                        response = crud.insert(object_=object_, id_=id_)
                         headers_ = [{"Location": SERVER_URL+API_NAME+"/"+type_+"/"+id_}]
                         status_code = int(list(response.keys())[0])
                         return set_response_headers(jsonify(response), headers=headers_, status_code=status_code)
