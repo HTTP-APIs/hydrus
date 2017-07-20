@@ -84,7 +84,7 @@ class Item(Resource):
                 obj_type = getType(class_type, "POST")
                 if validObject(object_):
                     if object_["@type"] == obj_type:
-                        response = crud.insert(object_=object_, id_=id_)
+                        response = crud.update(object_=object_, id_=id_, type_ = object_["@type"])
                         object_id = response[list(response.keys())[0]].split(" ")[3]
                         headers_ = [{"Location": SERVER_URL+API_NAME+"/"+type_+"/"+object_id}]
                         status_code = int(list(response.keys())[0])
@@ -101,7 +101,7 @@ class Item(Resource):
                 obj_type = getType(class_type, "PUT")
                 if validObject(object_):
                     if object_["@type"] == obj_type:
-                        response = crud.update(object_=object_, id_=id_, type_=type_)
+                        response = crud.insert(object_=object_, id_=id_)
                         headers_ = [{"Location": SERVER_URL+API_NAME+"/"+type_+"/"+id_}]
                         status_code = int(list(response.keys())[0])
                         return set_response_headers(jsonify(response), headers=headers_, status_code=status_code)
