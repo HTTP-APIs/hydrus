@@ -152,10 +152,21 @@ class HydraClassOp():
         self.returns = returns
         self.status = status
 
+    def get_type(self, method):
+        """Return @type for op based on method type."""
+        if method == "POST":
+            return "http://schema.org/UpdateAction"
+        elif method == "PUT":
+            return "http://schema.org/AddAction"
+        elif method == "DELETE":
+            return "http://schema.org/DeleteAction"
+        else:
+            return "hydra:Operation"
+
     def generate(self):
         """Get the Hydra op as a python dict."""
         op = {
-                "@type": "hydra:Operation",
+                "@type": self.get_type(self.method),
                 "title": self.title,
                 "method": self.method,
                 "expects": self.expects,
@@ -163,6 +174,7 @@ class HydraClassOp():
                 "possibleStatus": self.status
         }
         return op
+
 
 
 class HydraCollection():

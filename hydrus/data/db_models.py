@@ -12,7 +12,7 @@ DB_URL = os.environ.get("DB_URL", 'sqlite:///{}'.format(db_path))
 
 engine = create_engine(DB_URL)
 
-# engine = create_engine("postgresql://postgres:  @%s:5432/hydra"%(POSTGRES_IP,))
+# engine = create_engine("postgresql://hydra:hailhydra@localhost:5432/hydrus")
 Base = declarative_base()
 
 

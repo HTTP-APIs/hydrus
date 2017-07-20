@@ -5,16 +5,18 @@ from sqlalchemy import exists
 from sqlalchemy.orm.exc import NoResultFound
 from hydrus.data.db_models import (Graph, BaseProperty, RDFClass, Instance,
                                    Terminal, engine, GraphIAC, GraphIIT, GraphIII)
+import os
 Session = sessionmaker(bind=engine)
 session = Session()
 triples = with_polymorphic(Graph, '*')
 properties = with_polymorphic(BaseProperty, "*")
 
+API_NAME = os.environ.get("API_NAME", "api")
 
-def get(id_, type_, session=session):
+
+def get(id_, type_, session=session, recursive = False):
     """Retrieve an Instance with given ID from the database [GET]."""
     object_template = {
-        "@id": "",
         "@type": "",
     }
     try:
@@ -52,7 +54,7 @@ def get(id_, type_, session=session):
         inst_class_name = session.query(RDFClass).filter(
             RDFClass.id == instance.type_).one().name
         # Recursive call should get the instance needed
-        object_ = get(id_=instance.id, type_=inst_class_name, session=session)
+        object_ = get(id_=instance.id, type_=inst_class_name, session=session, recursive = True)
         object_template[prop_name] = object_
 
     for data in data_IIT:
@@ -65,8 +67,9 @@ def get(id_, type_, session=session):
         except:
             # If terminal is none
             object_template[prop_name] = ""
-    object_template["@id"] = "/api/" + type_ + "/" + str(id_)
     object_template["@type"] = rdf_class.name
+    if not recursive:
+        object_template["@id"] = "/"+ API_NAME+ "/" + type_ + "/" + str(id_)
 
     return object_template
 
@@ -276,7 +279,7 @@ def get_collection(API_NAME, type_, session=session):
 
     for instance_ in instances:
         object_template = {
-            "@id": "/api/" + type_ + "/" + str(instance_.id),
+            "@id": "/"+API_NAME+"/" + type_ + "Collection/" + str(instance_.id),
             "@type": type_
         }
         collection_template["members"].append(object_template)
@@ -291,11 +294,15 @@ def get_single(type_, session=session):
         return {400: "The class %s is not a valid/defined RDFClass" % type_}
 
     try:
-        instance = session.query(Instance).filter(Instance.type_ == rdf_class.id).one()
-    except NoResultFound:
+        instance = session.query(Instance).filter(Instance.type_ == rdf_class.id).all()[-1]
+    except (NoResultFound, IndexError, ValueError):
         return {404: "Instance of type %s not found" % type_}
+    object_ =  get(instance.id, rdf_class.name, session=session)
 
-    return get(instance.id_, instance.type_, session)
+    ## Fix object_ id
+    object_["@id"] = "/"+API_NAME+"/"+ type_
+
+    return object_
 
 
 def insert_single(object_, session=session):
@@ -306,9 +313,9 @@ def insert_single(object_, session=session):
         return {400: "The class %s is not a valid/defined RDFClass" % object_["@type"]}
 
     try:
-        session.query(Instance).filter(Instance.type_ == rdf_class.id).one()
-    except NoResultFound:
-        return insert(object_, session)
+        session.query(Instance).filter(Instance.type_ == rdf_class.id).all()[-1]
+    except (NoResultFound, IndexError, ValueError):
+        return insert(object_, session=session)
 
     return {400: "Instance of type %s already exists" % object_["@type"]}
 
@@ -321,9 +328,10 @@ def update_single(object_, session=session):
         return {400: "The class %s is not a valid/defined RDFClass" % object_["@type"]}
 
     try:
-        instance = session.query(Instance).filter(Instance.type_ == rdf_class.id).one()
-    except NoResultFound:
-        return {404: "Instance of type %s not found" % object_["@type"]}
+        instance = session.query(Instance).filter(Instance.type_ == rdf_class.id).all()[-1]
+    except (NoResultFound, IndexError, ValueError):
+        print("Instance of type %s not found" % object_["@type"])
+        return insert_single(object_, session=session)
 
     return update(instance.id, object_["@type"], object_, session)
 
@@ -336,32 +344,38 @@ def delete_single(type_, session=session):
         return {400: "The class %s is not a valid/defined RDFClass" % type_}
 
     try:
-        instance = session.query(Instance).filter(Instance.type_ == rdf_class.id).one()
-    except NoResultFound:
+        instance = session.query(Instance).filter(Instance.type_ == rdf_class.id).all()[-1]
+    except (NoResultFound, IndexError, ValueError):
         return {404: "Instance of type %s not found" % type_}
 
-    return delete(instance.id, type_, session)
+    return delete(instance.id, type_, session=session)
 
 
 if __name__ == "__main__":
 
     drone_specs = {
-        "@type": "Spacecraft_Communication",
-        "status": {
-            "@type": "object",
-            "Identifier": -1000,
+        "@type": "Drone",
+        "DroneID": -1000,
+        "name": "Drone1",
+        "model": "xyz",
+        "MaxSpeed": 50,
+        "Sensor": "Temperature",
+        "DroneState": {
+            "@type": "State",
             "Speed": 0,
             "Position": "0,0",
             "Battery": 100,
-            "Destination": "0,0",
-            "Sensor": "temprature",
-            "Status": "Started"
+            "Direction": "North",
+            "SensorStatus": "Inactive",
         }
     }
+
+    datastream = {'Position': '0,0', 'DroneID': '-100011', '@type': 'Datastream', 'Temperature': 100}
     # print(update(6, object__))
-    # print(insert(drone_specs))
+    print(insert(drone_specs))
+    print(insert(datastream))
     # print(update(4, object__))
-    print(get(182, "Spacecraft_Communication"))
+    # print(get(182, "Spacecraft_Communication"))
     # print(get(146, "Spacecraft_Communication"))
     # print(delete(142, "Spacecraft_Communication"))
     # print(get(142, "Spacecraft_Communication"))
