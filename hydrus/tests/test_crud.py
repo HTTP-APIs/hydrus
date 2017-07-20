@@ -8,6 +8,7 @@ import hydrus.data.crud as crud
 from hydrus.data.db_models import Base
 from hydrus.data.insert_classes import gen_classes
 
+
 def object_1():
     """Return a copy of an object."""
     object_ = {
@@ -161,7 +162,6 @@ class TestCRUD(unittest.TestCase):
         insert_response = crud.insert(object_=object_, id_=id_, session=self.session)
         assert 400 in insert_response
 
-
     def test_insert_abstractproperty(self):
         """Test CRUD when AbstractProperty is given instance."""
         object_ = object_1()
@@ -180,7 +180,7 @@ class TestCRUD(unittest.TestCase):
         insert_response_1 = crud.insert(object_=object_, id_=id_, session=self.session)
         object_["hasMass"] = "Spacecraft_Communication"
         insert_response_2 = crud.insert(object_=object_, id_=id_+1, session=self.session)
-        print(insert_response_1,insert_response_2)
+        print(insert_response_1, insert_response_2)
         assert 201 in insert_response_1
         assert 201 in insert_response_2
 

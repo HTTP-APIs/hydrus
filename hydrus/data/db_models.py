@@ -6,15 +6,13 @@ from sqlalchemy import Column, Integer, String
 import os
 
 
-# We'll use sqlite db for drones
-# db_path = os.path.join(os.path.dirname(__file__), 'database.db')
-# engine = create_engine('sqlite:///{}'.format(db_path))
+db_path = os.path.join(os.path.dirname(__file__), 'database.db')
+# We'll use sqlite db if no db is provided
+DB_URL = os.environ.get("DB_URL", 'sqlite:///{}'.format(db_path))
 
-# engine = create_engine('sqlite:///database.db')
-POSTGRES_IP = os.environ.get("POSTGRES_1_PORT_5432_TCP_ADDR", 'localhost')
+engine = create_engine(DB_URL)
 
-engine = create_engine("postgresql://hydra:hailhydra@%s:5432/hydrus"%(POSTGRES_IP,))
-# engine = create_engine("postgresql://postgres:  @%s:5432/hydra"%(POSTGRES_IP,))
+# engine = create_engine("postgresql://hydra:hailhydra@localhost:5432/hydrus")
 Base = declarative_base()
 
 
