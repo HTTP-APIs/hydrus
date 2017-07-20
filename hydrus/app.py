@@ -7,7 +7,7 @@ from flask_restful import Api, Resource
 # Will modify docs for each container using docker.
 from hydrus.metadata.doc_gen import doc_gen
 # from hydrus.metadata.drone.server_doc_gen import server_doc
-
+# from hydrus.metadata.drone.drone_doc_gen import drone_doc
 from hydrus.data import crud
 from flask_cors import CORS
 
@@ -20,7 +20,7 @@ SERVER_URL = os.environ.get("HYDRUS_SERVER_URL", "localhost/")
 API_NAME = os.environ.get("API_NAME", "api")
 API_DOC = doc_gen(API_NAME, SERVER_URL)
 # API_DOC = server_doc(API_NAME, SERVER_URL)
-
+# API_DOC = drone_doc(API_NAME, SERVER_URL)
 
 def validObject(object_):
     """Check if the data passed in POST is of valid format or not."""
@@ -111,11 +111,13 @@ class Item(Resource):
     def delete(self, id_, type_):
         """Delete object with id=id_ from database."""
         if checkEndpoint("DELETE", type_):
+            print("checkEndpoint passed")
             class_type = API_DOC.collections[type_]["collection"].class_.title
             if checkClassOp(class_type, "DELETE"):
                 response = crud.delete(id_, class_type)
                 status_code = int(list(response.keys())[0])
                 return set_response_headers(jsonify(response), status_code=status_code)
+        print("checkpoint failed")
         abort(405)
 
 
@@ -142,6 +144,7 @@ class ItemCollection(Resource):
 
             # Non Collection classes
             elif type_ in API_DOC.parsed_classes and type_+"Collection" not in API_DOC.collections:
+
                 response = crud.get_single(type_)
                 if len(response.keys()) == 1:
                     status_code = int(list(response.keys())[0])
@@ -185,10 +188,14 @@ class ItemCollection(Resource):
             # No update operation in Collections
             # Non Collection classes
             if type_ in API_DOC.parsed_classes and type_+"Collection" not in API_DOC.collections:
+                print("SINGLE COLLECTION TYPE")
                 obj_type = getType(type_, "POST")
+                print("OBJTYPE", obj_type, object_["@type"])
                 if object_["@type"] == obj_type:
                     if validObject(object_):
+                        print("validObject")
                         response = crud.update_single(object_=object_)
+                        print(response)
                         headers_ = [{"Location": SERVER_URL+API_NAME+"/"+type_+"/"}]
                         status_code = int(list(response.keys())[0])
                         return set_response_headers(jsonify(response), headers=headers_, status_code=status_code)
@@ -266,6 +273,12 @@ def checkEndpoint(method, type_):
             for operation in endpoint.supportedOperation:
                 if operation.method == method:
                     return True
+    ## Check non endpoint collection classes
+    for class_ in API_DOC.parsed_classes.keys():
+        if class_ == type_ or class_ == type_.split("Collection")[0]:
+            for operation in API_DOC.parsed_classes[class_]["class"].supportedOperation:
+                if operation.method == method:
+                    return True
     return False
 
 
@@ -273,7 +286,7 @@ def getType(class_type, method):
     """Return the @type of object allowed for POST/PUT."""
     for supportedOp in API_DOC.parsed_classes[class_type]["class"].supportedOperation:
         if supportedOp.method == method:
-            return supportedOp.expects
+            return supportedOp.expects.split("vocab:")[-1]
 
 
 def checkClassOp(class_type, method):
