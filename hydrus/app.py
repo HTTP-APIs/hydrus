@@ -16,9 +16,12 @@ CORS(app)
 app.url_map.strict_slashes = False
 api = Api(app)
 
-SERVER_URL = os.environ.get("HYDRUS_SERVER_URL", "localhost/")
+## For vocab path in APIDOC
+HYDRUS_SERVER_URL = os.environ.get("HYDRUS_SERVER_URL", "http://localhost:8080/")
+SERVER_URL = os.environ.get("SERVER_URL", HYDRUS_SERVER_URL)
+
 API_NAME = os.environ.get("API_NAME", "api")
-API_DOC = doc_gen(API_NAME, SERVER_URL)
+API_DOC = doc_gen(API_NAME, HYDRUS_SERVER_URL)
 # API_DOC = server_doc(API_NAME, SERVER_URL)
 # API_DOC = drone_doc(API_NAME, SERVER_URL)
 
