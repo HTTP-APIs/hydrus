@@ -124,7 +124,7 @@ def insert(object_, id_=None, session=session):
                     instance_object_result = insert(object_[prop_name], session=session)
                     if 201 in instance_object_result:
                         instance_object_id = int(instance_object_result[list(
-                            instance_object_result)[0]].split(" ")[3])
+                            instance_object_result)[0]].split("=")[1])
                         instance_object = session.query(Instance).filter(
                             Instance.id == instance_object_id).one()
                     else:
@@ -188,7 +188,7 @@ def insert(object_, id_=None, session=session):
 
     session.commit()
     # pdb.set_trace()
-    return {201: "Object with id %s successfully added!" % (instance.id)}
+    return {201: "Object successfully added! ID=%s" % (instance.id)}
 
 
 def delete(id_, type_, session=session):
@@ -233,7 +233,7 @@ def delete(id_, type_, session=session):
 
     session.delete(instance)
     session.commit()
-    return {200: "Object with ID : %s successfully deleted!" % (id_)}
+    return {200: "Object successfully deleted! ID=%s" % (id_)}
 
 
 def update(id_, type_, object_, session=session):
@@ -248,7 +248,7 @@ def update(id_, type_, object_, session=session):
         # Try inserting the new data
         insert_status = insert(object_=object_, id_=id_, session=session)
         if 201 in insert_status:
-            return {200: "Object with ID : %s successfully updated!" % (id_)}
+            return {200: "Object successfully updated! ID=%s" % (id_)}
         else:
             # Add the old object back
             insert(object_=instance, id_=id_, session=session)

@@ -176,7 +176,6 @@ class HydraClassOp():
         return op
 
 
-
 class HydraCollection():
     """Class for Hydra Collection."""
 
