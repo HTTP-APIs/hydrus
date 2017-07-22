@@ -19,3 +19,4 @@ pytz==2017.2
 six==1.10.0
 thespian==3.5.2
 flask-cors
+blinker==1.4
