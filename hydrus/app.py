@@ -7,6 +7,7 @@ from flask_restful import Api, Resource
 from hydrus.data.db_models import engine
 from sqlalchemy.orm import sessionmaker
 from hydrus.metadata.doc_gen import doc_gen
+from hydrus.settings import API_NAME, HYDRUS_SERVER_URL, PORT
 from hydrus.data import crud
 from flask_cors import CORS
 from contextlib import contextmanager
@@ -38,10 +39,8 @@ def get_session():
     return session
 
 
-HYDRUS_SERVER_URL = os.environ.get("HYDRUS_SERVER_URL", "http://localhost:8080/")
-SERVER_URL = os.environ.get("SERVER_URL", HYDRUS_SERVER_URL)
+SERVER_URL = HYDRUS_SERVER_URL
 
-API_NAME = os.environ.get("API_NAME", "api")
 API_DOC = doc_gen(API_NAME, HYDRUS_SERVER_URL)
 # set_session(app, sessionmaker(bind=engine)())
 
@@ -163,7 +162,7 @@ class ItemCollection(Resource):
                 response = crud.get_single(type_)
                 if len(response.keys()) == 1:
                     status_code = int(list(response.keys())[0])
-                    return set_response_headers(jsonify(response), status_code=status_code, session=get_session())
+                    return set_response_headers(jsonify(response), status_code=status_code)
                 else:
                     return set_response_headers(jsonify(hydrafy(response)))
         abort(405)
@@ -304,4 +303,4 @@ def checkClassOp(class_type, method):
 
 if __name__ == "__main__":
     # pdb.set_trace()
-    app.run(host='127.0.0.1', debug=True, port=8080)
+    app.run(host='127.0.0.1', debug=True, port=PORT)
