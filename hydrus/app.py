@@ -29,6 +29,24 @@ def set_session(application, DB_SESSION):
         yield
 
 
+@contextmanager
+def set_doc(application, APIDOC):
+    """Set the database session for the app along with context management."""
+    def handler(sender, **kwargs):
+        g.doc = APIDOC
+    with appcontext_pushed.connected_to(handler, application):
+        yield
+
+
+def get_doc():
+    """Get the db session for the app with context management."""
+    apidoc = getattr(g, 'doc', None)
+    if apidoc is None:
+        apidoc = doc_gen(API_NAME, HYDRUS_SERVER_URL)
+        g.doc = apidoc
+    return apidoc
+
+
 def get_session():
     """Get the db session for the app with context management."""
     session = getattr(g, 'dbsession', None)
@@ -36,7 +54,6 @@ def get_session():
         session = sessionmaker(bind=engine)()
         g.dbsession = session
     return session
-
 
 HYDRUS_SERVER_URL = os.environ.get("HYDRUS_SERVER_URL", "http://localhost:8080/")
 SERVER_URL = os.environ.get("SERVER_URL", HYDRUS_SERVER_URL)
