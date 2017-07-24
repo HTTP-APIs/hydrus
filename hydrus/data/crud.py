@@ -5,13 +5,14 @@ from sqlalchemy import exists
 from sqlalchemy.orm.exc import NoResultFound
 from hydrus.data.db_models import (Graph, BaseProperty, RDFClass, Instance,
                                    Terminal, engine, GraphIAC, GraphIIT, GraphIII)
-import os
+from hydrus.settings import API_NAME
+
+
 Session = sessionmaker(bind=engine)
 session = Session()
 triples = with_polymorphic(Graph, '*')
 properties = with_polymorphic(BaseProperty, "*")
 
-API_NAME = os.environ.get("API_NAME", "api")
 
 
 def get(id_, type_, session=session, recursive = False):

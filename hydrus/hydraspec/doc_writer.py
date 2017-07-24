@@ -20,6 +20,8 @@ class HydraDoc():
     def add_supported_class(self, class_, collection=False, collectionGet=True, collectionPost=True):
         """Add a new supportedClass."""
         # self.doc["supportedClass"].append(class_.get())
+        if not isinstance(class_, HydraClass):
+            raise TypeError("Type is not <HydraClass>")
         self.parsed_classes[class_.title] = {
             "context": Context(address=self.base_url+self.API, class_=class_),
             "class": class_,
@@ -34,6 +36,8 @@ class HydraDoc():
 
     def add_possible_status(self, status):
         """Add a new possibleStatus."""
+        if not isinstance(status, HydraStatus):
+            raise TypeError("Type is not <HydraStatus>")
         self.status.append(status)
 
     def add_baseCollection(self):
@@ -93,10 +97,14 @@ class HydraClass():
 
     def add_supported_prop(self, prop):
         """Add a new supportedProperty."""
+        if not isinstance(prop, (HydraClassProp, EntryPointClass, EntryPointCollection)):
+            raise TypeError("Type is not <HydraClassProp>")
         self.supportedProperty.append(prop)
 
     def add_supported_op(self, op):
         """Add a new supportedOperation."""
+        if not isinstance(op, (HydraClassOp, EntryPointOp)):
+            raise TypeError("Type is not <HydraClassOp>")
         self.supportedOperation.append(op)
 
     def generate(self):
@@ -260,12 +268,16 @@ class HydraEntryPoint():
 
     def add_Class(self, class_):
         """Add supportedProperty to the EntryPoint."""
+        if not isinstance(class_, HydraClass):
+            raise TypeError("Type is not <HydraClass>")
         entrypoint_class = EntryPointClass(class_)
         self.entrypoint.add_supported_prop(entrypoint_class)
         self.context.add(entrypoint_class.name, {"@id": entrypoint_class.id_, "@type": "@id"})
 
     def add_Collection(self, collection):
         """Add supportedProperty to the EntryPoint."""
+        if not isinstance(collection, HydraCollection):
+            raise TypeError("Type is not <HydraCollection>")
         entrypoint_collection = EntryPointCollection(collection)
         self.entrypoint.add_supported_prop(entrypoint_collection)
         self.context.add(entrypoint_collection.name, {"@id": entrypoint_collection.id_, "@type": "@id"})
@@ -488,11 +500,11 @@ class Context():
 
     def createContext(self, object_):
         """Create the context for the given object."""
-        if type(object_) is HydraClass:
+        if isinstance(object_, HydraClass):
             self.add(object_.title, object_.id)
             for prop in object_.supportedProperty:
                 self.add(prop.title, self.prop)
-        if type(object_) is HydraCollection:
+        if isinstance(object_, HydraCollection):
             self.add(object_.name, "vocab:"+object_.name)
             self.add(object_.class_.title, object_.class_.id)
 

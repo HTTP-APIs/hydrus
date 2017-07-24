@@ -3,12 +3,7 @@
 from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String
-import os
-
-
-db_path = os.path.join(os.path.dirname(__file__), 'database.db')
-# We'll use sqlite db if no db is provided
-DB_URL = os.environ.get("DB_URL", 'sqlite:///{}'.format(db_path))
+from hydrus.settings import DB_URL
 
 # engine = create_engine(DB_URL)
 
