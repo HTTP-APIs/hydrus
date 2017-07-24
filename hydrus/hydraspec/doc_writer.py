@@ -73,6 +73,7 @@ class HydraDoc():
             "@context": self.context.generate(),
             "@id": self.base_url + self.API + "/vocab",
             "@type": "ApiDocumentation",
+            "title": self.title,
             "description": self.desc,
             "supportedClass": [x.generate() for x in parsed_classes + self.other_classes + collections + [self.entrypoint]],
             "possibleStatus": [x.generate() for x in self.status]
@@ -220,7 +221,7 @@ class HydraCollection():
             "@id": "vocab:%s" % (self.name,),
             "@type": "hydra:Class",
             "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
-            "label": "%s" % (self.name),
+            "title": "%s" % (self.name),
             "description": "A collection of %s" % (self.class_.title.lower()),
             "supportedOperation": [x.generate() for x in self.supportedOperation],
             "supportedProperty": [x.generate() for x in self.supportedProperty]

@@ -118,7 +118,6 @@ doc = {
             "@id": "vocab:dummyClassCollection",
             "@type": "hydra:Class",
             "description": "A collection of dummyclass",
-            "label": "dummyClassCollection",
             "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
             "supportedOperation": [
                 {
@@ -155,7 +154,8 @@ doc = {
                     "title": "members",
                     "writeonly": "false"
                 }
-            ]
+            ],
+            "title": "dummyClassCollection"
         },
         {
             "@id": "vocab:EntryPoint",
@@ -216,5 +216,6 @@ doc = {
             ],
             "title": "EntryPoint"
         }
-    ]
+    ],
+    "title": "Title for the API Documentation"
 }
