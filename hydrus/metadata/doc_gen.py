@@ -169,7 +169,7 @@ def doc_gen(API, BASE_URL):
 
 
 if __name__ == "__main__":
-    dump = json.dumps(doc_gen("serverapi", "http://localhost/").generate(), indent=4, sort_keys=True)
+    dump = json.dumps(doc_gen("api", "http://localhost:8080/").generate(), indent=4, sort_keys=True)
     doc = '''"""\nGenerated API Documentation for Server API using server_doc_gen.py."""\n\ndoc = %s''' % dump
     doc = doc.replace('true', '"true"')
     doc = doc.replace('false', '"false"')

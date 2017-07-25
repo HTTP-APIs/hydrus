@@ -1,8 +1,9 @@
 """Demo script for setting up Hydrus with any db and any API Doc."""
 
-from hydrus.app import app, set_session, set_doc
+from hydrus.app import app, set_session, set_doc, set_hydrus_server_url
 from hydrus.data import doc_parse
 from hydrus.hydraspec import doc_maker
+from hydrus.settings import HYDRUS_SERVER_URL
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from hydrus.data.db_models import Base
@@ -35,7 +36,10 @@ doc_parse.insert_properties(properties, session)
 
 # Set the API Documentation
 with set_doc(app, apidoc):
-    # Set the DB session
-    with set_session(app, session):
+    # Set HYDRUS_SERVER_URL
+    with set_hydrus_server_url(app, HYDRUS_SERVER_URL):
+
+        # Set the DB session
+        with set_session(app, session):
         # Start Hydrus
-        app.run(host='127.0.0.1', debug=True, port=8080)
+            app.run(host='127.0.0.1', debug=True, port=8080)
