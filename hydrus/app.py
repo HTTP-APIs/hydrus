@@ -6,6 +6,8 @@ from flask import Flask, jsonify, request, abort
 from flask_restful import Api, Resource
 from hydrus.data.db_models import engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm.session import Session
+from hydrus.hydraspec.doc_writer import HydraDoc
 from hydrus.metadata.doc_gen import doc_gen
 from hydrus.settings import API_NAME, HYDRUS_SERVER_URL, PORT
 from hydrus.data import crud
@@ -24,10 +26,34 @@ api = Api(app)
 @contextmanager
 def set_session(application, DB_SESSION):
     """Set the database session for the app along with context management."""
+    if not isinstance(DB_SESSION, Session):
+        raise TypeError("The API Doc is not of type <hydrus.hydraspec.doc_writer.HydraDoc>")
+
     def handler(sender, **kwargs):
         g.dbsession = DB_SESSION
     with appcontext_pushed.connected_to(handler, application):
         yield
+
+
+@contextmanager
+def set_doc(application, APIDOC):
+    """Set the database session for the app along with context management."""
+    if not isinstance(APIDOC, HydraDoc):
+        raise TypeError("The API Doc is not of type <hydrus.hydraspec.doc_writer.HydraDoc>")
+
+    def handler(sender, **kwargs):
+        g.doc = APIDOC
+    with appcontext_pushed.connected_to(handler, application):
+        yield
+
+
+def get_doc():
+    """Get the db session for the app with context management."""
+    apidoc = getattr(g, 'doc', None)
+    if apidoc is None:
+        apidoc = doc_gen(API_NAME, HYDRUS_SERVER_URL)
+        g.doc = apidoc
+    return apidoc
 
 
 def get_session():
@@ -40,8 +66,6 @@ def get_session():
 
 
 SERVER_URL = HYDRUS_SERVER_URL
-
-API_DOC = doc_gen(API_NAME, HYDRUS_SERVER_URL)
 # set_session(app, sessionmaker(bind=engine)())
 
 
@@ -74,7 +98,7 @@ class Index(Resource):
 
     def get(self):
         """Return main entrypoint for the api."""
-        return set_response_headers(jsonify(API_DOC.entrypoint.get()))
+        return set_response_headers(jsonify(get_doc().entrypoint.get()))
 
 
 api.add_resource(Index, "/"+API_NAME+"/", endpoint="api")
@@ -85,7 +109,7 @@ class Item(Resource):
 
     def get(self, id_, type_):
         """GET object with id = id_ from the database."""
-        class_type = API_DOC.collections[type_]["collection"].class_.title
+        class_type = get_doc().collections[type_]["collection"].class_.title
         if checkClassOp(class_type, "GET"):
             response = crud.get(id_, class_type, session=get_session())
             if len(response.keys()) == 1:
@@ -98,7 +122,7 @@ class Item(Resource):
 
     def post(self, id_, type_):
         """Update object of type<type_> at ID<id_> with new object_ using HTTP POST."""
-        class_type = API_DOC.collections[type_]["collection"].class_.title
+        class_type = get_doc().collections[type_]["collection"].class_.title
         if checkClassOp(class_type, "POST"):
             object_ = json.loads(request.data.decode('utf-8'))
             obj_type = getType(class_type, "POST")
@@ -114,7 +138,7 @@ class Item(Resource):
 
     def put(self, id_, type_):
         """Add new object_ optional <id_> parameter using HTTP PUT."""
-        class_type = API_DOC.collections[type_]["collection"].class_.title
+        class_type = get_doc().collections[type_]["collection"].class_.title
         if checkClassOp(class_type, "PUT"):
             object_ = json.loads(request.data.decode('utf-8'))
             obj_type = getType(class_type, "PUT")
@@ -129,7 +153,7 @@ class Item(Resource):
 
     def delete(self, id_, type_):
         """Delete object with id=id_ from database."""
-        class_type = API_DOC.collections[type_]["collection"].class_.title
+        class_type = get_doc().collections[type_]["collection"].class_.title
         if checkClassOp(class_type, "DELETE"):
             response = crud.delete(id_, class_type, session=get_session())
             status_code = int(list(response.keys())[0])
@@ -147,8 +171,8 @@ class ItemCollection(Resource):
         """Retrieve a collection of items from the database."""
         if checkEndpoint("GET", type_):
             # Collections
-            if type_ in API_DOC.collections:
-                collection = API_DOC.collections[type_]["collection"]
+            if type_ in get_doc().collections:
+                collection = get_doc().collections[type_]["collection"]
                 response = crud.get_collection(API_NAME, collection.class_.title, session=get_session())
                 if "members" in response:
                     return set_response_headers(jsonify(hydrafy(response)))
@@ -158,7 +182,7 @@ class ItemCollection(Resource):
                     return set_response_headers(jsonify(response), status_code=status_code)
 
             # Non Collection classes
-            elif type_ in API_DOC.parsed_classes and type_+"Collection" not in API_DOC.collections:
+            elif type_ in get_doc().parsed_classes and type_+"Collection" not in get_doc().collections:
                 response = crud.get_single(type_)
                 if len(response.keys()) == 1:
                     status_code = int(list(response.keys())[0])
@@ -172,8 +196,8 @@ class ItemCollection(Resource):
         if checkEndpoint("PUT", type_):
             object_ = json.loads(request.data.decode('utf-8'))
             # Collections
-            if type_ in API_DOC.collections:
-                collection = API_DOC.collections[type_]["collection"]
+            if type_ in get_doc().collections:
+                collection = get_doc().collections[type_]["collection"]
                 obj_type = collection.class_.title
                 if validObject(object_):
                     if object_["@type"] == obj_type:
@@ -184,7 +208,7 @@ class ItemCollection(Resource):
                         return set_response_headers(jsonify(response), headers=headers_, status_code=status_code)
                 return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
             # Non Collection classes
-            elif type_ in API_DOC.parsed_classes and type_+"Collection" not in API_DOC.collections:
+            elif type_ in get_doc().parsed_classes and type_+"Collection" not in get_doc().collections:
                 obj_type = getType(type_, "PUT")
                 if object_["@type"] == obj_type:
                     if validObject(object_):
@@ -199,7 +223,7 @@ class ItemCollection(Resource):
         """Update Non Collection class item."""
         if checkEndpoint("POST", type_):
             object_ = json.loads(request.data.decode('utf-8'))
-            if type_ in API_DOC.parsed_classes and type_+"Collection" not in API_DOC.collections:
+            if type_ in get_doc().parsed_classes and type_+"Collection" not in get_doc().collections:
                 obj_type = getType(type_, "POST")
                 if validObject(object_):
                     if object_["@type"] == obj_type:
@@ -214,7 +238,7 @@ class ItemCollection(Resource):
         """Delete a non Collection class item."""
         if checkEndpoint("DELETE", type_):
             # No Delete Operation for collections
-            if type_ in API_DOC.parsed_classes and type_+"Collection" not in API_DOC.collections:
+            if type_ in get_doc().parsed_classes and type_+"Collection" not in get_doc().collections:
                 response = crud.delete_single(type_, session=get_session())
                 status_code = int(list(response.keys())[0])
                 return set_response_headers(jsonify(response), status_code=status_code)
@@ -231,15 +255,15 @@ class Contexts(Resource):
     def get(self, category):
         """Return the context for the specified class."""
         if "Collection" in category:
-            if category in API_DOC.collections:
-                response = {"@context": API_DOC.collections[category]["context"].generate()}
+            if category in get_doc().collections:
+                response = {"@context": get_doc().collections[category]["context"].generate()}
                 return set_response_headers(jsonify(response))
             else:
                 response = {404: "NOT FOUND"}
                 return set_response_headers(jsonify(response), status_code=404)
         else:
-            if category in API_DOC.parsed_classes:
-                response = {"@context": API_DOC.parsed_classes[category]["context"].generate()}
+            if category in get_doc().parsed_classes:
+                response = {"@context": get_doc().parsed_classes[category]["context"].generate()}
                 return set_response_headers(jsonify(response))
             else:
                 response = {404: "NOT FOUND"}
@@ -254,7 +278,7 @@ class Vocab(Resource):
 
     def get(self):
         """Return the main hydra vocab."""
-        return set_response_headers(jsonify(API_DOC.generate()))
+        return set_response_headers(jsonify(get_doc().generate()))
 
 
 api.add_resource(Vocab, "/"+API_NAME+"/vocab", endpoint="vocab")
@@ -265,7 +289,7 @@ class Entrypoint(Resource):
 
     def get(self):
         """Return application main Entrypoint."""
-        response = {"@context": API_DOC.entrypoint.context.generate()}
+        response = {"@context": get_doc().entrypoint.context.generate()}
         return set_response_headers(jsonify(response))
 
 
@@ -275,7 +299,7 @@ api.add_resource(Entrypoint, "/"+API_NAME+"/contexts/EntryPoint.jsonld",
 
 def checkEndpoint(method, type_):
     """Check if endpoint and method is supported in the API."""
-    for endpoint in API_DOC.entrypoint.entrypoint.supportedProperty:
+    for endpoint in get_doc().entrypoint.entrypoint.supportedProperty:
         if type_ == endpoint.name:
             for operation in endpoint.supportedOperation:
                 if operation.method == method:
@@ -287,7 +311,7 @@ def checkEndpoint(method, type_):
 
 def getType(class_type, method):
     """Return the @type of object allowed for POST/PUT."""
-    for supportedOp in API_DOC.parsed_classes[class_type]["class"].supportedOperation:
+    for supportedOp in get_doc().parsed_classes[class_type]["class"].supportedOperation:
         if supportedOp.method == method:
             return supportedOp.expects.replace("vocab:", "")
     # NOTE: Don't use split, if there are more than one substrings with 'vocab:' not everything will be returned.
@@ -295,7 +319,7 @@ def getType(class_type, method):
 
 def checkClassOp(class_type, method):
     """Check if the Class supports the operation."""
-    for supportedOp in API_DOC.parsed_classes[class_type]["class"].supportedOperation:
+    for supportedOp in get_doc().parsed_classes[class_type]["class"].supportedOperation:
         if supportedOp.method == method:
             return True
     return False
