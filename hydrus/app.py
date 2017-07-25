@@ -183,7 +183,7 @@ class ItemCollection(Resource):
 
             # Non Collection classes
             elif type_ in get_doc().parsed_classes and type_+"Collection" not in get_doc().collections:
-                response = crud.get_single(type_)
+                response = crud.get_single(type_, session=get_session())
                 if len(response.keys()) == 1:
                     status_code = int(list(response.keys())[0])
                     return set_response_headers(jsonify(response), status_code=status_code)

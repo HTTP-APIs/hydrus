@@ -5,9 +5,9 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String
 from hydrus.settings import DB_URL
 
-# engine = create_engine(DB_URL)
+engine = create_engine(DB_URL)
 
-engine = create_engine("postgresql://hydra:hailhydra@localhost:5432/hydrus")
+# engine = create_engine("postgresql://hydra:hailhydra@localhost:5432/hydrus")
 Base = declarative_base()
 
 
