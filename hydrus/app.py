@@ -9,7 +9,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 from hydrus.hydraspec.doc_writer import HydraDoc
 from hydrus.metadata.doc_gen import doc_gen
-from hydrus.settings import API_NAME, HYDRUS_SERVER_URL, PORT
+from hydrus.settings import HYDRUS_SERVER_URL, PORT
 from hydrus.data import crud
 from flask_cors import CORS
 from contextlib import contextmanager
@@ -34,6 +34,33 @@ def set_session(application, DB_SESSION):
     with appcontext_pushed.connected_to(handler, application):
         yield
 
+def get_session():
+    """Get the db session for the app with context management."""
+    session = getattr(g, 'dbsession', None)
+    if session is None:
+        session = sessionmaker(bind=engine)()
+        g.dbsession = session
+    return session
+
+
+@contextmanager
+def set_hydrus_server_url(application, HYDRUS_SERVER_URL):
+    """Set the database session for the app along with context management."""
+
+    def handler(sender, **kwargs):
+        g.hydrus_server_url = HYDRUS_SERVER_URL
+    with appcontext_pushed.connected_to(handler, application):
+        yield
+
+
+def get_hydrus_server_url():
+    """Get the db session for the app with context management."""
+    hydrus_server_url = getattr(g, 'hydrus_server_url', None)
+    if hydrus_server_url is None:
+        hydrus_server_url = HYDRUS_SERVER_URL
+        g.hydrus_server_url = hydrus_server_url
+    return hydrus_server_url
+
 
 @contextmanager
 def set_doc(application, APIDOC):
@@ -51,21 +78,12 @@ def get_doc():
     """Get the db session for the app with context management."""
     apidoc = getattr(g, 'doc', None)
     if apidoc is None:
-        apidoc = doc_gen(API_NAME, HYDRUS_SERVER_URL)
+        apidoc = doc_gen(API_NAME, get_hydrus_server_url())
         g.doc = apidoc
     return apidoc
 
-
-def get_session():
-    """Get the db session for the app with context management."""
-    session = getattr(g, 'dbsession', None)
-    if session is None:
-        session = sessionmaker(bind=engine)()
-        g.dbsession = session
-    return session
-
-
-SERVER_URL = HYDRUS_SERVER_URL
+global API_NAME
+API_NAME = "api"
 # set_session(app, sessionmaker(bind=engine)())
 
 
@@ -82,7 +100,7 @@ def set_response_headers(resp, ct="application/ld+json", headers=[], status_code
     for header in headers:
         resp.headers[list(header.keys())[0]] = header[list(header.keys())[0]]
     resp.headers['Content-type'] = ct
-    resp.headers['Link'] = '<' + SERVER_URL + \
+    resp.headers['Link'] = '<' + get_hydrus_server_url() + \
         API_NAME+'/vocab>; rel="http://www.w3.org/ns/hydra/core#apiDocumentation"'
     return resp
 
@@ -130,7 +148,7 @@ class Item(Resource):
                 if object_["@type"] == obj_type:
                     response = crud.update(object_=object_, id_=id_, type_=object_["@type"], session=get_session())
                     object_id = response[list(response.keys())[0]].split("=")[1]
-                    headers_ = [{"Location": SERVER_URL+API_NAME+"/"+type_+"/"+str(object_id)}]
+                    headers_ = [{"Location": get_hydrus_server_url()+API_NAME+"/"+type_+"/"+str(object_id)}]
                     status_code = int(list(response.keys())[0])
                     return set_response_headers(jsonify(response), headers=headers_, status_code=status_code)
             return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
@@ -145,7 +163,7 @@ class Item(Resource):
             if validObject(object_):
                 if object_["@type"] == obj_type:
                     response = crud.insert(object_=object_, id_=id_, session=get_session())
-                    headers_ = [{"Location": SERVER_URL+API_NAME+"/"+type_+"/"+str(id_)}]
+                    headers_ = [{"Location": get_hydrus_server_url()+API_NAME+"/"+type_+"/"+str(id_)}]
                     status_code = int(list(response.keys())[0])
                     return set_response_headers(jsonify(response), headers=headers_, status_code=status_code)
             return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
@@ -203,7 +221,7 @@ class ItemCollection(Resource):
                     if object_["@type"] == obj_type:
                         response = crud.insert(object_=object_, session=get_session())
                         object_id = response[list(response.keys())[0]].split('=')[1]
-                        headers_ = [{"Location": SERVER_URL+"api/"+type_+"/"+str(object_id)}]
+                        headers_ = [{"Location": get_hydrus_server_url()+"api/"+type_+"/"+str(object_id)}]
                         status_code = int(list(response.keys())[0])
                         return set_response_headers(jsonify(response), headers=headers_, status_code=status_code)
                 return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
@@ -213,7 +231,7 @@ class ItemCollection(Resource):
                 if object_["@type"] == obj_type:
                     if validObject(object_):
                         response = crud.insert_single(object_=object_, session=get_session())
-                        headers_ = [{"Location": SERVER_URL+API_NAME+"/"+type_+"/"}]
+                        headers_ = [{"Location": get_hydrus_server_url()+API_NAME+"/"+type_+"/"}]
                         status_code = int(list(response.keys())[0])
                         return set_response_headers(jsonify(response), headers=headers_, status_code=status_code)
                 return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
@@ -228,7 +246,7 @@ class ItemCollection(Resource):
                 if validObject(object_):
                     if object_["@type"] == obj_type:
                         response = crud.update_single(object_=object_, session=get_session())
-                        headers_ = [{"Location": SERVER_URL+API_NAME+"/"+type_+"/"}]
+                        headers_ = [{"Location": get_hydrus_server_url()+API_NAME+"/"+type_+"/"}]
                         status_code = int(list(response.keys())[0])
                         return set_response_headers(jsonify(response), headers=headers_, status_code=status_code)
                 return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)

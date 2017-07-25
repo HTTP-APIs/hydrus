@@ -7,7 +7,7 @@ import string
 import os
 import json
 import pdb
-from hydrus.app import API_NAME, SERVER_URL, API_DOC, app, set_session
+from hydrus.app import API_NAME, app, set_session, get_hydrus_server_url, get_doc
 from hydrus.data import doc_parse
 from hydrus.metadata.doc_gen import doc_gen
 from sqlalchemy import create_engine
@@ -94,7 +94,7 @@ class ViewsTestCase(unittest.TestCase):
                 assert "@context" in response_get_data
                 # print(response_get_data["@id"], SERVER_URL+API_NAME +"/vocab#")
                 assert response_get_data["@type"] == "ApiDocumentation"
-                assert response_get_data["@id"] == SERVER_URL+API_NAME+"/vocab"
+                assert response_get_data["@id"] == get_hydrus_server_url()+API_NAME+"/vocab"
                 assert response_get.status_code == 200
 
                 response_delete = client.delete("/"+API_NAME+"/vocab#")
@@ -114,7 +114,7 @@ class ViewsTestCase(unittest.TestCase):
                 assert index.status_code == 200
                 endpoints = json.loads(index.data.decode('utf-8'))
                 for endpoint in endpoints:
-                    if endpoint in API_DOC.collections:
+                    if endpoint in get_doc().collections:
                         response_get = client.get(endpoints[endpoint])
                         assert response_get.status_code == 200
                         response_get_data = json.loads(response_get.data.decode('utf-8'))
@@ -131,9 +131,9 @@ class ViewsTestCase(unittest.TestCase):
                 assert index.status_code == 200
                 endpoints = json.loads(index.data.decode('utf-8'))
                 for collection_name in endpoints:
-                    if collection_name in API_DOC.collections:
-                        collection = API_DOC.collections[collection_name]["collection"]
-                        dummy_object = gen_dummy_object(collection.class_.title, API_DOC)
+                    if collection_name in get_doc().collections:
+                        collection = get_doc().collections[collection_name]["collection"]
+                        dummy_object = gen_dummy_object(collection.class_.title, get_doc())
                         good_response_put = client.put(endpoints[collection_name], data=json.dumps(dummy_object))
                         assert good_response_put.status_code == 201
 
@@ -145,17 +145,17 @@ class ViewsTestCase(unittest.TestCase):
                 assert index.status_code == 200
                 endpoints = json.loads(index.data.decode('utf-8'))
                 for collection_name in endpoints:
-                    if collection_name in API_DOC.collections:
-                        collection = API_DOC.collections[collection_name]["collection"]
-                        class_ = API_DOC.parsed_classes[collection.class_.title]["class"]
+                    if collection_name in get_doc().collections:
+                        collection = get_doc().collections[collection_name]["collection"]
+                        class_ = get_doc().parsed_classes[collection.class_.title]["class"]
                         class_methods = [x.method for x in class_.supportedOperation]
-                        dummy_object = gen_dummy_object(collection.class_.title, API_DOC)
+                        dummy_object = gen_dummy_object(collection.class_.title, get_doc())
                         initial_put_response = client.put(endpoints[collection_name], data=json.dumps(dummy_object))
                         assert initial_put_response.status_code == 201
                         response = json.loads(initial_put_response.data.decode('utf-8'))
                         id_ = response["201"].split('=')[1]
                         if "POST" in class_methods:
-                            dummy_object = gen_dummy_object(collection.class_.title, API_DOC)
+                            dummy_object = gen_dummy_object(collection.class_.title, get_doc())
                             post_replace_response = client.post(endpoints[collection_name]+'/'+str(id_), data=json.dumps(dummy_object))
                             assert post_replace_response.status_code == 200
 
@@ -167,11 +167,11 @@ class ViewsTestCase(unittest.TestCase):
                 assert index.status_code == 200
                 endpoints = json.loads(index.data.decode('utf-8'))
                 for collection_name in endpoints:
-                    if collection_name in API_DOC.collections:
-                        collection = API_DOC.collections[collection_name]["collection"]
-                        class_ = API_DOC.parsed_classes[collection.class_.title]["class"]
+                    if collection_name in get_doc().collections:
+                        collection = get_doc().collections[collection_name]["collection"]
+                        class_ = get_doc().parsed_classes[collection.class_.title]["class"]
                         class_methods = [x.method for x in class_.supportedOperation]
-                        dummy_object = gen_dummy_object(collection.class_.title, API_DOC)
+                        dummy_object = gen_dummy_object(collection.class_.title, get_doc())
                         initial_put_response = client.put(endpoints[collection_name], data=json.dumps(dummy_object))
                         assert initial_put_response.status_code == 201
                         response = json.loads(initial_put_response.data.decode('utf-8'))
@@ -188,7 +188,7 @@ class ViewsTestCase(unittest.TestCase):
                 assert index.status_code == 200
                 endpoints = json.loads(index.data.decode('utf-8'))
                 for collection_name in endpoints:
-                    if collection_name in API_DOC.collections:
+                    if collection_name in get_doc().collections:
                         response_get = client.get(endpoints[collection_name])
                         assert response_get.status_code == 200
                         context = json.loads(response_get.data.decode('utf-8'))["@context"]
@@ -205,13 +205,13 @@ class ViewsTestCase(unittest.TestCase):
                 assert index.status_code == 200
                 endpoints = json.loads(index.data.decode('utf-8'))
                 for collection_name in endpoints:
-                    if collection_name in API_DOC.collections:
-                        collection = API_DOC.collections[collection_name]["collection"]
-                        class_ = API_DOC.parsed_classes[collection.class_.title]["class"]
+                    if collection_name in get_doc().collections:
+                        collection = get_doc().collections[collection_name]["collection"]
+                        class_ = get_doc().parsed_classes[collection.class_.title]["class"]
                         class_methods = [x.method for x in class_.supportedOperation]
-                        dummy_object = gen_dummy_object(collection.class_.title, API_DOC)
+                        dummy_object = gen_dummy_object(collection.class_.title, get_doc())
                         if "PUT" in class_methods:
-                            dummy_object = gen_dummy_object(collection.class_.title, API_DOC)
+                            dummy_object = gen_dummy_object(collection.class_.title, get_doc())
                             put_response = client.put(endpoints[collection_name], data=json.dumps(dummy_object))
                             assert put_response.status_code == 201
 
@@ -223,11 +223,11 @@ class ViewsTestCase(unittest.TestCase):
                 assert index.status_code == 200
                 endpoints = json.loads(index.data.decode('utf-8'))
                 for class_name in endpoints:
-                    if class_name not in API_DOC.collections and class_name not in ["@context", "@id", "@type"]:
-                        class_ = API_DOC.parsed_classes[class_name]["class"]
+                    if class_name not in get_doc().collections and class_name not in ["@context", "@id", "@type"]:
+                        class_ = get_doc().parsed_classes[class_name]["class"]
                         class_methods = [x.method for x in class_.supportedOperation]
                         if "PUT" in class_methods:
-                            dummy_object = gen_dummy_object(class_.title, API_DOC)
+                            dummy_object = gen_dummy_object(class_.title, get_doc())
                             put_response = client.put(endpoints[class_name], data=json.dumps(dummy_object))
                             assert put_response.status_code == 201
 
@@ -239,11 +239,11 @@ class ViewsTestCase(unittest.TestCase):
                 assert index.status_code == 200
                 endpoints = json.loads(index.data.decode('utf-8'))
                 for class_name in endpoints:
-                    if class_name not in API_DOC.collections and class_name not in ["@context", "@id", "@type"]:
-                        class_ = API_DOC.parsed_classes[class_name]["class"]
+                    if class_name not in get_doc().collections and class_name not in ["@context", "@id", "@type"]:
+                        class_ = get_doc().parsed_classes[class_name]["class"]
                         class_methods = [x.method for x in class_.supportedOperation]
                         if "POST" in class_methods:
-                            dummy_object = gen_dummy_object(class_.title, API_DOC)
+                            dummy_object = gen_dummy_object(class_.title, get_doc())
                             put_response = client.post(endpoints[class_name], data=json.dumps(dummy_object))
                             assert put_response.status_code == 201
 
@@ -255,8 +255,8 @@ class ViewsTestCase(unittest.TestCase):
                 assert index.status_code == 200
                 endpoints = json.loads(index.data.decode('utf-8'))
                 for class_name in endpoints:
-                    if class_name not in API_DOC.collections and class_name not in ["@context", "@id", "@type"]:
-                        class_ = API_DOC.parsed_classes[class_name]["class"]
+                    if class_name not in get_doc().collections and class_name not in ["@context", "@id", "@type"]:
+                        class_ = get_doc().parsed_classes[class_name]["class"]
                         class_methods = [x.method for x in class_.supportedOperation]
                         if "DELETE" in class_methods:
                             put_response = client.delete(endpoints[class_name])
@@ -270,8 +270,8 @@ class ViewsTestCase(unittest.TestCase):
                 assert index.status_code == 200
                 endpoints = json.loads(index.data.decode('utf-8'))
                 for class_name in endpoints:
-                    if class_name not in API_DOC.collections and class_name not in ["@context", "@id", "@type"]:
-                        class_ = API_DOC.parsed_classes[class_name]["class"]
+                    if class_name not in get_doc().collections and class_name not in ["@context", "@id", "@type"]:
+                        class_ = get_doc().parsed_classes[class_name]["class"]
                         class_methods = [x.method for x in class_.supportedOperation]
                         if "GET" in class_methods:
                             response_get = client.get(endpoints[class_name])
@@ -290,7 +290,7 @@ class ViewsTestCase(unittest.TestCase):
                 assert index.status_code == 200
                 endpoints = json.loads(index.data.decode('utf-8'))
                 for collection_name in endpoints:
-                    if collection_name in API_DOC.collections:
+                    if collection_name in get_doc().collections:
                         bad_response_put = client.put(endpoints[collection_name], data=json.dumps(dict(foo='bar')))
                         assert bad_response_put.status_code == 400
 
@@ -302,17 +302,17 @@ class ViewsTestCase(unittest.TestCase):
                 assert index.status_code == 200
                 endpoints = json.loads(index.data.decode('utf-8'))
                 for collection_name in endpoints:
-                    if collection_name in API_DOC.collections:
-                        collection = API_DOC.collections[collection_name]["collection"]
-                        class_ = API_DOC.parsed_classes[collection.class_.title]["class"]
+                    if collection_name in get_doc().collections:
+                        collection = get_doc().collections[collection_name]["collection"]
+                        class_ = get_doc().parsed_classes[collection.class_.title]["class"]
                         class_methods = [x.method for x in class_.supportedOperation]
-                        dummy_object = gen_dummy_object(collection.class_.title, API_DOC)
+                        dummy_object = gen_dummy_object(collection.class_.title, get_doc())
                         initial_put_response = client.put(endpoints[collection_name], data=json.dumps(dummy_object))
                         assert initial_put_response.status_code == 201
                         response = json.loads(initial_put_response.data.decode('utf-8'))
                         id_ = response["201"].split('=')[1]
                         if "POST" not in class_methods:
-                            dummy_object = gen_dummy_object(collection.class_.title, API_DOC)
+                            dummy_object = gen_dummy_object(collection.class_.title, get_doc())
                             post_replace_response = client.post(endpoints[collection_name]+'/'+str(id_), data=json.dumps(dummy_object))
                             assert post_replace_response.status_code == 405
 
