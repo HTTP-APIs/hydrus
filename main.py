@@ -36,9 +36,10 @@ doc_parse.insert_properties(properties, session)
 
 # Set the API Documentation
 with set_doc(app, apidoc):
-    # Set the DB session
+    # Set HYDRUS_SERVER_URL
     with set_hydrus_server_url(app, HYDRUS_SERVER_URL):
 
+        # Set the DB session
         with set_session(app, session):
         # Start Hydrus
             app.run(host='127.0.0.1', debug=True, port=8080)
