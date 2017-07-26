@@ -1,19 +1,16 @@
 """Basic CRUD operations for the server."""
 
-from sqlalchemy.orm import sessionmaker, with_polymorphic
+from sqlalchemy.orm import with_polymorphic
 from sqlalchemy import exists
 from sqlalchemy.orm.exc import NoResultFound
 from hydrus.data.db_models import (Graph, BaseProperty, RDFClass, Instance,
-                                   Terminal, engine, GraphIAC, GraphIIT, GraphIII)
+                                   Terminal, GraphIAC, GraphIIT, GraphIII)
 
-
-Session = sessionmaker(bind=engine)
-session = Session()
 triples = with_polymorphic(Graph, '*')
 properties = with_polymorphic(BaseProperty, "*")
 
 
-def get(id_, type_, api_name, session=session, recursive=False):
+def get(id_, type_, api_name, session, recursive=False):
     """Retrieve an Instance with given ID from the database [GET]."""
     object_template = {
         "@type": "",
@@ -53,7 +50,7 @@ def get(id_, type_, api_name, session=session, recursive=False):
         inst_class_name = session.query(RDFClass).filter(
             RDFClass.id == instance.type_).one().name
         # Recursive call should get the instance needed
-        object_ = get(id_=instance.id, type_=inst_class_name, session=session, recursive=True)
+        object_ = get(id_=instance.id, type_=inst_class_name, session=session, recursive=True, api_name=api_name)
         object_template[prop_name] = object_
 
     for data in data_IIT:
@@ -73,7 +70,7 @@ def get(id_, type_, api_name, session=session, recursive=False):
     return object_template
 
 
-def insert(object_, id_=None, session=session):
+def insert(object_, session, id_=None):
     """Insert an object to database [POST] and returns the inserted object."""
     rdf_class = None
     instance = None
@@ -190,7 +187,7 @@ def insert(object_, id_=None, session=session):
     return {201: "Object successfully added! ID=%s" % (instance.id)}
 
 
-def delete(id_, type_, session=session):
+def delete(id_, type_, session):
     """Delete an Instance and all its relations from DB given id [DELETE]."""
     try:
         rdf_class = session.query(RDFClass).filter(
@@ -235,10 +232,10 @@ def delete(id_, type_, session=session):
     return {200: "Object successfully deleted! ID=%s" % (id_)}
 
 
-def update(id_, type_, object_, session=session):
+def update(id_, type_, object_, session, api_name):
     """Update an object properties based on the given object [PUT]."""
     # Keep the object as fail safe
-    instance = get(id_, type_, session)
+    instance = get(id_=id_, type_=type_, session=session, api_name=api_name)
 
     # Try deleteing the object
     delete_status = delete(id_=id_, type_=type_, session=session)
@@ -256,7 +253,7 @@ def update(id_, type_, object_, session=session):
         return delete_status
 
 
-def get_collection(API_NAME, type_, session=session):
+def get_collection(API_NAME, type_, session):
     """Retrieve a type of collection from the database."""
     collection_template = {
         "@id": "/"+API_NAME+"/" + type_ + "Collection/",
@@ -285,7 +282,7 @@ def get_collection(API_NAME, type_, session=session):
     return collection_template
 
 
-def get_single(type_, api_name, session=session):
+def get_single(type_, api_name, session):
     """Get instance of classes with single objects."""
     try:
         rdf_class = session.query(RDFClass).filter(RDFClass.name == type_).one()
@@ -296,7 +293,7 @@ def get_single(type_, api_name, session=session):
         instance = session.query(Instance).filter(Instance.type_ == rdf_class.id).all()[-1]
     except (NoResultFound, IndexError, ValueError):
         return {404: "Instance of type %s not found" % type_}
-    object_ = get(instance.id, rdf_class.name, session=session)
+    object_ = get(instance.id, rdf_class.name, session=session, api_name=api_name)
 
     # Fix object_ id
     object_["@id"] = "/"+api_name+"/"+type_
@@ -304,7 +301,7 @@ def get_single(type_, api_name, session=session):
     return object_
 
 
-def insert_single(object_, session=session):
+def insert_single(object_, session):
     """Insert instance of classes with single objects."""
     try:
         rdf_class = session.query(RDFClass).filter(RDFClass.name == object_["@type"]).one()
@@ -319,7 +316,7 @@ def insert_single(object_, session=session):
     return {400: "Instance of type %s already exists" % object_["@type"]}
 
 
-def update_single(object_, session=session):
+def update_single(object_, session, api_name):
     """Update instance of classes with single objects."""
     try:
         rdf_class = session.query(RDFClass).filter(RDFClass.name == object_["@type"]).one()
@@ -332,10 +329,10 @@ def update_single(object_, session=session):
         print("Instance of type %s not found" % object_["@type"])
         return insert_single(object_, session=session)
 
-    return update(instance.id, object_["@type"], object_, session)
+    return update(id_=instance.id, type_=object_["@type"], object_=object_, session=session, api_name=api_name)
 
 
-def delete_single(type_, session=session):
+def delete_single(type_, session):
     """Delete instance of classes with single objects."""
     try:
         rdf_class = session.query(RDFClass).filter(RDFClass.name == type_).one()

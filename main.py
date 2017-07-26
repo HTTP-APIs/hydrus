@@ -15,6 +15,7 @@ from hydrus.metadata.doc import doc     # Can be replaced by any API Documentati
 db_path = os.path.join(os.path.dirname(__file__), 'database.db')
 DB_URL = 'sqlite:///{}'.format(db_path)
 
+print(DB_URL)
 # Define the server URL, this is what will be displayed on the Doc
 HYDRUS_SERVER_URL = "http://localhost:8080/"
 

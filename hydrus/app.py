@@ -7,12 +7,13 @@ from hydrus.data.db_models import engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 from hydrus.hydraspec.doc_writer import HydraDoc
-from hydrus.metadata.doc_gen import doc_gen
 from hydrus.data import crud
 from flask_cors import CORS
 from contextlib import contextmanager
 from flask import appcontext_pushed
 from flask import g
+from hydrus.metadata.doc_gen import doc_gen     # Needs to be replaced with sample
+# from hydrus.hydraspec.doc_writer_sample import api_doc as doc         # Sample doc
 
 
 @contextmanager
@@ -200,7 +201,7 @@ class Item(Resource):
             obj_type = getType(class_type, "POST")
             if validObject(object_):
                 if object_["@type"] == obj_type:
-                    response = crud.update(object_=object_, id_=id_, type_=object_["@type"], session=get_session())
+                    response = crud.update(object_=object_, id_=id_, type_=object_["@type"], session=get_session(), api_name=get_api_name())
                     object_id = response[list(response.keys())[0]].split("=")[1]
                     headers_ = [{"Location": get_hydrus_server_url()+get_api_name()+"/"+type_+"/"+str(object_id)}]
                     status_code = int(list(response.keys())[0])
@@ -296,7 +297,7 @@ class ItemCollection(Resource):
                 obj_type = getType(type_, "POST")
                 if validObject(object_):
                     if object_["@type"] == obj_type:
-                        response = crud.update_single(object_=object_, session=get_session())
+                        response = crud.update_single(object_=object_, session=get_session(), api_name=get_api_name())
                         headers_ = [{"Location": get_hydrus_server_url()+get_api_name()+"/"+type_+"/"}]
                         status_code = int(list(response.keys())[0])
                         return set_response_headers(jsonify(response), headers=headers_, status_code=status_code)
@@ -352,4 +353,5 @@ def app_factory(API_NAME="api"):
 
 if __name__ == "__main__":
     app = app_factory("api")
+
     app.run(host='127.0.0.1', debug=True, port=8080)
