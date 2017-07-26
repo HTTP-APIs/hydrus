@@ -5,7 +5,6 @@ from sqlalchemy import exists
 from sqlalchemy.orm.exc import NoResultFound
 from hydrus.data.db_models import (Graph, BaseProperty, RDFClass, Instance,
                                    Terminal, engine, GraphIAC, GraphIIT, GraphIII)
-from hydrus.settings import API_NAME
 
 
 Session = sessionmaker(bind=engine)
@@ -14,8 +13,7 @@ triples = with_polymorphic(Graph, '*')
 properties = with_polymorphic(BaseProperty, "*")
 
 
-
-def get(id_, type_, session=session, recursive = False):
+def get(id_, type_, api_name, session=session, recursive=False):
     """Retrieve an Instance with given ID from the database [GET]."""
     object_template = {
         "@type": "",
@@ -55,7 +53,7 @@ def get(id_, type_, session=session, recursive = False):
         inst_class_name = session.query(RDFClass).filter(
             RDFClass.id == instance.type_).one().name
         # Recursive call should get the instance needed
-        object_ = get(id_=instance.id, type_=inst_class_name, session=session, recursive = True)
+        object_ = get(id_=instance.id, type_=inst_class_name, session=session, recursive=True)
         object_template[prop_name] = object_
 
     for data in data_IIT:
@@ -70,7 +68,7 @@ def get(id_, type_, session=session, recursive = False):
             object_template[prop_name] = ""
     object_template["@type"] = rdf_class.name
     if not recursive:
-        object_template["@id"] = "/"+ API_NAME+ "/" + type_ + "/" + str(id_)
+        object_template["@id"] = "/"+api_name+"/"+type_+"/"+str(id_)
 
     return object_template
 
@@ -287,7 +285,7 @@ def get_collection(API_NAME, type_, session=session):
     return collection_template
 
 
-def get_single(type_, session=session):
+def get_single(type_, api_name, session=session):
     """Get instance of classes with single objects."""
     try:
         rdf_class = session.query(RDFClass).filter(RDFClass.name == type_).one()
@@ -298,10 +296,10 @@ def get_single(type_, session=session):
         instance = session.query(Instance).filter(Instance.type_ == rdf_class.id).all()[-1]
     except (NoResultFound, IndexError, ValueError):
         return {404: "Instance of type %s not found" % type_}
-    object_ =  get(instance.id, rdf_class.name, session=session)
+    object_ = get(instance.id, rdf_class.name, session=session)
 
-    ## Fix object_ id
-    object_["@id"] = "/"+API_NAME+"/"+ type_
+    # Fix object_ id
+    object_["@id"] = "/"+api_name+"/"+type_
 
     return object_
 
