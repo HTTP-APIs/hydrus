@@ -4,6 +4,7 @@ from hydrus.metadata.doc import doc as sample_document
 from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp, HydraStatus
 import re
 import json
+import pdb
 
 
 def createDoc(doc, HYDRUS_SERVER_URL=None, API_NAME=None):
@@ -83,6 +84,9 @@ def createClass(entrypoint, class_dict):
     id_ = class_dict["@id"]
     if id_ in exclude_list:
         return None, None
+    matchObj = re.match(r'vocab:(.*)', id_, re.M | re.I)
+    if matchObj:
+        id_ = matchObj.group(1)
 
     # Syntax checks
     try:
