@@ -52,7 +52,7 @@ pip install -r requirements.txt
 python main.py
 ```
 
-The demo should be up and running on `http://localhost:8080/api/`
+The demo should be up and running on `http://localhost:8080/serverapi/`
 
 <a name="usage"></a>
 Usage
