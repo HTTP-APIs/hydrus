@@ -189,26 +189,8 @@ class ViewsTestCase(unittest.TestCase):
                                 delete_response = client.delete(endpoints[collection_name]+'/'+str(id_))
                                 assert delete_response.status_code == 200
 
-    def test_Endpoints_Contexts(self):
-        """Test all endpoints contexts are generated properly."""
-        with set_session(self.app, self.session):
-            with set_doc(self.app, self.doc):
-                with self.app.test_client() as client:
-                    index = client.get("/"+self.API_NAME)
-                    assert index.status_code == 200
-                    endpoints = json.loads(index.data.decode('utf-8'))
-                    for collection_name in endpoints:
-                        if collection_name in self.doc.collections:
-                            response_get = client.get(endpoints[collection_name])
-                            assert response_get.status_code == 200
-                            context = json.loads(response_get.data.decode('utf-8'))["@context"]
-                            response_context = client.get(context)
-                            response_context_data = json.loads(response_context.data.decode('utf-8'))
-                            assert response_context.status_code == 200
-                            assert "@context" in response_context_data
-
-    def test_object_PUT(self):
-        """Create object at a specific ID where allowed."""
+    def test_object_PUT_at_id(self):
+        """Create object in collection using PUT at specific ID."""
         with set_session(self.app, self.session):
             with set_doc(self.app, self.doc):
                 with self.app.test_client() as client:
@@ -223,11 +205,12 @@ class ViewsTestCase(unittest.TestCase):
                             dummy_object = gen_dummy_object(collection.class_.title, self.doc)
                             if "PUT" in class_methods:
                                 dummy_object = gen_dummy_object(collection.class_.title, self.doc)
-                                put_response = client.put(endpoints[collection_name], data=json.dumps(dummy_object))
+                                put_response = client.put(endpoints[collection_name]+'/'+str(random.randint(100, 1000)),
+                                                          data=json.dumps(dummy_object))
                                 assert put_response.status_code == 201
 
     def test_endpointClass_PUT(self):
-        """Create non collection Class using PUT."""
+        """Check non collection Class PUT."""
         with set_session(self.app, self.session):
             with set_doc(self.app, self.doc):
                 with self.app.test_client() as client:
@@ -244,7 +227,7 @@ class ViewsTestCase(unittest.TestCase):
                                 assert put_response.status_code == 201
 
     def test_endpointClass_POST(self):
-        """Update non collection Class using PUT."""
+        """Check non collection Class POST."""
         with set_session(self.app, self.session):
             with set_doc(self.app, self.doc):
                 with self.app.test_client() as client:
@@ -261,7 +244,7 @@ class ViewsTestCase(unittest.TestCase):
                                 assert put_response.status_code == 201
 
     def test_endpointClass_DELETE(self):
-        """Update non collection Class using PUT."""
+        """Check non collection Class DELETE."""
         with set_session(self.app, self.session):
             with set_doc(self.app, self.doc):
                 with self.app.test_client() as client:
@@ -276,8 +259,8 @@ class ViewsTestCase(unittest.TestCase):
                                 put_response = client.delete(endpoints[class_name])
                                 assert put_response.status_code == 200
 
-    def test_endpointClass_DELETE(self):
-        """Update non collection Class using PUT."""
+    def test_endpointClass_GET(self):
+        """Check non collection Class GET."""
         with set_session(self.app, self.session):
             with set_doc(self.app, self.doc):
                 with self.app.test_client() as client:
@@ -333,6 +316,23 @@ class ViewsTestCase(unittest.TestCase):
                                 post_replace_response = client.post(endpoints[collection_name]+'/'+str(id_), data=json.dumps(dummy_object))
                                 assert post_replace_response.status_code == 405
 
+    def test_Endpoints_Contexts(self):
+        """Test all endpoints contexts are generated properly."""
+        with set_session(self.app, self.session):
+            with set_doc(self.app, self.doc):
+                with self.app.test_client() as client:
+                    index = client.get("/"+self.API_NAME)
+                    assert index.status_code == 200
+                    endpoints = json.loads(index.data.decode('utf-8'))
+                    for collection_name in endpoints:
+                        if collection_name in self.doc.collections:
+                            response_get = client.get(endpoints[collection_name])
+                            assert response_get.status_code == 200
+                            context = json.loads(response_get.data.decode('utf-8'))["@context"]
+                            response_context = client.get(context)
+                            response_context_data = json.loads(response_context.data.decode('utf-8'))
+                            assert response_context.status_code == 200
+                            assert "@context" in response_context_data
 
 if __name__ == '__main__':
     message = """
