@@ -1,14 +1,16 @@
 """Demo script for setting up Hydrus with any db and any API Doc."""
 
-from hydrus.app import app_factory, set_session, set_doc, set_hydrus_server_url
-from hydrus.data import doc_parse
-from hydrus.hydraspec import doc_maker
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
+from hydrus.app import app_factory
+from hydrus.utils import set_session, set_doc, set_hydrus_server_url, set_api_name
+from hydrus.data import doc_parse
+from hydrus.hydraspec import doc_maker
 from hydrus.data.db_models import Base
+from hydrus.metadata.doc import doc     # Can be replaced by any API Documentation
 
 import os
-from hydrus.metadata.doc import doc     # Can be replaced by any API Documentation
 
 # The database connection URL
 # See http://docs.sqlalchemy.org/en/rel_1_0/core/engines.html#sqlalchemy.create_engine for more info
@@ -53,12 +55,13 @@ if __name__ == "__main__":
 
     # Create a Hydrus app with the API name you want, default will be "api"
     app = app_factory(API_NAME)
-
-    # Set the API Documentation
-    with set_doc(app, apidoc):
-        # Set HYDRUS_SERVER_URL
-        with set_hydrus_server_url(app, HYDRUS_SERVER_URL):
-            # Set the Database session
-            with set_session(app, session):
-                # Start the Hydrus app
-                app.run(host='127.0.0.1', debug=True, port=8080)
+    # Set the name of the API
+    with set_api_name(app, "serverapi"):
+        # Set the API Documentation
+        with set_doc(app, apidoc):
+            # Set HYDRUS_SERVER_URL
+            with set_hydrus_server_url(app, HYDRUS_SERVER_URL):
+                # Set the Database session
+                with set_session(app, session):
+                    # Start the Hydrus app
+                    app.run(host='127.0.0.1', debug=True, port=8080)
