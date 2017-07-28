@@ -183,54 +183,73 @@ class Item(Resource):
     def get(self, id_, type_):
         """GET object with id = id_ from the database."""
         class_type = get_doc().collections[type_]["collection"].class_.title
+
         if checkClassOp(class_type, "GET"):
+
             response = crud.get(id_, class_type, api_name=get_api_name(), session=get_session())
+
             if len(response.keys()) == 1:
                 status_code = int(list(response.keys())[0])
                 return set_response_headers(jsonify(response), status_code=status_code)
+
             else:
                 response["@id"] = '/'+get_api_name()+'/'+type_+'/'+str(id_)
                 return set_response_headers(jsonify(hydrafy(response)))
+
         abort(405)
 
     def post(self, id_, type_):
         """Update object of type<type_> at ID<id_> with new object_ using HTTP POST."""
         class_type = get_doc().collections[type_]["collection"].class_.title
+
         if checkClassOp(class_type, "POST"):
+
             object_ = json.loads(request.data.decode('utf-8'))
             obj_type = getType(class_type, "POST")
+
             if validObject(object_):
+
                 if object_["@type"] == obj_type:
                     response = crud.update(object_=object_, id_=id_, type_=object_["@type"], session=get_session(), api_name=get_api_name())
                     object_id = response[list(response.keys())[0]].split("=")[1]
                     headers_ = [{"Location": get_hydrus_server_url()+get_api_name()+"/"+type_+"/"+str(object_id)}]
                     status_code = int(list(response.keys())[0])
                     return set_response_headers(jsonify(response), headers=headers_, status_code=status_code)
+
             return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
+
         abort(405)
 
     def put(self, id_, type_):
         """Add new object_ optional <id_> parameter using HTTP PUT."""
         class_type = get_doc().collections[type_]["collection"].class_.title
+
         if checkClassOp(class_type, "PUT"):
+
             object_ = json.loads(request.data.decode('utf-8'))
             obj_type = getType(class_type, "PUT")
+
             if validObject(object_):
+
                 if object_["@type"] == obj_type:
                     response = crud.insert(object_=object_, id_=id_, session=get_session())
                     headers_ = [{"Location": get_hydrus_server_url()+get_api_name()+"/"+type_+"/"+str(id_)}]
                     status_code = int(list(response.keys())[0])
                     return set_response_headers(jsonify(response), headers=headers_, status_code=status_code)
+
             return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
+
         abort(405)
 
     def delete(self, id_, type_):
         """Delete object with id=id_ from database."""
         class_type = get_doc().collections[type_]["collection"].class_.title
+
         if checkClassOp(class_type, "DELETE"):
             response = crud.delete(id_, class_type, session=get_session())
             status_code = int(list(response.keys())[0])
             return set_response_headers(jsonify(response), status_code=status_code)
+
         abort(405)
 
 
@@ -242,10 +261,13 @@ class ItemCollection(Resource):
         if checkEndpoint("GET", type_):
             # Collections
             if type_ in get_doc().collections:
+
                 collection = get_doc().collections[type_]["collection"]
                 response = crud.get_collection(get_api_name(), collection.class_.title, session=get_session())
+
                 if "members" in response:
                     return set_response_headers(jsonify(hydrafy(response)))
+
                 else:
                     status_code = int(list(response.keys())[0])
                     response = crud.get_collection(get_api_name(), type_, session=get_session())
@@ -254,11 +276,14 @@ class ItemCollection(Resource):
             # Non Collection classes
             elif type_ in get_doc().parsed_classes and type_+"Collection" not in get_doc().collections:
                 response = crud.get_single(type_, api_name=get_api_name(), session=get_session())
+
                 if len(response.keys()) == 1:
                     status_code = int(list(response.keys())[0])
                     return set_response_headers(jsonify(response), status_code=status_code)
+
                 else:
                     return set_response_headers(jsonify(hydrafy(response)))
+
         abort(405)
 
     def put(self, type_):
@@ -269,39 +294,51 @@ class ItemCollection(Resource):
             if type_ in get_doc().collections:
                 collection = get_doc().collections[type_]["collection"]
                 obj_type = collection.class_.title
+
                 if validObject(object_):
+
                     if object_["@type"] == obj_type:
                         response = crud.insert(object_=object_, session=get_session())
                         object_id = response[list(response.keys())[0]].split('=')[1]
                         headers_ = [{"Location": get_hydrus_server_url()+get_api_name()+"/"+type_+"/"+str(object_id)}]
                         status_code = int(list(response.keys())[0])
                         return set_response_headers(jsonify(response), headers=headers_, status_code=status_code)
+
                 return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
             # Non Collection classes
             elif type_ in get_doc().parsed_classes and type_+"Collection" not in get_doc().collections:
                 obj_type = getType(type_, "PUT")
+
                 if object_["@type"] == obj_type:
+
                     if validObject(object_):
                         response = crud.insert_single(object_=object_, session=get_session())
                         headers_ = [{"Location": get_hydrus_server_url()+get_api_name()+"/"+type_+"/"}]
                         status_code = int(list(response.keys())[0])
                         return set_response_headers(jsonify(response), headers=headers_, status_code=status_code)
+
                 return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
+
         abort(405)
 
     def post(self, type_):
         """Update Non Collection class item."""
         if checkEndpoint("POST", type_):
             object_ = json.loads(request.data.decode('utf-8'))
+
             if type_ in get_doc().parsed_classes and type_+"Collection" not in get_doc().collections:
                 obj_type = getType(type_, "POST")
+
                 if validObject(object_):
+
                     if object_["@type"] == obj_type:
                         response = crud.update_single(object_=object_, session=get_session(), api_name=get_api_name())
                         headers_ = [{"Location": get_hydrus_server_url()+get_api_name()+"/"+type_+"/"}]
                         status_code = int(list(response.keys())[0])
                         return set_response_headers(jsonify(response), headers=headers_, status_code=status_code)
+
                 return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
+
         abort(405)
 
     def delete(self, type_):
@@ -312,6 +349,7 @@ class ItemCollection(Resource):
                 response = crud.delete_single(type_, session=get_session())
                 status_code = int(list(response.keys())[0])
                 return set_response_headers(jsonify(response), status_code=status_code)
+
         abort(405)
 
 
@@ -321,16 +359,21 @@ class Contexts(Resource):
     def get(self, category):
         """Return the context for the specified class."""
         if "Collection" in category:
+
             if category in get_doc().collections:
                 response = {"@context": get_doc().collections[category]["context"].generate()}
                 return set_response_headers(jsonify(response))
+
             else:
                 response = {404: "NOT FOUND"}
                 return set_response_headers(jsonify(response), status_code=404)
+
         else:
+
             if category in get_doc().parsed_classes:
                 response = {"@context": get_doc().parsed_classes[category]["context"].generate()}
                 return set_response_headers(jsonify(response))
+
             else:
                 response = {404: "NOT FOUND"}
                 return set_response_headers(jsonify(response), status_code=404)
@@ -339,19 +382,22 @@ class Contexts(Resource):
 def app_factory(API_NAME="api"):
     """Create an app object."""
     app = Flask(__name__)
+
     CORS(app)
     app.url_map.strict_slashes = False
     api = Api(app)
+
     api.add_resource(Index, "/"+API_NAME+"/", endpoint="api")
     api.add_resource(Vocab, "/"+API_NAME+"/vocab", endpoint="vocab")
     api.add_resource(Contexts, "/"+API_NAME+"/contexts/<string:category>.jsonld", endpoint="contexts")
     api.add_resource(Entrypoint, "/"+API_NAME+"/contexts/EntryPoint.jsonld", endpoint="main_entrypoint")
     api.add_resource(ItemCollection, "/"+API_NAME+"/<string:type_>", endpoint="item_collection")
     api.add_resource(Item, "/"+API_NAME+"/<string:type_>/<int:id_>", endpoint="item")
+
     return app
 
 
 if __name__ == "__main__":
-    app = app_factory("api")
 
+    app = app_factory("api")
     app.run(host='127.0.0.1', debug=True, port=8080)
