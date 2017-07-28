@@ -199,7 +199,7 @@ def createProperty(supported_prop):
 
 def class_in_endpoint(class_, entrypoint):
     """Check if a given class is in the EntryPoint object as a class."""
-    regex = r'(vocab:)?(.*)EntryPoint/(.*/)?' + class_["title"]
+    regex = r'(vocab:)?(.*)EntryPoint/(.*/)?' + re.escape(class_["title"]) + r'$'
     # Check supportedProperty for the EntryPoint
     try:
         supportedProperty = entrypoint["supportedProperty"]
