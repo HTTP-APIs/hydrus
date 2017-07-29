@@ -42,11 +42,11 @@ dummyProp2 = HydraClassProp(prop1_uri, prop2_title, required=False, read=False, 
 
 
 """Create operations for the class"""
-op_name = "SubmitProp"          # The name of the operation
-op_method = "POST"              # The method of the Operation [GET, POST, PUT, DELETE]
-op_expects = "vocab:Drone"      # URI of the object that is expected for the operation
-op_returns = None               # URI of the object that is returned by the operation
-op_status = [{"statusCode": 200, "description": "Drone updated"}]   # List of statusCode for the operation
+op_name = "UpdateClass"  # The name of the operation
+op_method = "POST"  # The method of the Operation [GET, POST, PUT, DELETE]
+op_expects = "vocab:dummyClass"  # URI of the object that is expected for the operation
+op_returns = None   # URI of the object that is returned by the operation
+op_status = [{"statusCode": 200, "description": "dummyClass updated"}]   # List of statusCode for the operation
 
 op1 = HydraClassOp(op_name,
                    op_method,
@@ -83,7 +83,7 @@ if __name__ == "__main__":
     import json
 
     dump = json.dumps(doc, indent=4, sort_keys=True)
-    doc = '''"""Generated API Documentation sample using doc_writer_sample.py."""\n\ndoc = %s''' % dump
+    doc = '''"""\nGenerated API Documentation sample using doc_writer_sample.py.\n\ndoc = %s\n"""''' % dump
     # Python does not recognise null, true and false in JSON format, convert them to string
     doc = doc.replace('true', '"true"')
     doc = doc.replace('false', '"false"')

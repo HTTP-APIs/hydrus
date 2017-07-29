@@ -1,4 +1,5 @@
-"""Generated API Documentation sample using doc_writer_sample.py."""
+"""
+Generated API Documentation sample using doc_writer_sample.py.
 
 doc = {
     "@context": {
@@ -57,16 +58,16 @@ doc = {
             "supportedOperation": [
                 {
                     "@type": "http://schema.org/UpdateAction",
-                    "expects": "vocab:Drone",
+                    "expects": "vocab:dummyClass",
                     "method": "POST",
                     "possibleStatus": [
                         {
-                            "description": "Drone updated",
+                            "description": "dummyClass updated",
                             "statusCode": 200
                         }
                     ],
                     "returns": "null",
-                    "title": "SubmitProp"
+                    "title": "UpdateClass"
                 }
             ],
             "supportedProperty": [
@@ -219,3 +220,4 @@ doc = {
     ],
     "title": "Title for the API Documentation"
 }
+"""
