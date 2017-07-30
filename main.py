@@ -8,27 +8,21 @@ from hydrus.utils import set_session, set_doc, set_hydrus_server_url, set_api_na
 from hydrus.data import doc_parse
 from hydrus.hydraspec import doc_maker
 from hydrus.data.db_models import Base
-from hydrus.metadata.doc import doc     # Can be replaced by any API Documentation
+from doc import doc
 
-import os
-
-# The database connection URL
-# See http://docs.sqlalchemy.org/en/rel_1_0/core/engines.html#sqlalchemy.create_engine for more info
-db_path = os.path.join(os.path.dirname(__file__), 'database.db')
-DB_URL = 'sqlite:///{}'.format(db_path)
-
-print(DB_URL)
-# Define the server URL, this is what will be displayed on the Doc
-HYDRUS_SERVER_URL = "http://localhost:8080/"
-
-# The port on which Hydrus should run
-PORT = 8080
-
-# The name of the API or the EntryPoint, the api will be at http://localhost/<API_NAME>
-API_NAME = "serverapi"
 
 
 if __name__ == "__main__":
+    # The database connection URL
+    # See http://docs.sqlalchemy.org/en/rel_1_0/core/engines.html#sqlalchemy.create_engine for more info
+    DB_URL = 'sqlite:///database.db'
+
+    # Define the server URL, this is what will be displayed on the Doc
+    HYDRUS_SERVER_URL = "http://localhost:8080/"
+
+    # The name of the API or the EntryPoint, the api will be at http://localhost/<API_NAME>
+    API_NAME = "serverapi"
+
     # Create a connection to the database you want to use
     engine = create_engine(DB_URL)
 

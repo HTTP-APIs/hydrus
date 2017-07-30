@@ -1,11 +1,9 @@
 """Parser for Hydra APIDocumentation creates Classes and Properties."""
-from sqlalchemy.orm import sessionmaker
+# from sqlalchemy.orm import sessionmaker
 from sqlalchemy import exists
 
-from hydrus.data.db_models import RDFClass, BaseProperty, engine
-# from hydrus.metadata.drone.server_doc import server_doc
-# from hydrus.metadata.drone.drone_doc import drone_doc
-from hydrus.metadata.doc_gen import doc_gen
+from hydrus.data.db_models import RDFClass, BaseProperty
+# from hydrus.tests.example_doc import doc_gen
 
 
 def get_classes(apidoc):
@@ -55,20 +53,20 @@ def insert_properties(properties, session):
     return None
 
 
-if __name__ == "__main__":
-    Session = sessionmaker(bind=engine)
-    session = Session()
-
-    doc = doc_gen("test", "test")
-    # Extract all classes with supportedProperty from both
-    classes = get_classes(doc.generate())
-
-    # Extract all properties from both
-    # import pdb; pdb.set_trace()
-    properties = get_all_properties(classes)
-    # Add all the classes
-    insert_classes(classes, session)
-    print("Classes inserted successfully")
-    # Add all the properties
-    insert_properties(properties, session)
-    print("Properties inserted successfully")
+# if __name__ == "__main__":
+#     Session = sessionmaker(bind=engine)
+#     session = Session()
+#
+#     doc = doc_gen("test", "test")
+#     # Extract all classes with supportedProperty from both
+#     classes = get_classes(doc.generate())
+#
+#     # Extract all properties from both
+#     # import pdb; pdb.set_trace()
+#     properties = get_all_properties(classes)
+#     # Add all the classes
+#     insert_classes(classes, session)
+#     print("Classes inserted successfully")
+#     # Add all the properties
+#     insert_properties(properties, session)
+#     print("Properties inserted successfully")

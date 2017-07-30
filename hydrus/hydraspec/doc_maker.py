@@ -1,6 +1,6 @@
 """Contsructor to take a Python dict containing an API Documentation and create a HydraDoc object for it."""
 
-from hydrus.metadata.doc import doc as sample_document
+from hydrus.hydraspec.doc_writer_sample import api_doc as sample_document
 from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp, HydraStatus
 import re
 import json
@@ -164,9 +164,13 @@ def convert_literal(literal):
         # Check if the literal is valid
         if literal in map_:
             return map_[literal]
+        else:
+            return literal
+    elif isinstance(literal, (bool,)) or literal is None:
         return literal
-    # Raise error for non string objects
-    raise TypeError("Literal not recognised")
+    else:
+        # Raise error for non string objects
+        raise TypeError("Literal not recognised")
 
 
 def createProperty(supported_prop):
@@ -300,5 +304,5 @@ def createStatus(possible_status):
 
 
 if __name__ == "__main__":
-    api_doc = createDoc(sample_document)
+    api_doc = createDoc(sample_document.generate())
     print(json.dumps(api_doc.generate(), indent=4, sort_keys=True))

@@ -3,7 +3,7 @@
 from contextlib import contextmanager
 from flask import appcontext_pushed
 from flask import g
-from hydrus.metadata.doc_gen import doc_gen
+from hydrus.hydraspec import doc_writer_sample
 from hydrus.data.db_models import engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
@@ -62,7 +62,7 @@ def get_doc():
     """Get the server API Documentation."""
     apidoc = getattr(g, 'doc', None)
     if apidoc is None:
-        apidoc = doc_gen(get_api_name(), get_hydrus_server_url())
+        apidoc = doc_writer_sample.api_doc
         g.doc = apidoc
     return apidoc
 
