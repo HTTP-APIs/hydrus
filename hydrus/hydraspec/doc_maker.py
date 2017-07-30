@@ -4,9 +4,10 @@ from hydrus.metadata.doc import doc as sample_document
 from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp, HydraStatus
 import re
 import json
+import pdb
 
 
-def createDoc(doc):
+def createDoc(doc, HYDRUS_SERVER_URL=None, API_NAME=None):
     """Create the HydraDoc object from the API Documentation."""
     # Check @id
     try:
@@ -45,10 +46,13 @@ def createDoc(doc):
         raise SyntaxError("The API Documentation must have [possibleStatus]")
 
     # EntryPoint object
-    entry_point = getEntrypoint(doc)     # getEntrypoint checks if all classes have @id
+    entrypoint_obj = getEntrypoint(doc)     # getEntrypoint checks if all classes have @id
 
     # Main doc object
-    apidoc = HydraDoc(entrypoint, title, desc, entrypoint, base_url)
+    if HYDRUS_SERVER_URL is not None and API_NAME is not None:
+        apidoc = HydraDoc(API_NAME, title, desc, API_NAME, HYDRUS_SERVER_URL)
+    else:
+        apidoc = HydraDoc(entrypoint, title, desc, entrypoint, base_url)
 
     # additional context entries
     for entry in context:
@@ -56,7 +60,7 @@ def createDoc(doc):
 
     # add all parsed_classes
     for class_ in supportedClass:
-        class_obj, collection = createClass(entry_point, class_)
+        class_obj, collection = createClass(entrypoint_obj, class_)
         if class_obj:
             apidoc.add_supported_class(class_obj, collection=collection)
 
@@ -80,6 +84,9 @@ def createClass(entrypoint, class_dict):
     id_ = class_dict["@id"]
     if id_ in exclude_list:
         return None, None
+    matchObj = re.match(r'vocab:(.*)', id_, re.M | re.I)
+    if matchObj:
+        id_ = matchObj.group(1)
 
     # Syntax checks
     try:
@@ -192,7 +199,7 @@ def createProperty(supported_prop):
 
 def class_in_endpoint(class_, entrypoint):
     """Check if a given class is in the EntryPoint object as a class."""
-    regex = r'(vocab:)?(.*)EntryPoint/(.*/)?' + class_["title"]
+    regex = r'(vocab:)?(.*)EntryPoint/(.*/)?' + re.escape(class_["title"]) + r'$'
     # Check supportedProperty for the EntryPoint
     try:
         supportedProperty = entrypoint["supportedProperty"]

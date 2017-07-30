@@ -3,11 +3,10 @@
 from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String
-from hydrus.settings import DB_URL
+# from hydrus.settings import DB_URL
 
-engine = create_engine(DB_URL)
+engine = create_engine('sqlite:///database.db')
 
-# engine = create_engine("postgresql://hydra:hailhydra@localhost:5432/hydrus")
 Base = declarative_base()
 
 
