@@ -13,6 +13,8 @@ from hydrus.data.exceptions import (ClassNotFound, InstanceExists, PropertyNotFo
 triples = with_polymorphic(Graph, '*')
 properties = with_polymorphic(BaseProperty, "*")
 
+import pdb
+
 
 def get(id_, type_, api_name, session, recursive=False):
     """Retrieve an Instance with given ID from the database [GET]."""
@@ -140,7 +142,7 @@ def insert(object_, session, id_=None):
                     raise NotInstanceProperty(type_=prop_name)
 
     session.commit()
-    return instance.id_
+    return instance.id
 
 
 def delete(id_, type_, session):
@@ -195,8 +197,8 @@ def update(id_, type_, object_, session, api_name):
         insert(object_=instance, id_=id_, session=session)
         raise e
 
-    new_instance = get(id_=id_, type_=type_, session=session, api_name=api_name)
-    return new_instance
+    get(id_=id_, type_=type_, session=session, api_name=api_name)
+    return id_
 
 
 def get_collection(API_NAME, type_, session):

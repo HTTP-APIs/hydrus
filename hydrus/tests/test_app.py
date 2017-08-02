@@ -6,6 +6,7 @@ import random
 import string
 import json
 import pdb
+import re
 from hydrus.app import app_factory
 from hydrus.utils import set_session, set_doc, set_api_name
 from hydrus.data import doc_parse
@@ -172,10 +173,13 @@ class ViewsTestCase(unittest.TestCase):
                                 initial_put_response = client.put(endpoints[collection_name], data=json.dumps(dummy_object))
                                 assert initial_put_response.status_code == 201
                                 response = json.loads(initial_put_response.data.decode('utf-8'))
-                                id_ = response["201"].split('=')[1]
+                                regex = r'(.*)ID (\d)* (.*)'
+                                matchObj = re.match(regex, response["message"])
+                                assert matchObj is not None
+                                id_ = matchObj.group(2)
                                 if "POST" in class_methods:
                                     dummy_object = gen_dummy_object(collection.class_.title, self.doc)
-                                    post_replace_response = client.post(endpoints[collection_name]+'/'+str(id_), data=json.dumps(dummy_object))
+                                    post_replace_response = client.post(endpoints[collection_name]+'/'+id_, data=json.dumps(dummy_object))
                                     assert post_replace_response.status_code == 200
 
     def test_object_DELETE(self):
@@ -196,9 +200,12 @@ class ViewsTestCase(unittest.TestCase):
                                 initial_put_response = client.put(endpoints[collection_name], data=json.dumps(dummy_object))
                                 assert initial_put_response.status_code == 201
                                 response = json.loads(initial_put_response.data.decode('utf-8'))
-                                id_ = response["201"].split('=')[1]
+                                regex = r'(.*)ID (\d)* (.*)'
+                                matchObj = re.match(regex, response["message"])
+                                assert matchObj is not None
+                                id_ = matchObj.group(2)
                                 if "DELETE" in class_methods:
-                                    delete_response = client.delete(endpoints[collection_name]+'/'+str(id_))
+                                    delete_response = client.delete(endpoints[collection_name]+'/'+id_)
                                     assert delete_response.status_code == 200
 
     def test_object_PUT_at_id(self):
@@ -329,11 +336,17 @@ class ViewsTestCase(unittest.TestCase):
                                 initial_put_response = client.put(endpoints[collection_name], data=json.dumps(dummy_object))
                                 assert initial_put_response.status_code == 201
                                 response = json.loads(initial_put_response.data.decode('utf-8'))
-                                id_ = response["201"].split('=')[1]
+                                regex = r'(.*)ID (\d)* (.*)'
+                                matchObj = re.match(regex, response["message"])
+                                assert matchObj is not None
+                                id_ = matchObj.group(2)
                                 if "POST" not in class_methods:
                                     dummy_object = gen_dummy_object(collection.class_.title, self.doc)
-                                    post_replace_response = client.post(endpoints[collection_name]+'/'+str(id_), data=json.dumps(dummy_object))
+                                    post_replace_response = client.post(endpoints[collection_name]+'/'+id_, data=json.dumps(dummy_object))
                                     assert post_replace_response.status_code == 405
+                                if "DELETE" not in class_methods:
+                                    delete_response = client.delete(endpoints[collection_name]+'/'+id_)
+                                    assert delete_response.status_code == 405
 
     def test_Endpoints_Contexts(self):
         """Test all endpoints contexts are generated properly."""
