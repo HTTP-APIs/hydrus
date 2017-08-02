@@ -79,14 +79,3 @@ class NotAbstractProperty(Exception):
     def get_HTTP(self):
         """Return the HTTP response for the Exception."""
         return 400, {"message": "The property %s is not an Abstract property" % self.type_}
-
-
-
-
-#
-# class InstanceNotFound(Exception):
-#     """Error when the Instance is not found."""
-#
-#     def __init__(self, *args, **kwargs):
-#         """Constructor."""
-#         Exception.__init__(self, *args, **kwargs)
