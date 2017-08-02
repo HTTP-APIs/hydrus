@@ -6,6 +6,10 @@ from sqlalchemy.orm.exc import NoResultFound
 from hydrus.data.db_models import (Graph, BaseProperty, RDFClass, Instance,
                                    Terminal, GraphIAC, GraphIIT, GraphIII)
 
+from hydrus.data.exceptions import (ClassNotFound, InstanceExists, PropertyNotFound,
+                                    NotInstanceProperty, NotAbstractProperty,
+                                    InstanceNotFound)
+
 triples = with_polymorphic(Graph, '*')
 properties = with_polymorphic(BaseProperty, "*")
 
@@ -19,13 +23,13 @@ def get(id_, type_, api_name, session, recursive=False):
         rdf_class = session.query(RDFClass).filter(
             RDFClass.name == type_).one()
     except NoResultFound:
-        return {400: "The class %s is not a valid/defined RDFClass" % type_}
+        raise ClassNotFound(type_=type_)
 
     try:
         instance = session.query(Instance).filter(
             Instance.id == id_, Instance.type_ == rdf_class.id).one()
     except NoResultFound:
-        return {404: "Instance with ID : %s of Type : %s, NOT FOUND" % (id_, type_)}
+        raise InstanceNotFound(type_=rdf_class.name, id_=id_)
 
     data_IAC = session.query(triples).filter(triples.GraphIAC.subject == id_).all()
 
@@ -72,13 +76,13 @@ def insert(object_, session, id_=None):
         rdf_class = session.query(RDFClass).filter(
             RDFClass.name == object_["@type"]).one()
     except NoResultFound:
-        return {400: "The class %s is not a valid/defined RDFClass" % object_["@type"]}
+        raise ClassNotFound(type_=object_["@type"])
 
     if id_ is not None:
         if session.query(exists().where(Instance.id == id_)).scalar():
-            return {400: "Instance with ID : %s already exists" % str(id_)}
-
-        instance = Instance(id=id_, type_=rdf_class.id)
+            raise InstanceExists(id_=id_)
+        else:
+            instance = Instance(id=id_, type_=rdf_class.id)
     else:
         instance = Instance(type_=rdf_class.id)
     session.add(instance)
@@ -92,7 +96,7 @@ def insert(object_, session, id_=None):
             except NoResultFound:
                 # Adds new Property
                 session.close()
-                return {400: "%s is not a defined Property" % prop_name}
+                raise PropertyNotFound(type_=prop_name)
 
             # For insertion in III
             if type(object_[prop_name]) == dict:
@@ -105,7 +109,7 @@ def insert(object_, session, id_=None):
                     session.add(triple)
                 else:
                     session.close()
-                    return {400: "%s is not an Instance Property" % prop_name}
+                    raise NotInstanceProperty(type_=prop_name)
 
             # For insertion in IAC
             elif session.query(exists().where(RDFClass.name == str(object_[prop_name]))).scalar():
@@ -117,7 +121,7 @@ def insert(object_, session, id_=None):
                     session.add(triple)
                 else:
                     session.close()
-                    return {400: "%s is not an Abstract Property" % prop_name}
+                    raise NotAbstractProperty(type_=prop_name)
 
             # For insertion in IIT
             else:
@@ -133,10 +137,10 @@ def insert(object_, session, id_=None):
                     session.add(triple)
                 else:
                     session.close()
-                    return {400: "%s is not an Instance Property" % prop_name}
+                    raise NotInstanceProperty(type_=prop_name)
 
     session.commit()
-    return instance
+    return instance.id_
 
 
 def delete(id_, type_, session):
@@ -145,12 +149,12 @@ def delete(id_, type_, session):
         rdf_class = session.query(RDFClass).filter(
             RDFClass.name == type_).one()
     except NoResultFound:
-        return {400: "The class %s is not a valid/defined RDFClass" % type_}
+        return ClassNotFound(type=type_)
     try:
         instance = session.query(Instance).filter(
             Instance.id == id_ and type_ == rdf_class.id).one()
     except NoResultFound:
-        return {404: "Instance with ID : %s and Type : %s, NOT FOUND" % (id_, type_)}
+        raise InstanceNotFound(type_=rdf_class.name, id_=id_)
 
     data_IIT = session.query(triples).filter(triples.GraphIIT.subject == id_).all()
     data_IAC = session.query(triples).filter(triples.GraphIAC.subject == id_).all()
@@ -201,19 +205,18 @@ def get_collection(API_NAME, type_, session):
         "@id": "/"+API_NAME+"/" + type_ + "Collection/",
         "@context": None,
         "@type": type_ + "Collection",
-        "members": []
+        "members": list()
     }
     try:
         rdf_class = session.query(RDFClass).filter(
             RDFClass.name == type_).one()
     except NoResultFound:
-        return {400: "The class %s is not a valid/defined RDFClass" % type_}
+        raise ClassNotFound(type_=type_)
 
     try:
         instances = session.query(Instance).filter(Instance.type_ == rdf_class.id).all()
     except NoResultFound:
-        # No error, just means that there are no instances
-        instances = []
+        instances = list()
 
     for instance_ in instances:
         object_template = {
@@ -229,15 +232,14 @@ def get_single(type_, api_name, session):
     try:
         rdf_class = session.query(RDFClass).filter(RDFClass.name == type_).one()
     except NoResultFound:
-        return {400: "The class %s is not a valid/defined RDFClass" % type_}
+        raise ClassNotFound(type_=type_)
 
     try:
         instance = session.query(Instance).filter(Instance.type_ == rdf_class.id).all()[-1]
     except (NoResultFound, IndexError, ValueError):
-        return {404: "Instance of type %s not found" % type_}
+        raise InstanceNotFound(type_=rdf_class.name)
     object_ = get(instance.id, rdf_class.name, session=session, api_name=api_name)
 
-    # Fix object_ id
     object_["@id"] = "/"+api_name+"/"+type_
 
     return object_
@@ -248,14 +250,14 @@ def insert_single(object_, session):
     try:
         rdf_class = session.query(RDFClass).filter(RDFClass.name == object_["@type"]).one()
     except NoResultFound:
-        return {400: "The class %s is not a valid/defined RDFClass" % object_["@type"]}
+        raise ClassNotFound(type_=object_["@type"])
 
     try:
         session.query(Instance).filter(Instance.type_ == rdf_class.id).all()[-1]
     except (NoResultFound, IndexError, ValueError):
         return insert(object_, session=session)
 
-    return {400: "Instance of type %s already exists" % object_["@type"]}
+    raise InstanceExists(type_=rdf_class.name)
 
 
 def update_single(object_, session, api_name):
@@ -263,13 +265,12 @@ def update_single(object_, session, api_name):
     try:
         rdf_class = session.query(RDFClass).filter(RDFClass.name == object_["@type"]).one()
     except NoResultFound:
-        return {400: "The class %s is not a valid/defined RDFClass" % object_["@type"]}
+        raise ClassNotFound(type_=object_["@type"])
 
     try:
         instance = session.query(Instance).filter(Instance.type_ == rdf_class.id).all()[-1]
     except (NoResultFound, IndexError, ValueError):
-        print("Instance of type %s not found" % object_["@type"])
-        return insert_single(object_, session=session)
+        raise InstanceNotFound(type_=rdf_class.name)
 
     return update(id_=instance.id, type_=object_["@type"], object_=object_, session=session, api_name=api_name)
 
@@ -279,44 +280,11 @@ def delete_single(type_, session):
     try:
         rdf_class = session.query(RDFClass).filter(RDFClass.name == type_).one()
     except NoResultFound:
-        return {400: "The class %s is not a valid/defined RDFClass" % type_}
+        raise ClassNotFound(type_=type_)
 
     try:
         instance = session.query(Instance).filter(Instance.type_ == rdf_class.id).all()[-1]
     except (NoResultFound, IndexError, ValueError):
-        return {404: "Instance of type %s not found" % type_}
+        raise InstanceNotFound(type_=rdf_class.name)
 
     return delete(instance.id, type_, session=session)
-
-
-if __name__ == "__main__":
-
-    drone_specs = {
-        "@type": "Drone",
-        "DroneID": -1000,
-        "name": "Drone1",
-        "model": "xyz",
-        "MaxSpeed": 50,
-        "Sensor": "Temperature",
-        "DroneState": {
-            "@type": "State",
-            "Speed": 0,
-            "Position": "0,0",
-            "Battery": 100,
-            "Direction": "North",
-            "SensorStatus": "Inactive",
-        }
-    }
-
-    datastream = {'Position': '0,0', 'DroneID': '-100011', '@type': 'Datastream', 'Temperature': 100}
-    # print(update(6, object__))
-    print(insert(drone_specs))
-    print(insert(datastream))
-    # print(update(4, object__))
-    # print(get(182, "Spacecraft_Communication"))
-    # print(get(146, "Spacecraft_Communication"))
-    # print(delete(142, "Spacecraft_Communication"))
-    # print(get(142, "Spacecraft_Communication"))
-    # print(update(142, "Spacecraft_Communication", drone_specs))
-    # print(get(146, "Spacecraft_Communication"))
-    # print(get_collection("Spacecraft_Communication"))
