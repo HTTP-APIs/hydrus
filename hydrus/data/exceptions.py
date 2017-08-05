@@ -52,9 +52,9 @@ class InstanceExists(Exception):
     def get_HTTP(self):
         """Return the HTTP response for the Exception."""
         if self.id_ is None:
-            return 404, {"message": "Instance of type %salready exists" % (self.type_)}
+            return 400, {"message": "Instance of type %salready exists" % (self.type_)}
         else:
-            return 404, {"message": "Instance of type %s with ID %salready exists" % (self.type_, self.id_)}
+            return 400, {"message": "Instance of type %s with ID %salready exists" % (self.type_, self.id_)}
 
 
 class NotInstanceProperty(Exception):
