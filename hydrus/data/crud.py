@@ -102,7 +102,8 @@ def insert(object_, session, id_=None):
 
             # For insertion in III
             if type(object_[prop_name]) == dict:
-                instance_object = insert(object_[prop_name], session=session)
+                instance_id = insert(object_[prop_name], session=session)
+                instance_object = session.query(Instance).filter(Instance.id == instance_id).one()
 
                 if property_.type_ == "PROPERTY" or property_.type_ == "INSTANCE":
                     property_.type_ = "INSTANCE"
@@ -151,7 +152,7 @@ def delete(id_, type_, session):
         rdf_class = session.query(RDFClass).filter(
             RDFClass.name == type_).one()
     except NoResultFound:
-        return ClassNotFound(type=type_)
+        return ClassNotFound(type_=type_)
     try:
         instance = session.query(Instance).filter(
             Instance.id == id_ and type_ == rdf_class.id).one()
