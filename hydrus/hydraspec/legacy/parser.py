@@ -3,7 +3,7 @@ import json
 import sys
 
 from hydrus.hydraspec.crud_template import template
-from hydrus.metadata.subsystem_vocab_jsonld import subsystem_data
+from hydrus.metadata.subsystem.subsystem_vocab_jsonld import subsystem_data
 import pprint
 
 
@@ -52,23 +52,14 @@ def hydrafy_class(class_, supported_props, semantic_ref_name=None):
             operation["label"] = operation["label"] % (hydra_class["title"])
         except:
             print("Unexpected error:", sys.exc_info()[0])
-        if operation["method"] in ["POST", "PUT"]:
 
-            # If there is a semantic reference name give in the vocabulary then use that else use full links.
-            if semantic_ref_name is not None:
-                operation["expects"] = operation["expects"] % (
-                     hydra_class["@id"].rsplit('/', 1)[-1])
-            else:
-                operation["expects"] = operation["expects"] % (
-                    hydra_class["@id"])
+        if operation["method"] in ["POST", "PUT"]:
+            operation["expects"] = operation["expects"] % (
+                hydra_class["@id"])
+
         if operation["method"] in ["POST", "PUT", "GET"]:
-            # If there is a semantic reference name give in the vocabulary then use that else use full links.
-            if semantic_ref_name is not None:
-                operation["returns"] = operation["returns"] % (
-                    hydra_class["@id"].rsplit('/', 1)[-1])
-            else:
-                operation["returns"] = operation["returns"] % (
-                    hydra_class["@id"])
+            operation["returns"] = operation["returns"] % (
+                hydra_class["@id"])
         if operation["method"] in ["PUT", "GET"]:
             operation["statusCodes"][0]["description"] = operation["statusCodes"][0]["description"] % (
                 hydra_class["title"])

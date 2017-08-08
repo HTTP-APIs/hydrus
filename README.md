@@ -9,7 +9,6 @@ Table of contents
 * [Requirements](#req)
 * [Demo](#demo)
 * [Usage](#usage)
-* [Design](#design)
 
 <a name="features"></a>
 Features
@@ -26,38 +25,36 @@ The system is built over the following standards and tools:
 - [Flask](http://flask.pocoo.org/) a Python based micro-framework for handling server requests and responses.
 - [JSON-LD](http://json-ld.org/spec/latest/json-ld/) as the prefered data format.
 - [Hydra](http://www.hydra-cg.com/) as the API standard.
-- [PostgreSQL](https://www.postgresql.org/) as the backend database for storage and CRUD operations.
+- [SQLAlchemy](http://www.sqlalchemy.org/) as the backend database connector for storage and related operations.
 
 Apart from this, there are also various Python packages that Hydrus uses. A list of all these packages can be found in the [requirements.txt](https://github.com/HTTP-APIs/hydrus/blob/master/requirements.txt) file. It would be advisable to run **`pip install -r requirements.txt`** before setting up other things.
 
 <a name="demo"></a>
 Demo
 -------------
-**Please make sure you have [docker](https://docs.docker.com/engine/installation/) and [docker-compose](https://docs.docker.com/compose/install/) installed.**
+To run a demo for Hydrus using the sample API, just do the following:
 
-Once we have docker up and running setting up the demo server is a piece of cake.
-### Running the demo server
-- Clone the repository to your local machine.
-- `cd` into the project directory and use `docker-compose build` to build the required docker containers.
-- Start the containers using `docker-compose up`(With this we have our demo server up and running).
-- Now, all we need to do is setup and populate the database. Connect to the container using <br/> `docker exec -i -t <container_name or container_id> /bin/bash` ( You can get the hydrus container name using `docker ps`. It should be something like `hydrus*`).
-- Create the database models using `python /app/hydrus/data/db_models.py`.
-- Parse and insert classes from RDF/OWL vocabulary to the database using `python /app/hydrus/data/insert_classes.py`
-- Insert random data generated  by `hydrus.data.generator` using `python /app/hydrus/data/insert_data.py`. <br/>
-**NOTE**: This step is only valid for the subsystem example. You'll need to write your own generator to populate the database for any other example.
-- Exit the docker container shell using `exit`.
+Clone Hydrus:
+```bash
+git clone https://github.com/HTTP-APIs/hydrus
+```
+Change directory and switch to the develop branch:
+```bash
+cd hydrus
 
-**The demo server should be up and running at `127.0.0.1:8080/api`.**
+git checkout -b develop origin/develop
+```
 
-**NOTE:** Docker port binding is not working in Windows. Windows users can access the server at `<docker_ip>:8080/api`. You can check your docker_ip using `docker-machine ip`.
+Install requirements and run the `main.py` script:
+```bash
+pip install -r requirements.txt
 
+python main.py
+```
+
+The demo should be up and running on `http://localhost:8080/serverapi/`
 
 <a name="usage"></a>
 Usage
 -------------
-To understand how to use Hydrus and how things work, head over to the [Usage](https://github.com/HTTP-APIs/hydrus/wiki/Usage) page of the wiki.
-
-<a name="design"></a>
-Design
--------------
-Head over to the [Design](https://github.com/HTTP-APIs/hydrus/wiki/Design) page to understand the design principles and use cases of Hydrus.
+For more info, head to the [Usage](https://github.com/HTTP-APIs/hydrus/wiki/Usage) section of the [wiki](https://github.com/HTTP-APIs/hydrus/wiki/)

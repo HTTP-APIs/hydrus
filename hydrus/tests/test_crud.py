@@ -6,42 +6,26 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import hydrus.data.crud as crud
 from hydrus.data.db_models import Base
-from hydrus.hydraspec.vocab_generator import gen_vocab
-import hydrus.data.doc_parse as parser
-from hydrus.app import SERVER_URL, SEMANTIC_REF_URL, SEMANTIC_REF_NAME, PARSED_CLASSES
+from hydrus.data import doc_parse
+from hydrus.hydraspec.doc_writer_sample import api_doc as doc
+import random
+import string
+import pdb
 
-def object_1():
-    """Return a copy of an object."""
+
+def gen_dummy_object(class_, doc):
+    """Create a dummy object based on the definitions in the API Doc."""
     object_ = {
-        "name": "12W communication",
-        "@type": "Spacecraft_Communication",
-        "object": {
-            "hasMass": 9000,
-            "hasMonetaryValue": 4,
-            "hasPower": -61,
-            "hasVolume": 99,
-            "maxWorkingTemperature": 63,
-            "minWorkingTemperature": -26
-        }
+        "@type": class_
     }
-    return object_
-
-
-def object_2():
-    """Return a copy of another object."""
-    object_ = {
-        "name": "150W communication",
-        "@type": "Spacecraft_Communication",
-        "object": {
-            "hasMass": 00,
-            "hasMonetaryValue": 40,
-            "hasPower": -61,
-            "hasVolume": 95,
-            "maxWorkingTemperature": 60,
-            "minWorkingTemperature": -20
-        }
-    }
-    return object_
+    if class_ in doc.parsed_classes:
+        for prop in doc.parsed_classes[class_]["class"].supportedProperty:
+            if "vocab:" in prop.prop:
+                prop_class = prop.prop.replace("vocab:", "")
+                object_[prop.title] = gen_dummy_object(prop_class, doc)
+            else:
+                object_[prop.title] = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6))
+        return object_
 
 
 class TestCRUD(unittest.TestCase):
@@ -52,143 +36,132 @@ class TestCRUD(unittest.TestCase):
         """Database setup before the CRUD tests."""
         print("Creating a temporary datatbsse...")
         engine = create_engine('sqlite:///:memory:')
-        self.engine = engine
-
-        print("Creating models...")
         Base.metadata.create_all(engine)
-
-        print("Starting session...")
         Session = sessionmaker(bind=engine)
         session = Session()
         self.session = session
-
-        print("Adding Classes...")
-        classes = parser.get_classes(gen_vocab(PARSED_CLASSES, SERVER_URL, SEMANTIC_REF_NAME, SEMANTIC_REF_URL))
-        parser.insert_classes(classes, self.session)
-
-        print("Adding Properties...")
-        properties = parser.get_all_properties(classes)
-        parser.insert_properties(properties, self.session)
-
+        self.doc = doc
+        test_classes = doc_parse.get_classes(self.doc.generate())
+        test_properties = doc_parse.get_all_properties(test_classes)
+        doc_parse.insert_classes(test_classes, self.session)
+        doc_parse.insert_properties(test_properties, self.session)
+        print("Classes and properties added successfully.")
         print("Setup done, running tests...")
 
     def test_insert(self):
         """Test CRUD insert."""
-        object_ = object_1()
+        object_ = gen_dummy_object("dummyClass", self.doc)
         response = crud.insert(object_=object_, id_=1, session=self.session)
-        assert 204 in response
+        assert type(response) is int
 
     def test_get(self):
         """Test CRUD get."""
-        object_ = object_1()
+        object_ = gen_dummy_object("dummyClass", self.doc)
         id_ = 2
         response = crud.insert(object_=object_, id_=id_, session=self.session)
-        object_ = crud.get(id_=id_, type_=object_["@type"], session=self.session)
-        assert 204 in response
-        assert "object" in object_
+        object_ = crud.get(id_=id_, type_=object_["@type"], session=self.session, api_name="api")
+        assert type(response) is int
         assert int(object_["@id"].split("/")[-1]) == id_
 
     def test_update(self):
         """Test CRUD update."""
-        object_ = object_1()
-        new_object = object_2()
-        id_ = 3
+        object_ = gen_dummy_object("dummyClass", self.doc)
+        new_object = gen_dummy_object("dummyClass", self.doc)
+        id_ = 30
         insert_response = crud.insert(object_=object_, id_=id_, session=self.session)
-        update_response = crud.update(id_=id_, type_=object_["@type"], object_=new_object, session=self.session)
-        test_object = crud.get(id_=id_, type_=object_["@type"], session=self.session)
-        assert 204 in insert_response
-        assert 204 in update_response
+        update_response = crud.update(id_=id_, type_=object_["@type"], object_=new_object, session=self.session, api_name="api")
+        test_object = crud.get(id_=id_, type_=object_["@type"], session=self.session, api_name="api")
+        assert type(insert_response) is int
+        assert type(update_response) is int
+        assert insert_response == update_response
         assert int(test_object["@id"].split("/")[-1]) == id_
 
     def test_delete(self):
         """Test CRUD delete."""
-        object_ = object_1()
+        object_ = gen_dummy_object("dummyClass", self.doc)
         id_ = 4
         insert_response = crud.insert(object_=object_, id_=id_, session=self.session)
         delete_response = crud.delete(id_=id_, type_=object_["@type"], session=self.session)
-        get_response = crud.get(id_=id_, type_=object_["@type"], session=self.session)
-        assert 204 in insert_response
-        assert 204 in delete_response
-        assert 404 in get_response
+        assert type(insert_response) is int
+        response_code = None
+        try:
+            get_response = crud.get(id_=id_, type_=object_["@type"], session=self.session, api_name="api")
+        except Exception as e:
+            response_code, message = e.get_HTTP()
+        assert 404 == response_code
 
     def test_get_id(self):
         """Test CRUD get when wrong/undefined ID is given."""
         id_ = 999
-        type_ = "Spacecraft_Communication"
-        get_response = crud.get(id_=id_, type_=type_, session=self.session)
-        assert 404 in get_response
+        type_ = "dummyClass"
+        response_code = None
+        try:
+            get_response = crud.get(id_=id_, type_=type_, session=self.session, api_name="api")
+        except Exception as e:
+            response_code, message = e.get_HTTP()
+        assert 404 == response_code
 
     def test_get_type(self):
         """Test CRUD get when wrong/undefined class is given."""
         id_ = 1
-        type_ = "dummyClass"
-        get_response = crud.get(id_=id_, type_=type_, session=self.session)
-        assert 401 in get_response
+        type_ = "otherClass"
+        response_code = None
+        try:
+            get_response = crud.get(id_=id_, type_=type_, session=self.session, api_name="api")
+        except Exception as e:
+            response_code, message = e.get_HTTP()
+        assert 400 == response_code
 
     def test_delete_type(self):
         """Test CRUD delete when wrong/undefined class is given."""
-        object_ = object_1()
-        id_ = 5
+        object_ = gen_dummy_object("dummyClass", self.doc)
+        id_ = 50
         insert_response = crud.insert(object_=object_, id_=id_, session=self.session)
-        delete_response = crud.delete(id_=id_, type_="dummyClass", session=self.session)
-        assert 204 in insert_response
-        assert 401 in delete_response
+        assert type(insert_response) is int
+        assert insert_response == id_
+        response_code = None
+        try:
+            delete_response = crud.delete(id_=id_, type_="otherClass", session=self.session)
+        except Exception as e:
+            response_code, message = e.get_HTTP()
+        assert 400 == response_code
 
     def test_delete_id(self):
         """Test CRUD delete when wrong/undefined ID is given."""
-        object_ = object_1()
+        object_ = gen_dummy_object("dummyClass", self.doc)
         id_ = 6
         insert_response = crud.insert(object_=object_, id_=id_, session=self.session)
-        delete_response = crud.delete(id_=999, type_=object_["@type"], session=self.session)
-        assert 204 in insert_response
-        assert 404 in delete_response
+        response_code = None
+        try:
+            delete_response = crud.delete(id_=999, type_=object_["@type"], session=self.session)
+        except Exception as e:
+            response_code, message = e.get_HTTP()
+        assert 404 == response_code
+        assert type(insert_response) is int
+        assert insert_response == id_
 
     def test_insert_type(self):
         """Test CRUD insert when wrong/undefined class is given."""
-        object_ = object_1()
+        object_ = gen_dummy_object("dummyClass", self.doc)
         id_ = 7
-        object_["@type"] = "dummyClass"
-        insert_response = crud.insert(object_=object_, id_=id_, session=self.session)
-        assert 401 in insert_response
+        object_["@type"] = "otherClass"
+        response_code = None
+        try:
+            insert_response = crud.insert(object_=object_, id_=id_, session=self.session)
+        except Exception as e:
+            response_code, message = e.get_HTTP()
+        assert 400 == response_code
 
     def test_insert_id(self):
         """Test CRUD insert when used ID is given."""
-        object_ = object_1()
+        object_ = gen_dummy_object("dummyClass", self.doc)
         id_ = 1
-        insert_response = crud.insert(object_=object_, id_=id_, session=self.session)
-        assert 400 in insert_response
-
-    def test_insert_instance(self):
-        """Test CRUD insert when used invalid instance is given."""
-        object_ = object_1()
-        id_ = 8
-        object_["object"]["hasDuplicate"] = {"@id": 999}
-        insert_response_1 = crud.insert(object_=object_, id_=id_, session=self.session)
-        object_["object"]["hasDuplicate"] = {"id": 999}
-        insert_response_2 = crud.insert(object_=object_, id_=id_, session=self.session)
-        assert 403 in insert_response_1
-        assert 403 in insert_response_2
-
-    def test_insert_abstractproperty(self):
-        """Test CRUD when AbstractProperty is given instance."""
-        object_ = object_1()
-        id_ = 9
-        object_["object"]["dummyAbstractProperty"] = "Spacecraft_Communication"
-        insert_response_1 = crud.insert(object_=object_, id_=id_, session=self.session)
-        object_["object"]["dummyAbstractProperty"] = 4
-        insert_response_2 = crud.insert(object_=object_, id_=id_+1, session=self.session)
-        assert 204 in insert_response_1
-        assert 402 in insert_response_2
-
-    def test_insert_instanceproperty(self):
-        """Test CRUD when InstanceProperty is given Class."""
-        object_ = object_1()
-        id_ = 10
-        insert_response_1 = crud.insert(object_=object_, id_=id_, session=self.session)
-        object_["object"]["hasMass"] = "Spacecraft_Communication"
-        insert_response_2 = crud.insert(object_=object_, id_=id_+1, session=self.session)
-        assert 204 in insert_response_1
-        assert 402 in insert_response_2
+        response_code = None
+        try:
+            insert_response = crud.insert(object_=object_, id_=id_, session=self.session)
+        except Exception as e:
+            response_code, message = e.get_HTTP()
+        assert 400 == response_code
 
     @classmethod
     def tearDownClass(self):

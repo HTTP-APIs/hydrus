@@ -1,126 +1,63 @@
 """Main route for the applciation."""
 
-import os
 import json
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, abort
 from flask_restful import Api, Resource
-from hydrus.metadata.spacecraft_parsed_classes import parsed_classes
-from hydrus.hydraspec.vocab_generator import gen_vocab
-from hydrus.hydraspec.entrypoint_generator import gen_entrypoint
-from hydrus.hydraspec.entrypoint_context_generator import gen_entrypoint_context
+from flask_cors import CORS
+
 from hydrus.data import crud
-from flask_cors import CORS, cross_origin
+from hydrus.utils import get_session, get_doc, get_api_name, get_hydrus_server_url
+# from hydrus.hydraspec.doc_writer_sample import api_doc as doc
 
-app = Flask(__name__)
-CORS(app)
-api = Api(app)
-
-global SERVER_URL, SEMANTIC_REF_NAME, SEMANTIC_REF_URL, PARSED_CLASSES
-SERVER_URL = os.environ.get("HYDRUS_SERVER_URL", "localhost/")
-SEMANTIC_REF_NAME = "subsystems"
-SEMANTIC_REF_URL = "http://ontology.projectchronos.eu/subsystems"
-PARSED_CLASSES = parsed_classes
-
-## Save data in memory to improve performance
-global VOCAB, ENTRYPOINT, ENTRYPOINT_CONTEXT
-VOCAB = gen_vocab(PARSED_CLASSES, SERVER_URL, SEMANTIC_REF_NAME, SEMANTIC_REF_URL)
-ENTRYPOINT = gen_entrypoint(SERVER_URL, PARSED_CLASSES)
-ENTRYPOINT_CONTEXT = gen_entrypoint_context(SERVER_URL, parsed_classes)
 
 def validObject(object_):
     """Check if the data passed in POST is of valid format or not."""
-    if "name" in object_:
-        if "@type" in object_:
-            if "object" in object_:
-                return True
+    if "@type" in object_:
+        return True
     return False
 
 
-def set_response_headers(resp, ct="application/ld+json", status_code=200):
-    # NOTE: This isn't needed, flask automatically does this when you return a Python dict
-    #       Just use : "return response_dict, status_code"
-    """
-    Set the response headers.
-
-    Default : { Content-type:"JSON-LD", status_code:200}
-    """
+def set_response_headers(resp, ct="application/ld+json", headers=[], status_code=200):
+    """Set the response headers."""
     resp.status_code = status_code
+    for header in headers:
+        resp.headers[list(header.keys())[0]] = header[list(header.keys())[0]]
     resp.headers['Content-type'] = ct
-    resp.headers['Link'] = '<'+SERVER_URL+'api/vocab>; rel="http://www.w3.org/ns/hydra/core#apiDocumentation"'
+    resp.headers['Link'] = '<' + get_hydrus_server_url() + \
+        get_api_name()+'/vocab>; rel="http://www.w3.org/ns/hydra/core#apiDocumentation"'
     return resp
 
 
-def get_supported_properties(parsed_classes, category, vocab):
-    """Filter supported properties with their title (title, property) for a specific class from the parsed classes."""
-    obj = None
-    for object_ in parsed_classes:
-        if object_["title"] == category:
-            obj = object_
-    # print(obj, category)
-
-    supported_props = []
-    if obj is not None:
-        # Get object class and title
-        supported_props.append((obj["title"], obj["@id"]))
-        # Get supported properties
-        for obj_ in obj["supportedProperty"]:
-            try:
-                prop = (obj_["title"], obj_["property"])
-
-            except KeyError:
-                prop = (obj_["property"].split("subsystems:")[-1], obj_["property"])
-
-            if prop not in supported_props:
-                supported_props.append(prop)
-    return supported_props
-
-
-def gen_context(parsed_classes, server_url, category):
-    """Generate dynamic contexts for every item."""
-    SERVER_URL = server_url
-
-    context_template = {
-        "@context":{
-        "name": "http://schema.org/name",
-        "object": "http://schema.org/object",
-        "hydra": "http://www.w3.org/ns/hydra/core#",
-        "vocab": SERVER_URL + "api/vocab#",
-        }
-    }
-
-    # Get supported properties
-    supported_props = get_supported_properties(parsed_classes, category, vocab)
-    for title, value in supported_props:
-        context_template["@context"][title] = value
-
-    return context_template
-
-def gen_collection_context(server_url, type_ , semantic_ref_url):
-    """Generate context for Collection objects."""
-    SEMANTIC_REF_URL = semantic_ref_url
-    SERVER_URL = server_url
-    COLLECTION_TYPE = type_.split("Collection")[0]
-
-    template = {
-    "@context":{
-    "hydra": "http://www.w3.org/ns/hydra/core#",
-    "vocab": SERVER_URL + "api/vocab#",
-    COLLECTION_TYPE+"Collection": "vocab:%sCollection" %(COLLECTION_TYPE,),
-    COLLECTION_TYPE: SEMANTIC_REF_URL.split("?")[0]+COLLECTION_TYPE,
-
-    "members": "http://www.w3.org/ns/hydra/core#member"
-    }
-  }
-
-    return template
-
-def hydrafy(parsed_classes, object_, collection = False):
+def hydrafy(object_):
     """Add hydra context to objects."""
-    if collection:
-        object_["@context"] = "/api/contexts/"+object_["@type"]+".jsonld"
-    else:
-        object_["@context"] = "/api/contexts/"+object_["@type"]+".jsonld"
+    object_["@context"] = "/"+get_api_name()+"/contexts/" + object_["@type"] + ".jsonld"
     return object_
+
+
+def checkEndpoint(method, type_):
+    """Check if endpoint and method is supported in the API."""
+    for endpoint in get_doc().entrypoint.entrypoint.supportedProperty:
+        if type_ == endpoint.name:
+            for operation in endpoint.supportedOperation:
+                if operation.method == method:
+                    return True
+    return False
+
+
+def getType(class_type, method):
+    """Return the @type of object allowed for POST/PUT."""
+    for supportedOp in get_doc().parsed_classes[class_type]["class"].supportedOperation:
+        if supportedOp.method == method:
+            return supportedOp.expects.replace("vocab:", "")
+    # NOTE: Don't use split, if there are more than one substrings with 'vocab:' not everything will be returned.
+
+
+def checkClassOp(class_type, method):
+    """Check if the Class supports the operation."""
+    for supportedOp in get_doc().parsed_classes[class_type]["class"].supportedOperation:
+        if supportedOp.method == method:
+            return True
+    return False
 
 
 class Index(Resource):
@@ -128,94 +65,7 @@ class Index(Resource):
 
     def get(self):
         """Return main entrypoint for the api."""
-        return set_response_headers(jsonify(ENTRYPOINT))
-
-
-api.add_resource(Index, "/api", endpoint="api")
-
-
-class Item(Resource):
-    """Handles all operations(GET, POST, PATCH, DELETE) on Items (item can be anything depending upon the vocabulary)."""
-
-    def get(self, id_, type_):
-        """GET object with id = id_ from the database."""
-        response = crud.get(id_, type_)
-        if "object" in response:
-            return set_response_headers(jsonify(hydrafy(PARSED_CLASSES, response)))
-        else:
-            status_code = int(list(response.keys())[0])
-            return set_response_headers(jsonify(response), status_code=status_code)
-
-    def post(self, id_, type_):
-        """Add object_ to database with optional id_ parameter (The id where the object needs to be inserted)."""
-        object_ = json.loads(request.data.decode('utf-8'))
-        if validObject(object_):
-            response = crud.insert(object_=object_, id_=id_)
-            status_code = int(list(response.keys())[0])
-            return set_response_headers(jsonify(response), status_code=status_code)
-        else:
-            return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
-
-    def put(self, id_, type_):
-        """Update object at id=id_ with object_ in database."""
-        object_ = json.loads(request.data.decode('utf-8'))
-        if validObject(object_):
-            response = crud.update(object_=object_, id_=id_, type_=type_)
-            status_code = int(list(response.keys())[0])
-            return set_response_headers(jsonify(response), status_code=status_code)
-        else:
-            return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
-
-    def delete(self, id_, type_):
-        """Delete object with id=id_ from database."""
-        resp = crud.delete(id_, type_)
-        return set_response_headers(jsonify(resp))
-
-
-# Needs to be changed manually
-api.add_resource(Item, "/api/<string:type_>/<int:id_>", endpoint="item")
-
-
-class ItemCollection(Resource):
-    """Handle operation related to ItemCollection (a collection of items)."""
-
-    def get(self, type_):
-        """Retrieve a collection of items from the database."""
-        response = crud.get_collection(type_)
-        if "members" in response:
-            return set_response_headers(jsonify(hydrafy(PARSED_CLASSES, response, collection=True)))
-        else:
-            status_code = int(list(response.keys())[0])
-            return set_response_headers(jsonify(response), status_code=status_code)
-
-
-# Needs to be added manually.
-api.add_resource(ItemCollection, "/api/<string:type_>",
-                 endpoint="item_collection")
-
-class Contexts(Resource):
-    """Dynamically genereated contexts."""
-
-    def get(self, category):
-        """Return the context for the specified class."""
-        if "Collection" in category:
-            response = gen_collection_context(SERVER_URL, category, "http://ontology.projectchronos.eu/subsystems/")
-            if "@context" in response:
-                return set_response_headers(jsonify(response))
-            else:
-                status_code = int(list(response.keys())[0])
-                return set_response_headers(jsonify(response), status_code=status_code)
-        else:
-            response = gen_context(PARSED_CLASSES, SERVER_URL, category)
-            if "@context" in response:
-                return set_response_headers(jsonify(response))
-            else:
-                status_code = int(list(response.keys())[0])
-                return set_response_headers(jsonify(response), status_code=status_code)
-
-
-api.add_resource(Contexts, "/api/contexts/<string:category>.jsonld", endpoint="contexts")
-
+        return set_response_headers(jsonify(get_doc().entrypoint.get()))
 
 
 class Vocab(Resource):
@@ -223,10 +73,7 @@ class Vocab(Resource):
 
     def get(self):
         """Return the main hydra vocab."""
-        return set_response_headers(jsonify(VOCAB))
-
-
-api.add_resource(Vocab, "/api/vocab", endpoint="vocab")
+        return set_response_headers(jsonify(get_doc().generate()))
 
 
 class Entrypoint(Resource):
@@ -234,13 +81,257 @@ class Entrypoint(Resource):
 
     def get(self):
         """Return application main Entrypoint."""
-        return set_response_headers(jsonify(ENTRYPOINT_CONTEXT))
+        response = {"@context": get_doc().entrypoint.context.generate()}
+        return set_response_headers(jsonify(response))
 
 
-api.add_resource(Entrypoint, "/api/contexts/EntryPoint.jsonld",
-                 endpoint="main_entrypoint")
+class Item(Resource):
+    """Handles all operations(GET, POST, PATCH, DELETE) on Items (item can be anything depending upon the vocabulary)."""
 
-# Cots context added dynamically
+    def get(self, id_, type_):
+        """GET object with id = id_ from the database."""
+        class_type = get_doc().collections[type_]["collection"].class_.title
+
+        if checkClassOp(class_type, "GET"):
+
+            try:
+                response = crud.get(id_, class_type, api_name=get_api_name(), session=get_session())
+                return set_response_headers(jsonify(hydrafy(response)))
+
+            except Exception as e:
+                status_code, message = e.get_HTTP()
+                return set_response_headers(jsonify(message), status_code=status_code)
+
+        abort(405)
+
+    def post(self, id_, type_):
+        """Update object of type<type_> at ID<id_> with new object_ using HTTP POST."""
+        class_type = get_doc().collections[type_]["collection"].class_.title
+
+        if checkClassOp(class_type, "POST"):
+
+            object_ = json.loads(request.data.decode('utf-8'))
+            obj_type = getType(class_type, "POST")
+
+            if validObject(object_):
+
+                if object_["@type"] == obj_type:
+                    try:
+                        object_id = crud.update(object_=object_, id_=id_, type_=object_["@type"], session=get_session(), api_name=get_api_name())
+                        headers_ = [{"Location": get_hydrus_server_url()+get_api_name()+"/"+type_+"/"+str(object_id)}]
+                        response = {"message": "Object with ID %s successfully updated" % (object_id)}
+                        return set_response_headers(jsonify(response), headers=headers_)
+
+                    except Exception as e:
+                        status_code, message = e.get_HTTP()
+                        return set_response_headers(jsonify(message), status_code=status_code)
+
+            return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
+
+        abort(405)
+
+    def put(self, id_, type_):
+        """Add new object_ optional <id_> parameter using HTTP PUT."""
+        class_type = get_doc().collections[type_]["collection"].class_.title
+
+        if checkClassOp(class_type, "PUT"):
+
+            object_ = json.loads(request.data.decode('utf-8'))
+            obj_type = getType(class_type, "PUT")
+
+            if validObject(object_):
+
+                if object_["@type"] == obj_type:
+                    try:
+                        object_id = crud.insert(object_=object_, id_=id_, session=get_session())
+                        headers_ = [{"Location": get_hydrus_server_url()+get_api_name()+"/"+type_+"/"+str(object_id)}]
+                        response = {"message": "Object with ID %s successfully added" % (object_id)}
+                        return set_response_headers(jsonify(response), headers=headers_, status_code=201)
+
+                    except Exception as e:
+                        status_code, message = e.get_HTTP()
+                        return set_response_headers(jsonify(message), status_code=status_code)
+
+            return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
+
+        abort(405)
+
+    def delete(self, id_, type_):
+        """Delete object with id=id_ from database."""
+        class_type = get_doc().collections[type_]["collection"].class_.title
+
+        if checkClassOp(class_type, "DELETE"):
+            try:
+                crud.delete(id_, class_type, session=get_session())
+                response = {"message": "Object with ID %s successfully deleted" % (id_)}
+                return set_response_headers(jsonify(response))
+
+            except Exception as e:
+                status_code, message = e.get_HTTP()
+                return set_response_headers(jsonify(message), status_code=status_code)
+
+        abort(405)
+
+
+class ItemCollection(Resource):
+    """Handle operation related to ItemCollection (a collection of items)."""
+
+    def get(self, type_):
+        """Retrieve a collection of items from the database."""
+        if checkEndpoint("GET", type_):
+            # Collections
+            if type_ in get_doc().collections:
+
+                collection = get_doc().collections[type_]["collection"]
+                try:
+                    response = crud.get_collection(get_api_name(), collection.class_.title, session=get_session())
+                    return set_response_headers(jsonify(hydrafy(response)))
+
+                except Exception as e:
+                    status_code, message = e.get_HTTP()
+                    return set_response_headers(jsonify(message), status_code=status_code)
+
+            # Non Collection classes
+            elif type_ in get_doc().parsed_classes and type_+"Collection" not in get_doc().collections:
+                try:
+                    response = crud.get_single(type_, api_name=get_api_name(), session=get_session())
+                    return set_response_headers(jsonify(hydrafy(response)))
+
+                except Exception as e:
+                    status_code, message = e.get_HTTP()
+                    return set_response_headers(jsonify(message), status_code=status_code)
+
+        abort(405)
+
+    def put(self, type_):
+        """Add item to ItemCollection."""
+        if checkEndpoint("PUT", type_):
+            object_ = json.loads(request.data.decode('utf-8'))
+
+            # Collections
+            if type_ in get_doc().collections:
+
+                collection = get_doc().collections[type_]["collection"]
+                obj_type = collection.class_.title
+
+                if validObject(object_):
+
+                    if object_["@type"] == obj_type:
+                        try:
+                            object_id = crud.insert(object_=object_, session=get_session())
+                            headers_ = [{"Location": get_hydrus_server_url()+get_api_name()+"/"+type_+"/"+str(object_id)}]
+                            response = {"message": "Object with ID %s successfully deleted" % (object_id)}
+                            return set_response_headers(jsonify(response), headers=headers_, status_code=201)
+                        except Exception as e:
+                            status_code, message = e.get_HTTP()
+                            return set_response_headers(jsonify(message), status_code=status_code)
+
+                return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
+
+            # Non Collection classes
+            elif type_ in get_doc().parsed_classes and type_+"Collection" not in get_doc().collections:
+                obj_type = getType(type_, "PUT")
+
+                if object_["@type"] == obj_type:
+
+                    if validObject(object_):
+                        try:
+                            object_id = crud.insert(object_=object_, session=get_session())
+                            headers_ = [{"Location": get_hydrus_server_url()+get_api_name()+"/"+type_+"/"}]
+                            response = {"message": "Object successfully added"}
+                            return set_response_headers(jsonify(response), headers=headers_, status_code=201)
+                        except Exception as e:
+                            status_code, message = e.get_HTTP()
+                            return set_response_headers(jsonify(message), status_code=status_code)
+
+                return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
+
+        abort(405)
+
+    def post(self, type_):
+        """Update Non Collection class item."""
+        if checkEndpoint("POST", type_):
+            object_ = json.loads(request.data.decode('utf-8'))
+
+            if type_ in get_doc().parsed_classes and type_+"Collection" not in get_doc().collections:
+                obj_type = getType(type_, "POST")
+
+                if validObject(object_):
+
+                    if object_["@type"] == obj_type:
+                        try:
+                            crud.update_single(object_=object_, session=get_session(), api_name=get_api_name())
+                            headers_ = [{"Location": get_hydrus_server_url()+get_api_name()+"/"+type_+"/"}]
+                            response = {"message": "Object successfully updated"}
+                            return set_response_headers(jsonify(response), headers=headers_)
+                        except Exception as e:
+                            status_code, message = e.get_HTTP()
+                            return set_response_headers(jsonify(message), status_code=status_code)
+
+                return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
+
+        abort(405)
+
+    def delete(self, type_):
+        """Delete a non Collection class item."""
+        if checkEndpoint("DELETE", type_):
+            # No Delete Operation for collections
+            if type_ in get_doc().parsed_classes and type_+"Collection" not in get_doc().collections:
+                try:
+                    crud.delete_single(type_, session=get_session())
+                    response = {"message": "Object successfully deleted"}
+                    return set_response_headers(jsonify(response))
+                except Exception as e:
+                    status_code, message = e.get_HTTP()
+                    return set_response_headers(jsonify(message), status_code=status_code)
+        abort(405)
+
+
+class Contexts(Resource):
+    """Dynamically genereated contexts."""
+
+    def get(self, category):
+        """Return the context for the specified class."""
+        if "Collection" in category:
+
+            if category in get_doc().collections:
+                response = {"@context": get_doc().collections[category]["context"].generate()}
+                return set_response_headers(jsonify(response))
+
+            else:
+                response = {404: "NOT FOUND"}
+                return set_response_headers(jsonify(response), status_code=404)
+
+        else:
+
+            if category in get_doc().parsed_classes:
+                response = {"@context": get_doc().parsed_classes[category]["context"].generate()}
+                return set_response_headers(jsonify(response))
+
+            else:
+                response = {404: "NOT FOUND"}
+                return set_response_headers(jsonify(response), status_code=404)
+
+
+def app_factory(API_NAME="api"):
+    """Create an app object."""
+    app = Flask(__name__)
+
+    CORS(app)
+    app.url_map.strict_slashes = False
+    api = Api(app)
+
+    api.add_resource(Index, "/"+API_NAME+"/", endpoint="api")
+    api.add_resource(Vocab, "/"+API_NAME+"/vocab", endpoint="vocab")
+    api.add_resource(Contexts, "/"+API_NAME+"/contexts/<string:category>.jsonld", endpoint="contexts")
+    api.add_resource(Entrypoint, "/"+API_NAME+"/contexts/EntryPoint.jsonld", endpoint="main_entrypoint")
+    api.add_resource(ItemCollection, "/"+API_NAME+"/<string:type_>", endpoint="item_collection")
+    api.add_resource(Item, "/"+API_NAME+"/<string:type_>/<int:id_>", endpoint="item")
+
+    return app
+
 
 if __name__ == "__main__":
+
+    app = app_factory("api")
     app.run(host='127.0.0.1', debug=True, port=8080)
