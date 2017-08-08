@@ -13,8 +13,6 @@ from hydrus.data.exceptions import (ClassNotFound, InstanceExists, PropertyNotFo
 triples = with_polymorphic(Graph, '*')
 properties = with_polymorphic(BaseProperty, "*")
 
-import pdb
-
 
 def get(id_, type_, api_name, session, recursive=False):
     """Retrieve an Instance with given ID from the database [GET]."""
@@ -82,7 +80,7 @@ def insert(object_, session, id_=None):
 
     if id_ is not None:
         if session.query(exists().where(Instance.id == id_)).scalar():
-            raise InstanceExists(id_=id_)
+            raise InstanceExists(type_=rdf_class.name, id_=id_)
         else:
             instance = Instance(id=id_, type_=rdf_class.id)
     else:
@@ -149,10 +147,9 @@ def insert(object_, session, id_=None):
 def delete(id_, type_, session):
     """Delete an Instance and all its relations from DB given id [DELETE]."""
     try:
-        rdf_class = session.query(RDFClass).filter(
-            RDFClass.name == type_).one()
+        rdf_class = session.query(RDFClass).filter(RDFClass.name == type_).one()
     except NoResultFound:
-        return ClassNotFound(type_=type_)
+        raise ClassNotFound(type_=type_)
     try:
         instance = session.query(Instance).filter(
             Instance.id == id_ and type_ == rdf_class.id).one()
