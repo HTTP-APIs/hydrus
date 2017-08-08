@@ -13,8 +13,6 @@ from hydrus.data.exceptions import (ClassNotFound, InstanceExists, PropertyNotFo
 triples = with_polymorphic(Graph, '*')
 properties = with_polymorphic(BaseProperty, "*")
 
-import pdb
-
 
 def get(id_, type_, api_name, session, recursive=False):
     """Retrieve an Instance with given ID from the database [GET]."""
@@ -102,7 +100,8 @@ def insert(object_, session, id_=None):
 
             # For insertion in III
             if type(object_[prop_name]) == dict:
-                instance_object = insert(object_[prop_name], session=session)
+                instance_id = insert(object_[prop_name], session=session)
+                instance_object = session.query(Instance).filter(Instance.id == instance_id).one()
 
                 if property_.type_ == "PROPERTY" or property_.type_ == "INSTANCE":
                     property_.type_ = "INSTANCE"
