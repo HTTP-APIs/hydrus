@@ -259,14 +259,14 @@ class ItemCollection(Resource):
                 if validObject(object_):
 
                     if object_["@type"] == obj_type:
-                        try:
+                        # try:
                             crud.update_single(object_=object_, session=get_session(), api_name=get_api_name())
                             headers_ = [{"Location": get_hydrus_server_url()+get_api_name()+"/"+type_+"/"}]
                             response = {"message": "Object successfully updated"}
                             return set_response_headers(jsonify(response), headers=headers_)
-                        except Exception as e:
-                            status_code, message = e.get_HTTP()
-                            return set_response_headers(jsonify(message), status_code=status_code)
+                        # except Exception as e:
+                        #     status_code, message = e.get_HTTP()
+                        #     return set_response_headers(jsonify(message), status_code=status_code)
 
                 return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
 
