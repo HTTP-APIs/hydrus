@@ -170,7 +170,7 @@ class HydraClassOp():
         elif method == "DELETE":
             return "http://schema.org/DeleteAction"
         else:
-            return "hydra:Operation"
+            return "http://schema.org/FindAction"
 
     def generate(self):
         """Get the Hydra op as a python dict."""
