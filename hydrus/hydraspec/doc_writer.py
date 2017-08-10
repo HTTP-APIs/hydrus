@@ -381,11 +381,22 @@ class EntryPointOp():
         self.label = label
         self.type_ = type_
 
+    def get_type(self, method):
+        """Return @type for op based on method type."""
+        if method == "POST":
+            return "http://schema.org/UpdateAction"
+        elif method == "PUT":
+            return "http://schema.org/AddAction"
+        elif method == "DELETE":
+            return "http://schema.org/DeleteAction"
+        else:
+            return "http://schema.org/FindAction"
+
     def generate(self):
         """Get as Python Dict."""
         prop = {
             "@id": self.id_,
-            "@type": "hydra:Operation",
+            "@type": self.get_type(self.method),
             "method": self.method,
             "description": self.desc,
             "expects": self.expects,
