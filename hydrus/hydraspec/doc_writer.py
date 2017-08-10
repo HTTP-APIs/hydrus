@@ -200,7 +200,7 @@ class HydraCollection():
 
         if get:
             get_op = HydraCollectionOp("_:%s_collection_retrieve" % (self.class_.title.lower()),
-                                       "hydra:Operation",
+                                       "http://schema.org/FindAction",
                                        "GET", "Retrieves all %s entities" % (self.class_.title),
                                        None, "vocab:%s" % (self.name), [])
             self.supportedOperation.append(get_op)
