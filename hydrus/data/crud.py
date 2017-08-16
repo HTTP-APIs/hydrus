@@ -61,7 +61,7 @@ def get(id_, type_, api_name, session, recursive=False):
             object_template[prop_name] = ""
     object_template["@type"] = rdf_class.name
     if not recursive:
-        object_template["@id"] = "/"+api_name+"/"+type_+"/"+str(id_)
+        object_template["@id"] = "/"+api_name+"/"+type_+"Collection/"+str(id_)
 
     return object_template
 
