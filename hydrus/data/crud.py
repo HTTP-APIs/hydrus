@@ -61,7 +61,7 @@ def get(id_, type_, api_name, session, recursive=False):
             object_template[prop_name] = ""
     object_template["@type"] = rdf_class.name
     if not recursive:
-        object_template["@id"] = "/"+api_name+"/"+type_+"/"+str(id_)
+        object_template["@id"] = "/"+api_name+"/"+type_+"Collection/"+str(id_)
 
     return object_template
 
@@ -149,6 +149,7 @@ def delete(id_, type_, session):
     try:
         rdf_class = session.query(RDFClass).filter(RDFClass.name == type_).one()
     except NoResultFound:
+        print(type_)
         raise ClassNotFound(type_=type_)
     try:
         instance = session.query(Instance).filter(
@@ -170,9 +171,8 @@ def delete(id_, type_, session):
 
     for data in data_III:
         III_instance = session.query(Instance).filter(Instance.id == data.object_).one()
+        III_instance_type = session.query(RDFClass).filter(RDFClass.id == III_instance.type_).one()
         # Get the III object type_
-        III_instance_type = session.query(properties).filter(properties.id == data.predicate).one()
-        # Recursive call for delete
         delete(III_instance.id, III_instance_type.name, session=session)
 
     session.delete(instance)
@@ -265,6 +265,7 @@ def update_single(object_, session, api_name):
     try:
         rdf_class = session.query(RDFClass).filter(RDFClass.name == object_["@type"]).one()
     except NoResultFound:
+        print("Class not found in update_single")
         raise ClassNotFound(type_=object_["@type"])
 
     try:
