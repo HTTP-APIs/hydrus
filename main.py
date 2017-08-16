@@ -9,7 +9,7 @@ from hydrus.data import doc_parse
 from hydrus.hydraspec import doc_maker
 from hydrus.data.db_models import Base
 from doc import doc
-
+from gevent.wsgi import WSGIServer
 
 
 if __name__ == "__main__":
@@ -23,20 +23,24 @@ if __name__ == "__main__":
     # The name of the API or the EntryPoint, the api will be at http://localhost/<API_NAME>
     API_NAME = "serverapi"
 
+    print("Setting up the database")
     # Create a connection to the database you want to use
     engine = create_engine(DB_URL)
 
+    print("Creating models")
     # Add the required Models to the database
     Base.metadata.create_all(engine)
 
     # Define the Hydra API Documentation
     # NOTE: You can use your own API Documentation and create a HydraDoc object using doc_maker
     #       Or you may create your own HydraDoc Documentation using doc_writer [see hydrus/hydraspec/doc_writer_sample]
+    print("Creating the API Documentation")
     apidoc = doc_maker.createDoc(doc, HYDRUS_SERVER_URL, API_NAME)
 
     # Start a session with the DB and create all classes needed by the APIDoc
     session = sessionmaker(bind=engine)()
 
+    print("Adding Classes and Properties")
     # Get all the classes from the doc
     classes = doc_parse.get_classes(apidoc.generate())     # You can also pass a dictionary as defined in hydrus/hydraspec/doc_writer_sample_output.py
 
@@ -47,9 +51,11 @@ if __name__ == "__main__":
     doc_parse.insert_classes(classes, session)
     doc_parse.insert_properties(properties, session)
 
+    print("Creating the application")
     # Create a Hydrus app with the API name you want, default will be "api"
     app = app_factory(API_NAME)
     # Set the name of the API
+    print("Starting the application")
     with set_api_name(app, "serverapi"):
         # Set the API Documentation
         with set_doc(app, apidoc):
@@ -58,4 +64,6 @@ if __name__ == "__main__":
                 # Set the Database session
                 with set_session(app, session):
                     # Start the Hydrus app
-                    app.run(host='127.0.0.1', debug=True, port=8080)
+                    http_server = WSGIServer(('', 8080), app)
+                    print("Server running")
+                    http_server.serve_forever()
