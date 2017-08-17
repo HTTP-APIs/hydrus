@@ -79,3 +79,15 @@ class NotAbstractProperty(Exception):
     def get_HTTP(self):
         """Return the HTTP response for the Exception."""
         return 400, {"message": "The property %s is not an Abstract property" % self.type_}
+
+
+class UserExists(Exception):
+    """Error when the User already exitst."""
+
+    def __init__(self, id_):
+        """Constructor."""
+        self.id_ = id_
+
+    def get_HTTP(self):
+        """Return the HTTP response for the Exception."""
+        return 400, {"message": "The user with ID %s already exists" % self.id_}

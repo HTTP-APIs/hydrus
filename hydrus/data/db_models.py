@@ -195,6 +195,16 @@ class GraphIIT(Graph):
         return "<subject='%s', predicate='%s', object_='%s'>" % (self.subject, self.predicate, self.object_)
 
 
+class User(Base):
+    """Model for a user that stores the ID, paraphrase and a nonce."""
+
+    __tablename__ = "user"
+
+    id = Column(Integer, primary_key=True)
+    paraphrase = Column(String)
+    nonce = Column(Integer, nullable=True)
+
+
 if __name__ == "__main__":
     print("Creating models....")
     Base.metadata.create_all(engine)
