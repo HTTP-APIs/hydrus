@@ -1,6 +1,8 @@
 """File operations for User authorization."""
 
 from sqlalchemy import exists
+from flask import jsonify
+from hydrus.app import set_response_headers
 from sqlalchemy.orm.exc import NoResultFound
 from hydrus.data.exceptions import UserExists, UserNotFound
 from hydrus.data.db_models import User
@@ -39,7 +41,19 @@ def authenticate_user(id_, hashvalue, session):
     except NoResultFound:
         raise UserNotFound(id_=id_)
     paraphrase = user.paraphrase
-    nonce = str(user.nonce)
-    generated_hash = sha224(paraphrase+nonce).hexdigest()
+    generated_hash = sha224(paraphrase).hexdigest()
 
     return generated_hash == hashvalue
+
+
+def check_authorization(request, session):
+    """Check if the request object has the correct authorization."""
+    auth = request.authorization
+    return authenticate_user(auth.username, auth.password, session)
+
+
+def failed_authentication():
+    """Return failed authentication object."""
+    message = {401: "Need credentials to authenticate"}
+    set_response_headers(jsonify(message), status_code=401,
+                         headers=[{'WWW-Authenticate': 'Basic realm="Login Required"'}])
