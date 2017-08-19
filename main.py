@@ -4,10 +4,11 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from hydrus.app import app_factory
-from hydrus.utils import set_session, set_doc, set_hydrus_server_url, set_api_name
+from hydrus.utils import set_session, set_doc, set_hydrus_server_url, set_api_name, set_authentication
 from hydrus.data import doc_parse
 from hydrus.hydraspec import doc_maker
 from hydrus.data.db_models import Base
+from hydrus.data.user import add_user
 from doc import doc
 from gevent.wsgi import WSGIServer
 
@@ -15,7 +16,8 @@ from gevent.wsgi import WSGIServer
 if __name__ == "__main__":
     # The database connection URL
     # See http://docs.sqlalchemy.org/en/rel_1_0/core/engines.html#sqlalchemy.create_engine for more info
-    DB_URL = 'sqlite:///database.db'
+    # DB_URL = 'sqlite:///database.db'
+    DB_URL = 'sqlite:///:memory:'
 
     # Define the server URL, this is what will be displayed on the Doc
     HYDRUS_SERVER_URL = "http://localhost:8080/"
@@ -42,10 +44,17 @@ if __name__ == "__main__":
 
     print("Adding Classes and Properties")
     # Get all the classes from the doc
-    classes = doc_parse.get_classes(apidoc.generate())     # You can also pass a dictionary as defined in hydrus/hydraspec/doc_writer_sample_output.py
+    classes = doc_parse.get_classes(apidoc.generate())     # You can also pass dictionary defined in hydrus/hydraspec/doc_writer_sample_output.py
 
     # Get all the properties from the classes
     properties = doc_parse.get_all_properties(classes)
+
+    # Insert them into the database
+    doc_parse.insert_classes(classes, session)
+    doc_parse.insert_properties(properties, session)
+
+    print("Adding authorized users")
+    add_user(id_=1, paraphrase="test", session=session)
 
     # Insert them into the database
     doc_parse.insert_classes(classes, session)
@@ -56,14 +65,16 @@ if __name__ == "__main__":
     app = app_factory(API_NAME)
     # Set the name of the API
     print("Starting the application")
-    with set_api_name(app, "serverapi"):
-        # Set the API Documentation
-        with set_doc(app, apidoc):
-            # Set HYDRUS_SERVER_URL
-            with set_hydrus_server_url(app, HYDRUS_SERVER_URL):
-                # Set the Database session
-                with set_session(app, session):
-                    # Start the Hydrus app
-                    http_server = WSGIServer(('', 8080), app)
-                    print("Server running")
-                    http_server.serve_forever()
+    with set_authentication(app, True):
+        # Use authentication for all requests
+        with set_api_name(app, "serverapi"):
+            # Set the API Documentation
+            with set_doc(app, apidoc):
+                # Set HYDRUS_SERVER_URL
+                with set_hydrus_server_url(app, HYDRUS_SERVER_URL):
+                    # Set the Database session
+                    with set_session(app, session):
+                        # Start the Hydrus app
+                        http_server = WSGIServer(('', 8080), app)
+                        print("Server running")
+                        http_server.serve_forever()

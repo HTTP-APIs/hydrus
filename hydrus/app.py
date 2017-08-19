@@ -1,14 +1,14 @@
 """Main route for the applciation."""
 
 import json
-from flask import Flask, jsonify, request, abort, Response
+from flask import Flask, jsonify, request, abort
 from flask_restful import Api, Resource
 from flask_cors import CORS
 
 from hydrus.data import crud
-from hydrus.data.user import check_authorization, failed_authentication
+from hydrus.data.user import check_authorization
 from hydrus.utils import get_session, get_doc, get_api_name, get_hydrus_server_url, get_authentication
-# from hydrus.hydraspec.doc_writer_sample import api_doc as doc
+
 import pdb
 
 
@@ -17,6 +17,14 @@ def validObject(object_):
     if "@type" in object_:
         return True
     return False
+
+
+def failed_authentication():
+    """Return failed authentication object."""
+    message = {401: "Need credentials to authenticate"}
+    response = set_response_headers(jsonify(message), status_code=401,
+                                    headers=[{'WWW-Authenticate': 'Basic realm="Login Required"'}])
+    return response
 
 
 def set_response_headers(resp, ct="application/ld+json", headers=[], status_code=200):

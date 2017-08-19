@@ -202,7 +202,6 @@ class User(Base):
 
     id = Column(Integer, primary_key=True)
     paraphrase = Column(String)
-    nonce = Column(Integer, nullable=True)
 
 
 if __name__ == "__main__":

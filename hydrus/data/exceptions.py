@@ -23,10 +23,10 @@ class InstanceNotFound(Exception):
 
     def get_HTTP(self):
         """Return the HTTP response for the Exception."""
-        if self.id_ is None:
+        if str(self.id_) is None:
             return 404, {"message": "Instance of type %s not found" % (self.type_)}
         else:
-            return 404, {"message": "Instance of type %s with ID %s not found" % (self.type_, self.id_)}
+            return 404, {"message": "Instance of type %s with ID %s not found" % (self.type_, str(self.id_))}
 
 
 class PropertyNotFound(Exception):
@@ -51,10 +51,10 @@ class InstanceExists(Exception):
 
     def get_HTTP(self):
         """Return the HTTP response for the Exception."""
-        if self.id_ is None:
+        if str(self.id_) is None:
             return 400, {"message": "Instance of type %salready exists" % (self.type_)}
         else:
-            return 400, {"message": "Instance of type %s with ID %salready exists" % (self.type_, self.id_)}
+            return 400, {"message": "Instance of type %s with ID %salready exists" % (self.type_, str(self.id_))}
 
 
 class NotInstanceProperty(Exception):
@@ -90,4 +90,16 @@ class UserExists(Exception):
 
     def get_HTTP(self):
         """Return the HTTP response for the Exception."""
-        return 400, {"message": "The user with ID %s already exists" % self.id_}
+        return 400, {"message": "The user with ID %s already exists" % str(self.id_)}
+
+
+class UserNotFound(Exception):
+    """Error when the User is not found."""
+
+    def __init__(self, id_):
+        """Constructor."""
+        self.id_ = id_
+
+    def get_HTTP(self):
+        """Return the HTTP response for the Exception."""
+        return 400, {"message": "The User with ID %s is not a valid/defined User" % str(self.id_)}
