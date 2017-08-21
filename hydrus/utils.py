@@ -58,6 +58,18 @@ def set_doc(application, APIDOC):
         yield
 
 
+@contextmanager
+def set_authentication(application, authentication):
+    """Set the wether API needs to be authenticated or not."""
+    if not isinstance(authentication, bool):
+        raise TypeError("Authentication flag must be of type <bool>")
+
+    def handler(sender, **kwargs):
+        g.authentication = authentication
+    with appcontext_pushed.connected_to(handler, application):
+        yield
+
+
 def get_doc():
     """Get the server API Documentation."""
     apidoc = getattr(g, 'doc', None)
@@ -65,6 +77,15 @@ def get_doc():
         apidoc = doc_writer_sample.api_doc
         g.doc = apidoc
     return apidoc
+
+
+def get_authentication():
+    """Check wether API needs to be authenticated or not."""
+    authentication = getattr(g, 'authentication', None)
+    if authentication is None:
+        authentication = False
+        g.doc = authentication
+    return authentication
 
 
 def get_api_name():

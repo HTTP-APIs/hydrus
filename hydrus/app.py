@@ -6,8 +6,10 @@ from flask_restful import Api, Resource
 from flask_cors import CORS
 
 from hydrus.data import crud
-from hydrus.utils import get_session, get_doc, get_api_name, get_hydrus_server_url
-# from hydrus.hydraspec.doc_writer_sample import api_doc as doc
+from hydrus.data.user import check_authorization
+from hydrus.utils import get_session, get_doc, get_api_name, get_hydrus_server_url, get_authentication
+
+import pdb
 
 
 def validObject(object_):
@@ -15,6 +17,14 @@ def validObject(object_):
     if "@type" in object_:
         return True
     return False
+
+
+def failed_authentication():
+    """Return failed authentication object."""
+    message = {401: "Need credentials to authenticate"}
+    response = set_response_headers(jsonify(message), status_code=401,
+                                    headers=[{'WWW-Authenticate': 'Basic realm="Login Required"'}])
+    return response
 
 
 def set_response_headers(resp, ct="application/ld+json", headers=[], status_code=200):
@@ -90,6 +100,14 @@ class Item(Resource):
 
     def get(self, id_, type_):
         """GET object with id = id_ from the database."""
+        if get_authentication():
+            if request.authorization is None:
+                return failed_authentication()
+            else:
+                auth = check_authorization(request, get_session())
+                if auth is False:
+                    return failed_authentication()
+
         class_type = get_doc().collections[type_]["collection"].class_.title
 
         if checkClassOp(class_type, "GET"):
@@ -106,6 +124,14 @@ class Item(Resource):
 
     def post(self, id_, type_):
         """Update object of type<type_> at ID<id_> with new object_ using HTTP POST."""
+        if get_authentication():
+            if request.authorization is None:
+                return failed_authentication()
+            else:
+                auth = check_authorization(request, get_session())
+                if auth is False:
+                    return failed_authentication()
+
         class_type = get_doc().collections[type_]["collection"].class_.title
 
         if checkClassOp(class_type, "POST"):
@@ -132,6 +158,14 @@ class Item(Resource):
 
     def put(self, id_, type_):
         """Add new object_ optional <id_> parameter using HTTP PUT."""
+        if get_authentication():
+            if request.authorization is None:
+                return failed_authentication()
+            else:
+                auth = check_authorization(request, get_session())
+                if auth is False:
+                    return failed_authentication()
+
         class_type = get_doc().collections[type_]["collection"].class_.title
 
         if checkClassOp(class_type, "PUT"):
@@ -158,6 +192,14 @@ class Item(Resource):
 
     def delete(self, id_, type_):
         """Delete object with id=id_ from database."""
+        if get_authentication():
+            if request.authorization is None:
+                return failed_authentication()
+            else:
+                auth = check_authorization(request, get_session())
+                if auth is False:
+                    return failed_authentication()
+
         class_type = get_doc().collections[type_]["collection"].class_.title
 
         if checkClassOp(class_type, "DELETE"):
@@ -178,6 +220,14 @@ class ItemCollection(Resource):
 
     def get(self, type_):
         """Retrieve a collection of items from the database."""
+        if get_authentication():
+            if request.authorization is None:
+                return failed_authentication()
+            else:
+                auth = check_authorization(request, get_session())
+                if auth is False:
+                    return failed_authentication()
+
         if checkEndpoint("GET", type_):
             # Collections
             if type_ in get_doc().collections:
@@ -205,6 +255,14 @@ class ItemCollection(Resource):
 
     def put(self, type_):
         """Add item to ItemCollection."""
+        if get_authentication():
+            if request.authorization is None:
+                return failed_authentication()
+            else:
+                auth = check_authorization(request, get_session())
+                if auth is False:
+                    return failed_authentication()
+
         if checkEndpoint("PUT", type_):
             object_ = json.loads(request.data.decode('utf-8'))
 
@@ -250,6 +308,14 @@ class ItemCollection(Resource):
 
     def post(self, type_):
         """Update Non Collection class item."""
+        if get_authentication():
+            if request.authorization is None:
+                return failed_authentication()
+            else:
+                auth = check_authorization(request, get_session())
+                if auth is False:
+                    return failed_authentication()
+
         if checkEndpoint("POST", type_):
             object_ = json.loads(request.data.decode('utf-8'))
 
@@ -274,6 +340,14 @@ class ItemCollection(Resource):
 
     def delete(self, type_):
         """Delete a non Collection class item."""
+        if get_authentication():
+            if request.authorization is None:
+                return failed_authentication()
+            else:
+                auth = check_authorization(request, get_session())
+                if auth is False:
+                    return failed_authentication()
+
         if checkEndpoint("DELETE", type_):
             # No Delete Operation for collections
             if type_ in get_doc().parsed_classes and type_+"Collection" not in get_doc().collections:
