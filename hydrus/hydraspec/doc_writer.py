@@ -170,7 +170,7 @@ class HydraClassOp():
         elif method == "DELETE":
             return "http://schema.org/DeleteAction"
         else:
-            return "hydra:Operation"
+            return "http://schema.org/FindAction"
 
     def generate(self):
         """Get the Hydra op as a python dict."""
@@ -200,7 +200,7 @@ class HydraCollection():
 
         if get:
             get_op = HydraCollectionOp("_:%s_collection_retrieve" % (self.class_.title.lower()),
-                                       "hydra:Operation",
+                                       "http://schema.org/FindAction",
                                        "GET", "Retrieves all %s entities" % (self.class_.title),
                                        None, "vocab:%s" % (self.name), [])
             self.supportedOperation.append(get_op)
@@ -381,11 +381,22 @@ class EntryPointOp():
         self.label = label
         self.type_ = type_
 
+    def get_type(self, method):
+        """Return @type for op based on method type."""
+        if method == "POST":
+            return "http://schema.org/UpdateAction"
+        elif method == "PUT":
+            return "http://schema.org/AddAction"
+        elif method == "DELETE":
+            return "http://schema.org/DeleteAction"
+        else:
+            return "http://schema.org/FindAction"
+
     def generate(self):
         """Get as Python Dict."""
         prop = {
             "@id": self.id_,
-            "@type": "hydra:Operation",
+            "@type": self.get_type(self.method),
             "method": self.method,
             "description": self.desc,
             "expects": self.expects,
