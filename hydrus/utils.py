@@ -65,7 +65,7 @@ def set_authentication(application, authentication):
         raise TypeError("Authentication flag must be of type <bool>")
 
     def handler(sender, **kwargs):
-        g.authentication = authentication
+        g.authentication_ = authentication
     with appcontext_pushed.connected_to(handler, application):
         yield
 
@@ -81,10 +81,10 @@ def get_doc():
 
 def get_authentication():
     """Check wether API needs to be authenticated or not."""
-    authentication = getattr(g, 'authentication', None)
+    authentication = getattr(g, 'authentication_', None)
     if authentication is None:
         authentication = False
-        g.doc = authentication
+        g.authentication_ = authentication
     return authentication
 
 
