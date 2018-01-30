@@ -37,7 +37,7 @@ class ViewsTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         """Database setup before the tests."""
-        print("Creating a temporary datatbsse...")
+        print("Creating a temporary database...")
         engine = create_engine('sqlite:///:memory:')
         Base.metadata.create_all(engine)
         Session = sessionmaker(bind=engine)
