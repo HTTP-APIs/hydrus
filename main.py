@@ -77,4 +77,7 @@ if __name__ == "__main__":
                         # Start the Hydrus app
                         http_server = WSGIServer(('', 8080), app)
                         print("Server running")
-                        http_server.serve_forever()
+                        try:
+                            http_server.serve_forever()
+                        except KeyboardInterrupt:
+                            pass
