@@ -29,6 +29,8 @@ The system is built over the following standards and tools:
 
 Apart from this, there are also various Python packages that Hydrus uses. A list of all these packages can be found in the [requirements.txt](https://github.com/HTTP-APIs/hydrus/blob/master/requirements.txt) file. It would be advisable to run **`pip install -r requirements.txt`** before setting up other things.
 
+**NOTE:** You'll need to use `python3` not `python2`.
+
 <a name="demo"></a>
 Demo
 -------------
