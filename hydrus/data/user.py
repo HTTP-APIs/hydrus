@@ -15,7 +15,7 @@ def add_user(id_, paraphrase, session):
     if session.query(exists().where(User.id == id_)).scalar():
         raise UserExists(id_=id_)
     else:
-        new_user = User(id=id_, paraphrase=paraphrase)
+        new_user = User(id=id_, paraphrase=sha224(paraphrase.encode('utf-8')).hexdigest())
         session.add(new_user)
         session.commit()
 
@@ -41,14 +41,14 @@ def generate_basic_digest(id_, paraphrase):
     return digest
 
 
-def authenticate_user(id_, hashvalue, session):
+def authenticate_user(id_, paraphrase, session):
     """Authenticate a user based on the ID and his paraphrase."""
     user = None
     try:
         user = session.query(User).filter(User.id == id_).one()
     except NoResultFound:
         raise UserNotFound(id_=id_)
-    paraphrase = user.paraphrase
+    hashvalue = user.paraphrase
     generated_hash = sha224(paraphrase.encode('utf-8')).hexdigest()
 
     return generated_hash == hashvalue

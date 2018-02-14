@@ -104,9 +104,13 @@ class Item(Resource):
             if request.authorization is None:
                 return failed_authentication()
             else:
-                auth = check_authorization(request, get_session())
-                if auth is False:
-                    return failed_authentication()
+                try:
+                    auth = check_authorization(request, get_session())
+                    if auth is False:
+                        return failed_authentication()
+                except Exception as e:
+                    status_code, message = e.get_HTTP()
+                    return set_response_headers(jsonify(message), status_code=status_code)
 
         class_type = get_doc().collections[type_]["collection"].class_.title
 
@@ -128,9 +132,13 @@ class Item(Resource):
             if request.authorization is None:
                 return failed_authentication()
             else:
-                auth = check_authorization(request, get_session())
-                if auth is False:
-                    return failed_authentication()
+                try:
+                    auth = check_authorization(request, get_session())
+                    if auth is False:
+                        return failed_authentication()
+                except Exception as e:
+                    status_code, message = e.get_HTTP()
+                    return set_response_headers(jsonify(message), status_code=status_code)
 
         class_type = get_doc().collections[type_]["collection"].class_.title
 
@@ -162,9 +170,13 @@ class Item(Resource):
             if request.authorization is None:
                 return failed_authentication()
             else:
-                auth = check_authorization(request, get_session())
-                if auth is False:
-                    return failed_authentication()
+                try:
+                    auth = check_authorization(request, get_session())
+                    if auth is False:
+                        return failed_authentication()
+                except Exception as e:
+                    status_code, message = e.get_HTTP()
+                    return set_response_headers(jsonify(message), status_code=status_code)
 
         class_type = get_doc().collections[type_]["collection"].class_.title
 
@@ -196,9 +208,13 @@ class Item(Resource):
             if request.authorization is None:
                 return failed_authentication()
             else:
-                auth = check_authorization(request, get_session())
-                if auth is False:
-                    return failed_authentication()
+                try:
+                    auth = check_authorization(request, get_session())
+                    if auth is False:
+                        return failed_authentication()
+                except Exception as e:
+                    status_code, message = e.get_HTTP()
+                    return set_response_headers(jsonify(message), status_code=status_code)
 
         class_type = get_doc().collections[type_]["collection"].class_.title
 
@@ -224,9 +240,13 @@ class ItemCollection(Resource):
             if request.authorization is None:
                 return failed_authentication()
             else:
-                auth = check_authorization(request, get_session())
-                if auth is False:
-                    return failed_authentication()
+                try:
+                    auth = check_authorization(request, get_session())
+                    if auth is False:
+                        return failed_authentication()
+                except Exception as e:
+                    status_code, message = e.get_HTTP()
+                    return set_response_headers(jsonify(message), status_code=status_code)
 
         if checkEndpoint("GET", type_):
             # Collections
@@ -259,9 +279,13 @@ class ItemCollection(Resource):
             if request.authorization is None:
                 return failed_authentication()
             else:
-                auth = check_authorization(request, get_session())
-                if auth is False:
-                    return failed_authentication()
+                try:
+                    auth = check_authorization(request, get_session())
+                    if auth is False:
+                        return failed_authentication()
+                except Exception as e:
+                    status_code, message = e.get_HTTP()
+                    return set_response_headers(jsonify(message), status_code=status_code)
 
         if checkEndpoint("PUT", type_):
             object_ = json.loads(request.data.decode('utf-8'))
@@ -312,9 +336,13 @@ class ItemCollection(Resource):
             if request.authorization is None:
                 return failed_authentication()
             else:
-                auth = check_authorization(request, get_session())
-                if auth is False:
-                    return failed_authentication()
+                try:
+                    auth = check_authorization(request, get_session())
+                    if auth is False:
+                        return failed_authentication()
+                except Exception as e:
+                    status_code, message = e.get_HTTP()
+                    return set_response_headers(jsonify(message), status_code=status_code)
 
         if checkEndpoint("POST", type_):
             object_ = json.loads(request.data.decode('utf-8'))
@@ -344,9 +372,13 @@ class ItemCollection(Resource):
             if request.authorization is None:
                 return failed_authentication()
             else:
-                auth = check_authorization(request, get_session())
-                if auth is False:
-                    return failed_authentication()
+                try:
+                    auth = check_authorization(request, get_session())
+                    if auth is False:
+                        return failed_authentication()
+                except Exception as e:
+                    status_code, message = e.get_HTTP()
+                    return set_response_headers(jsonify(message), status_code=status_code)
 
         if checkEndpoint("DELETE", type_):
             # No Delete Operation for collections
