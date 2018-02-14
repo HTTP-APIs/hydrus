@@ -1,0 +1,247 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>hydrus.data package &#8212; hydra 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="hydrus.data.legacy package" href="hydrus.data.legacy.html" />
+    <link rel="prev" title="hydrus package" href="hydrus.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="hydrus.data.legacy.html" title="hydrus.data.legacy package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="hydrus.html" title="hydrus package"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">hydra 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="hydrus-data-package">
+<h1>hydrus.data package<a class="headerlink" href="#hydrus-data-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="hydrus-data-crud-module">
+<h2>hydrus.data.crud module<a class="headerlink" href="#hydrus-data-crud-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="hydrus-data-db-models-module">
+<h2>hydrus.data.db_models module<a class="headerlink" href="#hydrus-data-db-models-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="hydrus-data-doc-parse-module">
+<h2>hydrus.data.doc_parse module<a class="headerlink" href="#hydrus-data-doc-parse-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-hydrus.data.exceptions">
+<span id="hydrus-data-exceptions-module"></span><h2>hydrus.data.exceptions module<a class="headerlink" href="#module-hydrus.data.exceptions" title="Permalink to this headline">¶</a></h2>
+<p>Exceptions for the crud operations.</p>
+<dl class="exception">
+<dt id="hydrus.data.exceptions.ClassNotFound">
+<em class="property">exception </em><code class="descclassname">hydrus.data.exceptions.</code><code class="descname">ClassNotFound</code><span class="sig-paren">(</span><em>type_</em><span class="sig-paren">)</span><a class="headerlink" href="#hydrus.data.exceptions.ClassNotFound" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Error when the RDFClass is not found.</p>
+<dl class="method">
+<dt id="hydrus.data.exceptions.ClassNotFound.get_HTTP">
+<code class="descname">get_HTTP</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hydrus.data.exceptions.ClassNotFound.get_HTTP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the HTTP response for the Exception.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="hydrus.data.exceptions.InstanceExists">
+<em class="property">exception </em><code class="descclassname">hydrus.data.exceptions.</code><code class="descname">InstanceExists</code><span class="sig-paren">(</span><em>type_</em>, <em>id_=None</em><span class="sig-paren">)</span><a class="headerlink" href="#hydrus.data.exceptions.InstanceExists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Error when the Instance already exists.</p>
+<dl class="method">
+<dt id="hydrus.data.exceptions.InstanceExists.get_HTTP">
+<code class="descname">get_HTTP</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hydrus.data.exceptions.InstanceExists.get_HTTP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the HTTP response for the Exception.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="hydrus.data.exceptions.InstanceNotFound">
+<em class="property">exception </em><code class="descclassname">hydrus.data.exceptions.</code><code class="descname">InstanceNotFound</code><span class="sig-paren">(</span><em>type_</em>, <em>id_=None</em><span class="sig-paren">)</span><a class="headerlink" href="#hydrus.data.exceptions.InstanceNotFound" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Error when the Instance is not found.</p>
+<dl class="method">
+<dt id="hydrus.data.exceptions.InstanceNotFound.get_HTTP">
+<code class="descname">get_HTTP</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hydrus.data.exceptions.InstanceNotFound.get_HTTP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the HTTP response for the Exception.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="hydrus.data.exceptions.NotAbstractProperty">
+<em class="property">exception </em><code class="descclassname">hydrus.data.exceptions.</code><code class="descname">NotAbstractProperty</code><span class="sig-paren">(</span><em>type_</em><span class="sig-paren">)</span><a class="headerlink" href="#hydrus.data.exceptions.NotAbstractProperty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Error when the property is not an Abstract property.</p>
+<dl class="method">
+<dt id="hydrus.data.exceptions.NotAbstractProperty.get_HTTP">
+<code class="descname">get_HTTP</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hydrus.data.exceptions.NotAbstractProperty.get_HTTP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the HTTP response for the Exception.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="hydrus.data.exceptions.NotInstanceProperty">
+<em class="property">exception </em><code class="descclassname">hydrus.data.exceptions.</code><code class="descname">NotInstanceProperty</code><span class="sig-paren">(</span><em>type_</em><span class="sig-paren">)</span><a class="headerlink" href="#hydrus.data.exceptions.NotInstanceProperty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Error when the property is not an Instance property.</p>
+<dl class="method">
+<dt id="hydrus.data.exceptions.NotInstanceProperty.get_HTTP">
+<code class="descname">get_HTTP</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hydrus.data.exceptions.NotInstanceProperty.get_HTTP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the HTTP response for the Exception.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="hydrus.data.exceptions.PropertyNotFound">
+<em class="property">exception </em><code class="descclassname">hydrus.data.exceptions.</code><code class="descname">PropertyNotFound</code><span class="sig-paren">(</span><em>type_</em><span class="sig-paren">)</span><a class="headerlink" href="#hydrus.data.exceptions.PropertyNotFound" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Error when the Property is not found.</p>
+<dl class="method">
+<dt id="hydrus.data.exceptions.PropertyNotFound.get_HTTP">
+<code class="descname">get_HTTP</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hydrus.data.exceptions.PropertyNotFound.get_HTTP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the HTTP response for the Exception.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="hydrus.data.exceptions.UserExists">
+<em class="property">exception </em><code class="descclassname">hydrus.data.exceptions.</code><code class="descname">UserExists</code><span class="sig-paren">(</span><em>id_</em><span class="sig-paren">)</span><a class="headerlink" href="#hydrus.data.exceptions.UserExists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Error when the User already exitst.</p>
+<dl class="method">
+<dt id="hydrus.data.exceptions.UserExists.get_HTTP">
+<code class="descname">get_HTTP</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hydrus.data.exceptions.UserExists.get_HTTP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the HTTP response for the Exception.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="hydrus.data.exceptions.UserNotFound">
+<em class="property">exception </em><code class="descclassname">hydrus.data.exceptions.</code><code class="descname">UserNotFound</code><span class="sig-paren">(</span><em>id_</em><span class="sig-paren">)</span><a class="headerlink" href="#hydrus.data.exceptions.UserNotFound" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Error when the User is not found.</p>
+<dl class="method">
+<dt id="hydrus.data.exceptions.UserNotFound.get_HTTP">
+<code class="descname">get_HTTP</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#hydrus.data.exceptions.UserNotFound.get_HTTP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the HTTP response for the Exception.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="hydrus-data-user-module">
+<h2>hydrus.data.user module<a class="headerlink" href="#hydrus-data-user-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-hydrus.data">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-hydrus.data" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">hydrus.data package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#hydrus-data-crud-module">hydrus.data.crud module</a></li>
+<li><a class="reference internal" href="#hydrus-data-db-models-module">hydrus.data.db_models module</a></li>
+<li><a class="reference internal" href="#hydrus-data-doc-parse-module">hydrus.data.doc_parse module</a></li>
+<li><a class="reference internal" href="#module-hydrus.data.exceptions">hydrus.data.exceptions module</a></li>
+<li><a class="reference internal" href="#hydrus-data-user-module">hydrus.data.user module</a></li>
+<li><a class="reference internal" href="#module-hydrus.data">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="hydrus.html"
+                        title="previous chapter">hydrus package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="hydrus.data.legacy.html"
+                        title="next chapter">hydrus.data.legacy package</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/hydrus.data.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="hydrus.data.legacy.html" title="hydrus.data.legacy package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="hydrus.html" title="hydrus package"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">hydra 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, sandeep.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.0.
+    </div>
+  </body>
+</html>
