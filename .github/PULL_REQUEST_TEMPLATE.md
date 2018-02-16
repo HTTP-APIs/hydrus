@@ -8,5 +8,5 @@ Fixes #
 - [ ] Everything works and tested for Python 3.5.2 and above.
 - [ ] I have created/claimed the issue that this PR resolves.
 
-### Changes proposed
--
+### Description
+<!-- Describe about what this PR does, previous state and new state of the output -->
