@@ -47,6 +47,13 @@ cd hydrus
 git checkout -b develop origin/develop
 ```
 
+Create a virtual environment and activate it:
+```bash
+virtualenv venv --python=`which python3`
+
+source venv/bin/activate
+```
+
 Install requirements and run the `main.py` script:
 ```bash
 pip install -r requirements.txt
