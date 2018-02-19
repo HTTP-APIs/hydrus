@@ -77,6 +77,8 @@ if __name__ == "__main__":
                         # Start the Hydrus app
                         http_server = WSGIServer(('', 8080), app)
                         print("Server running")
+                        print("IP Address: ", HYDRUS_SERVER_URL, end=' ')
+                        print("Port: ", 8080)
                         try:
                             http_server.serve_forever()
                         except KeyboardInterrupt:
