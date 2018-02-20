@@ -6,6 +6,11 @@ import re
 import json
 import pdb
 
+def inputKeyCheck(body, key):
+    try:
+        return body[key]
+    except KeyError:
+        raise SyntaxError("The API Documentation must have [" + key + "]");
 
 def createDoc(doc, HYDRUS_SERVER_URL=None, API_NAME=None):
     """Create the HydraDoc object from the API Documentation."""
@@ -24,48 +29,35 @@ def createDoc(doc, HYDRUS_SERVER_URL=None, API_NAME=None):
     # Syntax checks
     else:
         raise SyntaxError("The '@id' of the Documentation must be of the form:\n'[protocol] :// [base url] / [entrypoint] / vocab'")
-    try:
-        desc = doc["description"]
-    except KeyError:
-        raise SyntaxError("The API Documentation must have [description]")
-    try:
-        title = doc["title"]
-    except KeyError:
-        raise SyntaxError("The API Documentation must have [title]")
-    try:
-        supportedClass = doc["supportedClass"]
-    except KeyError:
-        raise SyntaxError("The API Documentation must have [supportedClass]")
-    try:
-        context = doc["@context"]
-    except KeyError:
-        raise SyntaxError("The API Documentation must have [@context]")
-    try:
-        possibleStatus = doc["possibleStatus"]
-    except KeyError:
-        raise SyntaxError("The API Documentation must have [possibleStatus]")
+    
+    docKeys = {"desc" : "description", "title" : "title", "supportedClass" : "supportedClass",
+    "context" : "@context", "possibleStatus" : "possibleStatus"}
+
+    result ={};
+    for k,v in docKeys.items():
+         result[k]=inputKeyCheck(doc, v);
 
     # EntryPoint object
     entrypoint_obj = getEntrypoint(doc)     # getEntrypoint checks if all classes have @id
 
     # Main doc object
     if HYDRUS_SERVER_URL is not None and API_NAME is not None:
-        apidoc = HydraDoc(API_NAME, title, desc, API_NAME, HYDRUS_SERVER_URL)
+        apidoc = HydraDoc(API_NAME, result["title"], result["desc"], API_NAME, HYDRUS_SERVER_URL)
     else:
-        apidoc = HydraDoc(entrypoint, title, desc, entrypoint, base_url)
+        apidoc = HydraDoc(entrypoint, result["title"], result["desc"], entrypoint, base_url)
 
     # additional context entries
-    for entry in context:
-        apidoc.add_to_context(entry, context[entry])
+    for entry in result["context"]:
+        apidoc.add_to_context(entry, result["context"][entry])
 
     # add all parsed_classes
-    for class_ in supportedClass:
+    for class_ in result["supportedClass"]:
         class_obj, collection = createClass(entrypoint_obj, class_)
         if class_obj:
             apidoc.add_supported_class(class_obj, collection=collection)
 
     # add possibleStatus
-    for status in possibleStatus:
+    for status in result["possibleStatus"]:
         status_obj = createStatus(status)
         apidoc.add_possible_status(status_obj)
 
