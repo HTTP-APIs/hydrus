@@ -9,9 +9,6 @@ from hydrus.data import crud
 from hydrus.data.user import check_authorization
 from hydrus.utils import get_session, get_doc, get_api_name, get_hydrus_server_url, get_authentication
 
-import pdb
-
-
 def validObject(object_):
     """Check if the data passed in POST is of valid format or not."""
     if "@type" in object_:
