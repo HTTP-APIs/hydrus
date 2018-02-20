@@ -6,11 +6,16 @@ import re
 import json
 import pdb
 
-def inputKeyCheck(body, key):
+def errorMapping(body):
+    errorMap = {
+        "doc" : "The API Documentation must have"
+    }
+
+def inputKeyCheck(body, key,bodyType):
     try:
         return body[key]
     except KeyError:
-        raise SyntaxError("The API Documentation must have [" + key + "]");
+        raise SyntaxError(errorMapping(bodyType) + "[" + key + "]");
 
 def createDoc(doc, HYDRUS_SERVER_URL=None, API_NAME=None):
     """Create the HydraDoc object from the API Documentation."""
@@ -35,7 +40,7 @@ def createDoc(doc, HYDRUS_SERVER_URL=None, API_NAME=None):
 
     result ={};
     for k,v in docKeys.items():
-         result[k]=inputKeyCheck(doc, v);
+         result[k]=inputKeyCheck(doc, v, "doc");
 
     # EntryPoint object
     entrypoint_obj = getEntrypoint(doc)     # getEntrypoint checks if all classes have @id
