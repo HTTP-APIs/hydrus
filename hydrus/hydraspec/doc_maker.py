@@ -8,7 +8,8 @@ import pdb
 
 def errorMapping(body):
     errorMap = {
-        "doc" : "The API Documentation must have"
+        "doc" : "The API Documentation must have",
+        "class_dict" : "Class must have"
     }
 
 def inputKeyCheck(body, key,bodyType):
@@ -85,26 +86,15 @@ def createClass(entrypoint, class_dict):
     if matchObj:
         id_ = matchObj.group(1)
 
-    # Syntax checks
-    try:
-        supportedProperty = class_dict["supportedProperty"]
-    except KeyError:
-        raise SyntaxError("Class must have [supportedProperty]")
-    try:
-        title = class_dict["title"]
-    except KeyError:
-        raise SyntaxError("Class must have [title]")
-    try:
-        desc = class_dict["description"]
-    except KeyError:
-        raise SyntaxError("Class must have [description]")
-    try:
-        supportedOperation = class_dict["supportedOperation"]
-    except KeyError:
-        raise SyntaxError("Class must have [supportedOperation]")
+    docKeys = {"supportedProperty" : "supportedProperty", "title" : "title", "desc" : "description",
+    "supportedOperation" : "supportedOperation"}
+
+    result ={};
+    for k,v in docKeys.items():
+         result[k] = inputKeyCheck(class_dict, v, "class_dict");
 
     # See if class_dict is a Collection Class
-    collection = re.match(r'(.*)Collection(.*)', title, re.M | re.I)
+    collection = re.match(r'(.*)Collection(.*)', result["title"], re.M | re.I)
     if collection:
         return None, None
 
@@ -115,15 +105,15 @@ def createClass(entrypoint, class_dict):
     collection = collection_in_endpoint(class_dict, entrypoint)
 
     # Create the HydraClass object
-    class_ = HydraClass(id_, title, desc, endpoint=endpoint)
+    class_ = HydraClass(id_, result["title"], result["desc"], endpoint=endpoint)
 
     # Add supportedProperty for the Class
-    for prop in supportedProperty:
+    for prop in result["supportedProperty"]:
         prop_obj = createProperty(prop)
         class_.add_supported_prop(prop_obj)
 
     # Add supportedOperation for the Class
-    for op in supportedOperation:
+    for op in result["supportedOperation"]:
         op_obj = createOperation(op)
         class_.add_supported_op(op_obj)
 
