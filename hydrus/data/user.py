@@ -7,8 +7,6 @@ from hydrus.data.db_models import User
 from hashlib import sha224
 import base64
 # import random
-import pdb
-
 
 def add_user(id_, paraphrase, session):
     """Add new users to the database."""
