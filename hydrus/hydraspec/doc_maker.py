@@ -4,7 +4,6 @@ from hydrus.hydraspec.doc_writer_sample import api_doc as sample_document
 from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp, HydraStatus
 import re
 import json
-import pdb
 
 
 def createDoc(doc, HYDRUS_SERVER_URL=None, API_NAME=None):
