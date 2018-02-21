@@ -8,8 +8,8 @@
 ### Expected Behaviour:
 <!-- Describe what will happen if bug is removed -->
 
-### Steps to repoduce:
+### Steps to reproduce:
 <!-- If you can then please provide the steps to reproduce the bug -->
 
-### Do you want to work on this issue ?
+### Do you want to work on this issue?
 <!-- yes/no -->
