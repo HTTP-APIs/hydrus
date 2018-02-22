@@ -1,7 +1,7 @@
 """Demo script for setting up Hydrus with any db and any API Doc."""
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker,scoped_session
 
 from hydrus.app import app_factory
 from hydrus.utils import set_session, set_doc, set_hydrus_server_url, set_api_name, set_authentication
@@ -40,7 +40,7 @@ if __name__ == "__main__":
     apidoc = doc_maker.createDoc(doc, HYDRUS_SERVER_URL, API_NAME)
 
     # Start a session with the DB and create all classes needed by the APIDoc
-    session = sessionmaker(bind=engine)()
+    session = scoped_session(sessionmaker(bind=engine))
 
     print("Adding Classes and Properties")
     # Get all the classes from the doc
