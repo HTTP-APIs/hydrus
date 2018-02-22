@@ -8,7 +8,7 @@ from hydrus.utils import set_session, set_doc, set_api_name, set_authentication
 from hydrus.data import doc_parse
 from hydrus.hydraspec import doc_writer_sample, doc_maker
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker,scoped_session
 from hydrus.data.db_models import Base
 from hydrus.data.user import add_user
 
@@ -25,8 +25,7 @@ class AuthTestCase(unittest.TestCase):
         print("Creating a temporary datatbsse...")
         engine = create_engine('sqlite:///:memory:')
         Base.metadata.create_all(engine)
-        Session = sessionmaker(bind=engine)
-        session = Session()
+        session = scoped_session(sessionmaker(bind=engine))
 
         self.session = session
         self.API_NAME = "demoapi"
