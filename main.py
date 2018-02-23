@@ -37,7 +37,7 @@ if __name__ == "__main__":
     # NOTE: You can use your own API Documentation and create a HydraDoc object using doc_maker
     #       Or you may create your own HydraDoc Documentation using doc_writer [see hydrus/hydraspec/doc_writer_sample]
     print("Creating the API Documentation")
-    apidoc = doc_maker.createDoc(doc, HYDRUS_SERVER_URL, API_NAME)
+    apidoc = doc_maker.create_doc(doc, HYDRUS_SERVER_URL, API_NAME)
 
     # Start a session with the DB and create all classes needed by the APIDoc
     session = sessionmaker(bind=engine)()
