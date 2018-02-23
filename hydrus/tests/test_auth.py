@@ -11,6 +11,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker,scoped_session
 from hydrus.data.db_models import Base
 from hydrus.data.user import add_user
+from base64 import b64encode
 
 
 # response = requests.get("http://127.0.0.1:8080/serverapi/CommandCollection", headers={'Authorization':'Basic QWxhZGRpbjpPcGVuU2VzYW1l'})
@@ -38,7 +39,7 @@ class AuthTestCase(unittest.TestCase):
         doc_parse.insert_classes(test_classes, self.session)
         doc_parse.insert_properties(test_properties, self.session)
         add_user(1, "test", self.session)
-        self.auth_header = {"Authorization": "Basic " + generate_basic_digest(1, "test")}
+        self.auth_header = {"Authorization": "Basic " + b64encode(b"1:test").decode("ascii")}
         print("Classes, Properties and Users added successfully.")
         print("Setup done, running tests...")
 
