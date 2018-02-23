@@ -4,6 +4,7 @@ from hydrus.hydraspec.doc_writer_sample import api_doc as sample_document
 from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp, HydraStatus
 import re
 import json
+import pdb
 
 def errorMapping(body):
     errorMap = {
@@ -15,7 +16,7 @@ def errorMapping(body):
     }
     return errorMap[body];
 
-def inputKeyCheck(body, key,bodyType,literal):
+def inputKeyCheck(body,key,bodyType,literal):
     try:
         if(literal):
             return convert_literal(body[key])
