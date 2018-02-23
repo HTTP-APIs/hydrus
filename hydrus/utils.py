@@ -5,7 +5,7 @@ from flask import appcontext_pushed
 from flask import g
 from hydrus.hydraspec import doc_writer_sample
 from hydrus.data.db_models import engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker,scoped_session
 from sqlalchemy.orm.session import Session
 from hydrus.hydraspec.doc_writer import HydraDoc
 from flask.app import Flask
@@ -15,8 +15,8 @@ from typing import Any, Iterator
 @contextmanager
 def set_session(application: Flask, DB_SESSION: Session) -> Iterator:
     """Set the database session for the app. Must be of type <hydrus.hydraspec.doc_writer.HydraDoc>."""
-    if not isinstance(DB_SESSION, Session):
-        raise TypeError("The API Doc is not of type <sqlalchemy.orm.session.Session>")
+    if not isinstance(DB_SESSION, Session) and not isinstance(DB_SESSION,scoped_session):
+        raise TypeError("The API Doc is not of type <sqlalchemy.orm.session.Session> or <sqlalchemy.orm.scoping.scoped_session>")
 
     def handler(sender: Flask, **kwargs: Any) -> None:
         g.dbsession = DB_SESSION
@@ -112,6 +112,6 @@ def get_session() -> Session:
     """Get the Database Session for the server."""
     session = getattr(g, 'dbsession', None)
     if session is None:
-        session = sessionmaker(bind=engine)()
+        session = scoped_session(sessionmaker(bind=engine))
         g.dbsession = session
     return session
