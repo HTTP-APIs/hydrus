@@ -13,6 +13,7 @@ def errorMapping(body):
         "supported_op": "Operation must have",
         "possible_status": "Status must have"
     }
+    return errorMap[body];
 
 def inputKeyCheck(body, key,bodyType,literal):
     try:
