@@ -4,17 +4,22 @@ from hydrus.hydraspec.doc_writer_sample import api_doc as sample_document
 from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp, HydraStatus
 import re
 import json
-import pdb
 
 def errorMapping(body):
     errorMap = {
         "doc" : "The API Documentation must have",
-        "class_dict" : "Class must have"
+        "class_dict" : "Class must have",
+        "supported_prop" : "Property must have",
+        "supported_op": "Operation must have",
+        "possible_status": "Status must have"
     }
 
-def inputKeyCheck(body, key,bodyType):
+def inputKeyCheck(body, key,bodyType,literal):
     try:
-        return body[key]
+        if(literal):
+            return convert_literal(body[key])
+        else:
+            return body[key]
     except KeyError:
         raise SyntaxError(errorMapping(bodyType) + "[" + key + "]");
 
@@ -36,25 +41,25 @@ def createDoc(doc, HYDRUS_SERVER_URL=None, API_NAME=None):
     else:
         raise SyntaxError("The '@id' of the Documentation must be of the form:\n'[protocol] :// [base url] / [entrypoint] / vocab'")
     
-    docKeys = {"desc" : "description", "title" : "title", "supportedClass" : "supportedClass",
-    "context" : "@context", "possibleStatus" : "possibleStatus"}
+    docKeys = {"description" : False, "title" : False, "supportedClass" : False,
+    "@context" : False, "possibleStatus" : False}
 
     result ={};
     for k,v in docKeys.items():
-         result[k]=inputKeyCheck(doc, v, "doc");
+         result[k]=inputKeyCheck(doc, k, "doc", v);
 
     # EntryPoint object
     entrypoint_obj = getEntrypoint(doc)     # getEntrypoint checks if all classes have @id
 
     # Main doc object
     if HYDRUS_SERVER_URL is not None and API_NAME is not None:
-        apidoc = HydraDoc(API_NAME, result["title"], result["desc"], API_NAME, HYDRUS_SERVER_URL)
+        apidoc = HydraDoc(API_NAME, result["title"], result["description"], API_NAME, HYDRUS_SERVER_URL)
     else:
-        apidoc = HydraDoc(entrypoint, result["title"], result["desc"], entrypoint, base_url)
+        apidoc = HydraDoc(entrypoint, result["title"], result["description"], entrypoint, base_url)
 
     # additional context entries
-    for entry in result["context"]:
-        apidoc.add_to_context(entry, result["context"][entry])
+    for entry in result["@context"]:
+        apidoc.add_to_context(entry, result["@context"][entry])
 
     # add all parsed_classes
     for class_ in result["supportedClass"]:
@@ -86,12 +91,12 @@ def createClass(entrypoint, class_dict):
     if matchObj:
         id_ = matchObj.group(1)
 
-    docKeys = {"supportedProperty" : "supportedProperty", "title" : "title", "desc" : "description",
-    "supportedOperation" : "supportedOperation"}
+    docKeys = {"supportedProperty" : False, "title" : False, "description" : False,
+    "supportedOperation" : False }
 
     result ={};
     for k,v in docKeys.items():
-         result[k] = inputKeyCheck(class_dict, v, "class_dict");
+         result[k] = inputKeyCheck(class_dict, k, "class_dict",v);
 
     # See if class_dict is a Collection Class
     collection = re.match(r'(.*)Collection(.*)', result["title"], re.M | re.I)
@@ -105,7 +110,7 @@ def createClass(entrypoint, class_dict):
     collection = collection_in_endpoint(class_dict, entrypoint)
 
     # Create the HydraClass object
-    class_ = HydraClass(id_, result["title"], result["desc"], endpoint=endpoint)
+    class_ = HydraClass(id_, result["title"], result["description"], endpoint=endpoint)
 
     # Add supportedProperty for the Class
     for prop in result["supportedProperty"]:
@@ -163,28 +168,14 @@ def convert_literal(literal):
 def createProperty(supported_prop):
     """Create a HydraClassProp object from the supportedProperty."""
     # Syntax checks
-    try:
-        uri = supported_prop["property"]
-    except KeyError:
-        raise SyntaxError("Property must have [property]")
-    try:
-        title = supported_prop["title"]
-    except KeyError:
-        raise SyntaxError("Property must have [title]")
-    try:
-        read = convert_literal(supported_prop["readonly"])
-    except KeyError:
-        raise SyntaxError("Property must have [readonly]")
-    try:
-        write = convert_literal(supported_prop["writeonly"])
-    except KeyError:
-        raise SyntaxError("Property must have [writeonly]")
-    try:
-        required = convert_literal(supported_prop["required"])
-    except KeyError:
-        raise SyntaxError("Property must have [required]")
+
+    docKeys = { "property" : False, "title": False, "readonly": True, "writeonly": True, "required": True }
+    result ={};
+    for k,v in docKeys.items():
+         result[k] = inputKeyCheck(supported_prop, k, "supported_prop", v);
+    
     # Create the HydraClassProp object
-    prop = HydraClassProp(uri, title, required=required, read=read, write=write)
+    prop = HydraClassProp(result["property"], result["title"], required=result["required"], read=result["readonly"], write=result["writeonly"])
     return prop
 
 
@@ -245,48 +236,25 @@ def collection_in_endpoint(class_, entrypoint):
 def createOperation(supported_op):
     """Create a HyraClassOp object from the supportedOperation."""
     # Syntax checks
-    try:
-        name = supported_op["title"]
-    except KeyError:
-        raise SyntaxError("Operation must have [title]")
-    try:
-        method = supported_op["method"]
-    except KeyError:
-        raise SyntaxError("Operation must have [method]")
-    try:
-        expects = convert_literal(supported_op["expects"])
-    except KeyError:
-        raise SyntaxError("Operation must have [expects]")
-    try:
-        returns = convert_literal(supported_op["returns"])
-    except KeyError:
-        raise SyntaxError("Operation must have [returns]")
-    try:
-        status = supported_op["possibleStatus"]
-    except KeyError:
-        raise SyntaxError("Operation must have [possibleStatus]")
+    docKeys = {"title": False, "method" : False, "expects": True, "returns": True, "possibleStatus": False}
+    result ={};
+    for k,v in docKeys.items():
+         result[k] = inputKeyCheck(supported_op, k, "supported_op", v);
+
     # Create the HydraClassOp object
-    op = HydraClassOp(name, method, expects, returns, status)
+    op = HydraClassOp(result["title"], result["method"], result["expects"], result["returns"], result["possibleStatus"])
     return op
 
 
 def createStatus(possible_status):
     """Create a HydraStatus object from the possibleStatus."""
     # Syntax checks
-    try:
-        title = possible_status["title"]
-    except KeyError:
-        raise SyntaxError("Status must have [title]")
-    try:
-        code = possible_status["statusCode"]
-    except KeyError:
-        raise SyntaxError("Status must have [statusCode]")
-    try:
-        description = convert_literal(possible_status["description"])
-    except KeyError:
-        raise SyntaxError("Status must have [description]")
+    docKeys = {"title": False, "statusCode": False, "description": True}
+    result ={};
+    for k,v in docKeys.items():
+         result[k] = inputKeyCheck(possible_status, k, "possible_status", v);
     # Create the HydraStatus object
-    status = HydraStatus(code, title, description)
+    status = HydraStatus(result["statusCode"], result["title"], result["description"])
     return status
 
 
