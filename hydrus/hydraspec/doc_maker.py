@@ -7,7 +7,7 @@ import json
 import pdb
 
 
-def createDoc(doc, HYDRUS_SERVER_URL=None, API_NAME=None):
+def create_doc(doc, HYDRUS_SERVER_URL=None, API_NAME=None):
     """Create the HydraDoc object from the API Documentation."""
     # Check @id
     try:
@@ -46,7 +46,7 @@ def createDoc(doc, HYDRUS_SERVER_URL=None, API_NAME=None):
         raise SyntaxError("The API Documentation must have [possibleStatus]")
 
     # EntryPoint object
-    entrypoint_obj = getEntrypoint(doc)     # getEntrypoint checks if all classes have @id
+    entrypoint_obj = get_entrypoint(doc)     # get_entrypoint checks if all classes have @id
 
     # Main doc object
     if HYDRUS_SERVER_URL is not None and API_NAME is not None:
@@ -60,13 +60,13 @@ def createDoc(doc, HYDRUS_SERVER_URL=None, API_NAME=None):
 
     # add all parsed_classes
     for class_ in supportedClass:
-        class_obj, collection = createClass(entrypoint_obj, class_)
+        class_obj, collection = create_class(entrypoint_obj, class_)
         if class_obj:
             apidoc.add_supported_class(class_obj, collection=collection)
 
     # add possibleStatus
     for status in possibleStatus:
-        status_obj = createStatus(status)
+        status_obj = create_status(status)
         apidoc.add_possible_status(status_obj)
 
     apidoc.add_baseResource()
@@ -75,7 +75,7 @@ def createDoc(doc, HYDRUS_SERVER_URL=None, API_NAME=None):
     return apidoc
 
 
-def createClass(entrypoint, class_dict):
+def create_class(entrypoint, class_dict):
     """Create HydraClass objects for classes in the API Documentation."""
     # Base classes not used
     exclude_list = ['http://www.w3.org/ns/hydra/core#Resource',
@@ -122,18 +122,18 @@ def createClass(entrypoint, class_dict):
 
     # Add supportedProperty for the Class
     for prop in supportedProperty:
-        prop_obj = createProperty(prop)
+        prop_obj = create_property(prop)
         class_.add_supported_prop(prop_obj)
 
     # Add supportedOperation for the Class
     for op in supportedOperation:
-        op_obj = createOperation(op)
+        op_obj = create_operation(op)
         class_.add_supported_op(op_obj)
 
     return class_, collection
 
 
-def getEntrypoint(doc):
+def get_entrypoint(doc):
     """Find and return the entrypoint object in the doc."""
     # Search supportedClass
     for class_ in doc["supportedClass"]:
@@ -173,7 +173,7 @@ def convert_literal(literal):
         raise TypeError("Literal not recognised")
 
 
-def createProperty(supported_prop):
+def create_property(supported_prop):
     """Create a HydraClassProp object from the supportedProperty."""
     # Syntax checks
     try:
@@ -255,7 +255,7 @@ def collection_in_endpoint(class_, entrypoint):
     return False
 
 
-def createOperation(supported_op):
+def create_operation(supported_op):
     """Create a HyraClassOp object from the supportedOperation."""
     # Syntax checks
     try:
@@ -283,7 +283,7 @@ def createOperation(supported_op):
     return op
 
 
-def createStatus(possible_status):
+def create_status(possible_status):
     """Create a HydraStatus object from the possibleStatus."""
     # Syntax checks
     try:
@@ -304,5 +304,5 @@ def createStatus(possible_status):
 
 
 if __name__ == "__main__":
-    api_doc = createDoc(sample_document.generate())
+    api_doc = create_doc(sample_document.generate())
     print(json.dumps(api_doc.generate(), indent=4, sort_keys=True))

@@ -47,7 +47,7 @@ class ViewsTestCase(unittest.TestCase):
         self.API_NAME = "demoapi"
         self.HYDRUS_SERVER_URL = "http://hydrus.com/"
         self.app = app_factory(self.API_NAME)
-        self.doc = doc_maker.createDoc(doc_writer_sample.api_doc.generate(), self.HYDRUS_SERVER_URL, self.API_NAME)
+        self.doc = doc_maker.create_doc(doc_writer_sample.api_doc.generate(), self.HYDRUS_SERVER_URL, self.API_NAME)
 
         test_classes = doc_parse.get_classes(self.doc.generate())
         test_properties = doc_parse.get_all_properties(test_classes)
