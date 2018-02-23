@@ -7,10 +7,11 @@ from hydrus.data.db_models import User
 from hashlib import sha224
 import base64
 # import random
-import pdb
+from sqlalchemy.orm.session import Session
+from werkzeug.local import LocalProxy
 
 
-def add_user(id_, paraphrase, session):
+def add_user(id_: int, paraphrase: str, session: Session) -> None:
     """Add new users to the database."""
     if session.query(exists().where(User.id == id_)).scalar():
         raise UserExists(id_=id_)
@@ -33,7 +34,7 @@ def add_user(id_, paraphrase, session):
 #     return user.nonce
 
 
-def generate_basic_digest(id_, paraphrase):
+def generate_basic_digest(id_: int, paraphrase: str) -> str:
     """Create the digest to be added to the HTTP Authorization header."""
     paraphrase_digest = sha224(paraphrase.encode('utf-8')).hexdigest()
     credentials = str(id_) + ':' + paraphrase_digest
@@ -41,7 +42,7 @@ def generate_basic_digest(id_, paraphrase):
     return digest
 
 
-def authenticate_user(id_, paraphrase, session):
+def authenticate_user(id_: int, paraphrase: str, session: Session) -> bool:
     """Authenticate a user based on the ID and his paraphrase."""
     user = None
     try:
@@ -54,7 +55,7 @@ def authenticate_user(id_, paraphrase, session):
     return generated_hash == hashvalue
 
 
-def check_authorization(request, session):
+def check_authorization(request: LocalProxy, session: Session) -> bool:
     """Check if the request object has the correct authorization."""
     auth = request.authorization
     return authenticate_user(auth.username, auth.password, session)

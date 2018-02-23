@@ -1,6 +1,7 @@
 """Sample to create Hydra APIDocumentation using doc_writer."""
 
 from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp
+from typing import Any, Dict, Union
 
 """Creating the HydraDoc object, this is the primary class for the Doc"""
 API_NAME = "demoapi"                # Name of the API
@@ -76,7 +77,7 @@ api_doc.gen_EntryPoint()        # Generates the EntryPoint object for the Doc us
 
 
 """Generate the complete API Documentation"""
-doc = api_doc.generate()        # Returns the entire API Documentation as a Python dict
+doc: Union[Dict[str, Any], str] = api_doc.generate()        # Returns the entire API Documentation as a Python dict
 
 if __name__ == "__main__":
     """Print the complete sample Doc in doc_writer_sample_output.py."""

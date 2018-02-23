@@ -4,10 +4,10 @@ from hydrus.hydraspec.doc_writer_sample import api_doc as sample_document
 from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp, HydraStatus
 import re
 import json
-import pdb
+from typing import Any, Dict, Match, Optional, Tuple, Union
 
 
-def createDoc(doc, HYDRUS_SERVER_URL=None, API_NAME=None):
+def createDoc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str=None, API_NAME: str=None) -> HydraDoc:
     """Create the HydraDoc object from the API Documentation."""
     # Check @id
     try:
@@ -75,7 +75,7 @@ def createDoc(doc, HYDRUS_SERVER_URL=None, API_NAME=None):
     return apidoc
 
 
-def createClass(entrypoint, class_dict):
+def createClass(entrypoint: Dict[str, Any], class_dict: Dict[str, Any]) -> Tuple[HydraClass, bool]:
     """Create HydraClass objects for classes in the API Documentation."""
     # Base classes not used
     exclude_list = ['http://www.w3.org/ns/hydra/core#Resource',
@@ -107,7 +107,7 @@ def createClass(entrypoint, class_dict):
         raise SyntaxError("Class must have [supportedOperation]")
 
     # See if class_dict is a Collection Class
-    collection = re.match(r'(.*)Collection(.*)', title, re.M | re.I)
+    collection = re.match(r'(.*)Collection(.*)', title, re.M | re.I) #type: Union[Match[Any], bool]
     if collection:
         return None, None
 
@@ -133,7 +133,7 @@ def createClass(entrypoint, class_dict):
     return class_, collection
 
 
-def getEntrypoint(doc):
+def getEntrypoint(doc: Dict[str, Any]) -> Dict[str, Any]:
     """Find and return the entrypoint object in the doc."""
     # Search supportedClass
     for class_ in doc["supportedClass"]:
@@ -151,7 +151,7 @@ def getEntrypoint(doc):
     raise SyntaxError("No EntryPoint class found")
 
 
-def convert_literal(literal):
+def convert_literal(literal: Any) -> Optional[Union[bool, str]]:
     """Convert JSON literals to Python ones."""
     # Map for the literals
     map_ = {
@@ -173,7 +173,7 @@ def convert_literal(literal):
         raise TypeError("Literal not recognised")
 
 
-def createProperty(supported_prop):
+def createProperty(supported_prop: Dict[str, Any]) -> HydraClassProp:
     """Create a HydraClassProp object from the supportedProperty."""
     # Syntax checks
     try:
@@ -197,11 +197,11 @@ def createProperty(supported_prop):
     except KeyError:
         raise SyntaxError("Property must have [required]")
     # Create the HydraClassProp object
-    prop = HydraClassProp(uri, title, required=required, read=read, write=write)
+    prop = HydraClassProp(uri, title, required=required, read=read, write=write) # type: ignore
     return prop
 
 
-def class_in_endpoint(class_, entrypoint):
+def class_in_endpoint(class_: Dict[str, Any], entrypoint: Dict[str, Any]) -> bool:
     """Check if a given class is in the EntryPoint object as a class."""
     regex = r'(vocab:)?(.*)EntryPoint/(.*/)?' + re.escape(class_["title"]) + r'$'
     # Check supportedProperty for the EntryPoint
@@ -228,7 +228,7 @@ def class_in_endpoint(class_, entrypoint):
     return False
 
 
-def collection_in_endpoint(class_, entrypoint):
+def collection_in_endpoint(class_: Dict[str, Any], entrypoint: Dict[str, Any]) -> bool:
     """Check if a given class is in the EntryPoint object as a collection."""
     regex = r'(vocab:)?(.*)EntryPoint/(.*/)?' + class_["title"] + "Collection"
     # Check supportedProperty for the EntryPoint
@@ -255,7 +255,7 @@ def collection_in_endpoint(class_, entrypoint):
     return False
 
 
-def createOperation(supported_op):
+def createOperation(supported_op: Dict[str, Any]) -> HydraClassOp:
     """Create a HyraClassOp object from the supportedOperation."""
     # Syntax checks
     try:
@@ -279,11 +279,11 @@ def createOperation(supported_op):
     except KeyError:
         raise SyntaxError("Operation must have [possibleStatus]")
     # Create the HydraClassOp object
-    op = HydraClassOp(name, method, expects, returns, status)
+    op = HydraClassOp(name, method, expects, returns, status) # type: ignore
     return op
 
 
-def createStatus(possible_status):
+def createStatus(possible_status: Dict[str, Any]) -> HydraStatus:
     """Create a HydraStatus object from the possibleStatus."""
     # Syntax checks
     try:
@@ -299,7 +299,7 @@ def createStatus(possible_status):
     except KeyError:
         raise SyntaxError("Status must have [description]")
     # Create the HydraStatus object
-    status = HydraStatus(code, title, description)
+    status = HydraStatus(code, title, description) # type: ignore
     return status
 
 
