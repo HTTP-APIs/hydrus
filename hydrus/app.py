@@ -11,7 +11,6 @@ from hydrus.utils import get_session, get_doc, get_api_name, get_hydrus_server_u
 
 from flask.wrappers import Response
 from typing import Dict, List, Any, Union
-from flask.app import Flask
 
 
 def validObject(object_: Dict[str, Any]) -> bool:
@@ -211,7 +210,7 @@ class Item(Resource):
                 return set_response_headers(jsonify(response))
 
             except Exception as e:
-                status_code, message = e.get_HTTP() # type: ignore
+                status_code, message = e.get_HTTP()  # type: ignore
                 return set_response_headers(jsonify(message), status_code=status_code)
 
         abort(405)

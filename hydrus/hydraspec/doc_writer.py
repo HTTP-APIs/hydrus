@@ -11,10 +11,10 @@ class HydraDoc():
         self.title = title
         self.base_url = base_url
         self.context = Context(base_url + API)
-        self.parsed_classes: Dict[str, Any] = dict()
-        self.other_classes: List[HydraClass] = list()
-        self.collections: Dict[str, Any] = dict()
-        self.status: List[HydraStatus] = list()
+        self.parsed_classes = dict() # type: Dict[str, Any]
+        self.other_classes = list() # type: List[HydraClass]
+        self.collections = dict() # type: Dict[str, Any]
+        self.status = list() # type: List[HydraStatus]
         self.entrypoint = HydraEntryPoint(base_url, entrypoint)
         self.desc = desc
 
@@ -92,8 +92,8 @@ class HydraClass():
         self.desc = desc
         self.parents = None
         self.endpoint = endpoint
-        self.supportedProperty: List = list()
-        self.supportedOperation: List = list()
+        self.supportedProperty = list() # type: List
+        self.supportedOperation = list() # type: List
         if sub_classof is not None:
             self.parents = sub_classof
 
@@ -206,7 +206,7 @@ class HydraCollection():
         """Generate Collection for a given class."""
         self.class_ = class_
         self.name = class_.title + "Collection"
-        self.supportedOperation: List = list()
+        self.supportedOperation = list() # type: List
         self.supportedProperty = [HydraClassProp("http://www.w3.org/ns/hydra/core#member",
                                                  "members",
                                                  False, False, False,

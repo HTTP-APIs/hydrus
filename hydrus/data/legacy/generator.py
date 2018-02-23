@@ -112,7 +112,7 @@ def randomValue(interval: Dict[str, int]) -> int:
 
 def generateObject(name: str, subsystem: Dict[str, Any]) -> Optional[Dict[str, Any]]: # type: ignore
     """Generate random components from given input dictionary."""
-    result = {} # type: dict
+    result = {} # type: Dict
     result['hasMass'] = randomValue(subsystem['hasMass'])
     if 'minWorkingTemperature' in subsystem.keys():
         if not name == 'structure':
@@ -199,7 +199,7 @@ def gen_random_object() -> Dict[str, Any]:
     k, v = list(subsystems.items())[index]
     name = str(random.randrange(0, 50)) + \
         str(random.choice(['T', 'W', 'KV', 'JFG'])) + ' ' + k
-    obj: Dict[str, Any] = {}
+    obj = {} # type: Dict[str, Any]
     obj['name'] = name
     obj['@type'] = classes_keymap[k]
     obj['object'] = generateObject(k, v) #type: ignore
@@ -208,7 +208,7 @@ def gen_random_object() -> Dict[str, Any]:
 
 def gen_cots(n: int) -> List[Dict[str, Any]]:
     """Generate n number of spacecraft parts with random properties."""
-    output: List[Dict[str,Any]] = []
+    output = [] # type: List[Dict[str, Any]]
     for num in range(n):
         obj = gen_random_object()
         output.append(obj)

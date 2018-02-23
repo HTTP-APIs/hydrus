@@ -18,9 +18,9 @@ properties = with_polymorphic(BaseProperty, "*")
 
 def get(id_: int, type_: str, api_name: str, session: Session, recursive: bool = False) -> Dict[str, str]:
     """Retrieve an Instance with given ID from the database [GET]."""
-    object_template: Dict[str, Any] = {
+    object_template = {
         "@type": "",
-    }
+    } # type: Dict[str, Any]
     try:
         rdf_class = session.query(RDFClass).filter(
             RDFClass.name == type_).one()
@@ -203,12 +203,12 @@ def update(id_: int, type_: str, object_: Dict[str,str], session: Session, api_n
 
 def get_collection(API_NAME: str, type_: str, session: Session) -> Dict[str, Any]:
     """Retrieve a type of collection from the database."""
-    collection_template: Dict[str, Any] = {
+    collection_template = {
         "@id": "/"+API_NAME+"/" + type_ + "Collection/",
         "@context": None,
         "@type": type_ + "Collection",
         "members": list()
-    }
+    } # type: Dict[str, Any]
     try:
         rdf_class = session.query(RDFClass).filter(
             RDFClass.name == type_).one()
