@@ -3,16 +3,16 @@
 from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String
+from typing import Any
 # from hydrus.settings import DB_URL
 
 engine = create_engine('sqlite:///database.db')
 
-Base = declarative_base()
+Base = declarative_base() # type: Any
 
 
 class RDFClass(Base):
     """Model for Classes.
-
     Classes are RDF-OWL or RDF-HYDRA classes.
     """
 
@@ -21,14 +21,13 @@ class RDFClass(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, unique=True)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Verbose object name."""
         return "<id='%s', name='%s'>" % (self.id, self.name)
 
 
 class Instance(Base):
     """Model for Object/Resource.
-
     Instances are instances of some kind/classes that are served through the API.
     """
 
@@ -55,7 +54,6 @@ class BaseProperty(Base):
 
 class InstanceProperty(BaseProperty):
     """Model for Instance Properties.
-
     Instance Properties are properties that are used as predicate when the subject is an Instance.
     >>> prop1 = BaseProperty('hasWeight')
     >>> prop2 = BaseProperty('hasCost')
@@ -65,14 +63,13 @@ class InstanceProperty(BaseProperty):
         'polymorphic_identity': 'INSTANCE'
     }
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Verbose object name."""
         return "<id='%s', name='%s', type='%s'>" % (self.id, self.name, self.type_)
 
 
 class AbstractProperty(BaseProperty):
     """Model for Abstract Properties.
-
     Abstract Properties are properties that are used as predicate between two RDF-OWL classes.
     >>> prop1 = BaseProperty('hasWeight')
     >>> prop2 = BaseProperty('hasCost')
@@ -84,14 +81,13 @@ class AbstractProperty(BaseProperty):
         'polymorphic_identity': 'ABSTRACT'
     }
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Verbose object name."""
         return "<id='%s', name='%s', type='%s'>" % (self.id, self.name, self.type_)
 
 
 class Terminal(Base):
     """Model for Terminals.
-
     Terminals are numbers or string that can be referenced by a Property. They can be only
      objects in a triple.
     >>> t = Terminal(value=85, unit='cubic centimeters')
@@ -104,7 +100,7 @@ class Terminal(Base):
     value = Column(String)
     unit = Column(String)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Verbose object name."""
         return "<id='%s', value='%s', unit='%s'>" % (self.id, self.value, self.unit)
 
@@ -136,7 +132,7 @@ class GraphCAC(Graph):
         'polymorphic_identity': 'graphcac',
     }
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Verbose object name."""
         return "<subject='%s', predicate='%s', object_='%s'>" % (self.subject, self.predicate, self.object_)
 
@@ -154,7 +150,7 @@ class GraphIAC(Graph):
         'polymorphic_identity': 'graphiac',
     }
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Verbose object name."""
         return "<subject='%s', predicate='%s', object_='%s'>" % (self.subject, self.predicate, self.object_)
 
@@ -172,7 +168,7 @@ class GraphIII(Graph):
         'polymorphic_identity': 'graphiii',
     }
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Verbose object name."""
         return "<subject='%s', predicate='%s', object_='%s'>" % (self.subject, self.predicate, self.object_)
 
@@ -190,7 +186,7 @@ class GraphIIT(Graph):
         'polymorphic_identity': 'graphiit',
     }
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Verbose object name."""
         return "<subject='%s', predicate='%s', object_='%s'>" % (self.subject, self.predicate, self.object_)
 
