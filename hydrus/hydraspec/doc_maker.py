@@ -5,6 +5,8 @@ import json
 from hydrus.hydraspec.doc_writer_sample import api_doc as sample_document
 from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp
 from hydrus.hydraspec.doc_writer import HydraStatus
+from typing import Any, Dict, Match, Optional, Tuple, Union
+
 
 def error_mapping(body):
     """Function returns starting error message based on its body type."""
@@ -17,6 +19,9 @@ def error_mapping(body):
     }
     return error_map[body]
 
+
+
+
 def input_key_check(body, key, body_type, literal):
     """Function to validate key inside the dictonary payload"""
     try:
@@ -26,7 +31,8 @@ def input_key_check(body, key, body_type, literal):
     except KeyError:
         raise SyntaxError("{0} [{1}]".format(error_mapping(body_type), key))
 
-def create_doc(doc, HYDRUS_SERVER_URL=None, API_NAME=None):
+
+def createDoc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str=None, API_NAME: str=None) -> HydraDoc:
     """Create the HydraDoc object from the API Documentation."""
     # Check @id
     try:
@@ -55,7 +61,7 @@ def create_doc(doc, HYDRUS_SERVER_URL=None, API_NAME=None):
         result[k] = input_key_check(doc, k, "doc", literal)
 
     # EntryPoint object
-    entrypoint_obj = get_entrypoint(doc)     # getEntrypoint checks if all classes have @id
+    entrypoint_obj = getEntrypoint(doc)     # getEntrypoint checks if all classes have @id
 
     # Main doc object
     if HYDRUS_SERVER_URL is not None and API_NAME is not None:
@@ -69,13 +75,13 @@ def create_doc(doc, HYDRUS_SERVER_URL=None, API_NAME=None):
 
     # add all parsed_classes
     for class_ in result["supportedClass"]:
-        class_obj, collection = create_class(entrypoint_obj, class_)
+        class_obj, collection = createClass(entrypoint_obj, class_)
         if class_obj:
             apidoc.add_supported_class(class_obj, collection=collection)
 
     # add possibleStatus
     for status in result["possibleStatus"]:
-        status_obj = create_status(status)
+        status_obj = createStatus(status)
         apidoc.add_possible_status(status_obj)
 
     apidoc.add_baseResource()
@@ -84,7 +90,7 @@ def create_doc(doc, HYDRUS_SERVER_URL=None, API_NAME=None):
     return apidoc
 
 
-def create_class(entrypoint, class_dict):
+def createClass(entrypoint: Dict[str, Any], class_dict: Dict[str, Any]) -> Tuple[HydraClass, bool]:
     """Create HydraClass objects for classes in the API Documentation."""
     # Base classes not used
     exclude_list = ['http://www.w3.org/ns/hydra/core#Resource',
@@ -109,7 +115,7 @@ def create_class(entrypoint, class_dict):
         result[k] = input_key_check(class_dict, k, "class_dict", literal)
 
     # See if class_dict is a Collection Class
-    collection = re.match(r'(.*)Collection(.*)', result["title"], re.M | re.I)
+    collection = re.match(r'(.*)Collection(.*)', result["title"], re.M | re.I) #type: Union[Match[Any], bool]
     if collection:
         return None, None
 
@@ -124,18 +130,18 @@ def create_class(entrypoint, class_dict):
 
     # Add supportedProperty for the Class
     for prop in result["supportedProperty"]:
-        prop_obj = create_property(prop)
+        prop_obj = createProperty(prop)
         class_.add_supported_prop(prop_obj)
 
     # Add supportedOperation for the Class
     for op_ in result["supportedOperation"]:
-        op_obj = create_operation(op_)
+        op_obj = createOperation(op_)
         class_.add_supported_op(op_obj)
 
     return class_, collection
 
 
-def get_entrypoint(doc):
+def getEntrypoint(doc: Dict[str, Any]) -> Dict[str, Any]:
     """Find and return the entrypoint object in the doc."""
     # Search supportedClass
     for class_ in doc["supportedClass"]:
@@ -153,7 +159,7 @@ def get_entrypoint(doc):
     raise SyntaxError("No EntryPoint class found")
 
 
-def convert_literal(literal):
+def convert_literal(literal: Any) -> Optional[Union[bool, str]]:
     """Convert JSON literals to Python ones."""
     # Map for the literals
     map_ = {
@@ -174,7 +180,7 @@ def convert_literal(literal):
         raise TypeError("Literal not recognised")
 
 
-def create_property(supported_prop):
+def createProperty(supported_prop: Dict[str, Any]) -> HydraClassProp:
     """Create a HydraClassProp object from the supportedProperty."""
     # Syntax checks
 
@@ -192,7 +198,8 @@ def create_property(supported_prop):
     prop = HydraClassProp(result["property"], result["title"], required=result["required"], read=result["readonly"], write=result["writeonly"])
     return prop
 
-def class_in_endpoint(class_, entrypoint):
+
+def class_in_endpoint(class_: Dict[str, Any], entrypoint: Dict[str, Any]) -> bool:
     """Check if a given class is in the EntryPoint object as a class."""
     regex = r'(vocab:)?(.*)EntryPoint/(.*/)?' + re.escape(class_["title"]) + r'$'
     # Check supportedProperty for the EntryPoint
@@ -219,7 +226,7 @@ def class_in_endpoint(class_, entrypoint):
     return False
 
 
-def collection_in_endpoint(class_, entrypoint):
+def collection_in_endpoint(class_: Dict[str, Any], entrypoint: Dict[str, Any]) -> bool:
     """Check if a given class is in the EntryPoint object as a collection."""
     regex = r'(vocab:)?(.*)EntryPoint/(.*/)?' + class_["title"] + "Collection"
     # Check supportedProperty for the EntryPoint
@@ -246,7 +253,7 @@ def collection_in_endpoint(class_, entrypoint):
     return False
 
 
-def create_operation(supported_op):
+def createOperation(supported_op: Dict[str, Any]) -> HydraClassOp:
     """Create a HyraClassOp object from the supportedOperation."""
     # Syntax checks
     doc_keys = {
@@ -265,7 +272,7 @@ def create_operation(supported_op):
     return op_
 
 
-def create_status(possible_status):
+def createStatus(possible_status: Dict[str, Any]) -> HydraStatus:
     """Create a HydraStatus object from the possibleStatus."""
     # Syntax checks
     doc_keys = {
@@ -282,5 +289,5 @@ def create_status(possible_status):
 
 
 if __name__ == "__main__":
-    api_doc = create_doc(sample_document.generate())
+    api_doc = createDoc(sample_document.generate())
     print(json.dumps(api_doc.generate(), indent=4, sort_keys=True))
