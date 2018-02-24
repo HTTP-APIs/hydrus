@@ -47,8 +47,8 @@ def hydrafy(object_):
 def check_endpoint(method, type_):
     """Check if endpoint and method is supported in the API."""
     status_val = 404
-    if type_=='vocab':
-        return {'method':False,'status':405}
+    if type_ == 'vocab':
+        return {'method': False, 'status': 405}
 
     for endpoint in get_doc().entrypoint.entrypoint.supportedProperty:
         if type_ == endpoint.name:
@@ -56,8 +56,8 @@ def check_endpoint(method, type_):
             for operation in endpoint.supportedOperation:
                 if operation.method == method:
                     status_val = 200
-                    return {'method':True,'status':status_val}
-    return {'method':False,'status':status_val}
+                    return {'method': True, 'status': status_val}
+    return {'method': False, 'status': status_val}
 
 
 def get_type(class_type, method):
