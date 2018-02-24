@@ -34,72 +34,37 @@ from hydrus.hydraspec.doc_writer import HydraDoc
 
 
 @contextmanager
-def set_session(application, DB_SESSION):
+def set_authentication(application, authentication):
     """
-    Set the Database Session for the app before it is run in main.py.
+    Set the whether API needs to be authenticated or not (before it is run in main.py).
 
     :param application: Flask app object
             <flask.app.Flask>
-    :param DB_SESSION: SQLalchemy Session object
-            <sqlalchemy.orm.session.Session>
+    :param authentication : Bool. API Auth needed or not
+            <bool>
     """
-    if not isinstance(DB_SESSION, Session):
-        raise TypeError(
-            "The API Doc is not of type <sqlalchemy.orm.session.Session>")
+    if not isinstance(authentication, bool):
+        raise TypeError("Authentication flag must be of type <bool>")
 
     def handler(sender, **kwargs):
-        g.dbsession = DB_SESSION
+        g.authentication_ = authentication
     with appcontext_pushed.connected_to(handler, application):
         yield
 
 
-def get_session():
+def get_authentication():
     """
-    Get the Database Session from g.
-    Returns and sets a default Session if not found
+    Check whether API needs to be authenticated or not.
+    Return and sets False if not found.
 
-    :return session : SQLalchemy Session object
-            <sqlalchemy.orm.session.Session>
+    :return authentication : Bool. API Auth needed or not
+            <bool>
     """
-    session = getattr(g, 'dbsession', None)
-    if session is None:
-        session = sessionmaker(bind=engine)()
-        g.dbsession = session
-    return session
-
-
-@contextmanager
-def set_hydrus_server_url(application, server_url):
-    """
-    Set the server URL for the app (before it is run in main.py).
-
-    :param application: Flask app object
-            <flask.app.Flask>
-    :param server_url : Server URL
-            <str>
-    """
-    if not isinstance(server_url, str):
-        raise TypeError("The server_url is not of type <str>")
-
-    def handler(sender, **kwargs):
-        g.hydrus_server_url = server_url
-    with appcontext_pushed.connected_to(handler, application):
-        yield
-
-
-def get_hydrus_server_url():
-    """
-    Get the server URL.
-    Returns and sets "http://localhost/" if not found.
-
-    :return hydrus_server_url : Server URL
-            <str>
-    """
-    hydrus_server_url = getattr(g, 'hydrus_server_url', None)
-    if hydrus_server_url is None:
-        hydrus_server_url = "http://localhost/"
-        g.hydrus_server_url = hydrus_server_url
-    return hydrus_server_url
+    authentication = getattr(g, 'authentication_', None)
+    if authentication is None:
+        authentication = False
+        g.authentication_ = authentication
+    return authentication
 
 
 @contextmanager
@@ -172,34 +137,69 @@ def get_doc():
 
 
 @contextmanager
-def set_authentication(application, authentication):
+def set_hydrus_server_url(application, server_url):
     """
-    Set the whether API needs to be authenticated or not (before it is run in main.py).
+    Set the server URL for the app (before it is run in main.py).
 
     :param application: Flask app object
             <flask.app.Flask>
-    :param authentication : Bool. API Auth needed or not
-            <bool>
+    :param server_url : Server URL
+            <str>
     """
-    if not isinstance(authentication, bool):
-        raise TypeError("Authentication flag must be of type <bool>")
+    if not isinstance(server_url, str):
+        raise TypeError("The server_url is not of type <str>")
 
     def handler(sender, **kwargs):
-        g.authentication_ = authentication
+        g.hydrus_server_url = server_url
     with appcontext_pushed.connected_to(handler, application):
         yield
 
 
-def get_authentication():
+def get_hydrus_server_url():
     """
-    Check whether API needs to be authenticated or not.
-    Return and sets False if not found.
+    Get the server URL.
+    Returns and sets "http://localhost/" if not found.
 
-    :return authentication : Bool. API Auth needed or not
-            <bool>
+    :return hydrus_server_url : Server URL
+            <str>
     """
-    authentication = getattr(g, 'authentication_', None)
-    if authentication is None:
-        authentication = False
-        g.authentication_ = authentication
-    return authentication
+    hydrus_server_url = getattr(g, 'hydrus_server_url', None)
+    if hydrus_server_url is None:
+        hydrus_server_url = "http://localhost/"
+        g.hydrus_server_url = hydrus_server_url
+    return hydrus_server_url
+
+
+@contextmanager
+def set_session(application, DB_SESSION):
+    """
+    Set the Database Session for the app before it is run in main.py.
+
+    :param application: Flask app object
+            <flask.app.Flask>
+    :param DB_SESSION: SQLalchemy Session object
+            <sqlalchemy.orm.session.Session>
+    """
+    if not isinstance(DB_SESSION, Session):
+        raise TypeError(
+            "The API Doc is not of type <sqlalchemy.orm.session.Session>")
+
+    def handler(sender, **kwargs):
+        g.dbsession = DB_SESSION
+    with appcontext_pushed.connected_to(handler, application):
+        yield
+
+
+def get_session():
+    """
+    Get the Database Session from g.
+    Returns and sets a default Session if not found
+
+    :return session : SQLalchemy Session object
+            <sqlalchemy.orm.session.Session>
+    """
+    session = getattr(g, 'dbsession', None)
+    if session is None:
+        session = sessionmaker(bind=engine)()
+        g.dbsession = session
+    return session
