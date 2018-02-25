@@ -8,8 +8,11 @@ from hydrus.hydraspec.doc_writer import HydraStatus
 from typing import Any, Dict, Match, Optional, Tuple, Union
 
 
-def error_mapping(body):
-    """Function returns starting error message based on its body type."""
+def error_mapping(body: str=None) -> str :
+    """Function returns starting error message based on its body type.
+    :param body: Params type for error message
+    :return string: Error message for input key
+    """
     error_map = {
         "doc" : "The API Documentation must have",
         "class_dict" : "Class must have",
@@ -22,8 +25,14 @@ def error_mapping(body):
 
 
 
-def input_key_check(body, key, body_type, literal):
-    """Function to validate key inside the dictonary payload"""
+def input_key_check(body: Dict[str, Any], key: str=None, body_type: str=None, literal: bool=False) -> dict :
+    """Function to validate key inside the dictonary payload  
+    :param body: JSON body in which we have to check the key
+    :param key: To check if its value exit in the body
+    :param body_type: Name of JSON body
+    :param literal: To check whether we need to convert the value
+    :return string: Value of the body
+    """
     try:
         if literal:
             return convert_literal(body[key])
@@ -32,7 +41,8 @@ def input_key_check(body, key, body_type, literal):
         raise SyntaxError("{0} [{1}]".format(error_mapping(body_type), key))
 
 
-def createDoc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str=None, API_NAME: str=None) -> HydraDoc:
+
+def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str=None, API_NAME: str=None) -> HydraDoc:
     """Create the HydraDoc object from the API Documentation."""
     # Check @id
     try:
@@ -61,7 +71,7 @@ def createDoc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str=None, API_NAME: str=No
         result[k] = input_key_check(doc, k, "doc", literal)
 
     # EntryPoint object
-    entrypoint_obj = getEntrypoint(doc)     # getEntrypoint checks if all classes have @id
+    entrypoint_obj = get_entrypoint(doc)     # getEntrypoint checks if all classes have @id
 
     # Main doc object
     if HYDRUS_SERVER_URL is not None and API_NAME is not None:
@@ -75,13 +85,13 @@ def createDoc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str=None, API_NAME: str=No
 
     # add all parsed_classes
     for class_ in result["supportedClass"]:
-        class_obj, collection = createClass(entrypoint_obj, class_)
+        class_obj, collection = create_class(entrypoint_obj, class_)
         if class_obj:
             apidoc.add_supported_class(class_obj, collection=collection)
 
     # add possibleStatus
     for status in result["possibleStatus"]:
-        status_obj = createStatus(status)
+        status_obj = create_status(status)
         apidoc.add_possible_status(status_obj)
 
     apidoc.add_baseResource()
@@ -90,7 +100,7 @@ def createDoc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str=None, API_NAME: str=No
     return apidoc
 
 
-def createClass(entrypoint: Dict[str, Any], class_dict: Dict[str, Any]) -> Tuple[HydraClass, bool]:
+def create_class(entrypoint: Dict[str, Any], class_dict: Dict[str, Any]) -> Tuple[HydraClass, bool]:
     """Create HydraClass objects for classes in the API Documentation."""
     # Base classes not used
     exclude_list = ['http://www.w3.org/ns/hydra/core#Resource',
@@ -130,18 +140,18 @@ def createClass(entrypoint: Dict[str, Any], class_dict: Dict[str, Any]) -> Tuple
 
     # Add supportedProperty for the Class
     for prop in result["supportedProperty"]:
-        prop_obj = createProperty(prop)
+        prop_obj = create_property(prop)
         class_.add_supported_prop(prop_obj)
 
     # Add supportedOperation for the Class
-    for op_ in result["supportedOperation"]:
-        op_obj = createOperation(op_)
+    for op in result["supportedOperation"]:
+        op_obj = create_operation(op)
         class_.add_supported_op(op_obj)
 
     return class_, collection
 
 
-def getEntrypoint(doc: Dict[str, Any]) -> Dict[str, Any]:
+def get_entrypoint(doc: Dict[str, Any]) -> Dict[str, Any]:
     """Find and return the entrypoint object in the doc."""
     # Search supportedClass
     for class_ in doc["supportedClass"]:
@@ -180,7 +190,7 @@ def convert_literal(literal: Any) -> Optional[Union[bool, str]]:
         raise TypeError("Literal not recognised")
 
 
-def createProperty(supported_prop: Dict[str, Any]) -> HydraClassProp:
+def create_property(supported_prop: Dict[str, Any]) -> HydraClassProp:
     """Create a HydraClassProp object from the supportedProperty."""
     # Syntax checks
 
@@ -253,7 +263,7 @@ def collection_in_endpoint(class_: Dict[str, Any], entrypoint: Dict[str, Any]) -
     return False
 
 
-def createOperation(supported_op: Dict[str, Any]) -> HydraClassOp:
+def create_operation(supported_op: Dict[str, Any]) -> HydraClassOp:
     """Create a HyraClassOp object from the supportedOperation."""
     # Syntax checks
     doc_keys = {
@@ -272,7 +282,7 @@ def createOperation(supported_op: Dict[str, Any]) -> HydraClassOp:
     return op_
 
 
-def createStatus(possible_status: Dict[str, Any]) -> HydraStatus:
+def create_status(possible_status: Dict[str, Any]) -> HydraStatus:
     """Create a HydraStatus object from the possibleStatus."""
     # Syntax checks
     doc_keys = {
@@ -289,5 +299,5 @@ def createStatus(possible_status: Dict[str, Any]) -> HydraStatus:
 
 
 if __name__ == "__main__":
-    api_doc = createDoc(sample_document.generate())
+    api_doc = create_doc(sample_document.generate())
     print(json.dumps(api_doc.generate(), indent=4, sort_keys=True))
