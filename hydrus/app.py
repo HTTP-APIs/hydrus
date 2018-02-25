@@ -45,7 +45,7 @@ def hydrafy(object_: Dict[str, Any]) -> Dict[str, Any]:
     return object_
 
 
-def checkEndpoint(method: str, type_: str) -> Dict[str, Any]:
+def checkEndpoint(method: str, type_: str) -> Dict[str, Union[bool,int]] :
     """Check if endpoint and method is supported in the API."""
     status_val = 404
     if type_ == 'vocab':
