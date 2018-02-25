@@ -254,7 +254,7 @@ class ItemCollection(Resource):
                     status_code, message = e.get_HTTP()  # type: ignore
                     return set_response_headers(jsonify(message), status_code=status_code)
 
-        endpoint_ = check_endpoint("GET",type_)
+        endpoint_ = checkEndpoint("GET",type_)
         if endpoint_['method']:
             # Collections
             if type_ in get_doc().collections:
@@ -294,7 +294,7 @@ class ItemCollection(Resource):
                     status_code, message = e.get_HTTP()  # type: ignore
                     return set_response_headers(jsonify(message), status_code=status_code)
 
-        endpoint_ = check_endpoint("PUT",type_)
+        endpoint_ = checkEndpoint("PUT",type_)
         if endpoint_['method']:
             object_ = json.loads(request.data.decode('utf-8'))
 
@@ -352,7 +352,7 @@ class ItemCollection(Resource):
                     status_code, message = e.get_HTTP()  # type: ignore
                     return set_response_headers(jsonify(message), status_code=status_code)
 
-        endpoint_ = check_endpoint("POST",type_)
+        endpoint_ = checkEndpoint("POST",type_)
         if endpoint_['method']:
             object_ = json.loads(request.data.decode('utf-8'))
 
@@ -389,7 +389,7 @@ class ItemCollection(Resource):
                     status_code, message = e.get_HTTP()  # type: ignore
                     return set_response_headers(jsonify(message), status_code=status_code)
 
-        endpoint_ = check_endpoint("DELETE",type_)
+        endpoint_ = checkEndpoint("DELETE",type_)
         if endpoint_['method']:
             # No Delete Operation for collections
             if type_ in get_doc().parsed_classes and type_+"Collection" not in get_doc().collections:
