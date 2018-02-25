@@ -7,7 +7,7 @@ import json
 from typing import Any, Dict, Match, Optional, Tuple, Union
 
 
-def create_doc(doc, HYDRUS_SERVER_URL=None, API_NAME=None):
+def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str=None, API_NAME: str=None) -> HydraDoc:
     """Create the HydraDoc object from the API Documentation."""
     # Check @id
     try:
@@ -46,7 +46,7 @@ def create_doc(doc, HYDRUS_SERVER_URL=None, API_NAME=None):
         raise SyntaxError("The API Documentation must have [possibleStatus]")
 
     # EntryPoint object
-    entrypoint_obj = get_entrypoint(doc)     # get_entrypoint checks if all classes have @id
+    entrypoint_obj = get_entrypoint(doc)     # getEntrypoint checks if all classes have @id
 
     # Main doc object
     if HYDRUS_SERVER_URL is not None and API_NAME is not None:
@@ -75,7 +75,7 @@ def create_doc(doc, HYDRUS_SERVER_URL=None, API_NAME=None):
     return apidoc
 
 
-def create_class(entrypoint, class_dict):
+def create_class(entrypoint: Dict[str, Any], class_dict: Dict[str, Any]) -> Tuple[HydraClass, bool]:
     """Create HydraClass objects for classes in the API Documentation."""
     # Base classes not used
     exclude_list = ['http://www.w3.org/ns/hydra/core#Resource',
@@ -133,7 +133,7 @@ def create_class(entrypoint, class_dict):
     return class_, collection
 
 
-def get_entrypoint(doc):
+def get_entrypoint(doc: Dict[str, Any]) -> Dict[str, Any]:
     """Find and return the entrypoint object in the doc."""
     # Search supportedClass
     for class_ in doc["supportedClass"]:
@@ -173,7 +173,7 @@ def convert_literal(literal: Any) -> Optional[Union[bool, str]]:
         raise TypeError("Literal not recognised")
 
 
-def create_property(supported_prop):
+def create_property(supported_prop: Dict[str, Any]) -> HydraClassProp:
     """Create a HydraClassProp object from the supportedProperty."""
     # Syntax checks
     try:
@@ -255,7 +255,7 @@ def collection_in_endpoint(class_: Dict[str, Any], entrypoint: Dict[str, Any]) -
     return False
 
 
-def create_operation(supported_op):
+def create_operation(supported_op: Dict[str, Any]) -> HydraClassOp:
     """Create a HyraClassOp object from the supportedOperation."""
     # Syntax checks
     try:
@@ -283,7 +283,7 @@ def create_operation(supported_op):
     return op
 
 
-def create_status(possible_status):
+def create_status(possible_status: Dict[str, Any]) -> HydraStatus:
     """Create a HydraStatus object from the possibleStatus."""
     # Syntax checks
     try:
