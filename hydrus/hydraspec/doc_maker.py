@@ -1,13 +1,15 @@
 """Contsructor to take a Python dict containing an API Documentation and create a HydraDoc object for it."""
 
 from hydrus.hydraspec.doc_writer_sample import api_doc as sample_document
-from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp, HydraStatus
+from hydrus.hydraspec.doc_writer import (HydraDoc, HydraClass,
+                                         HydraClassProp, HydraClassOp,
+                                         HydraStatus)
 import re
 import json
-from typing import Any, Dict, Match, Optional, Tuple, Union
+from typing import Any, Dict, Match, Optional, Tuple, Union, Iterator
 
 
-def create_doc(doc, HYDRUS_SERVER_URL=None, API_NAME=None):
+def create_doc(doc, HYDRUS_SERVER_URL=None, API_NAME=None) -> HydraDoc:
     """Create the HydraDoc object from the API Documentation."""
     # Check @id
     try:
@@ -75,7 +77,7 @@ def create_doc(doc, HYDRUS_SERVER_URL=None, API_NAME=None):
     return apidoc
 
 
-def create_class(entrypoint, class_dict):
+def create_class(entrypoint, class_dict) -> HydraClass:
     """Create HydraClass objects for classes in the API Documentation."""
     # Base classes not used
     exclude_list = ['http://www.w3.org/ns/hydra/core#Resource',
@@ -133,7 +135,7 @@ def create_class(entrypoint, class_dict):
     return class_, collection
 
 
-def get_entrypoint(doc):
+def get_entrypoint(doc) -> Iterator:
     """Find and return the entrypoint object in the doc."""
     # Search supportedClass
     for class_ in doc["supportedClass"]:
@@ -173,7 +175,7 @@ def convert_literal(literal: Any) -> Optional[Union[bool, str]]:
         raise TypeError("Literal not recognised")
 
 
-def create_property(supported_prop):
+def create_property(supported_prop) -> HydraClassProp:
     """Create a HydraClassProp object from the supportedProperty."""
     # Syntax checks
     try:
@@ -255,8 +257,8 @@ def collection_in_endpoint(class_: Dict[str, Any], entrypoint: Dict[str, Any]) -
     return False
 
 
-def create_operation(supported_op):
-    """Create a HyraClassOp object from the supportedOperation."""
+def create_operation(supported_op) -> HydraClassOp:
+    """Create a HydraClassOp object from the supportedOperation."""
     # Syntax checks
     try:
         name = supported_op["title"]
@@ -283,7 +285,7 @@ def create_operation(supported_op):
     return op
 
 
-def create_status(possible_status):
+def create_status(possible_status) -> HydraStatus:
     """Create a HydraStatus object from the possibleStatus."""
     # Syntax checks
     try:

@@ -4,6 +4,7 @@ import json
 from flask import Flask, jsonify, request, abort
 from flask_restful import Api, Resource
 from flask_cors import CORS
+from typing import Any, Iterator
 
 from hydrus.data import crud
 from hydrus.data.user import check_authorization
@@ -12,14 +13,14 @@ from hydrus.utils import get_session, get_doc, get_api_name, get_hydrus_server_u
 import pdb
 
 
-def valid_object(object_):
+def valid_object(object_) -> bool:
     """Check if the data passed in POST is of valid format or not."""
     if "@type" in object_:
         return True
     return False
 
 
-def failed_authentication():
+def failed_authentication() -> Iterator:
     """Return failed authentication object."""
     message = {401: "Need credentials to authenticate"}
     response = set_response_headers(jsonify(message), status_code=401,
@@ -27,7 +28,7 @@ def failed_authentication():
     return response
 
 
-def set_response_headers(resp, ct="application/ld+json", headers=[], status_code=200):
+def set_response_headers(resp, ct="application/ld+json", headers=[], status_code=200) -> Iterator:
     """Set the response headers."""
     resp.status_code = status_code
     for header in headers:
@@ -38,13 +39,13 @@ def set_response_headers(resp, ct="application/ld+json", headers=[], status_code
     return resp
 
 
-def hydrafy(object_):
+def hydrafy(object_) -> Iterator:
     """Add hydra context to objects."""
     object_["@context"] = "/"+get_api_name()+"/contexts/" + object_["@type"] + ".jsonld"
     return object_
 
 
-def check_endpoint(method, type_):
+def check_endpoint(method, type_) -> bool:
     """Check if endpoint and method is supported in the API."""
     for endpoint in get_doc().entrypoint.entrypoint.supportedProperty:
         if type_ == endpoint.name:
@@ -54,7 +55,7 @@ def check_endpoint(method, type_):
     return False
 
 
-def get_type(class_type, method):
+def get_type(class_type, method) -> str:
     """Return the @type of object allowed for POST/PUT."""
     for supportedOp in get_doc().parsed_classes[class_type]["class"].supportedOperation:
         if supportedOp.method == method:
@@ -62,7 +63,7 @@ def get_type(class_type, method):
     # NOTE: Don't use split, if there are more than one substrings with 'vocab:' not everything will be returned.
 
 
-def check_class_op(class_type, method):
+def check_class_op(class_type, method) -> bool:
     """Check if the Class supports the operation."""
     for supportedOp in get_doc().parsed_classes[class_type]["class"].supportedOperation:
         if supportedOp.method == method:
@@ -73,7 +74,7 @@ def check_class_op(class_type, method):
 class Index(Resource):
     """Class for the EntryPoint."""
 
-    def get(self):
+    def get(self) -> Iterator:
         """Return main entrypoint for the api."""
         return set_response_headers(jsonify(get_doc().entrypoint.get()))
 
@@ -81,7 +82,7 @@ class Index(Resource):
 class Vocab(Resource):
     """Vocabulary for Hydra."""
 
-    def get(self):
+    def get(self) -> Iterator:
         """Return the main hydra vocab."""
         return set_response_headers(jsonify(get_doc().generate()))
 
@@ -89,7 +90,7 @@ class Vocab(Resource):
 class EntryPoint(Resource):
     """Hydra EntryPoint."""
 
-    def get(self):
+    def get(self) -> Iterator:
         """Return application main Entrypoint."""
         response = {"@context": get_doc().entrypoint.context.generate()}
         return set_response_headers(jsonify(response))
@@ -98,7 +99,7 @@ class EntryPoint(Resource):
 class Item(Resource):
     """Handles all operations(GET, POST, PATCH, DELETE) on Items (item can be anything depending upon the vocabulary)."""
 
-    def get(self, id_, type_):
+    def get(self, id_, type_) -> Iterator:
         """GET object with id = id_ from the database."""
         if get_authentication():
             if request.authorization is None:
@@ -122,7 +123,7 @@ class Item(Resource):
 
         abort(405)
 
-    def post(self, id_, type_):
+    def post(self, id_, type_) -> Iterator:
         """Update object of type<type_> at ID<id_> with new object_ using HTTP POST."""
         if get_authentication():
             if request.authorization is None:
@@ -156,7 +157,7 @@ class Item(Resource):
 
         abort(405)
 
-    def put(self, id_, type_):
+    def put(self, id_, type_) -> Iterator:
         """Add new object_ optional <id_> parameter using HTTP PUT."""
         if get_authentication():
             if request.authorization is None:
@@ -190,7 +191,7 @@ class Item(Resource):
 
         abort(405)
 
-    def delete(self, id_, type_):
+    def delete(self, id_, type_) -> Iterator:
         """Delete object with id=id_ from database."""
         if get_authentication():
             if request.authorization is None:
@@ -218,7 +219,7 @@ class Item(Resource):
 class ItemCollection(Resource):
     """Handle operation related to ItemCollection (a collection of items)."""
 
-    def get(self, type_):
+    def get(self, type_) -> Iterator:
         """Retrieve a collection of items from the database."""
         if get_authentication():
             if request.authorization is None:
@@ -253,7 +254,7 @@ class ItemCollection(Resource):
 
         abort(405)
 
-    def put(self, type_):
+    def put(self, type_) -> Iterator:
         """Add item to ItemCollection."""
         if get_authentication():
             if request.authorization is None:
@@ -306,7 +307,7 @@ class ItemCollection(Resource):
 
         abort(405)
 
-    def post(self, type_):
+    def post(self, type_) -> Iterator:
         """Update Non Collection class item."""
         if get_authentication():
             if request.authorization is None:
@@ -338,7 +339,7 @@ class ItemCollection(Resource):
 
         abort(405)
 
-    def delete(self, type_):
+    def delete(self, type_) -> Iterator:
         """Delete a non Collection class item."""
         if get_authentication():
             if request.authorization is None:
@@ -364,7 +365,7 @@ class ItemCollection(Resource):
 class Contexts(Resource):
     """Dynamically genereated contexts."""
 
-    def get(self, category):
+    def get(self, category) -> Iterator:
         """Return the context for the specified class."""
         if "Collection" in category:
 
@@ -387,7 +388,7 @@ class Contexts(Resource):
                 return set_response_headers(jsonify(response), status_code=404)
 
 
-def app_factory(API_NAME="api"):
+def app_factory(API_NAME="api") ->Iterator:
     """Create an app object."""
     app = Flask(__name__)
 
