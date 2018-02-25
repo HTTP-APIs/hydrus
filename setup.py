@@ -32,6 +32,8 @@ setup(name='hydrus',
           'thespian==3.5.2',
           'flask-cors',
           'blinker==1.4',
+          'typing==3.6.4',
+          'mypy'
       ],
       packages=[
         'hydrus',
