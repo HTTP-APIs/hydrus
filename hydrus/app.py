@@ -12,7 +12,7 @@ from hydrus.utils import get_session, get_doc, get_api_name, get_hydrus_server_u
 import pdb
 
 
-def validObject(object_):
+def valid_object(object_):
     """Check if the data passed in POST is of valid format or not."""
     if "@type" in object_:
         return True
@@ -44,7 +44,7 @@ def hydrafy(object_):
     return object_
 
 
-def checkEndpoint(method, type_):
+def check_endpoint(method, type_):
     """Check if endpoint and method is supported in the API."""
     for endpoint in get_doc().entrypoint.entrypoint.supportedProperty:
         if type_ == endpoint.name:
@@ -54,7 +54,7 @@ def checkEndpoint(method, type_):
     return False
 
 
-def getType(class_type, method):
+def get_type(class_type, method):
     """Return the @type of object allowed for POST/PUT."""
     for supportedOp in get_doc().parsed_classes[class_type]["class"].supportedOperation:
         if supportedOp.method == method:
@@ -62,7 +62,7 @@ def getType(class_type, method):
     # NOTE: Don't use split, if there are more than one substrings with 'vocab:' not everything will be returned.
 
 
-def checkClassOp(class_type, method):
+def check_class_op(class_type, method):
     """Check if the Class supports the operation."""
     for supportedOp in get_doc().parsed_classes[class_type]["class"].supportedOperation:
         if supportedOp.method == method:
@@ -86,7 +86,7 @@ class Vocab(Resource):
         return set_response_headers(jsonify(get_doc().generate()))
 
 
-class Entrypoint(Resource):
+class EntryPoint(Resource):
     """Hydra EntryPoint."""
 
     def get(self):
@@ -104,17 +104,13 @@ class Item(Resource):
             if request.authorization is None:
                 return failed_authentication()
             else:
-                try:
-                    auth = check_authorization(request, get_session())
-                    if auth is False:
-                        return failed_authentication()
-                except Exception as e:
-                    status_code, message = e.get_HTTP()
-                    return set_response_headers(jsonify(message), status_code=status_code)
+                auth = check_authorization(request, get_session())
+                if auth is False:
+                    return failed_authentication()
 
         class_type = get_doc().collections[type_]["collection"].class_.title
 
-        if checkClassOp(class_type, "GET"):
+        if check_class_op(class_type, "GET"):
 
             try:
                 response = crud.get(id_, class_type, api_name=get_api_name(), session=get_session())
@@ -132,22 +128,18 @@ class Item(Resource):
             if request.authorization is None:
                 return failed_authentication()
             else:
-                try:
-                    auth = check_authorization(request, get_session())
-                    if auth is False:
-                        return failed_authentication()
-                except Exception as e:
-                    status_code, message = e.get_HTTP()
-                    return set_response_headers(jsonify(message), status_code=status_code)
+                auth = check_authorization(request, get_session())
+                if auth is False:
+                    return failed_authentication()
 
         class_type = get_doc().collections[type_]["collection"].class_.title
 
-        if checkClassOp(class_type, "POST"):
+        if check_class_op(class_type, "POST"):
 
             object_ = json.loads(request.data.decode('utf-8'))
-            obj_type = getType(class_type, "POST")
+            obj_type = get_type(class_type, "POST")
 
-            if validObject(object_):
+            if valid_object(object_):
 
                 if object_["@type"] == obj_type:
                     try:
@@ -170,22 +162,18 @@ class Item(Resource):
             if request.authorization is None:
                 return failed_authentication()
             else:
-                try:
-                    auth = check_authorization(request, get_session())
-                    if auth is False:
-                        return failed_authentication()
-                except Exception as e:
-                    status_code, message = e.get_HTTP()
-                    return set_response_headers(jsonify(message), status_code=status_code)
+                auth = check_authorization(request, get_session())
+                if auth is False:
+                    return failed_authentication()
 
         class_type = get_doc().collections[type_]["collection"].class_.title
 
-        if checkClassOp(class_type, "PUT"):
+        if check_class_op(class_type, "PUT"):
 
             object_ = json.loads(request.data.decode('utf-8'))
-            obj_type = getType(class_type, "PUT")
+            obj_type = get_type(class_type, "PUT")
 
-            if validObject(object_):
+            if valid_object(object_):
 
                 if object_["@type"] == obj_type:
                     try:
@@ -208,17 +196,13 @@ class Item(Resource):
             if request.authorization is None:
                 return failed_authentication()
             else:
-                try:
-                    auth = check_authorization(request, get_session())
-                    if auth is False:
-                        return failed_authentication()
-                except Exception as e:
-                    status_code, message = e.get_HTTP()
-                    return set_response_headers(jsonify(message), status_code=status_code)
+                auth = check_authorization(request, get_session())
+                if auth is False:
+                    return failed_authentication()
 
         class_type = get_doc().collections[type_]["collection"].class_.title
 
-        if checkClassOp(class_type, "DELETE"):
+        if check_class_op(class_type, "DELETE"):
             try:
                 crud.delete(id_, class_type, session=get_session())
                 response = {"message": "Object with ID %s successfully deleted" % (id_)}
@@ -240,15 +224,11 @@ class ItemCollection(Resource):
             if request.authorization is None:
                 return failed_authentication()
             else:
-                try:
-                    auth = check_authorization(request, get_session())
-                    if auth is False:
-                        return failed_authentication()
-                except Exception as e:
-                    status_code, message = e.get_HTTP()
-                    return set_response_headers(jsonify(message), status_code=status_code)
+                auth = check_authorization(request, get_session())
+                if auth is False:
+                    return failed_authentication()
 
-        if checkEndpoint("GET", type_):
+        if check_endpoint("GET", type_):
             # Collections
             if type_ in get_doc().collections:
 
@@ -279,15 +259,11 @@ class ItemCollection(Resource):
             if request.authorization is None:
                 return failed_authentication()
             else:
-                try:
-                    auth = check_authorization(request, get_session())
-                    if auth is False:
-                        return failed_authentication()
-                except Exception as e:
-                    status_code, message = e.get_HTTP()
-                    return set_response_headers(jsonify(message), status_code=status_code)
+                auth = check_authorization(request, get_session())
+                if auth is False:
+                    return failed_authentication()
 
-        if checkEndpoint("PUT", type_):
+        if check_endpoint("PUT", type_):
             object_ = json.loads(request.data.decode('utf-8'))
 
             # Collections
@@ -296,7 +272,7 @@ class ItemCollection(Resource):
                 collection = get_doc().collections[type_]["collection"]
                 obj_type = collection.class_.title
 
-                if validObject(object_):
+                if valid_object(object_):
 
                     if object_["@type"] == obj_type:
                         try:
@@ -312,11 +288,11 @@ class ItemCollection(Resource):
 
             # Non Collection classes
             elif type_ in get_doc().parsed_classes and type_+"Collection" not in get_doc().collections:
-                obj_type = getType(type_, "PUT")
+                obj_type = get_type(type_, "PUT")
 
                 if object_["@type"] == obj_type:
 
-                    if validObject(object_):
+                    if valid_object(object_):
                         try:
                             object_id = crud.insert(object_=object_, session=get_session())
                             headers_ = [{"Location": get_hydrus_server_url()+get_api_name()+"/"+type_+"/"}]
@@ -336,21 +312,17 @@ class ItemCollection(Resource):
             if request.authorization is None:
                 return failed_authentication()
             else:
-                try:
-                    auth = check_authorization(request, get_session())
-                    if auth is False:
-                        return failed_authentication()
-                except Exception as e:
-                    status_code, message = e.get_HTTP()
-                    return set_response_headers(jsonify(message), status_code=status_code)
+                auth = check_authorization(request, get_session())
+                if auth is False:
+                    return failed_authentication()
 
-        if checkEndpoint("POST", type_):
+        if check_endpoint("POST", type_):
             object_ = json.loads(request.data.decode('utf-8'))
 
             if type_ in get_doc().parsed_classes and type_+"Collection" not in get_doc().collections:
-                obj_type = getType(type_, "POST")
+                obj_type = get_type(type_, "POST")
 
-                if validObject(object_):
+                if valid_object(object_):
 
                     if object_["@type"] == obj_type:
                         # try:
@@ -372,15 +344,11 @@ class ItemCollection(Resource):
             if request.authorization is None:
                 return failed_authentication()
             else:
-                try:
-                    auth = check_authorization(request, get_session())
-                    if auth is False:
-                        return failed_authentication()
-                except Exception as e:
-                    status_code, message = e.get_HTTP()
-                    return set_response_headers(jsonify(message), status_code=status_code)
+                auth = check_authorization(request, get_session())
+                if auth is False:
+                    return failed_authentication()
 
-        if checkEndpoint("DELETE", type_):
+        if check_endpoint("DELETE", type_):
             # No Delete Operation for collections
             if type_ in get_doc().parsed_classes and type_+"Collection" not in get_doc().collections:
                 try:
@@ -430,7 +398,7 @@ def app_factory(API_NAME="api"):
     api.add_resource(Index, "/"+API_NAME+"/", endpoint="api")
     api.add_resource(Vocab, "/"+API_NAME+"/vocab", endpoint="vocab")
     api.add_resource(Contexts, "/"+API_NAME+"/contexts/<string:category>.jsonld", endpoint="contexts")
-    api.add_resource(Entrypoint, "/"+API_NAME+"/contexts/EntryPoint.jsonld", endpoint="main_entrypoint")
+    api.add_resource(EntryPoint, "/" + API_NAME + "/contexts/EntryPoint.jsonld", endpoint="main_entrypoint")
     api.add_resource(ItemCollection, "/"+API_NAME+"/<string:type_>", endpoint="item_collection")
     api.add_resource(Item, "/"+API_NAME+"/<string:type_>/<int:id_>", endpoint="item")
 
