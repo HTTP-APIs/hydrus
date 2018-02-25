@@ -53,7 +53,7 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str=None, API_NAME: str=N
     # Extract base_url, entrypoint and API name
     match_obj = re.match(r'(.*)://(.*)/(.*)/vocab#?', id_, re.M | re.I)
     if match_obj:
-        base_url = match_obj.group(1) + '://' + match_obj.group(2) + '/'
+        base_url = "{0}://{1}/".format(match_obj.group(1),match_obj.group(2))
         entrypoint = match_obj.group(3)
 
     # Syntax checks
