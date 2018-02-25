@@ -3,7 +3,7 @@
 import unittest
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker,scoped_session
 import hydrus.data.crud as crud
 from hydrus.data.db_models import Base
 from hydrus.data import doc_parse
@@ -37,8 +37,8 @@ class TestCRUD(unittest.TestCase):
         print("Creating a temporary datatbsse...")
         engine = create_engine('sqlite:///:memory:')
         Base.metadata.create_all(engine)
-        Session = sessionmaker(bind=engine)
-        session = Session()
+        session = scoped_session(sessionmaker(bind=engine))
+
         self.session = session
         self.doc = doc
         test_classes = doc_parse.get_classes(self.doc.generate())

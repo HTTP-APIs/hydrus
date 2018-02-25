@@ -1,6 +1,7 @@
 """Sample to create Hydra APIDocumentation using doc_writer."""
 
 from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp
+from typing import Any, Dict, Union
 
 """Creating the HydraDoc object, this is the primary class for the Doc"""
 API_NAME = "demoapi"                # Name of the API
@@ -76,14 +77,14 @@ api_doc.gen_EntryPoint()        # Generates the EntryPoint object for the Doc us
 
 
 """Generate the complete API Documentation"""
-doc = api_doc.generate()        # Returns the entire API Documentation as a Python dict
+doc = api_doc.generate() # type: Union[Dict[str, Any], str]       # Returns the entire API Documentation as a Python dict
 
 if __name__ == "__main__":
     """Print the complete sample Doc in doc_writer_sample_output.py."""
     import json
 
     dump = json.dumps(doc, indent=4, sort_keys=True)
-    doc = '''"""\nGenerated API Documentation sample using doc_writer_sample.py.\n\ndoc = %s\n"""''' % dump
+    doc = '''"""Generated API Documentation sample using doc_writer_sample.py."""\n\ndoc = %s\n''' % dump
     # Python does not recognise null, true and false in JSON format, convert them to string
     doc = doc.replace('true', '"true"')
     doc = doc.replace('false', '"false"')

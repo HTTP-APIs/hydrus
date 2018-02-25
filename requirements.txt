@@ -22,3 +22,5 @@ six==1.10.0
 thespian==3.5.2
 flask-cors
 blinker==1.4
+mypy
+typing==3.6.4
