@@ -54,21 +54,24 @@ class ViewsTestCase(unittest.TestCase):
         doc_parse.insert_properties(test_properties, self.session)
 
         print("Classes and properties added successfully.")
-        print("Setup done, running tests...")
 
+        print("Setting up Hydrus utilities... ")
         self.api_name_util =  set_api_name(self.app, self.API_NAME)
         self.session_util = set_session(self.app, self.session)
         self.doc_util = set_doc(self.app, self.doc)
         self.client = self.app.test_client()
-        
+
+        print("Creating utilities context... ")
         self.api_name_util.__enter__()
         self.session_util.__enter__()
         self.doc_util.__enter__()
         self.client.__enter__()
+        
+        print("Setup done, running tests...")
 
     @classmethod
     def tearDownClass(self):
-        """Tear down temporary database."""
+        """Tear down temporary database and exit utilities"""
         self.client.__exit__(None, None, None)
         self.doc_util.__exit__(None, None, None)
         self.session_util.__exit__(None, None, None)
