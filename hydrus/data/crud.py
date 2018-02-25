@@ -6,9 +6,9 @@ from sqlalchemy.orm.exc import NoResultFound
 from hydrus.data.db_models import (Graph, BaseProperty, RDFClass, Instance,
                                    Terminal, GraphIAC, GraphIIT, GraphIII)
 
-from hydrus.data.exceptions import (ClassNotFound, InstanceExists, PropertyNotFound,
-                                    NotInstanceProperty, NotAbstractProperty,
-                                    InstanceNotFound)
+from hydrus.data.exceptions import (ClassNotFound, InstanceExists,
+                                    PropertyNotFound, NotInstanceProperty,
+                                    NotAbstractProperty, InstanceNotFound)
 from sqlalchemy.orm.session import Session
 from typing import Dict, Optional, Any, List
 
