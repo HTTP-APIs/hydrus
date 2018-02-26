@@ -45,14 +45,20 @@ def hydrafy(object_: Dict[str, Any]) -> Dict[str, Any]:
     return object_
 
 
-def checkEndpoint(method: str, type_: str) -> bool:
+def checkEndpoint(method: str, type_: str) -> Dict[str, Union[bool,int]] :
     """Check if endpoint and method is supported in the API."""
+    status_val = 404
+    if type_ == 'vocab':
+        return {'method': False, 'status': 405}
+
     for endpoint in get_doc().entrypoint.entrypoint.supportedProperty:
         if type_ == endpoint.name:
+            status_val = 405 
             for operation in endpoint.supportedOperation:
                 if operation.method == method:
-                    return True
-    return False
+                    status_val = 200
+                    return {'method': True, 'status': status_val}
+    return {'method': False, 'status': status_val}
 
 
 def getType(class_type: str, method: str) -> Any:
@@ -116,7 +122,6 @@ class Item(Resource):
         class_type = get_doc().collections[type_]["collection"].class_.title
 
         if checkClassOp(class_type, "GET"):
-
             try:
                 response = crud.get(id_, class_type, api_name=get_api_name(), session=get_session())
                 return set_response_headers(jsonify(hydrafy(response)))
@@ -249,7 +254,8 @@ class ItemCollection(Resource):
                     status_code, message = e.get_HTTP()  # type: ignore
                     return set_response_headers(jsonify(message), status_code=status_code)
 
-        if checkEndpoint("GET", type_):
+        endpoint_ = checkEndpoint("GET",type_)
+        if endpoint_['method']:
             # Collections
             if type_ in get_doc().collections:
 
@@ -272,7 +278,7 @@ class ItemCollection(Resource):
                     status_code, message = e.get_HTTP() # type: ignore
                     return set_response_headers(jsonify(message), status_code=status_code)
 
-        abort(405)
+        abort(endpoint_['status'])
 
     def put(self, type_: str) -> Response:
         """Add item to ItemCollection."""
@@ -288,7 +294,8 @@ class ItemCollection(Resource):
                     status_code, message = e.get_HTTP()  # type: ignore
                     return set_response_headers(jsonify(message), status_code=status_code)
 
-        if checkEndpoint("PUT", type_):
+        endpoint_ = checkEndpoint("PUT",type_)
+        if endpoint_['method']:
             object_ = json.loads(request.data.decode('utf-8'))
 
             # Collections
@@ -329,7 +336,7 @@ class ItemCollection(Resource):
 
                 return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
 
-        abort(405)
+        abort(endpoint_['status'])
 
     def post(self, type_: str) -> Response:
         """Update Non Collection class item."""
@@ -345,7 +352,8 @@ class ItemCollection(Resource):
                     status_code, message = e.get_HTTP()  # type: ignore
                     return set_response_headers(jsonify(message), status_code=status_code)
 
-        if checkEndpoint("POST", type_):
+        endpoint_ = checkEndpoint("POST",type_)
+        if endpoint_['method']:
             object_ = json.loads(request.data.decode('utf-8'))
 
             if type_ in get_doc().parsed_classes and type_+"Collection" not in get_doc().collections:
@@ -365,7 +373,7 @@ class ItemCollection(Resource):
 
                 return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
 
-        abort(405)
+        abort(endpoint_['status'])
 
     def delete(self, type_: str) -> Response:
         """Delete a non Collection class item."""
@@ -381,7 +389,8 @@ class ItemCollection(Resource):
                     status_code, message = e.get_HTTP()  # type: ignore
                     return set_response_headers(jsonify(message), status_code=status_code)
 
-        if checkEndpoint("DELETE", type_):
+        endpoint_ = checkEndpoint("DELETE",type_)
+        if endpoint_['method']:
             # No Delete Operation for collections
             if type_ in get_doc().parsed_classes and type_+"Collection" not in get_doc().collections:
                 try:
@@ -391,7 +400,7 @@ class ItemCollection(Resource):
                 except Exception as e:
                     status_code, message = e.get_HTTP() # type: ignore
                     return set_response_headers(jsonify(message), status_code=status_code)
-        abort(405)
+        abort(endpoint_['status'])
 
 
 class Contexts(Resource):
