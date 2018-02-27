@@ -39,4 +39,4 @@ setup(name='hydrus',
       packages=find_packages(),
       package_dir={'hydrus':
                    'hydrus'},
-      )
+     )
