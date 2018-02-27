@@ -1,6 +1,7 @@
 """Generate random objects for SubSystem classes."""
 
 import random
+from typing import Any, Dict, List, Optional
 
 classes_keymap = {
     "communication": "Spacecraft_Communication",
@@ -102,16 +103,16 @@ subsystems = {
 }
 
 
-def randomValue(interval):
+def randomValue(interval: Dict[str, int]) -> int:
     """Generate a random integer value from a given interval."""
     if not isinstance(interval, dict):
         raise ValueError('value has to be dict')
     return random.randrange(interval['min'], interval['max'], 1) // 1
 
 
-def generateObject(name, subsystem):
+def generateObject(name: str, subsystem: Dict[str, Any]) -> Optional[Dict[str, Any]]: # type: ignore
     """Generate random components from given input dictionary."""
-    result = {}
+    result = {} # type: Dict
     result['hasMass'] = randomValue(subsystem['hasMass'])
     if 'minWorkingTemperature' in subsystem.keys():
         if not name == 'structure':
@@ -192,27 +193,28 @@ def generateObject(name, subsystem):
 
 # First we will generate data for COTS (spacecraft parts).
 # gen_cots will generate n number of spacecraft parts with random properties
-def gen_random_object():
+def gen_random_object() -> Dict[str, Any]:
     """Generate a random object."""
     index = random.randint(0, len(subsystems.keys())-1)
     k, v = list(subsystems.items())[index]
     name = str(random.randrange(0, 50)) + \
         str(random.choice(['T', 'W', 'KV', 'JFG'])) + ' ' + k
-    obj = {}
+    obj = {} # type: Dict[str, Any]
     obj['name'] = name
     obj['@type'] = classes_keymap[k]
-    obj['object'] = generateObject(k, v)
+    obj['object'] = generateObject(k, v) #type: ignore
     return obj
 
 
-def gen_cots(n):
+def gen_cots(n: int) -> List[Dict[str, Any]]:
     """Generate n number of spacecraft parts with random properties."""
-    output = []
+    output = [] # type: List[Dict[str, Any]]
     for num in range(n):
         obj = gen_random_object()
         output.append(obj)
     return output
 
 import json
+
 if __name__ == "__main__":
     print(json.dumps(gen_cots(1), indent=4, sort_keys=True))

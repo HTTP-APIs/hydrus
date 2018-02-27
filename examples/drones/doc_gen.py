@@ -3,8 +3,7 @@
 from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp
 import json
 
-
-def doc_gen(API, BASE_URL):
+def doc_gen(API: str, BASE_URL: str) -> HydraDoc:
     """Generate API Doc for server."""
     # Main API Doc
     api_doc = HydraDoc(API,

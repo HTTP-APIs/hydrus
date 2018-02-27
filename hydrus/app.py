@@ -9,17 +9,18 @@ from hydrus.data import crud
 from hydrus.data.user import check_authorization
 from hydrus.utils import get_session, get_doc, get_api_name, get_hydrus_server_url, get_authentication
 
-import pdb
+from flask.wrappers import Response
+from typing import Dict, List, Any, Union
 
 
-def validObject(object_):
+def validObject(object_: Dict[str, Any]) -> bool:
     """Check if the data passed in POST is of valid format or not."""
     if "@type" in object_:
         return True
     return False
 
 
-def failed_authentication():
+def failed_authentication() -> Response:
     """Return failed authentication object."""
     message = {401: "Need credentials to authenticate"}
     response = set_response_headers(jsonify(message), status_code=401,
@@ -27,7 +28,7 @@ def failed_authentication():
     return response
 
 
-def set_response_headers(resp, ct="application/ld+json", headers=[], status_code=200):
+def set_response_headers(resp: Response, ct: str="application/ld+json", headers: List[Dict[str, Any]]=[], status_code: int=200) -> Response:
     """Set the response headers."""
     resp.status_code = status_code
     for header in headers:
@@ -38,23 +39,29 @@ def set_response_headers(resp, ct="application/ld+json", headers=[], status_code
     return resp
 
 
-def hydrafy(object_):
+def hydrafy(object_: Dict[str, Any]) -> Dict[str, Any]:
     """Add hydra context to objects."""
     object_["@context"] = "/"+get_api_name()+"/contexts/" + object_["@type"] + ".jsonld"
     return object_
 
 
-def checkEndpoint(method, type_):
+def checkEndpoint(method: str, type_: str) -> Dict[str, Union[bool,int]] :
     """Check if endpoint and method is supported in the API."""
+    status_val = 404
+    if type_ == 'vocab':
+        return {'method': False, 'status': 405}
+
     for endpoint in get_doc().entrypoint.entrypoint.supportedProperty:
         if type_ == endpoint.name:
+            status_val = 405 
             for operation in endpoint.supportedOperation:
                 if operation.method == method:
-                    return True
-    return False
+                    status_val = 200
+                    return {'method': True, 'status': status_val}
+    return {'method': False, 'status': status_val}
 
 
-def getType(class_type, method):
+def getType(class_type: str, method: str) -> Any:
     """Return the @type of object allowed for POST/PUT."""
     for supportedOp in get_doc().parsed_classes[class_type]["class"].supportedOperation:
         if supportedOp.method == method:
@@ -62,7 +69,7 @@ def getType(class_type, method):
     # NOTE: Don't use split, if there are more than one substrings with 'vocab:' not everything will be returned.
 
 
-def checkClassOp(class_type, method):
+def checkClassOp(class_type: str, method: str) -> bool:
     """Check if the Class supports the operation."""
     for supportedOp in get_doc().parsed_classes[class_type]["class"].supportedOperation:
         if supportedOp.method == method:
@@ -73,7 +80,7 @@ def checkClassOp(class_type, method):
 class Index(Resource):
     """Class for the EntryPoint."""
 
-    def get(self):
+    def get(self)-> Response:
         """Return main entrypoint for the api."""
         return set_response_headers(jsonify(get_doc().entrypoint.get()))
 
@@ -81,7 +88,7 @@ class Index(Resource):
 class Vocab(Resource):
     """Vocabulary for Hydra."""
 
-    def get(self):
+    def get(self) -> Response:
         """Return the main hydra vocab."""
         return set_response_headers(jsonify(get_doc().generate()))
 
@@ -89,7 +96,7 @@ class Vocab(Resource):
 class Entrypoint(Resource):
     """Hydra EntryPoint."""
 
-    def get(self):
+    def get(self) -> Response:
         """Return application main Entrypoint."""
         response = {"@context": get_doc().entrypoint.context.generate()}
         return set_response_headers(jsonify(response))
@@ -98,7 +105,7 @@ class Entrypoint(Resource):
 class Item(Resource):
     """Handles all operations(GET, POST, PATCH, DELETE) on Items (item can be anything depending upon the vocabulary)."""
 
-    def get(self, id_, type_):
+    def get(self, id_: int, type_: str) -> Response:
         """GET object with id = id_ from the database."""
         if get_authentication():
             if request.authorization is None:
@@ -109,24 +116,23 @@ class Item(Resource):
                     if auth is False:
                         return failed_authentication()
                 except Exception as e:
-                    status_code, message = e.get_HTTP()
+                    status_code, message = e.get_HTTP()  # type: ignore
                     return set_response_headers(jsonify(message), status_code=status_code)
 
         class_type = get_doc().collections[type_]["collection"].class_.title
 
         if checkClassOp(class_type, "GET"):
-
             try:
                 response = crud.get(id_, class_type, api_name=get_api_name(), session=get_session())
                 return set_response_headers(jsonify(hydrafy(response)))
 
             except Exception as e:
-                status_code, message = e.get_HTTP()
+                status_code, message = e.get_HTTP() # type: ignore
                 return set_response_headers(jsonify(message), status_code=status_code)
 
         abort(405)
 
-    def post(self, id_, type_):
+    def post(self, id_: int, type_: str) -> Response:
         """Update object of type<type_> at ID<id_> with new object_ using HTTP POST."""
         if get_authentication():
             if request.authorization is None:
@@ -137,7 +143,7 @@ class Item(Resource):
                     if auth is False:
                         return failed_authentication()
                 except Exception as e:
-                    status_code, message = e.get_HTTP()
+                    status_code, message = e.get_HTTP()  # type: ignore
                     return set_response_headers(jsonify(message), status_code=status_code)
 
         class_type = get_doc().collections[type_]["collection"].class_.title
@@ -157,14 +163,14 @@ class Item(Resource):
                         return set_response_headers(jsonify(response), headers=headers_)
 
                     except Exception as e:
-                        status_code, message = e.get_HTTP()
+                        status_code, message = e.get_HTTP() # type: ignore
                         return set_response_headers(jsonify(message), status_code=status_code)
 
             return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
 
         abort(405)
 
-    def put(self, id_, type_):
+    def put(self, id_: int, type_: str) -> Response:
         """Add new object_ optional <id_> parameter using HTTP PUT."""
         if get_authentication():
             if request.authorization is None:
@@ -175,7 +181,7 @@ class Item(Resource):
                     if auth is False:
                         return failed_authentication()
                 except Exception as e:
-                    status_code, message = e.get_HTTP()
+                    status_code, message = e.get_HTTP()  # type: ignore
                     return set_response_headers(jsonify(message), status_code=status_code)
 
         class_type = get_doc().collections[type_]["collection"].class_.title
@@ -195,14 +201,14 @@ class Item(Resource):
                         return set_response_headers(jsonify(response), headers=headers_, status_code=201)
 
                     except Exception as e:
-                        status_code, message = e.get_HTTP()
+                        status_code, message = e.get_HTTP() # type: ignore
                         return set_response_headers(jsonify(message), status_code=status_code)
 
             return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
 
         abort(405)
 
-    def delete(self, id_, type_):
+    def delete(self, id_: int, type_: str) -> Response:
         """Delete object with id=id_ from database."""
         if get_authentication():
             if request.authorization is None:
@@ -213,7 +219,7 @@ class Item(Resource):
                     if auth is False:
                         return failed_authentication()
                 except Exception as e:
-                    status_code, message = e.get_HTTP()
+                    status_code, message = e.get_HTTP()  # type: ignore
                     return set_response_headers(jsonify(message), status_code=status_code)
 
         class_type = get_doc().collections[type_]["collection"].class_.title
@@ -225,7 +231,7 @@ class Item(Resource):
                 return set_response_headers(jsonify(response))
 
             except Exception as e:
-                status_code, message = e.get_HTTP()
+                status_code, message = e.get_HTTP()  # type: ignore
                 return set_response_headers(jsonify(message), status_code=status_code)
 
         abort(405)
@@ -234,7 +240,7 @@ class Item(Resource):
 class ItemCollection(Resource):
     """Handle operation related to ItemCollection (a collection of items)."""
 
-    def get(self, type_):
+    def get(self, type_: str) -> Response:
         """Retrieve a collection of items from the database."""
         if get_authentication():
             if request.authorization is None:
@@ -245,10 +251,11 @@ class ItemCollection(Resource):
                     if auth is False:
                         return failed_authentication()
                 except Exception as e:
-                    status_code, message = e.get_HTTP()
+                    status_code, message = e.get_HTTP()  # type: ignore
                     return set_response_headers(jsonify(message), status_code=status_code)
 
-        if checkEndpoint("GET", type_):
+        endpoint_ = checkEndpoint("GET",type_)
+        if endpoint_['method']:
             # Collections
             if type_ in get_doc().collections:
 
@@ -258,7 +265,7 @@ class ItemCollection(Resource):
                     return set_response_headers(jsonify(hydrafy(response)))
 
                 except Exception as e:
-                    status_code, message = e.get_HTTP()
+                    status_code, message = e.get_HTTP() # type: ignore
                     return set_response_headers(jsonify(message), status_code=status_code)
 
             # Non Collection classes
@@ -268,12 +275,12 @@ class ItemCollection(Resource):
                     return set_response_headers(jsonify(hydrafy(response)))
 
                 except Exception as e:
-                    status_code, message = e.get_HTTP()
+                    status_code, message = e.get_HTTP() # type: ignore
                     return set_response_headers(jsonify(message), status_code=status_code)
 
-        abort(405)
+        abort(endpoint_['status'])
 
-    def put(self, type_):
+    def put(self, type_: str) -> Response:
         """Add item to ItemCollection."""
         if get_authentication():
             if request.authorization is None:
@@ -284,10 +291,11 @@ class ItemCollection(Resource):
                     if auth is False:
                         return failed_authentication()
                 except Exception as e:
-                    status_code, message = e.get_HTTP()
+                    status_code, message = e.get_HTTP()  # type: ignore
                     return set_response_headers(jsonify(message), status_code=status_code)
 
-        if checkEndpoint("PUT", type_):
+        endpoint_ = checkEndpoint("PUT",type_)
+        if endpoint_['method']:
             object_ = json.loads(request.data.decode('utf-8'))
 
             # Collections
@@ -305,7 +313,7 @@ class ItemCollection(Resource):
                             response = {"message": "Object with ID %s successfully deleted" % (object_id)}
                             return set_response_headers(jsonify(response), headers=headers_, status_code=201)
                         except Exception as e:
-                            status_code, message = e.get_HTTP()
+                            status_code, message = e.get_HTTP() #type: ignore
                             return set_response_headers(jsonify(message), status_code=status_code)
 
                 return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
@@ -323,14 +331,14 @@ class ItemCollection(Resource):
                             response = {"message": "Object successfully added"}
                             return set_response_headers(jsonify(response), headers=headers_, status_code=201)
                         except Exception as e:
-                            status_code, message = e.get_HTTP()
+                            status_code, message = e.get_HTTP() # type: ignore
                             return set_response_headers(jsonify(message), status_code=status_code)
 
                 return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
 
-        abort(405)
+        abort(endpoint_['status'])
 
-    def post(self, type_):
+    def post(self, type_: str) -> Response:
         """Update Non Collection class item."""
         if get_authentication():
             if request.authorization is None:
@@ -341,10 +349,11 @@ class ItemCollection(Resource):
                     if auth is False:
                         return failed_authentication()
                 except Exception as e:
-                    status_code, message = e.get_HTTP()
+                    status_code, message = e.get_HTTP()  # type: ignore
                     return set_response_headers(jsonify(message), status_code=status_code)
 
-        if checkEndpoint("POST", type_):
+        endpoint_ = checkEndpoint("POST",type_)
+        if endpoint_['method']:
             object_ = json.loads(request.data.decode('utf-8'))
 
             if type_ in get_doc().parsed_classes and type_+"Collection" not in get_doc().collections:
@@ -364,9 +373,9 @@ class ItemCollection(Resource):
 
                 return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
 
-        abort(405)
+        abort(endpoint_['status'])
 
-    def delete(self, type_):
+    def delete(self, type_: str) -> Response:
         """Delete a non Collection class item."""
         if get_authentication():
             if request.authorization is None:
@@ -377,10 +386,11 @@ class ItemCollection(Resource):
                     if auth is False:
                         return failed_authentication()
                 except Exception as e:
-                    status_code, message = e.get_HTTP()
+                    status_code, message = e.get_HTTP()  # type: ignore
                     return set_response_headers(jsonify(message), status_code=status_code)
 
-        if checkEndpoint("DELETE", type_):
+        endpoint_ = checkEndpoint("DELETE",type_)
+        if endpoint_['method']:
             # No Delete Operation for collections
             if type_ in get_doc().parsed_classes and type_+"Collection" not in get_doc().collections:
                 try:
@@ -388,20 +398,20 @@ class ItemCollection(Resource):
                     response = {"message": "Object successfully deleted"}
                     return set_response_headers(jsonify(response))
                 except Exception as e:
-                    status_code, message = e.get_HTTP()
+                    status_code, message = e.get_HTTP() # type: ignore
                     return set_response_headers(jsonify(message), status_code=status_code)
-        abort(405)
+        abort(endpoint_['status'])
 
 
 class Contexts(Resource):
     """Dynamically genereated contexts."""
 
-    def get(self, category):
+    def get(self, category: str) -> Response:
         """Return the context for the specified class."""
         if "Collection" in category:
 
             if category in get_doc().collections:
-                response = {"@context": get_doc().collections[category]["context"].generate()}
+                response = {"@context": get_doc().collections[category]["context"].generate()} # type: Union[Dict[str,Any],Dict[int,str]]
                 return set_response_headers(jsonify(response))
 
             else:
@@ -419,7 +429,7 @@ class Contexts(Resource):
                 return set_response_headers(jsonify(response), status_code=404)
 
 
-def app_factory(API_NAME="api"):
+def app_factory(API_NAME: str="api") -> Flask:
     """Create an app object."""
     app = Flask(__name__)
 
