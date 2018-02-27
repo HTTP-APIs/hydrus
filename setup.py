@@ -1,7 +1,7 @@
 # !/usr/bin/env python
 """Setup script for Hydrus."""
 
-from distutils.core import setup
+from setuptools import setup, find_packages
 
 setup(name='hydrus',
       version='0.0.1',
@@ -33,11 +33,13 @@ setup(name='hydrus',
           'flask-cors',
           'blinker==1.4',
           'typing==3.6.4',
-          'mypy'
+          'mypy',
+          'Click'
       ],
-      packages=[
-        'hydrus',
-      ],
+      entry_points={
+        'console_scripts': ['hydrus = cli:start']
+      },
+      packages=find_packages(),
       package_dir={'hydrus':
                    'hydrus'},
       )
