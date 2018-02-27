@@ -1,5 +1,4 @@
-"""
-Generated API Documentation sample using doc_writer_sample.py.
+"""Generated API Documentation sample using doc_writer_sample.py."""
 
 doc = {
     "@context": {
@@ -123,7 +122,7 @@ doc = {
             "supportedOperation": [
                 {
                     "@id": "_:dummyclass_collection_retrieve",
-                    "@type": "hydra:Operation",
+                    "@type": "http://schema.org/FindAction",
                     "description": "Retrieves all dummyClass entities",
                     "expects": "null",
                     "method": "GET",
@@ -165,7 +164,7 @@ doc = {
             "supportedOperation": [
                 {
                     "@id": "_:entry_point",
-                    "@type": "hydra:Operation",
+                    "@type": "http://schema.org/FindAction",
                     "description": "The APIs main entry point.",
                     "expects": "null",
                     "method": "GET",
@@ -187,7 +186,7 @@ doc = {
                         "supportedOperation": [
                             {
                                 "@id": "_:_:dummyclass_collection_retrieve",
-                                "@type": "hydra:Operation",
+                                "@type": "http://schema.org/FindAction",
                                 "description": "Retrieves all dummyClass entities",
                                 "expects": "null",
                                 "method": "GET",
@@ -220,4 +219,3 @@ doc = {
     ],
     "title": "Title for the API Documentation"
 }
-"""
