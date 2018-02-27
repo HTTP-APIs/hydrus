@@ -1,11 +1,30 @@
-"""Pluggable utilities for Hydrus."""
+"""
+    Pluggable utilities for Hydrus.
+    ===============================
+    Imports :
+    contextlib.contextmanager : This function is a decorator that can be used to
+    define a factory function for with statement context managers, without needing
+    to create a class or separate __enter__() and __exit__() methods.
+    Ref- https://docs.python.org/2/library/contextlib.html#contextlib.contextmanager
+    flask.appcontext_pushed : Signal is sent when an application context is pushed.
+    The sender is the application.
+    Ref- http://flask.pocoo.org/docs/0.12/api/#flask.appcontext_pushed
+    Ref- https://speakerdeck.com/mitsuhiko/advanced-flask-patterns-1
+    flask.g : Used to attach values to global variables
+    doc_writer_sample : Sample script used to create Hydra APIDocumentation
+    hydrus.hydraspec.engine : An SQLalchemy DB engine
+    sqlalchemy.orm.sessionmaker : Used to create a SQLalchemy Session
+    sqlalchemy.orm.session.Session : SQLalchemy Session class
+    Ref- http://docs.sqlalchemy.org/en/latest/orm/session_basics.html
+    hydrus.hydraspec.doc_writer.HydraDoc : Class for Hydra Documentation
+"""
 
 from contextlib import contextmanager
 from flask import appcontext_pushed
 from flask import g
 from hydrus.hydraspec import doc_writer_sample
 from hydrus.data.db_models import engine
-from sqlalchemy.orm import sessionmaker,scoped_session
+from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.orm.session import Session
 from hydrus.hydraspec.doc_writer import HydraDoc
 from flask.app import Flask
@@ -15,8 +34,9 @@ from typing import Any, Iterator
 @contextmanager
 def set_session(application: Flask, DB_SESSION: Session) -> Iterator:
     """Set the database session for the app. Must be of type <hydrus.hydraspec.doc_writer.HydraDoc>."""
-    if not isinstance(DB_SESSION, Session) and not isinstance(DB_SESSION,scoped_session):
-        raise TypeError("The API Doc is not of type <sqlalchemy.orm.session.Session> or <sqlalchemy.orm.scoping.scoped_session>")
+    if not isinstance(DB_SESSION, Session) and not isinstance(DB_SESSION, scoped_session):
+        raise TypeError(
+            "The API Doc is not of type <sqlalchemy.orm.session.Session> or <sqlalchemy.orm.scoping.scoped_session>")
 
     def handler(sender: Flask, **kwargs: Any) -> None:
         g.dbsession = DB_SESSION
@@ -52,7 +72,8 @@ def set_api_name(application: Flask, api_name: str) -> Iterator:
 def set_doc(application: Flask, APIDOC: HydraDoc) -> Iterator:
     """Set the API Documentation for the app. Must be of type <hydrus.hydraspec.doc_writer.HydraDoc>."""
     if not isinstance(APIDOC, HydraDoc):
-        raise TypeError("The API Doc is not of type <hydrus.hydraspec.doc_writer.HydraDoc>")
+        raise TypeError(
+            "The API Doc is not of type <hydrus.hydraspec.doc_writer.HydraDoc>")
 
     def handler(sender: Flask, **kwargs: Any) -> None:
         g.doc = APIDOC
