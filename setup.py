@@ -9,6 +9,7 @@ setup(name='hydrus',
       author='W3C HYDRA development group',
       author_email='public-hydra@w3.org',
       url='https://github.com/HTTP-APIs/hydrus',
+	  py_modules=['cli'],
       install_requires=[
           'Flask==0.11',
           'Flask-RESTful==0.3.6',
@@ -39,4 +40,8 @@ setup(name='hydrus',
       packages=find_packages(),
       package_dir={'hydrus':
                    'hydrus'},
+	  entry_points='''
+		[console_scripts]
+		hydrus=cli:main
+	  '''
      )
