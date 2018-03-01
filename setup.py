@@ -1,7 +1,7 @@
 # !/usr/bin/env python
 """Setup script for Hydrus."""
 
-from distutils.core import setup
+from setuptools import setup, find_packages
 
 setup(name='hydrus',
       version='0.0.1',
@@ -9,6 +9,7 @@ setup(name='hydrus',
       author='W3C HYDRA development group',
       author_email='public-hydra@w3.org',
       url='https://github.com/HTTP-APIs/hydrus',
+      py_modules=['cli'],
       install_requires=[
           'Flask==0.11',
           'Flask-RESTful==0.3.6',
@@ -33,11 +34,15 @@ setup(name='hydrus',
           'flask-cors',
           'blinker==1.4',
           'typing==3.6.4',
-          'mypy'
+          'mypy',
+          'Click',
+          'gevent==1.2.2',
       ],
-      packages=[
-        'hydrus',
-      ],
+      packages=find_packages(),
       package_dir={'hydrus':
-                   'hydrus'},
+                    'hydrus'},
+      entry_points='''
+            [console_scripts]
+            hydrus=cli:startserver
+        '''
       )
