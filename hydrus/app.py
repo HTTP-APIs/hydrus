@@ -81,30 +81,34 @@ def checkClassOp(class_type: str, method: str) -> bool:
             return True
     return False
 
+def verify_user() -> Union[Response, None]:
+    try:
+        auth = check_authorization(request, get_session())
+        if auth is False:
+            return failed_authentication()
+        else:
+            if get_token():
+                token = add_token(request, get_session())
+                return token_response(token)
+    except Exception as e:
+        status_code, message = e.get_HTTP()  # type: ignore
+        return set_response_headers(jsonify(message), status_code=status_code)
+    return None  
+
 def check_authentication_response() -> Union[Response,None]:
     """ Returns the response as per the authentication requirements."""
     if get_authentication():
-        if request.args and get_token() and not request.authorization:
-            try:
-                token = check_token(request,get_session())
-                if token is False:
+        if request.args and get_token():
+            token = check_token(request, get_session())
+            if not token:
+                if request.authorization is None:
                     return failed_authentication()
-            except:
-                return failed_authentication()
+                else:
+                    return verify_user()
         elif request.authorization is None:
             return failed_authentication()
         else:
-            try:
-                auth = check_authorization(request, get_session())
-                if auth is False:
-                    return failed_authentication()
-                else:
-                    if get_token():
-                        token = add_token(request, get_session())
-                        return token_response(token)
-            except Exception as e:
-                status_code, message = e.get_HTTP()  # type: ignore
-                return set_response_headers(jsonify(message), status_code=status_code)
+            return verify_user()
     return None
 
 class Index(Resource):
