@@ -6,7 +6,7 @@ from flask_restful import Api, Resource
 from flask_cors import CORS
 
 from hydrus.data import crud
-from hydrus.data.user import check_authorization
+from hydrus.data.user import check_authorization,add_token,check_token
 from hydrus.utils import get_session, get_doc, get_api_name, get_hydrus_server_url, get_authentication
 
 from flask.wrappers import Response
@@ -19,6 +19,11 @@ def validObject(object_: Dict[str, Any]) -> bool:
         return True
     return False
 
+def token_response(token: str) -> Response:
+    """Return succesful token generation object"""
+    message = {"User Token": token}
+    response = set_response_headers(jsonify(message), status_code=200)
+    return response
 
 def failed_authentication() -> Response:
     """Return failed authentication object."""
@@ -243,13 +248,23 @@ class ItemCollection(Resource):
     def get(self, type_: str) -> Response:
         """Retrieve a collection of items from the database."""
         if get_authentication():
-            if request.authorization is None:
+            if request.args:
+                try:
+                    token = check_token(request,get_session())
+                    if token is False:
+                        return failed_authentication()
+                except:
+                    return failed_authentication()
+            elif request.authorization is None:
                 return failed_authentication()
             else:
                 try:
                     auth = check_authorization(request, get_session())
                     if auth is False:
                         return failed_authentication()
+                    else:
+                        token = add_token(request, get_session())
+                        return token_response(token)
                 except Exception as e:
                     status_code, message = e.get_HTTP()  # type: ignore
                     return set_response_headers(jsonify(message), status_code=status_code)

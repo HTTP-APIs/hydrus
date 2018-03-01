@@ -3,12 +3,13 @@
 from sqlalchemy import exists
 from sqlalchemy.orm.exc import NoResultFound
 from hydrus.data.exceptions import UserExists, UserNotFound
-from hydrus.data.db_models import User
+from hydrus.data.db_models import User,Token
 from hashlib import sha224
 import base64
 # import random
 from sqlalchemy.orm.session import Session
 from werkzeug.local import LocalProxy
+from random import randrange
 
 
 def add_user(id_: int, paraphrase: str, session: Session) -> None:
@@ -33,6 +34,27 @@ def add_user(id_: int, paraphrase: str, session: Session) -> None:
 #
 #     return user.nonce
 
+def add_token(request: LocalProxy, session: Session) -> str:
+    token = None
+    id_ = int(request.authorization['username'])
+    try:
+        token = session.query(Token).filter(Token.user_id == id_).one()
+    except NoResultFound:
+        token = '%030x' % randrange(16**30)
+        new_token = Token(user_id=id_,id=token)
+        session.add(new_token)
+        session.commit()
+        return token
+    return token.id
+
+def check_token(request: LocalProxy, session: Session) -> bool:
+    token = None
+    try:
+        id_ = request.args['token']
+        token = session.query(Token).filter(Token.id == id_).one()
+    except:
+        return False
+    return True
 
 def generate_basic_digest(id_: int, paraphrase: str) -> str:
     """Create the digest to be added to the HTTP Authorization header."""
