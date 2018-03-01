@@ -38,7 +38,7 @@ setup(name='hydrus',
           'Click',
           'gevent==1.2.2',
       ],
-      packages=find_packages(),
+      packages=find_packages(exclude=['contrib', 'docs', 'tests*', 'hydrus.egg-info']),
       package_dir={'hydrus':
                     'hydrus'},
       entry_points='''
