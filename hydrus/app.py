@@ -99,8 +99,9 @@ def check_authentication_response() -> Union[Response,None]:
                 if auth is False:
                     return failed_authentication()
                 else:
-                    token = add_token(request, get_session())
-                    return token_response(token)
+                    if get_token():
+                        token = add_token(request, get_session())
+                        return token_response(token)
             except Exception as e:
                 status_code, message = e.get_HTTP()  # type: ignore
                 return set_response_headers(jsonify(message), status_code=status_code)
