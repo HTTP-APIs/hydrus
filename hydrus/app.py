@@ -82,6 +82,7 @@ def checkClassOp(class_type: str, method: str) -> bool:
     return False
 
 def verify_user() -> Union[Response, None]:
+    """ Verify the credentials of the user and assign token."""
     try:
         auth = check_authorization(request, get_session())
         if auth is False:
