@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker,scoped_session
 
 from hydrus.app import app_factory
-from hydrus.utils import set_session, set_doc, set_hydrus_server_url, set_api_name, set_authentication
+from hydrus.utils import set_session, set_doc, set_hydrus_server_url, set_api_name, set_authentication, set_token
 from hydrus.data import doc_parse
 from hydrus.hydraspec import doc_maker
 from hydrus.data.db_models import Base
@@ -67,18 +67,19 @@ if __name__ == "__main__":
     print("Starting the application")
     with set_authentication(app, True):
         # Use authentication for all requests
-        with set_api_name(app, "serverapi"):
-            # Set the API Documentation
-            with set_doc(app, apidoc):
-                # Set HYDRUS_SERVER_URL
-                with set_hydrus_server_url(app, HYDRUS_SERVER_URL):
-                    # Set the Database session
-                    with set_session(app, session):
-                        # Start the Hydrus app
-                        http_server = WSGIServer(('', 8080), app)
-                        print("Server running at:")
-                        print(HYDRUS_SERVER_URL + API_NAME)
-                        try:
-                            http_server.serve_forever()
-                        except KeyboardInterrupt:
-                            pass
+        with set_token(app, True): 
+            with set_api_name(app, "serverapi"):
+                # Set the API Documentation
+                with set_doc(app, apidoc):
+                    # Set HYDRUS_SERVER_URL
+                    with set_hydrus_server_url(app, HYDRUS_SERVER_URL):
+                        # Set the Database session
+                        with set_session(app, session):
+                            # Start the Hydrus app
+                            http_server = WSGIServer(('', 8080), app)
+                            print("Server running at:")
+                            print(HYDRUS_SERVER_URL + API_NAME)
+                            try:
+                                http_server.serve_forever()
+                            except KeyboardInterrupt:
+                                pass

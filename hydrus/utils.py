@@ -92,6 +92,16 @@ def set_authentication(application: Flask, authentication: bool) -> Iterator:
     with appcontext_pushed.connected_to(handler, application):
         yield
 
+@contextmanager        
+def set_token(application: Flask, token: bool) -> Iterator:
+    """Set whether API needs to implement token based authentication."""
+    if not isinstance(token, bool):
+        raise TypeError("Token flag must be of type <bool>")
+
+    def handler(sender: Flask, **kwargs: Any) -> None:
+        g.token_ = token
+    with appcontext_pushed.connected_to(handler, application):
+        yield
 
 def get_doc() -> HydraDoc:
     """Get the server API Documentation."""
@@ -110,6 +120,13 @@ def get_authentication() -> bool:
         g.authentication_ = authentication
     return authentication
 
+def get_token() -> bool:
+    """Check wether API needs to be authenticated or not."""
+    token = getattr(g, 'token_', None)
+    if token is None:
+        token = False
+        g.token_ = token
+    return token
 
 def get_api_name() -> str:
     """Get the server API name."""

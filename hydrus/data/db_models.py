@@ -200,7 +200,7 @@ class User(Base):
     paraphrase = Column(String)
 
 class Token(Base):
-    """Model for storing time bound tokens for the users."""
+    """Model for storing tokens for the users."""
 
     __tablename__ = "tokens"
     id = Column(String, primary_key = True)

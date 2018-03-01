@@ -7,7 +7,7 @@ from flask_cors import CORS
 
 from hydrus.data import crud
 from hydrus.data.user import check_authorization,add_token,check_token
-from hydrus.utils import get_session, get_doc, get_api_name, get_hydrus_server_url, get_authentication
+from hydrus.utils import get_session, get_doc, get_api_name, get_hydrus_server_url, get_authentication,get_token
 
 from flask.wrappers import Response
 from typing import Dict, List, Any, Union
@@ -81,6 +81,30 @@ def checkClassOp(class_type: str, method: str) -> bool:
             return True
     return False
 
+def check_authentication_response() -> Union[Response,None]:
+    """ Returns the response as per the authentication requirements."""
+    if get_authentication():
+        if request.args and get_token() and not request.authorization:
+            try:
+                token = check_token(request,get_session())
+                if token is False:
+                    return failed_authentication()
+            except:
+                return failed_authentication()
+        elif request.authorization is None:
+            return failed_authentication()
+        else:
+            try:
+                auth = check_authorization(request, get_session())
+                if auth is False:
+                    return failed_authentication()
+                else:
+                    token = add_token(request, get_session())
+                    return token_response(token)
+            except Exception as e:
+                status_code, message = e.get_HTTP()  # type: ignore
+                return set_response_headers(jsonify(message), status_code=status_code)
+    return None
 
 class Index(Resource):
     """Class for the EntryPoint."""
@@ -112,17 +136,9 @@ class Item(Resource):
 
     def get(self, id_: int, type_: str) -> Response:
         """GET object with id = id_ from the database."""
-        if get_authentication():
-            if request.authorization is None:
-                return failed_authentication()
-            else:
-                try:
-                    auth = check_authorization(request, get_session())
-                    if auth is False:
-                        return failed_authentication()
-                except Exception as e:
-                    status_code, message = e.get_HTTP()  # type: ignore
-                    return set_response_headers(jsonify(message), status_code=status_code)
+        auth_response = check_authentication_response()
+        if type(auth_response) == Response:
+            return auth_response
 
         class_type = get_doc().collections[type_]["collection"].class_.title
 
@@ -139,17 +155,9 @@ class Item(Resource):
 
     def post(self, id_: int, type_: str) -> Response:
         """Update object of type<type_> at ID<id_> with new object_ using HTTP POST."""
-        if get_authentication():
-            if request.authorization is None:
-                return failed_authentication()
-            else:
-                try:
-                    auth = check_authorization(request, get_session())
-                    if auth is False:
-                        return failed_authentication()
-                except Exception as e:
-                    status_code, message = e.get_HTTP()  # type: ignore
-                    return set_response_headers(jsonify(message), status_code=status_code)
+        auth_response = check_authentication_response()
+        if type(auth_response) == Response:
+            return auth_response
 
         class_type = get_doc().collections[type_]["collection"].class_.title
 
@@ -177,17 +185,9 @@ class Item(Resource):
 
     def put(self, id_: int, type_: str) -> Response:
         """Add new object_ optional <id_> parameter using HTTP PUT."""
-        if get_authentication():
-            if request.authorization is None:
-                return failed_authentication()
-            else:
-                try:
-                    auth = check_authorization(request, get_session())
-                    if auth is False:
-                        return failed_authentication()
-                except Exception as e:
-                    status_code, message = e.get_HTTP()  # type: ignore
-                    return set_response_headers(jsonify(message), status_code=status_code)
+        auth_response = check_authentication_response()
+        if type(auth_response) == Response:
+            return auth_response
 
         class_type = get_doc().collections[type_]["collection"].class_.title
 
@@ -215,17 +215,9 @@ class Item(Resource):
 
     def delete(self, id_: int, type_: str) -> Response:
         """Delete object with id=id_ from database."""
-        if get_authentication():
-            if request.authorization is None:
-                return failed_authentication()
-            else:
-                try:
-                    auth = check_authorization(request, get_session())
-                    if auth is False:
-                        return failed_authentication()
-                except Exception as e:
-                    status_code, message = e.get_HTTP()  # type: ignore
-                    return set_response_headers(jsonify(message), status_code=status_code)
+        auth_response = check_authentication_response()
+        if type(auth_response) == Response:
+            return auth_response
 
         class_type = get_doc().collections[type_]["collection"].class_.title
 
@@ -247,28 +239,9 @@ class ItemCollection(Resource):
 
     def get(self, type_: str) -> Response:
         """Retrieve a collection of items from the database."""
-        if get_authentication():
-            if request.args:
-                try:
-                    token = check_token(request,get_session())
-                    if token is False:
-                        return failed_authentication()
-                except:
-                    return failed_authentication()
-            elif request.authorization is None:
-                return failed_authentication()
-            else:
-                try:
-                    auth = check_authorization(request, get_session())
-                    if auth is False:
-                        return failed_authentication()
-                    else:
-                        token = add_token(request, get_session())
-                        return token_response(token)
-                except Exception as e:
-                    status_code, message = e.get_HTTP()  # type: ignore
-                    return set_response_headers(jsonify(message), status_code=status_code)
-
+        auth_response = check_authentication_response()
+        if type(auth_response) == Response:
+            return auth_response
         endpoint_ = checkEndpoint("GET",type_)
         if endpoint_['method']:
             # Collections
@@ -297,17 +270,9 @@ class ItemCollection(Resource):
 
     def put(self, type_: str) -> Response:
         """Add item to ItemCollection."""
-        if get_authentication():
-            if request.authorization is None:
-                return failed_authentication()
-            else:
-                try:
-                    auth = check_authorization(request, get_session())
-                    if auth is False:
-                        return failed_authentication()
-                except Exception as e:
-                    status_code, message = e.get_HTTP()  # type: ignore
-                    return set_response_headers(jsonify(message), status_code=status_code)
+        auth_response = check_authentication_response()
+        if type(auth_response) == Response:
+            return auth_response
 
         endpoint_ = checkEndpoint("PUT",type_)
         if endpoint_['method']:
@@ -355,17 +320,9 @@ class ItemCollection(Resource):
 
     def post(self, type_: str) -> Response:
         """Update Non Collection class item."""
-        if get_authentication():
-            if request.authorization is None:
-                return failed_authentication()
-            else:
-                try:
-                    auth = check_authorization(request, get_session())
-                    if auth is False:
-                        return failed_authentication()
-                except Exception as e:
-                    status_code, message = e.get_HTTP()  # type: ignore
-                    return set_response_headers(jsonify(message), status_code=status_code)
+        auth_response = check_authentication_response()
+        if type(auth_response) == Response:
+            return auth_response
 
         endpoint_ = checkEndpoint("POST",type_)
         if endpoint_['method']:
@@ -392,17 +349,9 @@ class ItemCollection(Resource):
 
     def delete(self, type_: str) -> Response:
         """Delete a non Collection class item."""
-        if get_authentication():
-            if request.authorization is None:
-                return failed_authentication()
-            else:
-                try:
-                    auth = check_authorization(request, get_session())
-                    if auth is False:
-                        return failed_authentication()
-                except Exception as e:
-                    status_code, message = e.get_HTTP()  # type: ignore
-                    return set_response_headers(jsonify(message), status_code=status_code)
+        auth_response = check_authentication_response()
+        if type(auth_response) == Response:
+            return auth_response
 
         endpoint_ = checkEndpoint("DELETE",type_)
         if endpoint_['method']:

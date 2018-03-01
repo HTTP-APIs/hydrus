@@ -4,7 +4,7 @@ from hydrus.data.user import generate_basic_digest
 import json
 import unittest
 from hydrus.app import app_factory
-from hydrus.utils import set_session, set_doc, set_api_name, set_authentication
+from hydrus.utils import set_session, set_doc, set_api_name, set_authentication, set_token
 from hydrus.data import doc_parse
 from hydrus.hydraspec import doc_writer_sample, doc_maker
 from sqlalchemy import create_engine
@@ -47,6 +47,7 @@ class AuthTestCase(unittest.TestCase):
         self.session_util = set_session(self.app, self.session)
         self.doc_util = set_doc(self.app, self.doc)
         self.auth_util = set_authentication(self.app, True)
+        self.token_util = set_token(self.app, False)
         self.client = self.app.test_client()
         
         print("Creating utilities context... ")
@@ -54,6 +55,7 @@ class AuthTestCase(unittest.TestCase):
         self.session_util.__enter__()
         self.doc_util.__enter__()
         self.auth_util.__enter__()
+        self.token_util.__enter__()
         self.client.__enter__()
 
         print("Setup done, running tests...")
@@ -64,6 +66,7 @@ class AuthTestCase(unittest.TestCase):
         """Tear down temporary database and exit utilities"""
         self.client.__exit__(None, None, None)
         self.auth_util.__exit__(None, None, None)
+        self.token_util.__exit__(None, None, None)
         self.doc_util.__exit__(None, None, None)
         self.session_util.__exit__(None, None, None)
         self.api_name_util.__exit__(None, None, None)
