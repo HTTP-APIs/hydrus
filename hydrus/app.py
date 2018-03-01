@@ -310,7 +310,7 @@ class ItemCollection(Resource):
                         try:
                             object_id = crud.insert(object_=object_, session=get_session())
                             headers_ = [{"Location": get_hydrus_server_url()+get_api_name()+"/"+type_+"/"+str(object_id)}]
-                            response = {"message": "Object with ID %s successfully deleted" % (object_id)}
+                            response = {"message": "Object with ID %s successfully added" % (object_id)}
                             return set_response_headers(jsonify(response), headers=headers_, status_code=201)
                         except Exception as e:
                             status_code, message = e.get_HTTP() #type: ignore
