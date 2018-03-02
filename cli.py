@@ -13,19 +13,19 @@ import json
 import click
 
 @click.command()
-@click.option("--hydradoc", default="doc.json",
-			           help="Location To HydraDocumentation(JSON Format) Of Server",\
-			           type=click.File('r'))
+@click.option("--adduser", "-u", default=tuple([1, "test"]),
+                help="Adds a new user to the API.", nargs=2, type=(int, str))
 @click.option("--api", "-a", default="serverapi",
                 help="The API name.", type=str)
 @click.option("--auth/--no-auth", default=True,
                 help="Set authentication to True or False.")
+@click.option("--hydradoc", "-d", default="doc.json",
+			    help="Location to HydraDocumentation (JSON) of server.",
+			    type=click.File('r'))
 @click.option("--port", "-p", default=8080,
                 help="The port the app is hosted at.", type=int)
-@click.option("--adduser", default=tuple([1, "test"]),
-                help="Adds a new user to the API.", nargs=2, type=(int, str))
 @click.argument("serve", required=True)
-def startserver(adduser, api, auth, port, hydradoc, serve):
+def startserver(adduser, api, auth, hydradoc, port, serve):
     """Python Hydrus CLI"""
     # The database connection URL
     # See http://docs.sqlalchemy.org/en/rel_1_0/core/engines.html#sqlalchemy.create_engine for more info
@@ -50,7 +50,8 @@ def startserver(adduser, api, auth, port, hydradoc, serve):
     # NOTE: You can use your own API Documentation and create a HydraDoc object using doc_maker
     #       Or you may create your own HydraDoc Documentation using doc_writer [see hydrus/hydraspec/doc_writer_sample]
     click.echo("Creating the API Documentation")
-    apidoc = doc_maker.create_doc(json.loads(hydradoc.read()), HYDRUS_SERVER_URL, API_NAME)
+    apidoc = doc_maker.create_doc(json.loads(hydradoc.read()),
+                                    HYDRUS_SERVER_URL, API_NAME)
 
     # Start a session with the DB and create all classes needed by the APIDoc
     session = scoped_session(sessionmaker(bind=engine))
