@@ -20,8 +20,8 @@ import click
 @click.option("--auth/--no-auth", default=True,
                 help="Set authentication to True or False.")
 @click.option("--hydradoc", "-d", default="doc.json",
-			    help="Location to HydraDocumentation (JSON) of server.",
-			    type=click.File('r'))
+                help="Location to HydraDocumentation (JSON) of server.",
+                type=click.File('r'))
 @click.option("--port", "-p", default=8080,
                 help="The port the app is hosted at.", type=int)
 @click.argument("serve", required=True)
