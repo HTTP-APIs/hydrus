@@ -40,6 +40,8 @@ class AuthTestCase(unittest.TestCase):
         doc_parse.insert_properties(test_properties, self.session)
         add_user(1, "test", self.session)
         self.auth_header = {"Authorization": "Basic " + b64encode(b"1:test").decode("ascii")}
+        self.wrong_id = {"Authorization": "Basic " + b64encode(b"2:test").decode("ascii")}
+        self.wrong_pass = {"Authorization": "Basic " + b64encode(b"1:test2").decode("ascii")}        
         print("Classes, Properties and Users added successfully.")
 
         print("Setting up Hydrus utilities... ")
@@ -68,6 +70,42 @@ class AuthTestCase(unittest.TestCase):
         self.session_util.__exit__(None, None, None)
         self.api_name_util.__exit__(None, None, None)
         self.session.close()
+
+    def test_wrongID_GET(self):
+        """Test for the index."""
+        response_get = self.client.get("/"+self.API_NAME)
+        endpoints = json.loads(response_get.data.decode('utf-8'))
+        for endpoint in endpoints:
+            if endpoint in self.doc.collections:
+                response_get = self.client.get(endpoints[endpoint], headers=self.wrong_id)
+                assert response_get.status_code == 401 or response_get.status_code == 400
+
+    def test_wrongID_POST(self):
+        """Test for the index."""
+        response_get = self.client.get("/"+self.API_NAME)
+        endpoints = json.loads(response_get.data.decode('utf-8'))
+        for endpoint in endpoints:
+            if endpoint in self.doc.collections:
+                response_get = self.client.post(endpoints[endpoint], headers=self.wrong_id, data=json.dumps(dict(foo="bar")))
+                assert response_get.status_code == 401 or response_get.status_code == 400
+
+    def test_wrongPass_GET(self):
+        """Test for the index."""
+        response_get = self.client.get("/"+self.API_NAME)
+        endpoints = json.loads(response_get.data.decode('utf-8'))
+        for endpoint in endpoints:
+            if endpoint in self.doc.collections:
+                response_get = self.client.get(endpoints[endpoint], headers=self.wrong_pass)
+                assert response_get.status_code == 401
+
+    def test_wrongPass_POST(self):
+        """Test for the index."""
+        response_get = self.client.get("/"+self.API_NAME)
+        endpoints = json.loads(response_get.data.decode('utf-8'))
+        for endpoint in endpoints:
+            if endpoint in self.doc.collections:
+                response_get = self.client.post(endpoints[endpoint], headers=self.wrong_pass, data=json.dumps(dict(foo="bar")))
+                assert response_get.status_code == 401
 
     def test_Auth_GET(self):
         """Test for the index."""
