@@ -3,7 +3,7 @@
 from sqlalchemy import exists
 from sqlalchemy.orm.exc import NoResultFound
 from hydrus.data.exceptions import UserExists, UserNotFound
-from hydrus.data.db_models import User,Token
+from hydrus.data.db_models import User, Token, Nonce
 from hashlib import sha224
 import base64
 # import random
@@ -11,6 +11,7 @@ from sqlalchemy.orm.session import Session
 from werkzeug.local import LocalProxy
 from random import randrange
 from datetime import datetime,timedelta
+from uuid import uuid4
 
 
 def add_user(id_: int, paraphrase: str, session: Session) -> None:
@@ -22,18 +23,29 @@ def add_user(id_: int, paraphrase: str, session: Session) -> None:
         session.add(new_user)
         session.commit()
 
-# TODO: Implement handhasking for better security
-# def create_nonce(id_, session):
-#     """Assign a random nonce to the user."""
-#     user = None
-#     try:
-#         user = session.query(User).filter(User.id == id_).one()
-#     except NoResultFound:
-#         raise UserNotFound(id_=id_)
-#     user.nonce = random.randint(1, 1000000)
-#     session.commit()
-#
-#     return user.nonce
+def check_nonce(request: LocalProxy, session: Session) -> bool:
+    """check validity of nonce passed by the user."""
+    try:
+        id_ = request.cookies['nonce']
+        nonce = session.query(Nonce).filter(Nonce.id == id_).one()
+        present = datetime.now()
+        present = present - nonce.timestamp
+        session.delete(nonce)
+        session.commit()
+        if present > timedelta(0,0,0,0,1,0,0):
+            return False
+    except:
+        return False
+    return True        
+
+def create_nonce(session: Session) -> str:
+    """Create a one time valid nonce for two factor authentication."""
+    nonce = str(uuid4())
+    time = datetime.now()
+    new_nonce = Nonce(id=nonce, timestamp=time)
+    session.add(new_nonce)
+    session.commit()
+    return nonce
 
 def add_token(request: LocalProxy, session: Session) -> str:
     """Create a new token for the user or return a 
@@ -45,7 +57,7 @@ def add_token(request: LocalProxy, session: Session) -> str:
         token = session.query(Token).filter(Token.user_id == id_).one()
         present = datetime.now()
         present = present - token.timestamp
-        if present > timedelta(0,0,0,0,1,0,0):
+        if present > timedelta(0,0,0,0,2,0,0):
             update_token = '%030x' % randrange(16**30)
             token.id = update_token
             token.timestamp = datetime.now()
@@ -67,7 +79,7 @@ def check_token(request: LocalProxy, session: Session) -> bool:
         token = session.query(Token).filter(Token.id == id_).one()
         present = datetime.now()
         present = present - token.timestamp
-        if present > timedelta(0,0,0,0,1,0,0):
+        if present > timedelta(0,0,0,0,2,0,0):
             return False
     except:
         return False
@@ -97,4 +109,6 @@ def authenticate_user(id_: int, paraphrase: str, session: Session) -> bool:
 def check_authorization(request: LocalProxy, session: Session) -> bool:
     """Check if the request object has the correct authorization."""
     auth = request.authorization
-    return authenticate_user(auth.username, auth.password, session)
+    if check_nonce(request, session):
+        return authenticate_user(auth.username, auth.password, session)
+    return False

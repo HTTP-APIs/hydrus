@@ -207,6 +207,13 @@ class Token(Base):
     user_id = Column(Integer, ForeignKey('user.id'))
     timestamp = Column(DateTime) 
 
+class Nonce(Base):
+    """Model for storing nonce for the users."""
+
+    __tablename__  = "nonce"
+    id = Column(String, primary_key = True)
+    timestamp = Column(DateTime)
+
 if __name__ == "__main__":
     print("Creating models....")
     Base.metadata.create_all(engine)

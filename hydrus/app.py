@@ -6,7 +6,7 @@ from flask_restful import Api, Resource
 from flask_cors import CORS
 
 from hydrus.data import crud
-from hydrus.data.user import check_authorization,add_token,check_token
+from hydrus.data.user import check_authorization, add_token, check_token, create_nonce
 from hydrus.utils import get_session, get_doc, get_api_name, get_hydrus_server_url, get_authentication,get_token
 
 from flask.wrappers import Response
@@ -28,8 +28,9 @@ def token_response(token: str) -> Response:
 def failed_authentication() -> Response:
     """Return failed authentication object."""
     message = {401: "Need credentials to authenticate"}
+    nonce = create_nonce(get_session())
     response = set_response_headers(jsonify(message), status_code=401,
-                                    headers=[{'WWW-Authenticate': 'Basic realm="Login Required"'}])
+                                    headers=[{'WWW-Authenticate': 'Basic realm="Login Required"'},{'Set-Cookie':'nonce=%s' %nonce}])
     return response
 
 
@@ -402,7 +403,7 @@ class Contexts(Resource):
 def app_factory(API_NAME: str="api") -> Flask:
     """Create an app object."""
     app = Flask(__name__)
-
+    app.config['SECRET_KEY'] = 'secret key'
     CORS(app)
     app.url_map.strict_slashes = False
     api = Api(app)
