@@ -4,12 +4,15 @@
 from setuptools import setup, find_packages
 
 setup(name='hydrus',
+      include_package_data=True,
       version='0.0.1',
       description='A space-based application for W3C HYDRA Draft',
       author='W3C HYDRA development group',
       author_email='public-hydra@w3.org',
       url='https://github.com/HTTP-APIs/hydrus',
       py_modules=['cli'],
+      python_requires='>=3',
+      packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
       install_requires=[
           'Flask==0.11',
           'Flask-RESTful==0.3.6',
