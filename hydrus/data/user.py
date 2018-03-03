@@ -10,6 +10,7 @@ import base64
 from sqlalchemy.orm.session import Session
 from werkzeug.local import LocalProxy
 from random import randrange
+from datetime import datetime,timedelta
 
 
 def add_user(id_: int, paraphrase: str, session: Session) -> None:
@@ -35,23 +36,39 @@ def add_user(id_: int, paraphrase: str, session: Session) -> None:
 #     return user.nonce
 
 def add_token(request: LocalProxy, session: Session) -> str:
+    """Create a new token for the user or return a 
+        valid existing token to the user"""
+
     token = None
     id_ = int(request.authorization['username'])
     try:
         token = session.query(Token).filter(Token.user_id == id_).one()
+        present = datetime.now()
+        present = present - token.timestamp
+        if present > timedelta(0,0,0,0,1,0,0):
+            update_token = '%030x' % randrange(16**30)
+            token.id = update_token
+            token.timestamp = datetime.now()
+            session.commit()
     except NoResultFound:
         token = '%030x' % randrange(16**30)
-        new_token = Token(user_id=id_,id=token)
+        time = datetime.now()
+        new_token = Token(user_id=id_, id=token, timestamp=time)
         session.add(new_token)
         session.commit()
         return token
     return token.id
 
 def check_token(request: LocalProxy, session: Session) -> bool:
+    """check validity of the token passed by the user."""
     token = None
     try:
         id_ = request.args['token']
         token = session.query(Token).filter(Token.id == id_).one()
+        present = datetime.now()
+        present = present - token.timestamp
+        if present > timedelta(0,0,0,0,1,0,0):
+            return False
     except:
         return False
     return True

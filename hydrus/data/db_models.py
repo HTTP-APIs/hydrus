@@ -204,7 +204,8 @@ class Token(Base):
 
     __tablename__ = "tokens"
     id = Column(String, primary_key = True)
-    user_id = Column(Integer, ForeignKey('user.id')) 
+    user_id = Column(Integer, ForeignKey('user.id'))
+    timestamp = Column(DateTime) 
 
 if __name__ == "__main__":
     print("Creating models....")
