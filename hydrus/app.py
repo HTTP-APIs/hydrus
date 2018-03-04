@@ -52,7 +52,7 @@ def failed_authentication(missing: bool) -> Response:
         response = set_response_headers(jsonify(message), status_code=401,
                                         headers=[{'WWW-Authenticate': 'Basic realm="Login Required"'}])
     else:
-        message = {403: "Credentials were incoorect."}
+        message = {403: "Credentials were incorrect."}
         response = set_response_headers(jsonify(message), status_code=403,
                                         headers=[{'WWW-Authenticate': 'Basic realm="Incorrect credentials."'}])
     return response
