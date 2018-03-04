@@ -19,8 +19,8 @@ import click
                 help="The API name.", type=str)
 @click.option("--auth/--no-auth", default=True,
                 help="Set authentication to True or False.")
-@click.option("--hydradoc", "-d", default="doc.json",
-                help="Location to HydraDocumentation (JSON) of server.",
+@click.option("--hydradoc", "-d", default="doc.jsonld",
+                help="Location to HydraDocumentation (JSON-LD) of server.",
                 type=click.File('r'))
 @click.option("--port", "-p", default=8080,
                 help="The port the app is hosted at.", type=int)
