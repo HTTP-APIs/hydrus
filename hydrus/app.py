@@ -1,4 +1,29 @@
-"""Main route for the applciation."""
+"""Main route for the applciation.
+    ===============================
+    Imports :
+
+    flask.json.jsonify : Turns the JSON output into a Response object with the application/json mimetype
+    Ref- http://flask.pocoo.org/docs/0.12/api
+
+    flask.request : The request object used by default in Flask. Remembers the matched endpoint and view arguments.
+    Ref - http://flask.pocoo.org/docs/0.12/api
+
+    flask.abort : Raises an HTTPException for the given status code or WSGI application:
+    Ref - http://flask.pocoo.org/docs/0.12/api
+
+    flask_restful.Resource : Represents an abstract RESTful resource.
+    Ref - http://flask-restful.readthedocs.io/en/latest/api.html
+
+
+    hydrus.data.crud : Function/Class to perform basic CRUD operations for the server 
+    hydrus.data.user.check_authorization : Funcion checks if the request object has the correct authorization
+    hydrus.utils.get_session : Gets the database session for the server 
+    hydrus.utils.get_doc : Function which gets the server API documentation
+    hydrus.utils.get_api_name : Function which gets the server API name 
+    hydrus.utils.get_hydrus_server_url : Function the gets the server URL
+    hydrus.utils.get_authentication : Function that checks whether API needs to be authenticated or not
+
+"""
 
 import json
 from flask import Flask, jsonify, request, abort
