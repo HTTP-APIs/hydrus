@@ -6,7 +6,7 @@ from hydrus.data.exceptions import UserExists, UserNotFound
 from hydrus.data.db_models import User
 from hashlib import sha224
 import base64
-# import random
+import random
 from sqlalchemy.orm.session import Session
 from werkzeug.local import LocalProxy
 
@@ -20,6 +20,7 @@ def add_user(id_: int, paraphrase: str, session: Session) -> None:
         session.add(new_user)
         session.commit()
 
+
 # TODO: Implement handhasking for better security
 # def create_nonce(id_, session):
 #     """Assign a random nonce to the user."""
@@ -32,6 +33,20 @@ def add_user(id_: int, paraphrase: str, session: Session) -> None:
 #     session.commit()
 #
 #     return user.nonce
+
+
+def create_nonce(id_, session) -> int:
+    """Assign a random nonce to the user."""
+    user = None
+    try:
+        user = session.query(User).filter(User.id == id_).one()
+    except NoResultFound:
+        raise UserNotFound(id_=id_)
+    random.seed(sha224(id_.encode('utf-8')).hexdigest())
+    user.nonce = random.randint(1, 1000000000)
+    session.commit()
+
+    return user.nonce
 
 
 def generate_basic_digest(id_: int, paraphrase: str) -> str:
