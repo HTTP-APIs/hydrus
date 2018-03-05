@@ -21,7 +21,7 @@ def validObject(object_: Dict[str, Any]) -> bool:
 
 def token_response(token: str) -> Response:
     """Return succesful token generation object"""
-    message = {"User token": token}
+    message = {200: "User token generated"}
     response = set_response_headers(jsonify(message), status_code=200,
                                     headers=[{'X-Authorization': 'TOKEN ' + token}])
     return response
@@ -36,7 +36,7 @@ def failed_authentication(incorrect: bool) -> Response:
         realm = 'Basic realm="Incorrect credentials"'        
     nonce = create_nonce(get_session())
     response = set_response_headers(jsonify(message), status_code=401,
-                                    headers=[{'WWW-Authenticate': realm},{'Set-Cookie': 'nonce=%s' %nonce}])
+                                    headers=[{'WWW-Authenticate': realm},{'X-Authentication': 'NONCE %s' %nonce}])
     return response
 
 
@@ -106,7 +106,7 @@ def verify_user() -> Union[Response, None]:
 def check_authentication_response() -> Union[Response,None]:
     """ Returns the response as per the authentication requirements."""
     if get_authentication():
-        if request.args and get_token():
+        if get_token():
             token = check_token(request, get_session())
             if not token:
                 if request.authorization is None:
