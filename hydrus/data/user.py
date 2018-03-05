@@ -57,7 +57,7 @@ def add_token(request: LocalProxy, session: Session) -> str:
         token = session.query(Token).filter(Token.user_id == id_).one()
         present = datetime.now()
         present = present - token.timestamp
-        if present > timedelta(0,0,0,0,2,0,0):
+        if present > timedelta(0,0,0,0,45,0,0):
             update_token = '%030x' % randrange(16**30)
             token.id = update_token
             token.timestamp = datetime.now()
@@ -79,7 +79,7 @@ def check_token(request: LocalProxy, session: Session) -> bool:
         token = session.query(Token).filter(Token.id == id_).one()
         present = datetime.now()
         present = present - token.timestamp
-        if present > timedelta(0,0,0,0,2,0,0):
+        if present > timedelta(0,0,0,0,45,0,0):
             return False
     except:
         return False
