@@ -21,16 +21,22 @@ def validObject(object_: Dict[str, Any]) -> bool:
 
 def token_response(token: str) -> Response:
     """Return succesful token generation object"""
-    message = {"User Token": token}
-    response = set_response_headers(jsonify(message), status_code=200)
+    message = {"User token": token}
+    response = set_response_headers(jsonify(message), status_code=200,
+                                    headers=[{'X-Authorization': 'TOKEN ' + token}])
     return response
 
-def failed_authentication() -> Response:
+def failed_authentication(incorrect: bool) -> Response:
     """Return failed authentication object."""
-    message = {401: "Need credentials to authenticate"}
+    if not incorrect:
+        message = {401: "Need credentials to authenticate"}
+        realm = 'Basic realm="Login required"'
+    else:
+        message = {401: "Incorrect credentials"}
+        realm = 'Basic realm="Incorrect credentials"'        
     nonce = create_nonce(get_session())
     response = set_response_headers(jsonify(message), status_code=401,
-                                    headers=[{'WWW-Authenticate': 'Basic realm="Login Required"'},{'Set-Cookie':'nonce=%s' %nonce}])
+                                    headers=[{'WWW-Authenticate': realm},{'Set-Cookie': 'nonce=%s' %nonce}])
     return response
 
 
@@ -87,7 +93,7 @@ def verify_user() -> Union[Response, None]:
     try:
         auth = check_authorization(request, get_session())
         if auth is False:
-            return failed_authentication()
+            return failed_authentication(True)
         else:
             if get_token():
                 token = add_token(request, get_session())
@@ -104,11 +110,11 @@ def check_authentication_response() -> Union[Response,None]:
             token = check_token(request, get_session())
             if not token:
                 if request.authorization is None:
-                    return failed_authentication()
+                    return failed_authentication(False)
                 else:
                     return verify_user()
         elif request.authorization is None:
-            return failed_authentication()
+            return failed_authentication(False)
         else:
             return verify_user()
     return None
