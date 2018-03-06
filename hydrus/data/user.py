@@ -26,7 +26,7 @@ def add_user(id_: int, paraphrase: str, session: Session) -> None:
 def check_nonce(request: LocalProxy, session: Session) -> bool:
     """check validity of nonce passed by the user."""
     try:
-        id_ = request.headers['nonce']
+        id_ = request.headers['X-Authentication']
         nonce = session.query(Nonce).filter(Nonce.id == id_).one()
         present = datetime.now()
         present = present - nonce.timestamp
@@ -75,7 +75,7 @@ def check_token(request: LocalProxy, session: Session) -> bool:
     """check validity of the token passed by the user."""
     token = None
     try:
-        id_ = request.headers['token']
+        id_ = request.headers['X-Authorization']
         token = session.query(Token).filter(Token.id == id_).one()
         present = datetime.now()
         present = present - token.timestamp

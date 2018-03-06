@@ -23,7 +23,7 @@ def token_response(token: str) -> Response:
     """Return succesful token generation object"""
     message = {200: "User token generated"}
     response = set_response_headers(jsonify(message), status_code=200,
-                                    headers=[{'X-Authorization': 'TOKEN ' + token}])
+                                    headers=[{'X-Authorization': token}])
     return response
 
 def failed_authentication(incorrect: bool) -> Response:
@@ -36,7 +36,7 @@ def failed_authentication(incorrect: bool) -> Response:
         realm = 'Basic realm="Incorrect credentials"'        
     nonce = create_nonce(get_session())
     response = set_response_headers(jsonify(message), status_code=401,
-                                    headers=[{'WWW-Authenticate': realm},{'X-Authentication': 'NONCE %s' %nonce}])
+                                    headers=[{'WWW-Authenticate': realm},{'X-Authentication': nonce}])
     return response
 
 
