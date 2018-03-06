@@ -16,18 +16,18 @@ Features
 Hydrus supports the following features:
 - A client that can understand Hydra vocabulary and interacts with a Hydra supporting server to basic [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) operations on data.
 - A generic server that can serve required data and metadata(in the form of API documentation) to a client over HTTP.
-- A middleware that allows users to use the client to interact with the server using Natural Language which is processed machine consumable language. **(under developement)**
+- A middleware that allows users to use the client to interact with the server using Natural Language which is processed machine consumable language. **(under development)**
 
 <a name="req"></a>
 Requirements
 -------------
 The system is built over the following standards and tools:
 - [Flask](http://flask.pocoo.org/) a Python based micro-framework for handling server requests and responses.
-- [JSON-LD](http://json-ld.org/spec/latest/json-ld/) as the prefered data format.
+- [JSON-LD](http://json-ld.org/spec/latest/json-ld/) as the preferred data format.
 - [Hydra](http://www.hydra-cg.com/) as the API standard.
 - [SQLAlchemy](http://www.sqlalchemy.org/) as the backend database connector for storage and related operations.
 
-Apart from this, there are also various Python packages that Hydrus uses. A list of all these packages can be found in the [requirements.txt](https://github.com/HTTP-APIs/hydrus/blob/master/requirements.txt) file. It would be advisable to run **`pip install -r requirements.txt`** before setting up other things.
+Apart from this, there are also various Python packages that Hydrus uses. Using `python setup.py install` installs all the required dependencies.
 
 **NOTE:** You'll need to use `python3` not `python2`.
 
@@ -47,16 +47,21 @@ cd hydrus
 git checkout -b develop origin/develop
 ```
 
-Install requirements and run the `main.py` script:
-```bash
-pip install -r requirements.txt
+Install hydrus using:
 
-python main.py
+```bash
+python setup.py install
 ```
 
-The demo should be up and running on `http://localhost:8080/serverapi/`
+and run the server using:
+
+```bash
+hydrus serve
+```
+
+The demo should be up and running on `http://localhost:8080/serverapi/`.
 
 <a name="usage"></a>
 Usage
 -------------
-For more info, head to the [Usage](https://github.com/HTTP-APIs/hydrus/wiki/Usage) section of the [wiki](https://github.com/HTTP-APIs/hydrus/wiki/)
+For more info, head to the [Usage](https://github.com/HTTP-APIs/hydrus/wiki/Usage) section of the [wiki](https://github.com/HTTP-APIs/hydrus/wiki/).
