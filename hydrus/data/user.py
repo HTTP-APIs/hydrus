@@ -39,7 +39,10 @@ def check_nonce(request: LocalProxy, session: Session) -> bool:
     return True        
 
 def create_nonce(session: Session) -> str:
-    """Create a one time valid nonce for two factor authentication."""
+    """
+    Create a one time use nonce valid for a short time 
+    for user authentication.
+    """
     nonce = str(uuid4())
     time = datetime.now()
     new_nonce = Nonce(id=nonce, timestamp=time)
@@ -48,9 +51,10 @@ def create_nonce(session: Session) -> str:
     return nonce
 
 def add_token(request: LocalProxy, session: Session) -> str:
-    """Create a new token for the user or return a 
-        valid existing token to the user"""
-
+    """
+    Create a new token for the user or return a 
+    valid existing token to the user.
+    """
     token = None
     id_ = int(request.authorization['username'])
     try:
@@ -72,7 +76,9 @@ def add_token(request: LocalProxy, session: Session) -> str:
     return token.id
 
 def check_token(request: LocalProxy, session: Session) -> bool:
-    """check validity of the token passed by the user."""
+    """
+    check validity of the token passed by the user.
+    """
     token = None
     try:
         id_ = request.headers['X-Authorization']

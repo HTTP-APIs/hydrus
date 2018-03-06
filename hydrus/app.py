@@ -51,14 +51,18 @@ def validObject(object_: Dict[str, Any]) -> bool:
     return False
 
 def token_response(token: str) -> Response:
-    """Return succesful token generation object"""
+    """
+    Return succesful token generation object
+    """
     message = {200: "User token generated"}
     response = set_response_headers(jsonify(message), status_code=200,
                                     headers=[{'X-Authorization': token}])
     return response
 
 def failed_authentication(incorrect: bool) -> Response:
-    """Return failed authentication object."""
+    """
+    Return failed authentication object.
+    """
     if not incorrect:
         message = {401: "Need credentials to authenticate"}
         realm = 'Basic realm="Login required"'
@@ -121,7 +125,9 @@ def checkClassOp(class_type: str, method: str) -> bool:
     return False
 
 def verify_user() -> Union[Response, None]:
-    """ Verify the credentials of the user and assign token."""
+    """ 
+    Verify the credentials of the user and assign token.
+    """
     try:
         auth = check_authorization(request, get_session())
         if auth is False:
@@ -136,7 +142,9 @@ def verify_user() -> Union[Response, None]:
     return None  
 
 def check_authentication_response() -> Union[Response,None]:
-    """ Returns the response as per the authentication requirements."""
+    """ 
+    Return the response as per the authentication requirements.
+    """
     if get_authentication():
         if get_token():
             token = check_token(request, get_session())
