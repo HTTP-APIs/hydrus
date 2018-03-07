@@ -48,7 +48,10 @@ git checkout -b develop origin/develop
 ```
 
 Install hydrus using:
-
+```bash
+pip install .
+```
+or
 ```bash
 python setup.py install
 ```
