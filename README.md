@@ -45,6 +45,13 @@ Change directory and switch to the develop branch:
 cd hydrus
 
 git checkout -b develop origin/develop
+
+```
+For running the project in virtual environment
+```bash
+virtualenv .venv --python=/path/to/python3
+
+source .venv/bin/activate
 ```
 
 Install requirements and run the `main.py` script:
