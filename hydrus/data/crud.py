@@ -15,9 +15,6 @@
     sqlalchemy.orm.session.Session : Manages persistence operations for ORM-mapped objects.
     Ref : http://docs.sqlalchemy.org/en/latest/orm/session_api.html?highlight=session#module-sqlalchemy.orm.session
 
-
-
-
     hydrus.data.db_models.Graph : Model for a graph that store triples of instance from the other models to map relationships.
     hydrus.data.db_models.BaseProperty : Model for Basic Property.
     hydrus.data.db_models.RDFClass : Model for Classes specifically RDF-OWL or RDF-HYDRA classes.
