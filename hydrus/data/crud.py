@@ -1,4 +1,38 @@
-"""Basic CRUD operations for the server."""
+"""Basic CRUD operations for the server.
+
+    ===============================
+    Imports :
+
+    sqlalchemy.orm.with_polymorphic : Load columns for inheriting classes.
+    Ref : http://docs.sqlalchemy.org/en/latest/orm/query.html
+
+    sqlalchemy.exists : A convenience method that turns a query into an EXISTS subquery of the form EXISTS (SELECT 1 FROM … WHERE …).
+    Ref : http://docs.sqlalchemy.org/en/latest/orm/query.html
+
+    sqlalchemy.orm.exc.NoResultFound : A database result was required but none was found.
+    Ref : http://docs.sqlalchemy.org/en/latest/orm/exceptions.html?highlight=result%20found#sqlalchemy.orm.exc.NoResultFound
+
+    sqlalchemy.orm.session.Session : Manages persistence operations for ORM-mapped objects.
+    Ref : http://docs.sqlalchemy.org/en/latest/orm/session_api.html?highlight=session#module-sqlalchemy.orm.session
+
+
+
+
+    hydrus.data.db_models.Graph : Model for a graph that store triples of instance from the other models to map relationships.
+    hydrus.data.db_models.BaseProperty : Model for Basic Property.
+    hydrus.data.db_models.RDFClass : Model for Classes specifically RDF-OWL or RDF-HYDRA classes.
+    hydrus.data.db_models.Instance : Model for Object/Resource. Instances are instances of some kind/classes that are served through the API.
+    hydrus.data.db_models.Terminal : Model for Terminals which are numbers or string that can be referenced by a Property. 
+    hydrus.data.db_models.GraphIAC : Graph model for Instance >> AbstractProperty >> Class.
+    hydrus.data.db_models.GraphIIT : Graph model for Instance >> InstanceProperty >> Terminal.
+    hydrus.data.db_models.GraphIII : Graph model for Instance >> InstanceProperty >> Instance.
+    
+    Ref : ./db_models.py
+
+    hydrus.data.exceptions : Contains all exceptions .
+    typing : Module which provides support for type hints .
+
+"""
 
 from sqlalchemy.orm import with_polymorphic
 from sqlalchemy import exists
@@ -9,16 +43,18 @@ from hydrus.data.db_models import (Graph, BaseProperty, RDFClass, Instance,
 from hydrus.data.exceptions import (ClassNotFound, InstanceExists, PropertyNotFound,
                                     NotInstanceProperty, NotAbstractProperty,
                                     InstanceNotFound)
+from sqlalchemy.orm.session import Session
+from typing import Dict, Optional, Any, List
 
 triples = with_polymorphic(Graph, '*')
 properties = with_polymorphic(BaseProperty, "*")
 
 
-def get(id_, type_, api_name, session, recursive=False):
+def get(id_: int, type_: str, api_name: str, session: Session, recursive: bool = False) -> Dict[str, str]:
     """Retrieve an Instance with given ID from the database [GET]."""
     object_template = {
         "@type": "",
-    }
+    } # type: Dict[str, Any]
     try:
         rdf_class = session.query(RDFClass).filter(
             RDFClass.name == type_).one()
@@ -66,7 +102,7 @@ def get(id_, type_, api_name, session, recursive=False):
     return object_template
 
 
-def insert(object_, session, id_=None):
+def insert(object_: Dict[str, Any], session: Session , id_: Optional[int] =None) -> int:
     """Insert an object to database [POST] and returns the inserted object."""
     rdf_class = None
     instance = None
@@ -144,7 +180,7 @@ def insert(object_, session, id_=None):
     return instance.id
 
 
-def delete(id_, type_, session):
+def delete(id_:int, type_:str, session:Session) -> None:
     """Delete an Instance and all its relations from DB given id [DELETE]."""
     try:
         rdf_class = session.query(RDFClass).filter(RDFClass.name == type_).one()
@@ -179,7 +215,7 @@ def delete(id_, type_, session):
     session.commit()
 
 
-def update(id_, type_, object_, session, api_name):
+def update(id_: int, type_: str, object_: Dict[str,str], session: Session, api_name:str) -> int:
     """Update an object properties based on the given object [PUT]."""
     # Keep the object as fail safe
     instance = get(id_=id_, type_=type_, session=session, api_name=api_name)
@@ -199,14 +235,14 @@ def update(id_, type_, object_, session, api_name):
     return id_
 
 
-def get_collection(API_NAME, type_, session):
+def get_collection(API_NAME: str, type_: str, session: Session) -> Dict[str, Any]:
     """Retrieve a type of collection from the database."""
     collection_template = {
         "@id": "/"+API_NAME+"/" + type_ + "Collection/",
         "@context": None,
         "@type": type_ + "Collection",
         "members": list()
-    }
+    } # type: Dict[str, Any]
     try:
         rdf_class = session.query(RDFClass).filter(
             RDFClass.name == type_).one()
@@ -227,7 +263,7 @@ def get_collection(API_NAME, type_, session):
     return collection_template
 
 
-def get_single(type_, api_name, session):
+def get_single(type_: str, api_name: str, session: Session) -> Dict[str, Any]:
     """Get instance of classes with single objects."""
     try:
         rdf_class = session.query(RDFClass).filter(RDFClass.name == type_).one()
@@ -245,7 +281,7 @@ def get_single(type_, api_name, session):
     return object_
 
 
-def insert_single(object_, session):
+def insert_single(object_: Dict[str, Any], session: Session) -> Any:
     """Insert instance of classes with single objects."""
     try:
         rdf_class = session.query(RDFClass).filter(RDFClass.name == object_["@type"]).one()
@@ -260,7 +296,7 @@ def insert_single(object_, session):
     raise InstanceExists(type_=rdf_class.name)
 
 
-def update_single(object_, session, api_name):
+def update_single(object_: Dict[str, Any], session: Session, api_name: str) -> int:
     """Update instance of classes with single objects."""
     try:
         rdf_class = session.query(RDFClass).filter(RDFClass.name == object_["@type"]).one()
@@ -276,7 +312,7 @@ def update_single(object_, session, api_name):
     return update(id_=instance.id, type_=object_["@type"], object_=object_, session=session, api_name=api_name)
 
 
-def delete_single(type_, session):
+def delete_single(type_: str, session: Session) -> None:
     """Delete instance of classes with single objects."""
     try:
         rdf_class = session.query(RDFClass).filter(RDFClass.name == type_).one()
