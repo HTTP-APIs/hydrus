@@ -170,9 +170,9 @@ def set_session(application: Flask, DB_SESSION: scoped_session) -> Iterator:
     :param DB_SESSION: SQLalchemy Session object
             <sqlalchemy.orm.session.Session>
     """
-    if not isinstance(DB_SESSION, scoped_session):
+    if not isinstance(DB_SESSION, scoped_session) and not isinstance(DB_SESSION, Session):
         raise TypeError(
-            "The API Doc is not of type or <sqlalchemy.orm.scoping.scoped_session>")
+            "The API Doc is not of type <sqlalchemy.orm.session.Session> or <sqlalchemy.orm.scoping.scoped_session>")
 
     def handler(sender: Flask, **kwargs: Any) -> None:
         g.dbsession = DB_SESSION
