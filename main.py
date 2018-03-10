@@ -49,10 +49,6 @@ if __name__ == "__main__":
     # Get all the properties from the classes
     properties = doc_parse.get_all_properties(classes)
 
-    # Insert them into the database
-    doc_parse.insert_classes(classes, session)
-    doc_parse.insert_properties(properties, session)
-
     print("Adding authorized users")
     add_user(id_=1, paraphrase="test", session=session)
 
