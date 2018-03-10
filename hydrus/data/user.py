@@ -3,12 +3,15 @@
 from sqlalchemy import exists
 from sqlalchemy.orm.exc import NoResultFound
 from hydrus.data.exceptions import UserExists, UserNotFound
-from hydrus.data.db_models import User
+from hydrus.data.db_models import User, Token, Nonce
 from hashlib import sha224
 import base64
 # import random
 from sqlalchemy.orm.session import Session
 from werkzeug.local import LocalProxy
+from random import randrange
+from datetime import datetime,timedelta
+from uuid import uuid4
 
 
 def add_user(id_: int, paraphrase: str, session: Session) -> None:
@@ -20,19 +23,73 @@ def add_user(id_: int, paraphrase: str, session: Session) -> None:
         session.add(new_user)
         session.commit()
 
-# TODO: Implement handhasking for better security
-# def create_nonce(id_, session):
-#     """Assign a random nonce to the user."""
-#     user = None
-#     try:
-#         user = session.query(User).filter(User.id == id_).one()
-#     except NoResultFound:
-#         raise UserNotFound(id_=id_)
-#     user.nonce = random.randint(1, 1000000)
-#     session.commit()
-#
-#     return user.nonce
+def check_nonce(request: LocalProxy, session: Session) -> bool:
+    """check validity of nonce passed by the user."""
+    try:
+        id_ = request.headers['X-Authentication']
+        nonce = session.query(Nonce).filter(Nonce.id == id_).one()
+        present = datetime.now()
+        present = present - nonce.timestamp
+        session.delete(nonce)
+        session.commit()
+        if present > timedelta(0,0,0,0,1,0,0):
+            return False
+    except:
+        return False
+    return True        
 
+def create_nonce(session: Session) -> str:
+    """
+    Create a one time use nonce valid for a short time 
+    for user authentication.
+    """
+    nonce = str(uuid4())
+    time = datetime.now()
+    new_nonce = Nonce(id=nonce, timestamp=time)
+    session.add(new_nonce)
+    session.commit()
+    return nonce
+
+def add_token(request: LocalProxy, session: Session) -> str:
+    """
+    Create a new token for the user or return a 
+    valid existing token to the user.
+    """
+    token = None
+    id_ = int(request.authorization['username'])
+    try:
+        token = session.query(Token).filter(Token.user_id == id_).one()
+        present = datetime.now()
+        present = present - token.timestamp
+        if present > timedelta(0,0,0,0,45,0,0):
+            update_token = '%030x' % randrange(16**30)
+            token.id = update_token
+            token.timestamp = datetime.now()
+            session.commit()
+    except NoResultFound:
+        token = '%030x' % randrange(16**30)
+        time = datetime.now()
+        new_token = Token(user_id=id_, id=token, timestamp=time)
+        session.add(new_token)
+        session.commit()
+        return token
+    return token.id
+
+def check_token(request: LocalProxy, session: Session) -> bool:
+    """
+    check validity of the token passed by the user.
+    """
+    token = None
+    try:
+        id_ = request.headers['X-Authorization']
+        token = session.query(Token).filter(Token.id == id_).one()
+        present = datetime.now()
+        present = present - token.timestamp
+        if present > timedelta(0,0,0,0,45,0,0):
+            return False
+    except:
+        return False
+    return True
 
 def generate_basic_digest(id_: int, paraphrase: str) -> str:
     """Create the digest to be added to the HTTP Authorization header."""
@@ -58,4 +115,6 @@ def authenticate_user(id_: int, paraphrase: str, session: Session) -> bool:
 def check_authorization(request: LocalProxy, session: Session) -> bool:
     """Check if the request object has the correct authorization."""
     auth = request.authorization
-    return authenticate_user(auth.username, auth.password, session)
+    if check_nonce(request, session):
+        return authenticate_user(auth.username, auth.password, session)
+    return False

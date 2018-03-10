@@ -115,6 +115,28 @@ def set_doc(application: Flask, APIDOC: HydraDoc) -> Iterator:
         yield
 
 
+@contextmanager
+def set_authentication(application: Flask, authentication: bool) -> Iterator:
+    """Set the wether API needs to be authenticated or not."""
+    if not isinstance(authentication, bool):
+        raise TypeError("Authentication flag must be of type <bool>")
+
+    def handler(sender: Flask, **kwargs: Any) -> None:
+        g.authentication_ = authentication
+    with appcontext_pushed.connected_to(handler, application):
+        yield
+
+@contextmanager        
+def set_token(application: Flask, token: bool) -> Iterator:
+    """Set whether API needs to implement token based authentication."""
+    if not isinstance(token, bool):
+        raise TypeError("Token flag must be of type <bool>")
+
+    def handler(sender: Flask, **kwargs: Any) -> None:
+        g.token_ = token
+    with appcontext_pushed.connected_to(handler, application):
+        yield
+        
 def get_doc() -> HydraDoc:
     """
     Get the server API Documentation.
@@ -129,6 +151,22 @@ def get_doc() -> HydraDoc:
     return apidoc
 
 
+def get_authentication() -> bool:
+    """Check wether API needs to be authenticated or not."""
+    authentication = getattr(g, 'authentication_', None)
+    if authentication is None:
+        authentication = False
+        g.authentication_ = authentication
+    return authentication
+
+def get_token() -> bool:
+    """Check wether API needs to be authenticated or not."""
+    token = getattr(g, 'token_', None)
+    if token is None:
+        token = False
+        g.token_ = token
+    return token
+  
 @contextmanager
 def set_hydrus_server_url(application: Flask, server_url: str) -> Iterator:
     """
@@ -140,7 +178,6 @@ def set_hydrus_server_url(application: Flask, server_url: str) -> Iterator:
     """
     if not isinstance(server_url, str):
         raise TypeError("The server_url is not of type <str>")
-
     def handler(sender: Flask, **kwargs: Any) -> None:
         g.hydrus_server_url = server_url
     with appcontext_pushed.connected_to(handler, application):
