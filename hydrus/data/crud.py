@@ -1,4 +1,35 @@
-"""Basic CRUD operations for the server."""
+"""Basic CRUD operations for the server.
+
+    ===============================
+    Imports :
+
+    sqlalchemy.orm.with_polymorphic : Load columns for inheriting classes.
+    Ref : http://docs.sqlalchemy.org/en/latest/orm/query.html
+
+    sqlalchemy.exists : A convenience method that turns a query into an EXISTS subquery of the form EXISTS (SELECT 1 FROM … WHERE …).
+    Ref : http://docs.sqlalchemy.org/en/latest/orm/query.html
+
+    sqlalchemy.orm.exc.NoResultFound : A database result was required but none was found.
+    Ref : http://docs.sqlalchemy.org/en/latest/orm/exceptions.html?highlight=result%20found#sqlalchemy.orm.exc.NoResultFound
+
+    sqlalchemy.orm.session.Session : Manages persistence operations for ORM-mapped objects.
+    Ref : http://docs.sqlalchemy.org/en/latest/orm/session_api.html?highlight=session#module-sqlalchemy.orm.session
+
+    hydrus.data.db_models.Graph : Model for a graph that store triples of instance from the other models to map relationships.
+    hydrus.data.db_models.BaseProperty : Model for Basic Property.
+    hydrus.data.db_models.RDFClass : Model for Classes specifically RDF-OWL or RDF-HYDRA classes.
+    hydrus.data.db_models.Instance : Model for Object/Resource. Instances are instances of some kind/classes that are served through the API.
+    hydrus.data.db_models.Terminal : Model for Terminals which are numbers or string that can be referenced by a Property. 
+    hydrus.data.db_models.GraphIAC : Graph model for Instance >> AbstractProperty >> Class.
+    hydrus.data.db_models.GraphIIT : Graph model for Instance >> InstanceProperty >> Terminal.
+    hydrus.data.db_models.GraphIII : Graph model for Instance >> InstanceProperty >> Instance.
+    
+    Ref : ./db_models.py
+
+    hydrus.data.exceptions : Contains all exceptions .
+    typing : Module which provides support for type hints .
+
+"""
 
 from sqlalchemy.orm import with_polymorphic
 from sqlalchemy import exists
