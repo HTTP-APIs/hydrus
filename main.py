@@ -1,7 +1,7 @@
 """Demo script for setting up Hydrus with any db and any API Doc."""
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker,scoped_session
+from sqlalchemy.orm import sessionmaker, scoped_session
 
 from hydrus.app import app_factory
 from hydrus.utils import set_session, set_doc, set_hydrus_server_url, set_api_name, set_authentication, set_token
