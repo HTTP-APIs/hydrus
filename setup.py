@@ -1,4 +1,4 @@
-# !/usr/bin/env python
+#!/usr/bin/env python
 """Setup script for Hydrus."""
 
 from setuptools import setup, find_packages
