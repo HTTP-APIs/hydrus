@@ -9,6 +9,7 @@ from hydrus.hydraspec import doc_maker
 from hydrus.data.db_models import Base
 from hydrus.data.user import add_user
 from gevent.wsgi import WSGIServer
+from typing import Tuple
 import json
 import click
 
@@ -19,15 +20,18 @@ import click
                 help="The API name.", type=str)
 @click.option("--auth/--no-auth", default=True,
                 help="Set authentication to True or False.")
-@click.option("--dburl", default="sqlite:///:memory:", help="Set database url", type=str)
+@click.option("--dburl", default="sqlite:///:memory:",
+                help="Set database url", type=str)
 @click.option("--hydradoc", "-d", default="doc.jsonld",
                 help="Location to HydraDocumentation (JSON-LD) of server.",
                 type=click.File('r'))
 @click.option("--port", "-p", default=8080,
                 help="The port the app is hosted at.", type=int)
-@click.option("--serverurl", default= "http://localhost", help="Set server url", type=str)
+@click.option("--serverurl", default= "http://localhost",
+                help="Set server url", type=str)
 @click.argument("serve", required=True)
-def startserver(adduser, api, auth, dburl, hydradoc, port, serverurl, serve):
+def startserver(adduser: Tuple([int, str]), api: str, auth: bool, dburl: str,
+                hydradoc: str, port: int, serverurl: str, serve: None) -> None:
     """
     Python Hydrus CLI
 
