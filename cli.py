@@ -9,6 +9,7 @@ from hydrus.hydraspec import doc_maker
 from hydrus.data.db_models import Base
 from hydrus.data.user import add_user
 from gevent.wsgi import WSGIServer
+from typing import Tuple
 import json
 import click
 
@@ -19,23 +20,40 @@ import click
                 help="The API name.", type=str)
 @click.option("--auth/--no-auth", default=True,
                 help="Set authentication to True or False.")
-@click.option("--dburl", default="sqlite:///:memory:", help="Set database url", type=str)
+@click.option("--dburl", default="sqlite:///:memory:",
+                help="Set database url", type=str)
 @click.option("--hydradoc", "-d", default="doc.jsonld",
                 help="Location to HydraDocumentation (JSON-LD) of server.",
                 type=click.File('r'))
 @click.option("--port", "-p", default=8080,
                 help="The port the app is hosted at.", type=int)
-@click.option("--serverurl", default= "http://localhost", help="Set server url", type=str)
+@click.option("--serverurl", default= "http://localhost",
+                help="Set server url", type=str)
 @click.argument("serve", required=True)
-def startserver(adduser, api, auth, dburl, hydradoc, port, serverurl, serve):
-    """Python Hydrus CLI"""
+def startserver(adduser: Tuple([int, str]), api: str, auth: bool, dburl: str,
+                hydradoc: str, port: int, serverurl: str, serve: None) -> None:
+    """
+    Python Hydrus CLI
+
+    :param adduser <tuple([int, str])>  : Contains the user credentials.
+    :param api <str>                    : Sets the API name for the server.
+    :param auth <bool>                  : Toggles the authentication.
+    :param dburl <str>                  : Sets the database URL.
+    :param hydradoc <str>               : Sets the link to the HydraDoc file.
+    :param port <int>                   : Sets the API server port.
+    :param serverurl <str>              : Sets the API server url.
+    :param token <str>                  : Toggles the user token on or off.
+    :param serve                        : Starts up the server.
+
+    :return                             : None.
+    """
     # The database connection URL
     # See http://docs.sqlalchemy.org/en/rel_1_0/core/engines.html#sqlalchemy.create_engine for more info
     # DB_URL = 'sqlite:///database.db'
     DB_URL = dburl
 
     # Define the server URL, this is what will be displayed on the Doc
-    HYDRUS_SERVER_URL = serverurl + ":" + str(port) + "/"
+    HYDRUS_SERVER_URL = "{}:{}/".format(serverurl, str(port))
 
     # The name of the API or the EntryPoint, the api will be at http://localhost/<API_NAME>
     API_NAME = api
