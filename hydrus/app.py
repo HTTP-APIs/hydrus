@@ -525,4 +525,4 @@ def app_factory(API_NAME: str="api") -> Flask:
 if __name__ == "__main__":
 
     app = app_factory("api")
-    app.run(host='127.0.0.1', debug=True, port=8080)    
+    app.run(host='127.0.0.1', debug=True, port=8080)
