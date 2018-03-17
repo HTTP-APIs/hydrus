@@ -203,16 +203,16 @@ class Token(Base):
     """Model for storing tokens for the users."""
 
     __tablename__ = "tokens"
-    id = Column(String, primary_key = True)
+    id = Column(String, primary_key = True, index = True)
     user_id = Column(Integer, ForeignKey('user.id'))
-    timestamp = Column(DateTime) 
+    timestamp = Column(DateTime, index = True) 
 
 class Nonce(Base):
     """Model for storing nonce for the users."""
 
     __tablename__  = "nonce"
-    id = Column(String, primary_key = True)
-    timestamp = Column(DateTime)
+    id = Column(String, primary_key = True, index = True)
+    timestamp = Column(DateTime, index = True)
 
 if __name__ == "__main__":
     print("Creating models....")

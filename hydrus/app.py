@@ -148,9 +148,9 @@ def check_authentication_response() -> Union[Response,None]:
     if get_authentication():
         if get_token():
             token = check_token(request, get_session())
-            if not token:
+            if not token['valid']:
                 if request.authorization is None:
-                    return failed_authentication(False)
+                    return failed_authentication(token['present'])
                 else:
                     return verify_user()
         elif request.authorization is None:
@@ -525,4 +525,4 @@ def app_factory(API_NAME: str="api") -> Flask:
 if __name__ == "__main__":
 
     app = app_factory("api")
-    app.run(host='127.0.0.1', debug=True, port=8080)
+    app.run(host='127.0.0.1', debug=True, port=8080)    
