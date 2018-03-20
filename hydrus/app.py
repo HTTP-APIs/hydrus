@@ -20,7 +20,8 @@
     hydrus.utils.get_session : Gets the database session for the server
     hydrus.utils.get_doc : Function which gets the server API documentation
     hydrus.utils.get_api_name : Function which gets the server API name
-    hydrus.utils.get_hydrus_server_url : Function the gets the server URL
+    hydrus.utils.get_hydrus_server_url : Function which gets the server URL
+    hydrus.utils.set_hydrus_server_url : Function the sets the server URL
     hydrus.utils.get_authentication : Function that checks whether API needs to be authenticated or not
 
 """
@@ -32,7 +33,8 @@ from flask_cors import CORS
 
 from hydrus.data import crud
 from hydrus.data.user import check_authorization, add_token, check_token, create_nonce
-from hydrus.utils import get_session, get_doc, get_api_name, get_hydrus_server_url, get_authentication,get_token
+from hydrus.utils import get_session, get_doc, get_api_name, get_hydrus_server_url, \
+    get_authentication, get_token, set_hydrus_server_url
 
 from flask.wrappers import Response
 from typing import Dict, List, Any, Union
@@ -524,5 +526,9 @@ def app_factory(API_NAME: str="api") -> Flask:
 
 if __name__ == "__main__":
 
+    HOST = '127.0.0.1'
+    PORT = 8081
     app = app_factory("api")
-    app.run(host='127.0.0.1', debug=True, port=8080)
+    with app.app_context():
+        with set_hydrus_server_url(app, HOST, PORT):
+            app.run(host=HOST, debug=True, port=PORT)
