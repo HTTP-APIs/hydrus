@@ -12,6 +12,8 @@ setup(name='hydrus',
       install_requires=[
           'Flask==0.11',
           'Flask-RESTful==0.3.6',
+          'gevent==1.2.2',
+          'greenlet==0.4.12',
           'Jinja2==2.9.6',
           'MarkupSafe==1.0',
           'SQLAlchemy==1.1.10',
