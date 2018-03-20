@@ -168,7 +168,7 @@ def get_token() -> bool:
     return token
   
 @contextmanager
-def set_hydrus_server_url(application: Flask, server_url: str) -> Iterator:
+def set_hydrus_server_url(application: Flask, server_url: str, port: int=80) -> Iterator:
     """
     Set the server URL for the app (before it is run in main.py).
     :param application: Flask app object
@@ -178,8 +178,14 @@ def set_hydrus_server_url(application: Flask, server_url: str) -> Iterator:
     """
     if not isinstance(server_url, str):
         raise TypeError("The server_url is not of type <str>")
+    if not isinstance(port, int):
+        raise TypeError("The port number is not of type <int>")
     def handler(sender: Flask, **kwargs: Any) -> None:
-        g.hydrus_server_url = server_url
+        g.hydrus_server_url = '{}:{}'.format(server_url, port)
+        if not g.hydrus_server_url.startswith('http://'):
+            g.hydrus_server_url = 'http://' + g.hydrus_server_url
+        if not g.hydrus_server_url.endswith('/'):
+            g.hydrus_server_url = g.hydrus_server_url + '/'
     with appcontext_pushed.connected_to(handler, application):
         yield
 
@@ -187,13 +193,13 @@ def set_hydrus_server_url(application: Flask, server_url: str) -> Iterator:
 def get_hydrus_server_url() -> str:
     """
     Get the server URL.
-    Returns and sets "http://localhost/" if not found.
+    Returns and sets "http://localhost:8080/" if not found.
     :return hydrus_server_url : Server URL
             <str>
     """
     hydrus_server_url = getattr(g, 'hydrus_server_url', None)
     if hydrus_server_url is None:
-        hydrus_server_url = "http://localhost/"
+        hydrus_server_url = "http://localhost:8080/"
         g.hydrus_server_url = hydrus_server_url
     return hydrus_server_url
 
