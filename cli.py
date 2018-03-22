@@ -30,7 +30,7 @@ import click
 @click.option("--serverurl", default= "http://localhost",
                 help="Set server url", type=str)
 @click.argument("serve", required=True)
-def startserver(adduser: Tuple([int, str]), api: str, auth: bool, dburl: str,
+def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
                 hydradoc: str, port: int, serverurl: str, serve: None) -> None:
     """
     Python Hydrus CLI
