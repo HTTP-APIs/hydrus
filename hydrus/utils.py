@@ -116,18 +116,6 @@ def set_doc(application: Flask, APIDOC: HydraDoc) -> Iterator:
     with appcontext_pushed.connected_to(handler, application):
         yield
 
-
-@contextmanager
-def set_authentication(application: Flask, authentication: bool) -> Iterator:
-    """Set the wether API needs to be authenticated or not."""
-    if not isinstance(authentication, bool):
-        raise TypeError("Authentication flag must be of type <bool>")
-
-    def handler(sender: Flask, **kwargs: Any) -> None:
-        g.authentication_ = authentication
-    with appcontext_pushed.connected_to(handler, application):
-        yield
-
 @contextmanager        
 def set_token(application: Flask, token: bool) -> Iterator:
     """Set whether API needs to implement token based authentication."""
