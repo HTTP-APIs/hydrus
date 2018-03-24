@@ -57,8 +57,9 @@ def get_authentication() -> bool:
     :return authentication : Bool. API Auth needed or not
             <bool>
     """
-    authentication = getattr(g, 'authentication_', None)
-    if authentication is None:
+    try:
+        authentication = getattr(g, 'authentication_')
+    except AttributeError:
         authentication = False
         g.authentication_ = authentication
     return authentication
@@ -89,8 +90,9 @@ def get_api_name() -> str:
     :return api_name : API/Server name or EntryPoint
             <str>
     """
-    api_name = getattr(g, 'api_name', None)
-    if api_name is None:
+    try:
+        api_name = getattr(g, 'api_name')
+    except AttributeError:
         api_name = "api"
         g.doc = api_name
     return api_name
@@ -144,25 +146,18 @@ def get_doc() -> HydraDoc:
     :return apidoc : Hydra Documentation object
             <hydrus.hydraspec.doc_writer.HydraDoc>
     """
-    apidoc = getattr(g, 'doc', None)
-    if apidoc is None:
-        apidoc = doc_writer_sample.api_doc
-        g.doc = apidoc
+    try:
+        apidoc = getattr(g, 'doc')
+    except AttributeError:
+        g.doc = apidoc = doc_writer_sample.api_doc
     return apidoc
 
 
-def get_authentication() -> bool:
-    """Check wether API needs to be authenticated or not."""
-    authentication = getattr(g, 'authentication_', None)
-    if authentication is None:
-        authentication = False
-        g.authentication_ = authentication
-    return authentication
-
 def get_token() -> bool:
     """Check wether API needs to be authenticated or not."""
-    token = getattr(g, 'token_', None)
-    if token is None:
+    try:
+        token = getattr(g, 'token_')
+    except AttributeError:
         token = False
         g.token_ = token
     return token
@@ -191,8 +186,9 @@ def get_hydrus_server_url() -> str:
     :return hydrus_server_url : Server URL
             <str>
     """
-    hydrus_server_url = getattr(g, 'hydrus_server_url', None)
-    if hydrus_server_url is None:
+    try:
+        hydrus_server_url = getattr(g, 'hydrus_server_url')
+    except AttributeError:
         hydrus_server_url = "http://localhost/"
         g.hydrus_server_url = hydrus_server_url
     return hydrus_server_url
@@ -224,8 +220,9 @@ def get_session() -> scoped_session:
     :return session : SQLalchemy Session object
             <sqlalchemy.orm.scoped_session>
     """
-    session = getattr(g, 'dbsession', None)
-    if session is None:
+    try:
+        session = getattr(g, 'dbsession')
+    except AttributeError:
         session = scoped_session(sessionmaker(bind=engine))
         g.dbsession = session
     return session
