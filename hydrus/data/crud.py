@@ -224,7 +224,7 @@ def update(id_: int, type_: str, object_: Dict[str,str], session: scoped_session
     # Try inserting new object
     try:
         insert(object_=object_, id_=id_, session=session)
-    except Exception as e:
+    except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
         # Put old object back
         insert(object_=instance, id_=id_, session=session)
         raise e
