@@ -32,11 +32,13 @@ from flask_cors import CORS
 
 from hydrus.data import crud
 from hydrus.data.user import check_authorization, add_token, check_token, create_nonce
+from hydrus.data.exceptions import (ClassNotFound, InstanceExists, PropertyNotFound,
+                                    NotInstanceProperty, NotAbstractProperty,
+                                    InstanceNotFound)
 from hydrus.utils import get_session, get_doc, get_api_name, get_hydrus_server_url, get_authentication,get_token
 
 from flask.wrappers import Response
 from typing import Dict, List, Any, Union
-from pprint import pprint
 
 
 def validObject(object_: Dict[str, Any]) -> bool:
@@ -208,8 +210,8 @@ class Item(Resource):
                     id_, class_type, api_name=get_api_name(), session=get_session())
                 return set_response_headers(jsonify(hydrafy(response)))
 
-            except Exception as e:
-                status_code, message = e.get_HTTP()  # type: ignore
+            except (ClassNotFound, InstanceNotFound) as e:
+                status_code, message = e.get_HTTP()
                 return set_response_headers(jsonify(message), status_code=status_code)
         abort(405)
 
@@ -243,8 +245,8 @@ class Item(Resource):
                             "message": "Object with ID %s successfully updated" % (object_id)}
                         return set_response_headers(jsonify(response), headers=headers_)
 
-                    except Exception as e:
-                        status_code, message = e.get_HTTP()  # type: ignore
+                    except (ClassNotFound, InstanceNotFound, InstanceExists, PropertyNotFound) as e:
+                        status_code, message = e.get_HTTP()
                         return set_response_headers(jsonify(message), status_code=status_code)
 
             return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
@@ -279,8 +281,8 @@ class Item(Resource):
                         response = {
                             "message": "Object with ID %s successfully added" % (object_id)}
                         return set_response_headers(jsonify(response), headers=headers_, status_code=201)
-                    except Exception as e:
-                        status_code, message = e.get_HTTP()  # type: ignore
+                    except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
+                        status_code, message = e.get_HTTP()
                         return set_response_headers(jsonify(message), status_code=status_code)
 
             return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
@@ -304,8 +306,8 @@ class Item(Resource):
                     "message": "Object with ID %s successfully deleted" % (id_)}
                 return set_response_headers(jsonify(response))
 
-            except Exception as e:
-                status_code, message = e.get_HTTP()  # type: ignore
+            except (ClassNotFound, InstanceNotFound) as e:
+                status_code, message = e.get_HTTP()
                 return set_response_headers(jsonify(message), status_code=status_code)
 
         abort(405)
@@ -333,8 +335,8 @@ class ItemCollection(Resource):
                         get_api_name(), collection.class_.title, session=get_session())
                     return set_response_headers(jsonify(hydrafy(response)))
 
-                except Exception as e:
-                    status_code, message = e.get_HTTP()  # type: ignore
+                except ClassNotFound as e:
+                    status_code, message = e.get_HTTP()
                     return set_response_headers(jsonify(message), status_code=status_code)
 
             # If class is supported
@@ -344,8 +346,8 @@ class ItemCollection(Resource):
                         type_, api_name=get_api_name(), session=get_session())
                     return set_response_headers(jsonify(hydrafy(response)))
 
-                except Exception as e:
-                    status_code, message = e.get_HTTP()  # type: ignore
+                except (ClassNotFound, InstanceNotFound) as e:
+                    status_code, message = e.get_HTTP()
                     return set_response_headers(jsonify(message), status_code=status_code)
 
         abort(endpoint_['status'])
@@ -353,7 +355,7 @@ class ItemCollection(Resource):
     def put(self, type_: str) -> Response:
         """
         Method executed for PUT requests.
-        Used to add an item to a colllection
+        Used to add an item to a collection
 
         :param type_ - Item type
         """
@@ -387,8 +389,8 @@ class ItemCollection(Resource):
                             response = {
                                 "message": "Object with ID %s successfully added" % (object_id)}
                             return set_response_headers(jsonify(response), headers=headers_, status_code=201)
-                        except Exception as e:
-                            status_code, message = e.get_HTTP()  # type: ignore
+                        except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
+                            status_code, message = e.get_HTTP()
                             return set_response_headers(jsonify(message), status_code=status_code)
 
                 return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
@@ -405,8 +407,8 @@ class ItemCollection(Resource):
                             ) + get_api_name() + "/" + type_ + "/"}]
                             response = {"message": "Object successfully added"}
                             return set_response_headers(jsonify(response), headers=headers_, status_code=201)
-                        except Exception as e:
-                            status_code, message = e.get_HTTP()  # type: ignore
+                        except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
+                            status_code, message = e.get_HTTP()
                             return set_response_headers(jsonify(message), status_code=status_code)
 
                 return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
@@ -431,16 +433,16 @@ class ItemCollection(Resource):
                 obj_type = getType(type_, "POST")
                 if validObject(object_):
                     if object_["@type"] == obj_type:
-                        # try:
-                        crud.update_single(
-                            object_=object_, session=get_session(), api_name=get_api_name())
-                        headers_ = [{"Location": get_hydrus_server_url(
-                        ) + get_api_name() + "/" + type_ + "/"}]
-                        response = {"message": "Object successfully updated"}
-                        return set_response_headers(jsonify(response), headers=headers_)
-                        # except Exception as e:
-                        #     status_code, message = e.get_HTTP()
-                        #     return set_response_headers(jsonify(message), status_code=status_code)
+                        try:
+                            crud.update_single(
+                                object_=object_, session=get_session(), api_name=get_api_name())
+                            headers_ = [{"Location": get_hydrus_server_url(
+                            ) + get_api_name() + "/" + type_ + "/"}]
+                            response = {"message": "Object successfully updated"}
+                            return set_response_headers(jsonify(response), headers=headers_)
+                        except (ClassNotFound, InstanceNotFound, InstanceExists, PropertyNotFound) as e:
+                             status_code, message = e.get_HTTP()
+                             return set_response_headers(jsonify(message), status_code=status_code)
 
                 return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
 
@@ -465,8 +467,8 @@ class ItemCollection(Resource):
                     crud.delete_single(type_, session=get_session())
                     response = {"message": "Object successfully deleted"}
                     return set_response_headers(jsonify(response))
-                except Exception as e:
-                    status_code, message = e.get_HTTP()  # type: ignore
+                except (ClassNotFound, InstanceNotFound) as e:
+                    status_code, message = e.get_HTTP()
                     return set_response_headers(jsonify(message), status_code=status_code)
         abort(endpoint_['status'])
 
