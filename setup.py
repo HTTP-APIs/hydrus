@@ -2,8 +2,14 @@
 """Setup script for Hydrus."""
 
 from setuptools import setup, find_packages
-from pip.req import parse_requirements
-from pip.download import PipSession
+
+try: # for pip >= 10
+    from pip._internal.req import parse_requirements
+    from pip._internal.download import PipSession
+except ImportError: # for pip <= 9.0.3
+    from pip.req import parse_requirements
+    from pip.download import PipSession
+
 
 install_requires = parse_requirements('requirements.txt', session=PipSession())
 dependencies = [str(package.req) for package in install_requires]
