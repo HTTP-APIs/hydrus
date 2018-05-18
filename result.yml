@@ -1,0 +1,17 @@
+'basePath ': /
+definitions:
+  dummyClass:
+    description: A dummyClass for demo
+    type: object
+  dummyClassCollection:
+    description: A collection of dummyclass
+    type: object
+host: hydrus.com
+info:
+  description: Description for the API Documentation
+  title: Title for the API Documentation
+paths: {}
+schemes:
+- https
+- http
+swagger: '2.0'
