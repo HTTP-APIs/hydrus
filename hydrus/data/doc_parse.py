@@ -3,10 +3,13 @@
 from sqlalchemy import exists
 
 from hydrus.data.db_models import RDFClass, BaseProperty
+from typing import Any, Dict, List, Set, Optional
+from sqlalchemy.orm.session import Session
+from sqlalchemy.orm import scoped_session
 # from hydrus.tests.example_doc import doc_gen
 
 
-def get_classes(apidoc):
+def get_classes(apidoc: Dict[str, Any]) -> List[Dict[str, Any]]:
     """Get all the classes in the APIDocumentation."""
     classes = list()
     for class_ in apidoc["supportedClass"]:
@@ -16,10 +19,10 @@ def get_classes(apidoc):
     return classes
 
 
-def get_all_properties(classes):
+def get_all_properties(classes: List[Dict[str, Any]]) -> Set[str]:
     """Get all the classes in the APIDocumentation."""
     # properties = list()
-    prop_names = set()
+    prop_names = set() # type: Set[str]
     for class_ in classes:
         for prop in class_["supportedProperty"]:
             if prop["title"] not in prop_names:
@@ -28,9 +31,13 @@ def get_all_properties(classes):
     return set(prop_names)
 
 
-def insert_classes(classes, session):
+def insert_classes(classes: List[Dict[str, Any]], session: scoped_session) -> Optional[Any]:
     """Insert all the classes as defined in the APIDocumentation into DB."""
     # print(session.query(exists().where(RDFClass.name == "Datastream")).scalar())
+    if not isinstance(session, scoped_session) and not isinstance(session, Session):
+        raise TypeError(
+            "session is not of type <sqlalchemy.orm.scoping.scoped_session> or <sqlalchemy.orm.session.Session>"
+        )
     class_list = [RDFClass(name=class_["label"].strip('.')) for class_ in classes
                   if "label" in class_ and
                   not session.query(exists().where(RDFClass.name == class_["label"].strip('.'))).scalar()]
@@ -44,7 +51,7 @@ def insert_classes(classes, session):
     return None
 
 
-def insert_properties(properties, session):
+def insert_properties(properties: Set[str], session: scoped_session) -> Optional[Any]:
     """Insert all the properties as defined in the APIDocumentation into DB."""
     prop_list = [BaseProperty(name=prop) for prop in properties
                  if not session.query(exists().where(BaseProperty.name == prop)).scalar()]

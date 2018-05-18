@@ -1,6 +1,4 @@
 Flask==0.11
-gevent==1.2.2
-greenlet==0.4.12
 Flask-RESTful==0.3.6
 Jinja2==2.9.6
 MarkupSafe==1.0
@@ -22,3 +20,6 @@ six==1.10.0
 thespian==3.5.2
 flask-cors
 blinker==1.4
+typing==3.6.4
+gevent==1.2.2
+mypy
