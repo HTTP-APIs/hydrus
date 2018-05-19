@@ -578,6 +578,7 @@ securityDefinitions:
 definitions:
   Order:
     type: object
+    description: "this is def"
     properties:
       id:
         type: integer
