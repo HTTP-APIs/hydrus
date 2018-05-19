@@ -21,4 +21,24 @@ for class_ in definitions:
     except KeyError:
         desc=class_
     classDefinition = HydraClass(class_,class_,desc,endpoint=False)
+    properties = definitions[class_]["properties"]
+    for prop in properties:
+        new_prop = HydraClassProp("vocab:"+prop,prop, required=False, read=True, write=True)
+        classDefinition.add_supported_prop(new_prop)
+    api_doc.add_supported_class(classDefinition,collection=False)
 
+api_doc.add_baseCollection()
+api_doc.add_baseResource()
+api_doc.gen_EntryPoint()
+hydra_doc = api_doc.generate()
+if __name__ == "__main__":
+    import json
+    dump = json.dumps(hydra_doc, indent=4, sort_keys=True)
+    hydra_doc = '''"""\nGenerated API Documentation for Server API using server_doc_gen.py."""\n\ndoc = %s''' % dump
+    hydra_doc = hydra_doc + '\n'
+    hydra_doc = hydra_doc.replace('true', '"true"')
+    hydra_doc = hydra_doc.replace('false', '"false"')
+    hydra_doc = hydra_doc.replace('null', '"null"')
+    f = open("hydra_doc_sample.py", "w")
+    f.write(hydra_doc)
+    f.close()
