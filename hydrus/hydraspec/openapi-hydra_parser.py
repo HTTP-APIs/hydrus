@@ -86,7 +86,6 @@ def get_ops():
 
 
 # iterate over hash map or definition set to add this g
-
 if __name__ == "__main__":
     getClasses()
     hydra_doc = api_doc.generate()
