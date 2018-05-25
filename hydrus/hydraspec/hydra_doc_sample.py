@@ -112,7 +112,112 @@ doc = {
             "@id": "vocab:User",
             "@type": "hydra:Class",
             "description": "User",
-            "supportedOperation": [],
+            "supportedOperation": [
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "User",
+                    "method": "post",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Create user"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "null",
+                    "method": "post",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Creates list of users with given input array"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "null",
+                    "method": "post",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Creates list of users with given input array"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "null",
+                    "method": "get",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Logs user into the system"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "",
+                    "method": "get",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Logs out current logged in user session"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "null",
+                    "method": "get",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Get user by user name"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "null",
+                    "method": "put",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Updated user"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "null",
+                    "method": "delete",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Delete user"
+                }
+            ],
             "supportedProperty": [
                 {
                     "@type": "SupportedProperty",
@@ -235,7 +340,112 @@ doc = {
             "@id": "vocab:Pet",
             "@type": "hydra:Class",
             "description": "Pet",
-            "supportedOperation": [],
+            "supportedOperation": [
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "Pet",
+                    "method": "post",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Add a new pet to the store"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "Pet",
+                    "method": "put",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Update an existing pet"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "null",
+                    "method": "get",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Finds Pets by status"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "null",
+                    "method": "get",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Finds Pets by tags"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "null",
+                    "method": "get",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Find pet by ID"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "null",
+                    "method": "post",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Updates a pet in the store with form data"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "null",
+                    "method": "delete",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Deletes a pet"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "null",
+                    "method": "post",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "uploads an image"
+                }
+            ],
             "supportedProperty": [
                 {
                     "@type": "SupportedProperty",
