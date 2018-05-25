@@ -38,7 +38,7 @@ for path in paths:
     #dirty hack , do case insensitive search more gracefully
     possiblePath=possiblePath.replace(possiblePath[0], possiblePath[0].upper())
     # check if the path name exists in the classes defined
-    if possiblePath in definitionSet:
+    if possiblePath in definitionSet and len(path.split('/'))==2:
         for method in paths[path]:
             op_name = ""
             op_method = method
