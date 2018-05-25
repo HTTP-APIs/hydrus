@@ -23,6 +23,8 @@ paths = doc["paths"]
 definitionSet = set()
 classAndClassDefinition = dict()
 hydra_doc = ""
+
+
 def getClasses():
     for class_ in definitions:
         try:
@@ -34,14 +36,11 @@ def getClasses():
         classAndClassDefinition[class_] = classDefinition
         definitionSet.add(class_)
         api_doc.add_supported_class(classDefinition, collection=False)
-        get_props(properties,class_)
+        for prop in properties:
+            new_prop = HydraClassProp("vocab:" + prop, prop, required=False, read=True, write=True)
+            classAndClassDefinition[class_].add_supported_prop(new_prop)
 
-
-def get_props(properties,class_):
-    for prop in properties:
-        new_prop = HydraClassProp("vocab:" + prop, prop, required=False, read=True, write=True)
-        classAndClassDefinition[class_].add_supported_prop(new_prop)
-        get_ops()
+    get_ops()
 
 
 def generateEntrypoint():
