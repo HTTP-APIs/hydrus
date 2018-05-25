@@ -115,7 +115,267 @@ doc = {
             "supportedOperation": [
                 {
                     "@type": "http://schema.org/FindAction",
-                    "expects": "User",
+                    "expects": "vocab:User",
+                    "method": "post",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Create user"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:User",
+                    "method": "post",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Create user"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:User",
+                    "method": "post",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Create user"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:User",
+                    "method": "post",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Create user"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:User",
+                    "method": "post",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Create user"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:User",
+                    "method": "post",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Create user"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:User",
+                    "method": "post",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Create user"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:User",
+                    "method": "post",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Create user"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:User",
+                    "method": "post",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Create user"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:User",
+                    "method": "post",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Create user"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:User",
+                    "method": "post",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Create user"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:User",
+                    "method": "post",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Create user"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:User",
+                    "method": "post",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Create user"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:User",
+                    "method": "post",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Create user"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:User",
+                    "method": "post",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Create user"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:User",
+                    "method": "post",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Create user"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:User",
+                    "method": "post",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Create user"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:User",
+                    "method": "post",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Create user"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:User",
+                    "method": "post",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Create user"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:User",
+                    "method": "post",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Create user"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:User",
                     "method": "post",
                     "possibleStatus": [
                         {
@@ -252,7 +512,7 @@ doc = {
             "supportedOperation": [
                 {
                     "@type": "http://schema.org/FindAction",
-                    "expects": "Pet",
+                    "expects": "vocab:Pet",
                     "method": "post",
                     "possibleStatus": [
                         {
@@ -265,7 +525,215 @@ doc = {
                 },
                 {
                     "@type": "http://schema.org/FindAction",
-                    "expects": "Pet",
+                    "expects": "vocab:Pet",
+                    "method": "put",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Update an existing pet"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:Pet",
+                    "method": "post",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Add a new pet to the store"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:Pet",
+                    "method": "put",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Update an existing pet"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:Pet",
+                    "method": "post",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Add a new pet to the store"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:Pet",
+                    "method": "put",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Update an existing pet"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:Pet",
+                    "method": "post",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Add a new pet to the store"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:Pet",
+                    "method": "put",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Update an existing pet"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:Pet",
+                    "method": "post",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Add a new pet to the store"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:Pet",
+                    "method": "put",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Update an existing pet"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:Pet",
+                    "method": "post",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Add a new pet to the store"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:Pet",
+                    "method": "put",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Update an existing pet"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:Pet",
+                    "method": "post",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Add a new pet to the store"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:Pet",
+                    "method": "put",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Update an existing pet"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:Pet",
+                    "method": "post",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Add a new pet to the store"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:Pet",
+                    "method": "put",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Update an existing pet"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:Pet",
+                    "method": "post",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass updated",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Add a new pet to the store"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "vocab:Pet",
                     "method": "put",
                     "possibleStatus": [
                         {
@@ -361,6 +829,9431 @@ doc = {
                 }
             ],
             "title": "ApiResponse"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "Collection"
+        },
+        {
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
+            "@type": "hydra:Class",
+            "description": "null",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "Resource"
         },
         {
             "@id": "http://www.w3.org/ns/hydra/core#Collection",
