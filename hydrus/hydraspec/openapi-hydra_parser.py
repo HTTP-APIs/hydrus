@@ -8,7 +8,7 @@ import json
 
 with open("openapi_sample.yaml", 'r') as stream:
     try:
-        doc= yaml.load(stream)
+        doc = yaml.load(stream)
     except yaml.YAMLError as exc:
         print(exc)
 
@@ -26,6 +26,9 @@ hydra_doc = ""
 
 
 def getClasses():
+    """
+    Get Definitions from Open Api specification and convert to Classes and supported Props for Hydra Documentation
+    """
     for class_ in definitions:
         try:
             desc = definitions[class_]["description"]
@@ -44,12 +47,21 @@ def getClasses():
 
 
 def generateEntrypoint():
+    """
+    Generates Entrypoint , Base Collection and Base Resource for the documentation
+    """
     api_doc.add_baseCollection()
     api_doc.add_baseResource()
     api_doc.gen_EntryPoint()
 
 
 def get_ops():
+    """
+    Parses Paths from the Open Api Spec and creates supported operations for the paths which we have defined classes for
+    we check if the path has a class defined , if it does we parse the methods and add the information parsed to Hydra
+
+    :return:
+    """
     for path in paths:
         possiblePath = path.split('/')[1]
         # dirty hack , do  case insensitive search more gracefully
@@ -85,8 +97,8 @@ def get_ops():
         generateEntrypoint()
 
 
-# iterate over hash map or definition set to add this g
 if __name__ == "__main__":
+
     getClasses()
     hydra_doc = api_doc.generate()
 
