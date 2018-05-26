@@ -117,12 +117,11 @@ doc = {
                     "@type": "http://schema.org/FindAction",
                     "expects": "vocab:User",
                     "method": "post",
-                    "possibleStatus": [
-                        {
-                            "description": "dummyClass updated",
-                            "statusCode": 200
+                    "possibleStatus": {
+                        "default": {
+                            "description": "successful operation"
                         }
-                    ],
+                    },
                     "returns": "null",
                     "title": "Create user"
                 }
@@ -254,12 +253,11 @@ doc = {
                     "@type": "http://schema.org/FindAction",
                     "expects": "vocab:Pet",
                     "method": "post",
-                    "possibleStatus": [
-                        {
-                            "description": "dummyClass updated",
-                            "statusCode": 200
+                    "possibleStatus": {
+                        "405": {
+                            "description": "Invalid input"
                         }
-                    ],
+                    },
                     "returns": "null",
                     "title": "Add a new pet to the store"
                 },
@@ -267,12 +265,17 @@ doc = {
                     "@type": "http://schema.org/FindAction",
                     "expects": "vocab:Pet",
                     "method": "put",
-                    "possibleStatus": [
-                        {
-                            "description": "dummyClass updated",
-                            "statusCode": 200
+                    "possibleStatus": {
+                        "400": {
+                            "description": "Invalid ID supplied"
+                        },
+                        "404": {
+                            "description": "Pet not found"
+                        },
+                        "405": {
+                            "description": "Validation exception"
                         }
-                    ],
+                    },
                     "returns": "null",
                     "title": "Update an existing pet"
                 }

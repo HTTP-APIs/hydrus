@@ -69,7 +69,6 @@ def get_ops():
         # check if the path name exists in the classes defined
         if possiblePath in definitionSet and len(path.split('/')) == 2:
             for method in paths[path]:
-                op_name = ""
                 op_method = method
                 op_expects = ""
                 op_returns = None
@@ -84,6 +83,11 @@ def get_ops():
                         op_expects = param["schema"]["$ref"].split('/')[2]
                 except KeyError:
                     op_expects = None
+                try:
+                    responses = paths[path][method]["responses"]
+                    op_status = responses
+                except KeyError:
+                    op_returns = None
                 classAndClassDefinition[possiblePath].add_supported_op(HydraClassOp(op_name,
                                                                                     op_method,
                                                                                     "vocab:" + op_expects,
@@ -94,6 +98,7 @@ def get_ops():
 
         else:
             print("not found")
+
         generateEntrypoint()
 
 
