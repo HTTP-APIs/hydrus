@@ -2,8 +2,8 @@
 Module to take in Open Api Specification and convert it to HYDRA Api Doc
 
 """
+from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp
 import yaml
-from doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp
 import json
 
 with open("openapi_sample.yaml", 'r') as stream:
