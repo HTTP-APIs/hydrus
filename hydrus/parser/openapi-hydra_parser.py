@@ -2,11 +2,12 @@
 Module to take in Open Api Specification and convert it to HYDRA Api Doc
 
 """
-from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp
 import yaml
 import json
 
-with open("openapi_sample.yaml", 'r') as stream:
+from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp
+
+with open("../samples/openapi_sample.yaml", 'r') as stream:
     try:
         doc = yaml.load(stream)
     except yaml.YAMLError as exc:
@@ -113,6 +114,6 @@ if __name__ == "__main__":
     hydra_doc = hydra_doc.replace('true', '"true"')
     hydra_doc = hydra_doc.replace('false', '"false"')
     hydra_doc = hydra_doc.replace('null', '"null"')
-    f = open("hydra_doc_sample.py", "w")
+    f = open("../samples/hydra_doc_sample.py", "w")
     f.write(hydra_doc)
     f.close()
