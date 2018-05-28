@@ -13,14 +13,7 @@ with open("../samples/openapi_sample.yaml", 'r') as stream:
     except yaml.YAMLError as exc:
         print(exc)
 
-info = doc["info"]
-desc = info["description"]
-title = info["title"]
-baseURL = doc["host"]
-name = doc["basePath"]
-api_doc = HydraDoc(name, title, desc, name, baseURL)
-definitions = doc["definitions"]
-paths = doc["paths"]
+
 definitionSet = set()
 classAndClassDefinition = dict()
 hydra_doc = ""
@@ -30,6 +23,8 @@ def getClasses():
     """
     Get Definitions from Open Api specification and convert to Classes and supported Props for Hydra Documentation
     """
+    definitions = doc["definitions"]
+
     for class_ in definitions:
         try:
             desc = definitions[class_]["description"]
@@ -63,6 +58,8 @@ def get_ops():
 
     :return:
     """
+    paths = doc["paths"]
+
     for path in paths:
         possiblePath = path.split('/')[1]
         # dirty hack , do  case insensitive search more gracefully
@@ -104,7 +101,12 @@ def get_ops():
 
 
 if __name__ == "__main__":
-
+    info = doc["info"]
+    desc = info["description"]
+    title = info["title"]
+    baseURL = doc["host"]
+    name = doc["basePath"]
+    api_doc = HydraDoc(name, title, desc, name, baseURL)
     getClasses()
     hydra_doc = api_doc.generate()
 
