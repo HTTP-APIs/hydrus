@@ -22,7 +22,7 @@ hydrus.hydraspec.doc_writer.HydraDoc : Class for Hydra Documentation
 from contextlib import contextmanager
 from flask import appcontext_pushed
 from flask import g
-from hydrus.hydraspec import doc_writer_sample
+from hydrus.samples import doc_writer_sample
 from hydrus.data.db_models import engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.orm.session import Session
