@@ -7,24 +7,20 @@ import json
 
 from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp
 
-with open("../samples/openapi_sample.yaml", 'r') as stream:
-    try:
-        doc = yaml.load(stream)
-    except yaml.YAMLError as exc:
-        print(exc)
 
 
-definitionSet = set()
-classAndClassDefinition = dict()
+
+
 hydra_doc = ""
 
 
-def getClasses():
+def getClasses(doc):
     """
     Get Definitions from Open Api specification and convert to Classes and supported Props for Hydra Documentation
     """
     definitions = doc["definitions"]
-
+    definitionSet = set()
+    classAndClassDefinition = dict()
     for class_ in definitions:
         try:
             desc = definitions[class_]["description"]
@@ -39,7 +35,7 @@ def getClasses():
             new_prop = HydraClassProp("vocab:" + prop, prop, required=False, read=True, write=True)
             classAndClassDefinition[class_].add_supported_prop(new_prop)
 
-    get_ops()
+    get_ops(doc, definitionSet, classAndClassDefinition)
 
 
 def generateEntrypoint():
@@ -51,7 +47,7 @@ def generateEntrypoint():
     api_doc.gen_EntryPoint()
 
 
-def get_ops():
+def get_ops(doc, definitionSet, classAndClassDefinition):
     """
     Parses Paths from the Open Api Spec and creates supported operations for the paths which we have defined classes for
     we check if the path has a class defined , if it does we parse the methods and add the information parsed to Hydra
@@ -87,7 +83,7 @@ def get_ops():
                 except KeyError:
                     op_returns = None
                 classAndClassDefinition[possiblePath].add_supported_op(HydraClassOp(op_name,
-                                                                                    op_method,
+                                                                                    op_method.upper(),
                                                                                     "vocab:" + op_expects,
                                                                                     op_returns,
                                                                                     op_status))
@@ -101,13 +97,18 @@ def get_ops():
 
 
 if __name__ == "__main__":
+    with open("../samples/openapi_sample.yaml", 'r') as stream:
+        try:
+            doc = yaml.load(stream)
+        except yaml.YAMLError as exc:
+            print(exc)
     info = doc["info"]
     desc = info["description"]
     title = info["title"]
     baseURL = doc["host"]
     name = doc["basePath"]
     api_doc = HydraDoc(name, title, desc, name, baseURL)
-    getClasses()
+    getClasses(doc)
     hydra_doc = api_doc.generate()
 
     dump = json.dumps(hydra_doc, indent=4, sort_keys=True)
