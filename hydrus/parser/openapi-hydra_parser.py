@@ -7,10 +7,6 @@ import json
 
 from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp
 
-
-
-
-
 hydra_doc = ""
 
 
@@ -97,7 +93,7 @@ def get_ops(doc, definitionSet, classAndClassDefinition):
 
 
 def check_for_ref(block):
-    # we get all the classes here in the try 
+    # we get all the classes here in the try
     for obj in block["parameters"]:
         try:
             print(obj["schema"])
@@ -108,6 +104,7 @@ def check_for_ref(block):
             print(block["responses"][obj]["schema"])
         except KeyError:
             pass
+
 
 def get_paths(doc):
     paths = doc["paths"]
