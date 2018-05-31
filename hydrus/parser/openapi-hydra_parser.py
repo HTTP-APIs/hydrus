@@ -96,6 +96,26 @@ def get_ops(doc, definitionSet, classAndClassDefinition):
         generateEntrypoint()
 
 
+def check_for_ref(block):
+    # we get all the classes here in the try 
+    for obj in block["parameters"]:
+        try:
+            print(obj["schema"])
+        except KeyError:
+            pass
+    for obj in block["responses"]:
+        try:
+            print(block["responses"][obj]["schema"])
+        except KeyError:
+            pass
+
+def get_paths(doc):
+    paths = doc["paths"]
+    for path in paths:
+        for method in paths[path]:
+            check_for_ref(paths[path][method])
+
+
 if __name__ == "__main__":
     with open("../samples/openapi_sample.yaml", 'r') as stream:
         try:
@@ -108,8 +128,11 @@ if __name__ == "__main__":
     baseURL = doc["host"]
     name = doc["basePath"]
     api_doc = HydraDoc(name, title, desc, name, baseURL)
-    getClasses(doc)
     hydra_doc = api_doc.generate()
+
+    getClasses(doc)
+
+    get_paths(doc)
 
     dump = json.dumps(hydra_doc, indent=4, sort_keys=True)
     hydra_doc = '''"""\nGenerated API Documentation for Server API using server_doc_gen.py."""\n\ndoc = %s''' % dump
