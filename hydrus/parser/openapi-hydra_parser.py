@@ -114,7 +114,7 @@ def get_paths(doc):
 
 
 if __name__ == "__main__":
-    with open("../samples/openapi_sample.yaml", 'r') as stream:
+    with open("../samples/petstore_open_api.yaml", 'r') as stream:
         try:
             doc = yaml.load(stream)
         except yaml.YAMLError as exc:
