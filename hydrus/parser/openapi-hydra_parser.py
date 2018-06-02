@@ -92,25 +92,105 @@ def get_ops(doc, definitionSet, classAndClassDefinition):
         generateEntrypoint()
 
 
-def check_for_ref(block):
+def add_class(doc , block , class_name , collection ):
+    # make a var to store class name and collection  bool
+    pass
+
+
+def check_if_collection(schema_block):
+    try:
+        type = schema_block["type"]
+        if type == "array":
+            collection = "true"
+        else:
+            # TODO here in type we will get object,string,integer etc
+            collection = type
+    except KeyError:
+        collection = "false"
+    return collection
+
+# todo make a list of already parsed classes and check in for loop if the prop has type which has been defined already
+# else define that class first
+
+
+def get_class_details(class_location, doc):
+    class_name = class_location[2]
+    try:
+        desc = doc[class_location[1]][class_location[2]]["description"]
+    except KeyError:
+        desc = class_location[2]
+    classDefinition = HydraClass(class_name, class_name, desc, endpoint=False)
+
+    properties = doc[class_location[1]][class_location[2]]["properties"]
+    for prop in properties:
+        # todo parse one more level to check 'type' and define class if needed
+        # check required from required list and add when true
+        classDefinition.add_supported_prop(HydraClassProp("vocab:" + prop, prop, required=False, read=True, write=True))
+    classAndClassDefinition[class_name] = classDefinition
+
+
+def check_for_ref(doc, block):
     # we get all the classes here in the try
+    # define a map here and add collection with class name
     for obj in block["parameters"]:
+        collection = "none"
+        class_location = list(["null", "null", "null"])
         try:
-            print(obj["schema"])
+            collection = check_if_collection(obj["schema"])
+            class_location = obj["schema"]["$ref"].split('/')
+            get_class_details(class_location, doc)
         except KeyError:
             pass
+        return class_location[2], collection
+
     for obj in block["responses"]:
+        collection = "none"
+        class_location = list(["null", "null", "null"])
         try:
-            print(block["responses"][obj]["schema"])
+            collection = check_if_collection(block["responses"][obj]["schema"])
+            class_location = block["responses"][obj]["schema"]["$ref"].split('/')
+            get_class_details(class_location, doc)
+
         except KeyError:
             pass
+        return class_location[2], collection
 
 
 def get_paths(doc):
     paths = doc["paths"]
     for path in paths:
         for method in paths[path]:
-            check_for_ref(paths[path][method])
+            print(path)
+            print(check_for_ref(doc, paths[path][method]))
+            class_name, collection = check_for_ref(doc, paths[path][method])
+            print("collection is "+collection)
+            if collection != "none" and class_name!="null":
+                op_method = method
+                op_expects = ""
+                op_returns = None
+                op_status = [{"statusCode": 200, "description": "dummyClass updated"}]
+                try:
+                    op_name = paths[path][method]["summary"]
+                except KeyError:
+                    op_name = class_name
+                try:
+                    parameters = paths[path][method]["parameters"]
+                    for param in parameters:
+                        op_expects = param["schema"]["$ref"].split('/')[2]
+                except KeyError:
+                    op_expects = None
+                try:
+                    responses = paths[path][method]["responses"]
+                    op_status = responses
+                except KeyError:
+                    op_returns = None
+                classAndClassDefinition[class_name].add_supported_op(HydraClassOp(op_name,
+                                                                                    op_method.upper(),
+                                                                                    "vocab:" + op_expects,
+                                                                                    op_returns,
+                                                                                    op_status))
+                api_doc.add_supported_class(classAndClassDefinition[class_name], collection=collection)
+                generateEntrypoint()
 
 
 if __name__ == "__main__":
@@ -125,11 +205,12 @@ if __name__ == "__main__":
     baseURL = doc["host"]
     name = doc["basePath"]
     api_doc = HydraDoc(name, title, desc, name, baseURL)
-    hydra_doc = api_doc.generate()
+    classAndClassDefinition = dict()
 
-    getClasses(doc)
+    # getClasses(doc)
 
     get_paths(doc)
+    hydra_doc = api_doc.generate()
 
     dump = json.dumps(hydra_doc, indent=4, sort_keys=True)
     hydra_doc = '''"""\nGenerated API Documentation for Server API using server_doc_gen.py."""\n\ndoc = %s''' % dump
