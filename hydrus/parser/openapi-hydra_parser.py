@@ -100,6 +100,7 @@ def add_class(doc , block , class_name , collection ):
 def check_if_collection(schema_block):
     try:
         type = schema_block["type"]
+        print("type is "+type)
         if type == "array":
             collection = "true"
         else:
@@ -119,7 +120,7 @@ def get_class_details(class_location, doc):
         desc = doc[class_location[1]][class_location[2]]["description"]
     except KeyError:
         desc = class_location[2]
-    classDefinition = HydraClass(class_name, class_name, desc, endpoint=False)
+    classDefinition = HydraClass(class_name, class_name, desc, endpoint=True)
 
     properties = doc[class_location[1]][class_location[2]]["properties"]
     for prop in properties:
@@ -130,8 +131,7 @@ def get_class_details(class_location, doc):
 
 
 def check_for_ref(doc, block):
-    # we get all the classes here in the try
-    # define a map here and add collection with class name
+
     for obj in block["parameters"]:
         collection = "none"
         class_location = list(["null", "null", "null"])
@@ -146,11 +146,11 @@ def check_for_ref(doc, block):
     for obj in block["responses"]:
         collection = "none"
         class_location = list(["null", "null", "null"])
+        print("this is from responses"+block["responses"][obj])
         try:
             collection = check_if_collection(block["responses"][obj]["schema"])
             class_location = block["responses"][obj]["schema"]["$ref"].split('/')
             get_class_details(class_location, doc)
-
         except KeyError:
             pass
         return class_location[2], collection
@@ -159,38 +159,39 @@ def check_for_ref(doc, block):
 def get_paths(doc):
     paths = doc["paths"]
     for path in paths:
-        for method in paths[path]:
-            print(path)
-            print(check_for_ref(doc, paths[path][method]))
-            class_name, collection = check_for_ref(doc, paths[path][method])
-            print("collection is "+collection)
-            if collection != "none" and class_name!="null":
-                op_method = method
-                op_expects = ""
-                op_returns = None
-                op_status = [{"statusCode": 200, "description": "dummyClass updated"}]
-                try:
-                    op_name = paths[path][method]["summary"]
-                except KeyError:
-                    op_name = class_name
-                try:
-                    parameters = paths[path][method]["parameters"]
-                    for param in parameters:
-                        op_expects = param["schema"]["$ref"].split('/')[2]
-                except KeyError:
-                    op_expects = None
-                try:
-                    responses = paths[path][method]["responses"]
-                    op_status = responses
-                except KeyError:
+        if len(path.split('/')) == 2:
+            for method in paths[path]:
+                print(path)
+                print(check_for_ref(doc, paths[path][method]))
+                class_name, collection = check_for_ref(doc, paths[path][method])
+                print("collection is "+collection)
+                if collection != "none" and class_name!="null":
+                    op_method = method
+                    op_expects = ""
                     op_returns = None
-                classAndClassDefinition[class_name].add_supported_op(HydraClassOp(op_name,
-                                                                                    op_method.upper(),
-                                                                                    "vocab:" + op_expects,
-                                                                                    op_returns,
-                                                                                    op_status))
-                api_doc.add_supported_class(classAndClassDefinition[class_name], collection=collection)
-                generateEntrypoint()
+                    op_status = [{"statusCode": 200, "description": "dummyClass updated"}]
+                    try:
+                        op_name = paths[path][method]["summary"]
+                    except KeyError:
+                        op_name = class_name
+                    try:
+                        parameters = paths[path][method]["parameters"]
+                        for param in parameters:
+                            op_expects = param["schema"]["$ref"].split('/')[2]
+                    except KeyError:
+                        op_expects = None
+                    try:
+                        responses = paths[path][method]["responses"]
+                        op_status = responses
+                    except KeyError:
+                        op_returns = None
+                    classAndClassDefinition[class_name].add_supported_op(HydraClassOp(op_name,
+                                                                                        op_method.upper(),
+                                                                                        "vocab:" + op_expects,
+                                                                                        op_returns,
+                                                                                        op_status))
+                    api_doc.add_supported_class(classAndClassDefinition[class_name], collection=collection)
+                    generateEntrypoint()
 
 
 if __name__ == "__main__":
