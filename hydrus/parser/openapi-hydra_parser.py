@@ -98,6 +98,8 @@ def add_class(doc , block , class_name , collection ):
 
 
 def check_if_collection(schema_block):
+    print("hehehhee")
+    print(schema_block)
     try:
         type = schema_block["type"]
         print("type is "+type)
@@ -133,25 +135,31 @@ def get_class_details(class_location, doc):
 
 
 def check_for_ref(doc, block):
-
-    for obj in block["parameters"]:
-        class_location=list(["null", "null", "null"])
-        try:
-            class_location = obj["schema"]["$ref"].split('/')
-            get_class_details(class_location, doc)
-        except KeyError:
-            pass
-        return class_location[2], "false"
     for obj in block["responses"]:
         collection = "none"
         class_location = list(["null", "null", "null"])
         try:
             collection = check_if_collection(block["responses"][obj]["schema"])
+            print("collection from for is "+collection)
             class_location = block["responses"][obj]["schema"]["$ref"].split('/')
             get_class_details(class_location, doc)
+            return class_location[2], collection
         except KeyError:
-            pass
-        return class_location[2], collection
+            return class_location[2], collection
+
+    for obj in block["parameters"]:
+        class_location = list(["null", "null", "null"])
+        try:
+            class_location = obj["schema"]["$ref"].split('/')
+            get_class_details(class_location, doc)
+            print("in try")
+            return class_location[2], "false"
+        except KeyError:
+            print("in except")
+            return class_location[2], "false"
+
+    print("we are here let")
+
 
 
 def get_paths(doc):
@@ -191,7 +199,13 @@ def get_paths(doc):
                     possiblePath = possiblePath.replace(possiblePath[0], possiblePath[0].upper())
 
                     if possiblePath in definitionSet:
-                        api_doc.add_supported_class(classAndClassDefinition[class_name], collection=collection)
+                        pass
+                    if collection is "true":
+                        print("hit")
+                        api_doc.add_supported_class(classAndClassDefinition[class_name], collection=True)
+                    else:
+                        print("miss")
+                        api_doc.add_supported_class(classAndClassDefinition[class_name], collection=False)
     generateEntrypoint()
 
 
