@@ -100,6 +100,37 @@ def check_for_ref(doc, block):
     return "null", "none"
 
 
+def get_ops(param, method, class_name):
+    op_method = method
+    op_expects = ""
+    op_returns = None
+    op_status = [{"statusCode": 200, "description": "dummyClass updated"}]
+    try:
+        op_name = param[method]["summary"]
+    except KeyError:
+        op_name = class_name
+    try:
+        parameters = param[method]["parameters"]
+        for param in parameters:
+            print("param is ")
+            print(param)
+            op_expects = "vocab:" + param["schema"]["$ref"].split('/')[2]
+    except KeyError:
+        op_expects = None
+    # todo responses from definition set and status to be parsed yet
+    try:
+        responses = param[method]["responses"]
+        op_status = responses
+    except KeyError:
+        op_returns = None
+    print(" we are going to add an operation with name " + op_name)
+    classAndClassDefinition[class_name].add_supported_op(HydraClassOp(op_name,
+                                                                      op_method.upper(),
+                                                                      op_expects,
+                                                                      op_returns,
+                                                                      op_status))
+
+
 def get_paths(doc):
     paths = doc["paths"]
     for path in paths:
@@ -112,35 +143,8 @@ def get_paths(doc):
                 print("the class name we got was "+class_name+"and the collection was "+collection)
                 if collection != "none" and class_name != "null":
                     print("the collection and class var were suitable hence we here ")
-                    op_method = method
-                    op_expects = ""
-                    op_returns = None
-                    op_status = [{"statusCode": 200, "description": "dummyClass updated"}]
-                    try:
-                        op_name = paths[path][method]["summary"]
-                    except KeyError:
-                        op_name = class_name
-                    # expects to be found from the definition set
-                    try:
-                        parameters = paths[path][method]["parameters"]
-                        for param in parameters:
-                            print("param is ")
-                            print(param)
-                            op_expects = "vocab:" + param["schema"]["$ref"].split('/')[2]
-                    except KeyError:
-                        op_expects = None
-                    # todo responses from definition set and status to be parsed yet
-                    try:
-                        responses = paths[path][method]["responses"]
-                        op_status = responses
-                    except KeyError:
-                        op_returns = None
-                    print(" we are going to add an operation with name "+op_name)
-                    classAndClassDefinition[class_name].add_supported_op(HydraClassOp(op_name,
-                                                                                      op_method.upper(),
-                                                                                      op_expects,
-                                                                                      op_returns,
-                                                                                      op_status))
+                    get_ops (paths[path], method,class_name)
+
                     possiblePath = path.split('/')[1]
                     possiblePath = possiblePath.replace(possiblePath[0], possiblePath[0].upper())
                     print("the path is "+possiblePath)
