@@ -101,6 +101,7 @@ def check_for_ref(doc, block):
 
 
 def get_ops(param, method, class_name):
+    print(param)
     op_method = method
     op_expects = ""
     op_returns = None
@@ -111,13 +112,14 @@ def get_ops(param, method, class_name):
         op_name = class_name
     try:
         parameters = param[method]["parameters"]
-        for param in parameters:
+        for parameter in parameters:
             print("param is ")
-            print(param)
-            op_expects = "vocab:" + param["schema"]["$ref"].split('/')[2]
+            print(parameter)
+            op_expects = "vocab:" + parameter["schema"]["$ref"].split('/')[2]
     except KeyError:
         op_expects = None
     # todo responses from definition set and status to be parsed yet
+    print(param[method])
     try:
         responses = param[method]["responses"]
         op_status = responses
