@@ -7,31 +7,6 @@ import json
 
 from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp
 
-hydra_doc = ""
-
-
-def getClasses(doc):
-    """
-    Get Definitions from Open Api specification and convert to Classes and supported Props for Hydra Documentation
-    """
-    definitions = doc["definitions"]
-    definitionSet = set()
-    classAndClassDefinition = dict()
-    for class_ in definitions:
-        try:
-            desc = definitions[class_]["description"]
-        except KeyError:
-            desc = class_
-        classDefinition = HydraClass(class_, class_, desc, endpoint=False)
-        properties = definitions[class_]["properties"]
-        classAndClassDefinition[class_] = classDefinition
-        definitionSet.add(class_)
-        api_doc.add_supported_class(classDefinition, collection=False)
-        for prop in properties:
-            new_prop = HydraClassProp("vocab:" + prop, prop, required=False, read=True, write=True)
-            classAndClassDefinition[class_].add_supported_prop(new_prop)
-
-    get_ops(doc, definitionSet, classAndClassDefinition)
 
 
 def generateEntrypoint():
@@ -43,62 +18,7 @@ def generateEntrypoint():
     api_doc.gen_EntryPoint()
 
 
-def get_ops(doc, definitionSet, classAndClassDefinition):
-    """
-    Parses Paths from the Open Api Spec and creates supported operations for the paths which we have defined classes for
-    we check if the path has a class defined , if it does we parse the methods and add the information parsed to Hydra
-
-    :return:
-    """
-    paths = doc["paths"]
-
-    for path in paths:
-        possiblePath = path.split('/')[1]
-        # dirty hack , do  case insensitive search more gracefully
-        possiblePath = possiblePath.replace(possiblePath[0], possiblePath[0].upper())
-        # check if the path name exists in the classes defined
-        if possiblePath in definitionSet and len(path.split('/')) == 2:
-            for method in paths[path]:
-                op_method = method
-                op_expects = ""
-                op_returns = None
-                op_status = [{"statusCode": 200, "description": "dummyClass updated"}]
-                try:
-                    op_name = paths[path][method]["summary"]
-                except KeyError:
-                    op_name = possiblePath
-                try:
-                    parameters = paths[path][method]["parameters"]
-                    for param in parameters:
-                        op_expects = param["schema"]["$ref"].split('/')[2]
-                except KeyError:
-                    op_expects = None
-                try:
-                    responses = paths[path][method]["responses"]
-                    op_status = responses
-                except KeyError:
-                    op_returns = None
-                classAndClassDefinition[possiblePath].add_supported_op(HydraClassOp(op_name,
-                                                                                    op_method.upper(),
-                                                                                    "vocab:" + op_expects,
-                                                                                    op_returns,
-                                                                                    op_status))
-                api_doc.add_supported_class(classAndClassDefinition[possiblePath], collection=False)
-                print("found" + possiblePath)
-
-        else:
-            print("not found")
-
-        generateEntrypoint()
-
-
-def add_class(doc , block , class_name , collection ):
-    # make a var to store class name and collection  bool
-    pass
-
-
 def check_if_collection(schema_block):
-    print("hehehhee")
     print(schema_block)
     try:
         type = schema_block["type"]
@@ -127,7 +47,11 @@ def get_class_details(class_location, doc):
         for prop in properties:
             # todo parse one more level to check 'type' and define class if needed
             # check required from required list and add when true
-            classDefinition.add_supported_prop(HydraClassProp("vocab:" + prop, prop, required=False, read=True, write=True))
+            classDefinition.add_supported_prop(HydraClassProp("vocab:" + prop,
+                                                              prop,
+                                                              required=False,
+                                                              read=True,
+                                                              write=True))
         classAndClassDefinition[class_name] = classDefinition
         definitionSet.add(class_name)
     else:
@@ -135,40 +59,59 @@ def get_class_details(class_location, doc):
 
 
 def check_for_ref(doc, block):
+    print("we entered check for ref for ")
     for obj in block["responses"]:
-        collection = "none"
-        class_location = list(["null", "null", "null"])
+
         try:
+            print("in the try for reponses in CFR")
+            print(block["responses"][obj]["schema"])
             collection = check_if_collection(block["responses"][obj]["schema"])
-            print("collection from for is "+collection)
-            class_location = block["responses"][obj]["schema"]["$ref"].split('/')
+            print("from cfr the collection is "+collection)
+            try:
+                class_location = block["responses"][obj]["schema"]["$ref"].split('/')
+            except KeyError:
+                class_location = block["responses"][obj]["schema"]["items"]["$ref"].split('/')
+            print("from cfr the class_location is ")
+            print(class_location)
             get_class_details(class_location, doc)
+            print("and we are returning from responses back ")
             return class_location[2], collection
         except KeyError:
-            return class_location[2], collection
+            print("we are in the except of responses from cfr")
+            print(block["responses"][obj])
+            pass
 
     for obj in block["parameters"]:
         class_location = list(["null", "null", "null"])
         try:
+            print("we are in try for paramerters")
             class_location = obj["schema"]["$ref"].split('/')
+            print("we got class_location as ")
+            print(class_location)
             get_class_details(class_location, doc)
-            print("in try")
+            print("and we are returning from parameters")
             return class_location[2], "false"
         except KeyError:
-            print("in except")
-            return class_location[2], "false"
+            print("we are in except for parameters")
+            pass
 
-    print("we are here let")
-
+    print("we are returning from cfr with null values for ")
+    print(block)
+    return "null", "none"
 
 
 def get_paths(doc):
     paths = doc["paths"]
     for path in paths:
+        print("from paths we got path "+path)
         if len(path.split('/')) == 2:
+            print("the url was of length one , hence we here")
             for method in paths[path]:
+                print("inside method "+ method+ "for path "+path)
                 class_name, collection = check_for_ref(doc, paths[path][method])
+                print("the class name we got was "+class_name+"and the collection was "+collection)
                 if collection != "none" and class_name != "null":
+                    print("the collection and class var were suitable hence we here ")
                     op_method = method
                     op_expects = ""
                     op_returns = None
@@ -181,7 +124,9 @@ def get_paths(doc):
                     try:
                         parameters = paths[path][method]["parameters"]
                         for param in parameters:
-                            op_expects = param["schema"]["$ref"].split('/')[2]
+                            print("param is ")
+                            print(param)
+                            op_expects = "vocab:" + param["schema"]["$ref"].split('/')[2]
                     except KeyError:
                         op_expects = None
                     # todo responses from definition set and status to be parsed yet
@@ -190,22 +135,24 @@ def get_paths(doc):
                         op_status = responses
                     except KeyError:
                         op_returns = None
+                    print(" we are going to add an operation with name "+op_name)
                     classAndClassDefinition[class_name].add_supported_op(HydraClassOp(op_name,
                                                                                       op_method.upper(),
-                                                                                      "vocab:" + op_expects,
+                                                                                      op_expects,
                                                                                       op_returns,
                                                                                       op_status))
-                    possiblePath= path.split('/')[1]
+                    possiblePath = path.split('/')[1]
                     possiblePath = possiblePath.replace(possiblePath[0], possiblePath[0].upper())
+                    print("the path is "+possiblePath)
 
                     if possiblePath in definitionSet:
-                        pass
-                    if collection is "true":
-                        print("hit")
-                        api_doc.add_supported_class(classAndClassDefinition[class_name], collection=True)
-                    else:
-                        print("miss")
-                        api_doc.add_supported_class(classAndClassDefinition[class_name], collection=False)
+                        print("we have found the class we parsed to be defined already ")
+                        if collection is "true":
+                            print("collection is true for this class")
+                            api_doc.add_supported_class(classAndClassDefinition[class_name], collection=True)
+                        else:
+                            print("collection is false for this class ")
+                            api_doc.add_supported_class(classAndClassDefinition[class_name], collection=False)
     generateEntrypoint()
 
 
