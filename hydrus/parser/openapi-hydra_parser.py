@@ -19,6 +19,11 @@ def generateEntrypoint():
 
 
 def check_if_collection(schema_block):
+    """
+    checks if the provided schema block represents a collection or not
+    :param schema_block: child of response object where schema is defined for return variables
+    :return: collection (string)
+    """
     print(schema_block)
     try:
         type = schema_block["type"]
@@ -34,6 +39,12 @@ def check_if_collection(schema_block):
 
 
 def get_class_details(class_location, doc):
+    """
+    fetches details of class and adds the class to the dict along with the classDefinition untill this point
+    :param class_location: location of class definition in the doc , we extract name from here
+    :param doc: the whole doc
+    :return:
+    """
     class_name = class_location[2]
     # we simply check if the class has been defined or not
     if class_name not in definitionSet:
@@ -59,6 +70,13 @@ def get_class_details(class_location, doc):
 
 
 def check_for_ref(doc, block):
+    """
+    checks the location of schema object in the given method , can be parameter or responses block
+    and takes the collection from check_if_collection and passes to parent function
+    :param doc: whole OAS defined doc
+    :param block: the method block from doc
+    :return: class name and collection variable
+    """
     print("we entered check for ref for ")
     for obj in block["responses"]:
 
@@ -82,7 +100,6 @@ def check_for_ref(doc, block):
             pass
 
     for obj in block["parameters"]:
-        class_location = list(["null", "null", "null"])
         try:
             print("we are in try for paramerters")
             class_location = obj["schema"]["$ref"].split('/')
@@ -101,6 +118,12 @@ def check_for_ref(doc, block):
 
 
 def get_ops(param, method, class_name):
+    """
+    parses the method block and adds the operation to the already defined class definition
+    :param param: the path block
+    :param method: the method name ["post,"put","get"]
+    :param class_name: class name
+    """
     print(param)
     op_method = method
     op_expects = ""
@@ -134,6 +157,10 @@ def get_ops(param, method, class_name):
 
 
 def get_paths(doc):
+    """
+    parent function for parsing the doc
+    :param doc: the oas spec doc 
+    """
     paths = doc["paths"]
     for path in paths:
         print("from paths we got path "+path)
@@ -145,7 +172,7 @@ def get_paths(doc):
                 print("the class name we got was "+class_name+"and the collection was "+collection)
                 if collection != "none" and class_name != "null":
                     print("the collection and class var were suitable hence we here ")
-                    get_ops (paths[path], method,class_name)
+                    get_ops(paths[path], method,class_name)
 
                     possiblePath = path.split('/')[1]
                     possiblePath = possiblePath.replace(possiblePath[0], possiblePath[0].upper())
