@@ -52,17 +52,19 @@ def get_class_details(class_location, doc):
             desc = doc[class_location[1]][class_location[2]]["description"]
         except KeyError:
             desc = class_location[2]
+
         classDefinition = HydraClass(class_name, class_name, desc, endpoint=True)
 
         properties = doc[class_location[1]][class_location[2]]["properties"]
-        required = set()
-        required = doc[class_location[1]][class_location[2]]["required"]
-        print(required)
+        try:
+            required = doc[class_location[1]][class_location[2]]["required"]
+        except KeyError:
+            required = set()
         for prop in properties:
             # todo parse one more level to check 'type' and define class if needed
             # check required from required list and add when true
             flag = False
-            if prop in required:
+            if prop in required and len(required) > 0:
                 flag = True
             classDefinition.add_supported_prop(HydraClassProp("vocab:" + prop,
                                                               prop,
@@ -105,7 +107,10 @@ def check_for_ref(doc, block):
             print(block["responses"][obj])
             pass
 
+    # when we would be able to take arrays as parameters we will use check_if_collection here as well c
     for obj in block["parameters"]:
+        print("xyzzz")
+        print(obj)
         try:
             print("we are in try for paramerters")
             class_location = obj["schema"]["$ref"].split('/')
@@ -142,8 +147,6 @@ def get_ops(param, method, class_name):
     try:
         parameters = param[method]["parameters"]
         for parameter in parameters:
-            print("param is ")
-            print(parameter)
             op_expects = "vocab:" + parameter["schema"]["$ref"].split('/')[2]
     except KeyError:
         op_expects = None
@@ -155,6 +158,7 @@ def get_ops(param, method, class_name):
     except KeyError:
         op_returns = None
     print(" we are going to add an operation with name " + op_name)
+
     classAndClassDefinition[class_name].add_supported_op(HydraClassOp(op_name,
                                                                       op_method.upper(),
                                                                       op_expects,
@@ -178,8 +182,7 @@ def get_paths(doc):
                 print("the class name we got was "+class_name+"and the collection was "+collection)
                 if collection != "none" and class_name != "null":
                     print("the collection and class var were suitable hence we here ")
-                    get_ops(paths[path], method,class_name)
-
+                    get_ops(paths[path], method, class_name)
                     possiblePath = path.split('/')[1]
                     possiblePath = possiblePath.replace(possiblePath[0], possiblePath[0].upper())
                     print("the path is "+possiblePath)
