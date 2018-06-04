@@ -55,12 +55,18 @@ def get_class_details(class_location, doc):
         classDefinition = HydraClass(class_name, class_name, desc, endpoint=True)
 
         properties = doc[class_location[1]][class_location[2]]["properties"]
+        required = set()
+        required = doc[class_location[1]][class_location[2]]["required"]
+        print(required)
         for prop in properties:
             # todo parse one more level to check 'type' and define class if needed
             # check required from required list and add when true
+            flag = False
+            if prop in required:
+                flag = True
             classDefinition.add_supported_prop(HydraClassProp("vocab:" + prop,
                                                               prop,
-                                                              required=False,
+                                                              required=flag,
                                                               read=True,
                                                               write=True))
         classAndClassDefinition[class_name] = classDefinition

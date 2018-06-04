@@ -126,7 +126,7 @@ doc = {
                     "@type": "SupportedProperty",
                     "property": "vocab:name",
                     "readonly": "true",
-                    "required": "false",
+                    "required": "true",
                     "title": "name",
                     "writeonly": "true"
                 },
@@ -134,7 +134,7 @@ doc = {
                     "@type": "SupportedProperty",
                     "property": "vocab:photoUrls",
                     "readonly": "true",
-                    "required": "false",
+                    "required": "true",
                     "title": "photoUrls",
                     "writeonly": "true"
                 },
@@ -156,92 +156,6 @@ doc = {
                 }
             ],
             "title": "Pet"
-        },
-        {
-            "@id": "vocab:User",
-            "@type": "hydra:Class",
-            "description": "User",
-            "supportedOperation": [
-                {
-                    "@type": "http://schema.org/UpdateAction",
-                    "expects": "vocab:User",
-                    "method": "POST",
-                    "possibleStatus": {
-                        "default": {
-                            "description": "successful operation"
-                        }
-                    },
-                    "returns": "null",
-                    "title": "Create user"
-                }
-            ],
-            "supportedProperty": [
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:id",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "id",
-                    "writeonly": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:username",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "username",
-                    "writeonly": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:firstName",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "firstName",
-                    "writeonly": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:lastName",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "lastName",
-                    "writeonly": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:email",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "email",
-                    "writeonly": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:password",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "password",
-                    "writeonly": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:phone",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "phone",
-                    "writeonly": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:userStatus",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "userStatus",
-                    "writeonly": "true"
-                }
-            ],
-            "title": "User"
         },
         {
             "@id": "http://www.w3.org/ns/hydra/core#Collection",
@@ -389,37 +303,6 @@ doc = {
                                             },
                                             "type": "array"
                                         }
-                                    }
-                                }
-                            }
-                        ]
-                    },
-                    "readonly": "true",
-                    "required": "null",
-                    "writeonly": "false"
-                },
-                {
-                    "hydra:description": "The User Class",
-                    "hydra:title": "user",
-                    "property": {
-                        "@id": "vocab:EntryPoint/User",
-                        "@type": "hydra:Link",
-                        "description": "User",
-                        "domain": "vocab:EntryPoint",
-                        "label": "User",
-                        "range": "vocab:User",
-                        "supportedOperation": [
-                            {
-                                "@id": "_:create user",
-                                "@type": "http://schema.org/UpdateAction",
-                                "description": "null",
-                                "expects": "vocab:User",
-                                "label": "Create user",
-                                "method": "POST",
-                                "returns": "null",
-                                "statusCodes": {
-                                    "default": {
-                                        "description": "successful operation"
                                     }
                                 }
                             }
