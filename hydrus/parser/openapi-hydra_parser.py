@@ -8,7 +8,6 @@ import json
 from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp
 
 
-
 def generateEntrypoint():
     """
     Generates Entrypoint , Base Collection and Base Resource for the documentation
@@ -109,7 +108,6 @@ def check_for_ref(doc, block):
 
     # when we would be able to take arrays as parameters we will use check_if_collection here as well c
     for obj in block["parameters"]:
-        print("xyzzz")
         print(obj)
         try:
             print("we are in try for paramerters")
@@ -177,7 +175,7 @@ def get_paths(doc):
         if len(path.split('/')) == 2:
             print("the url was of length one , hence we here")
             for method in paths[path]:
-                print("inside method "+ method+ "for path "+path)
+                print("inside method " + method + "for path "+path)
                 class_name, collection = check_for_ref(doc, paths[path][method])
                 print("the class name we got was "+class_name+"and the collection was "+collection)
                 if collection != "none" and class_name != "null":
@@ -212,9 +210,12 @@ if __name__ == "__main__":
     title = info["title"]
     baseURL = doc["host"]
     name = doc["basePath"]
-    api_doc = HydraDoc(name, title, desc, name, baseURL)
+    try:
+        schemes = doc["schemes"]
+    except KeyError:
+        schemes = "http"
+    api_doc = HydraDoc(name, title, desc, name, schemes[0]+"://"+baseURL)
     get_paths(doc)
-
 
     # getClasses(doc)
 
