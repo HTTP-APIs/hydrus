@@ -7,6 +7,18 @@ import json
 
 from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp
 
+def try_catch_replacement(block,get_this, default):
+    """
+    replacement for the try catch blocks. HELPER FUNCTION
+    :param block:
+    :param get_this:
+    :param default:
+    :return:
+    """
+    try:
+        return block[get_this]
+    except KeyError:
+        return default
 
 def generateEntrypoint():
     """
@@ -133,7 +145,6 @@ def get_ops(param, method, class_name):
     :param method: the method name ["post,"put","get"]
     :param class_name: class name
     """
-    print(param)
     op_method = method
     op_expects = ""
     op_returns = None
@@ -145,7 +156,10 @@ def get_ops(param, method, class_name):
     try:
         parameters = param[method]["parameters"]
         for parameter in parameters:
-            op_expects = "vocab:" + parameter["schema"]["$ref"].split('/')[2]
+            try:
+                op_expects = "vocab:" + parameter["schema"]["$ref"].split('/')[2]
+            except KeyError:
+                op_expects = parameter["schema"]["type"]
     except KeyError:
         op_expects = None
     # todo responses from definition set and status to be parsed yet
@@ -205,20 +219,16 @@ if __name__ == "__main__":
     classAndClassDefinition = dict()
     definitionSet = set()
     classAndCollection = dict()
-    info = doc["info"]
-    desc = info["description"]
-    title = info["title"]
-    baseURL = doc["host"]
-    name = doc["basePath"]
-    try:
-        schemes = doc["schemes"]
-    except KeyError:
-        schemes = "http"
+    info = try_catch_replacement(doc, "info", "")
+    if info != "":
+        desc = try_catch_replacement(info, "description", "not defined")
+        title = try_catch_replacement(info, "title", "not defined")
+
+    baseURL = try_catch_replacement(doc, "host", "localhost")
+    name = try_catch_replacement(doc, "basePath", "api")
+    schemes = try_catch_replacement(doc,"schemes", "http")
     api_doc = HydraDoc(name, title, desc, name, schemes[0]+"://"+baseURL)
     get_paths(doc)
-
-    # getClasses(doc)
-
     hydra_doc = api_doc.generate()
 
     dump = json.dumps(hydra_doc, indent=4, sort_keys=True)
