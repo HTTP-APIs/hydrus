@@ -7,6 +7,7 @@ import json
 
 from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp
 
+
 def try_catch_replacement(block,get_this, default):
     """
     replacement for the try catch blocks. HELPER FUNCTION
@@ -19,6 +20,7 @@ def try_catch_replacement(block,get_this, default):
         return block[get_this]
     except KeyError:
         return default
+
 
 def generateEntrypoint():
     """
@@ -147,10 +149,8 @@ def get_ops(param, method, class_name):
     """
     op_method = method
     op_expects = ""
-    op_returns = None
-    op_status = [{"statusCode": 200, "description": "dummyClass updated"}]
-
     op_name = try_catch_replacement(param[method], "summary", class_name)
+    op_status = [{"statusCode": 200, "description": "dummyClass updated"}]
     try:
         parameters = param[method]["parameters"]
         for parameter in parameters:
@@ -162,6 +162,9 @@ def get_ops(param, method, class_name):
         op_expects = None
     try:
         responses = param[method]["responses"]
+        print("wrx")
+        print(responses)
+        op_status = responses
         op_returns = ""
         for response in responses:
             try:
@@ -173,9 +176,9 @@ def get_ops(param, method, class_name):
                     op_returns = "vocab:" + responses[response]["schema"]["items"]["$ref"].split('/')[2]
                 except KeyError:
                     op_returns = try_catch_replacement(responses[response]["schema"], "type", None)
-        op_status = responses
     except KeyError:
         op_returns = None
+    print(op_status)
     print(" we are going to add an operation with name " + op_name)
 
     classAndClassDefinition[class_name].add_supported_op(HydraClassOp(op_name,
@@ -227,9 +230,14 @@ if __name__ == "__main__":
     definitionSet = set()
     classAndCollection = dict()
     info = try_catch_replacement(doc, "info", "")
+
     if info != "":
         desc = try_catch_replacement(info, "description", "not defined")
         title = try_catch_replacement(info, "title", "not defined")
+    else:
+        desc = "not defined"
+        title = "not defined"
+    # todo throw error if desc or title dont exist
 
     baseURL = try_catch_replacement(doc, "host", "localhost")
     name = try_catch_replacement(doc, "basePath", "api")

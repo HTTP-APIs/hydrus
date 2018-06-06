@@ -60,12 +60,11 @@ doc = {
                     "@type": "http://schema.org/UpdateAction",
                     "expects": "vocab:Pet",
                     "method": "POST",
-                    "possibleStatus": [
-                        {
-                            "description": "dummyClass updated",
-                            "statusCode": 200
+                    "possibleStatus": {
+                        "405": {
+                            "description": "Invalid input"
                         }
-                    ],
+                    },
                     "returns": "null",
                     "title": "Add a new pet to the store"
                 },
@@ -73,12 +72,17 @@ doc = {
                     "@type": "http://schema.org/AddAction",
                     "expects": "vocab:Pet",
                     "method": "PUT",
-                    "possibleStatus": [
-                        {
-                            "description": "dummyClass updated",
-                            "statusCode": 200
+                    "possibleStatus": {
+                        "400": {
+                            "description": "Invalid ID supplied"
+                        },
+                        "404": {
+                            "description": "Pet not found"
+                        },
+                        "405": {
+                            "description": "Validation exception"
                         }
-                    ],
+                    },
                     "returns": "null",
                     "title": "Update an existing pet"
                 },
@@ -159,12 +163,11 @@ doc = {
                     "@type": "http://schema.org/UpdateAction",
                     "expects": "vocab:User",
                     "method": "POST",
-                    "possibleStatus": [
-                        {
-                            "description": "dummyClass updated",
-                            "statusCode": 200
+                    "possibleStatus": {
+                        "default": {
+                            "description": "successful operation"
                         }
-                    ],
+                    },
                     "returns": "null",
                     "title": "Create user"
                 }
@@ -297,12 +300,11 @@ doc = {
                                 "label": "Add a new pet to the store",
                                 "method": "POST",
                                 "returns": "null",
-                                "statusCodes": [
-                                    {
-                                        "description": "dummyClass updated",
-                                        "statusCode": 200
+                                "statusCodes": {
+                                    "405": {
+                                        "description": "Invalid input"
                                     }
-                                ]
+                                }
                             },
                             {
                                 "@id": "_:update an existing pet",
@@ -312,12 +314,17 @@ doc = {
                                 "label": "Update an existing pet",
                                 "method": "PUT",
                                 "returns": "null",
-                                "statusCodes": [
-                                    {
-                                        "description": "dummyClass updated",
-                                        "statusCode": 200
+                                "statusCodes": {
+                                    "400": {
+                                        "description": "Invalid ID supplied"
+                                    },
+                                    "404": {
+                                        "description": "Pet not found"
+                                    },
+                                    "405": {
+                                        "description": "Validation exception"
                                     }
-                                ]
+                                }
                             },
                             {
                                 "@id": "_:get all pets",
@@ -361,12 +368,11 @@ doc = {
                                 "label": "Create user",
                                 "method": "POST",
                                 "returns": "null",
-                                "statusCodes": [
-                                    {
-                                        "description": "dummyClass updated",
-                                        "statusCode": 200
+                                "statusCodes": {
+                                    "default": {
+                                        "description": "successful operation"
                                     }
-                                ]
+                                }
                             }
                         ]
                     },
