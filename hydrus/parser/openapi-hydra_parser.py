@@ -176,6 +176,11 @@ def get_ops(param, method, class_name):
                     op_returns = "vocab:" + responses[response]["schema"]["items"]["$ref"].split('/')[2]
                 except KeyError:
                     op_returns = try_catch_replacement(responses[response]["schema"], "type", None)
+            try:
+                del responses[response]["schema"]
+                op_status[response] = responses[response]
+            except KeyError:
+                pass
     except KeyError:
         op_returns = None
     print(op_status)

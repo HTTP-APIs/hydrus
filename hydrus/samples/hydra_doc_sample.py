@@ -92,10 +92,7 @@ doc = {
                     "method": "GET",
                     "possibleStatus": {
                         "200": {
-                            "description": "successful operation",
-                            "schema": {
-                                "$ref": "#/definitions/Pet"
-                            }
+                            "description": "successful operation"
                         }
                     },
                     "returns": "vocab:Pet",
@@ -336,10 +333,7 @@ doc = {
                                 "returns": "vocab:Pet",
                                 "statusCodes": {
                                     "200": {
-                                        "description": "successful operation",
-                                        "schema": {
-                                            "$ref": "#/definitions/Pet"
-                                        }
+                                        "description": "successful operation"
                                     }
                                 }
                             }
