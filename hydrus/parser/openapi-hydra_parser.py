@@ -149,10 +149,8 @@ def get_ops(param, method, class_name):
     op_expects = ""
     op_returns = None
     op_status = [{"statusCode": 200, "description": "dummyClass updated"}]
-    try:
-        op_name = param[method]["summary"]
-    except KeyError:
-        op_name = class_name
+
+    op_name = try_catch_replacement(param[method], "summary", class_name)
     try:
         parameters = param[method]["parameters"]
         for parameter in parameters:
@@ -162,10 +160,19 @@ def get_ops(param, method, class_name):
                 op_expects = parameter["schema"]["type"]
     except KeyError:
         op_expects = None
-    # todo responses from definition set and status to be parsed yet
-    print(param[method])
     try:
         responses = param[method]["responses"]
+        op_returns = ""
+        for response in responses:
+            try:
+                op_returns = "vocab:" + responses[response]["schema"]["$ref"].split('/')[2]
+            except KeyError:
+                pass
+            if op_returns == "":
+                try:
+                    op_returns = "vocab:" + responses[response]["schema"]["items"]["$ref"].split('/')[2]
+                except KeyError:
+                    op_returns = try_catch_replacement(responses[response]["schema"], "type", None)
         op_status = responses
     except KeyError:
         op_returns = None
