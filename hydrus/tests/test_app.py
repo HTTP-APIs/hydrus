@@ -12,6 +12,7 @@ from hydrus.data import doc_parse
 from hydrus.hydraspec import doc_maker
 from hydrus.samples import doc_writer_sample
 from sqlalchemy import create_engine
+from hydrus.samples import hydra_doc_sample
 from sqlalchemy.orm import sessionmaker,scoped_session
 from hydrus.data.db_models import Base
 
@@ -43,11 +44,12 @@ class ViewsTestCase(unittest.TestCase):
         session = scoped_session(sessionmaker(bind=engine))
 
         self.session = session
-        self.API_NAME = "demoapi"
-        self.HYDRUS_SERVER_URL = "http://hydrus.com/"
+        self.API_NAME = "v2"
+        self.HYDRUS_SERVER_URL = "http://petstore.swagger.io/"
         self.app = app_factory(self.API_NAME)
-        self.doc = doc_maker.create_doc(doc_writer_sample.api_doc.generate(), self.HYDRUS_SERVER_URL, self.API_NAME)
+        print("going for create doc")
 
+        self.doc = doc_maker.create_doc(hydra_doc_sample.doc, self.HYDRUS_SERVER_URL, self.API_NAME)
         test_classes = doc_parse.get_classes(self.doc.generate())
         test_properties = doc_parse.get_all_properties(test_classes)
         doc_parse.insert_classes(test_classes, self.session)
