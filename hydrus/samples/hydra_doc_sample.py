@@ -60,11 +60,12 @@ doc = {
                     "@type": "http://schema.org/UpdateAction",
                     "expects": "vocab:Pet",
                     "method": "POST",
-                    "possibleStatus": {
-                        "405": {
-                            "description": "Invalid input"
+                    "possibleStatus": [
+                        {
+                            "description": "Invalid input",
+                            "statusCode": "405"
                         }
-                    },
+                    ],
                     "returns": "null",
                     "title": "Add a new pet to the store"
                 },
@@ -72,17 +73,12 @@ doc = {
                     "@type": "http://schema.org/AddAction",
                     "expects": "vocab:Pet",
                     "method": "PUT",
-                    "possibleStatus": {
-                        "400": {
-                            "description": "Invalid ID supplied"
-                        },
-                        "404": {
-                            "description": "Pet not found"
-                        },
-                        "405": {
-                            "description": "Validation exception"
+                    "possibleStatus": [
+                        {
+                            "description": "Invalid ID supplied",
+                            "statusCode": "400"
                         }
-                    },
+                    ],
                     "returns": "null",
                     "title": "Update an existing pet"
                 },
@@ -90,11 +86,12 @@ doc = {
                     "@type": "http://schema.org/FindAction",
                     "expects": "null",
                     "method": "GET",
-                    "possibleStatus": {
-                        "200": {
-                            "description": "successful operation"
+                    "possibleStatus": [
+                        {
+                            "description": "successful operation",
+                            "statusCode": "200"
                         }
-                    },
+                    ],
                     "returns": "vocab:Pet",
                     "title": "get all pets"
                 }
@@ -160,11 +157,12 @@ doc = {
                     "@type": "http://schema.org/UpdateAction",
                     "expects": "vocab:User",
                     "method": "POST",
-                    "possibleStatus": {
-                        "default": {
-                            "description": "successful operation"
+                    "possibleStatus": [
+                        {
+                            "description": "successful operation",
+                            "statusCode": "default"
                         }
-                    },
+                    ],
                     "returns": "null",
                     "title": "Create user"
                 }
@@ -263,6 +261,49 @@ doc = {
             "title": "Resource"
         },
         {
+            "@id": "vocab:PetCollection",
+            "@type": "hydra:Class",
+            "description": "A collection of pet",
+            "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
+            "supportedOperation": [
+                {
+                    "@id": "_:pet_collection_retrieve",
+                    "@type": "http://schema.org/FindAction",
+                    "description": "Retrieves all Pet entities",
+                    "expects": "null",
+                    "method": "GET",
+                    "returns": "vocab:PetCollection",
+                    "statusCodes": []
+                },
+                {
+                    "@id": "_:pet_create",
+                    "@type": "http://schema.org/AddAction",
+                    "description": "Create new Pet entitity",
+                    "expects": "vocab:Pet",
+                    "method": "PUT",
+                    "returns": "vocab:Pet",
+                    "statusCodes": [
+                        {
+                            "description": "If the Pet entity was created successfully.",
+                            "statusCode": 201
+                        }
+                    ]
+                }
+            ],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "description": "The pet",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "false",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "PetCollection"
+        },
+        {
             "@id": "vocab:EntryPoint",
             "@type": "hydra:Class",
             "description": "The main entry point or homepage of the API.",
@@ -297,11 +338,12 @@ doc = {
                                 "label": "Add a new pet to the store",
                                 "method": "POST",
                                 "returns": "null",
-                                "statusCodes": {
-                                    "405": {
-                                        "description": "Invalid input"
+                                "statusCodes": [
+                                    {
+                                        "description": "Invalid input",
+                                        "statusCode": "405"
                                     }
-                                }
+                                ]
                             },
                             {
                                 "@id": "_:update an existing pet",
@@ -311,17 +353,12 @@ doc = {
                                 "label": "Update an existing pet",
                                 "method": "PUT",
                                 "returns": "null",
-                                "statusCodes": {
-                                    "400": {
-                                        "description": "Invalid ID supplied"
-                                    },
-                                    "404": {
-                                        "description": "Pet not found"
-                                    },
-                                    "405": {
-                                        "description": "Validation exception"
+                                "statusCodes": [
+                                    {
+                                        "description": "Invalid ID supplied",
+                                        "statusCode": "400"
                                     }
-                                }
+                                ]
                             },
                             {
                                 "@id": "_:get all pets",
@@ -331,11 +368,12 @@ doc = {
                                 "label": "get all pets",
                                 "method": "GET",
                                 "returns": "vocab:Pet",
-                                "statusCodes": {
-                                    "200": {
-                                        "description": "successful operation"
+                                "statusCodes": [
+                                    {
+                                        "description": "successful operation",
+                                        "statusCode": "200"
                                     }
-                                }
+                                ]
                             }
                         ]
                     },
@@ -362,11 +400,52 @@ doc = {
                                 "label": "Create user",
                                 "method": "POST",
                                 "returns": "null",
-                                "statusCodes": {
-                                    "default": {
-                                        "description": "successful operation"
+                                "statusCodes": [
+                                    {
+                                        "description": "successful operation",
+                                        "statusCode": "default"
                                     }
-                                }
+                                ]
+                            }
+                        ]
+                    },
+                    "readonly": "true",
+                    "required": "null",
+                    "writeonly": "false"
+                },
+                {
+                    "hydra:description": "The PetCollection collection",
+                    "hydra:title": "petcollection",
+                    "property": {
+                        "@id": "vocab:EntryPoint/PetCollection",
+                        "@type": "hydra:Link",
+                        "description": "The PetCollection collection",
+                        "domain": "vocab:EntryPoint",
+                        "label": "PetCollection",
+                        "range": "vocab:PetCollection",
+                        "supportedOperation": [
+                            {
+                                "@id": "_:_:pet_collection_retrieve",
+                                "@type": "http://schema.org/FindAction",
+                                "description": "Retrieves all Pet entities",
+                                "expects": "null",
+                                "method": "GET",
+                                "returns": "vocab:PetCollection",
+                                "statusCodes": []
+                            },
+                            {
+                                "@id": "_:_:pet_create",
+                                "@type": "http://schema.org/AddAction",
+                                "description": "Create new Pet entitity",
+                                "expects": "vocab:Pet",
+                                "method": "PUT",
+                                "returns": "vocab:Pet",
+                                "statusCodes": [
+                                    {
+                                        "description": "If the Pet entity was created successfully.",
+                                        "statusCode": 201
+                                    }
+                                ]
                             }
                         ]
                     },

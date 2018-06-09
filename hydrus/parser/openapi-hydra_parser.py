@@ -150,7 +150,7 @@ def get_ops(param, method, class_name):
     op_method = method
     op_expects = ""
     op_name = try_catch_replacement(param[method], "summary", class_name)
-    op_status = [{"statusCode": 200, "description": "dummyClass updated"}]
+    op_status = list()
     try:
         parameters = param[method]["parameters"]
         for parameter in parameters:
@@ -162,11 +162,10 @@ def get_ops(param, method, class_name):
         op_expects = None
     try:
         responses = param[method]["responses"]
-        print("wrx")
-        print(responses)
-        op_status = responses
         op_returns = ""
         for response in responses:
+            if response != 'default':
+                op_status.append({"statusCode": int(response), "description": responses[response]["description"]})
             try:
                 op_returns = "vocab:" + responses[response]["schema"]["$ref"].split('/')[2]
             except KeyError:
@@ -176,14 +175,11 @@ def get_ops(param, method, class_name):
                     op_returns = "vocab:" + responses[response]["schema"]["items"]["$ref"].split('/')[2]
                 except KeyError:
                     op_returns = try_catch_replacement(responses[response]["schema"], "type", None)
-            try:
-                del responses[response]["schema"]
-                op_status[response] = responses[response]
-            except KeyError:
-                pass
     except KeyError:
         op_returns = None
-    print(op_status)
+    if len(op_status) == 0:
+        op_status.append({"statusCode": 200, "description": "Successful Operation"})
+
     print(" we are going to add an operation with name " + op_name)
 
     classAndClassDefinition[class_name].add_supported_op(HydraClassOp(op_name,
