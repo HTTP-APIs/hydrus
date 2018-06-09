@@ -8,7 +8,7 @@ import json
 from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp
 
 
-def try_catch_replacement(block,get_this, default):
+def try_catch_replacement(block, get_this, default):
     """
     replacement for the try catch blocks. HELPER FUNCTION
     :param block:
@@ -222,7 +222,7 @@ def get_paths(doc):
 
 
 if __name__ == "__main__":
-    with open("../samples/petstore_open_api.yaml", 'r') as stream:
+    with open("../samples/petstore_openapi.yaml", 'r') as stream:
         try:
             doc = yaml.load(stream)
         except yaml.YAMLError as exc:
