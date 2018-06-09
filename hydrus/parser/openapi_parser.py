@@ -98,11 +98,9 @@ def check_for_ref(doc, block):
     :param block: the method block from doc
     :return: class name and collection variable
     """
-    print("we entered check for ref for ")
     for obj in block["responses"]:
 
         try:
-            print("in the try for reponses in CFR")
             print(block["responses"][obj]["schema"])
             collection = check_if_collection(block["responses"][obj]["schema"])
             print("from cfr the collection is "+collection)
@@ -110,13 +108,9 @@ def check_for_ref(doc, block):
                 class_location = block["responses"][obj]["schema"]["$ref"].split('/')
             except KeyError:
                 class_location = block["responses"][obj]["schema"]["items"]["$ref"].split('/')
-            print("from cfr the class_location is ")
-            print(class_location)
             get_class_details(class_location, doc)
-            print("and we are returning from responses back ")
             return class_location[2], collection
         except KeyError:
-            print("we are in the except of responses from cfr")
             print(block["responses"][obj])
             pass
 
@@ -126,16 +120,12 @@ def check_for_ref(doc, block):
         try:
             print("we are in try for paramerters")
             class_location = obj["schema"]["$ref"].split('/')
-            print("we got class_location as ")
             print(class_location)
             get_class_details(class_location, doc)
-            print("and we are returning from parameters")
             return class_location[2], "false"
         except KeyError:
-            print("we are in except for parameters")
             pass
 
-    print("we are returning from cfr with null values for ")
     print(block)
     return "null", "none"
 
@@ -196,27 +186,21 @@ def get_paths(doc):
     """
     paths = doc["paths"]
     for path in paths:
-        print("from paths we got path "+path)
         if len(path.split('/')) == 2:
-            print("the url was of length one , hence we here")
             for method in paths[path]:
                 print("inside method " + method + "for path "+path)
                 class_name, collection = check_for_ref(doc, paths[path][method])
                 print("the class name we got was "+class_name+"and the collection was "+collection)
                 if collection != "none" and class_name != "null":
-                    print("the collection and class var were suitable hence we here ")
                     get_ops(paths[path], method, class_name)
                     possiblePath = path.split('/')[1]
                     possiblePath = possiblePath.replace(possiblePath[0], possiblePath[0].upper())
                     print("the path is "+possiblePath)
 
                     if possiblePath in definitionSet:
-                        print("we have found the class we parsed to be defined already ")
                         if collection is "true":
-                            print("collection is true for this class")
                             api_doc.add_supported_class(classAndClassDefinition[class_name], collection=True)
                         else:
-                            print("collection is false for this class ")
                             api_doc.add_supported_class(classAndClassDefinition[class_name], collection=False)
     generateEntrypoint()
 
