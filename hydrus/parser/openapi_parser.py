@@ -4,11 +4,11 @@ Module to take in Open Api Specification and convert it to HYDRA Api Doc
 """
 import yaml
 import json
-
+from typing import Any, Dict, Match, Optional, Tuple, Union, List,Set
 from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp
 
 
-def try_catch_replacement(block, get_this, default):
+def try_catch_replacement(block: Any, get_this: str, default: Any) -> str:
     """
     replacement for the try catch blocks. HELPER FUNCTION
     :param block:
@@ -22,7 +22,7 @@ def try_catch_replacement(block, get_this, default):
         return default
 
 
-def generateEntrypoint():
+def generateEntrypoint() -> None:
     """
     Generates Entrypoint , Base Collection and Base Resource for the documentation
     """
@@ -31,7 +31,7 @@ def generateEntrypoint():
     api_doc.gen_EntryPoint()
 
 
-def check_if_collection(schema_block):
+def check_if_collection(schema_block: Dict[str, Any]) -> str:
     """
     checks if the provided schema block represents a collection or not
     :param schema_block: child of response object where schema is defined for return variables
@@ -40,7 +40,7 @@ def check_if_collection(schema_block):
     print(schema_block)
     try:
         type = schema_block["type"]
-        print("type is "+type)
+        print("type is " + type)
         if type == "array":
             collection = "true"
         else:
@@ -51,7 +51,7 @@ def check_if_collection(schema_block):
     return collection
 
 
-def get_class_details(class_location, doc):
+def get_class_details(class_location: List[str], doc: Dict["str", Any]) -> None:
     """
     fetches details of class and adds the class to the dict along with the classDefinition untill this point
     :param class_location: location of class definition in the doc , we extract name from here
@@ -90,7 +90,7 @@ def get_class_details(class_location, doc):
         return
 
 
-def check_for_ref(doc, block):
+def check_for_ref(doc: Dict["str", Any], block: Dict[str, Any]) -> Tuple[str, str]:
     """
     checks the location of schema object in the given method , can be parameter or responses block
     and takes the collection from check_if_collection and passes to parent function
@@ -103,7 +103,7 @@ def check_for_ref(doc, block):
         try:
             print(block["responses"][obj]["schema"])
             collection = check_if_collection(block["responses"][obj]["schema"])
-            print("from cfr the collection is "+collection)
+            print("from cfr the collection is " + collection)
             try:
                 class_location = block["responses"][obj]["schema"]["$ref"].split('/')
             except KeyError:
@@ -130,7 +130,7 @@ def check_for_ref(doc, block):
     return "null", "none"
 
 
-def get_ops(param, method, class_name):
+def get_ops(param: Dict["str", Any], method: str, class_name: str) -> None:
     """
     parses the method block and adds the operation to the already defined class definition
     :param param: the path block
@@ -149,7 +149,7 @@ def get_ops(param, method, class_name):
             except KeyError:
                 op_expects = parameter["schema"]["type"]
     except KeyError:
-        op_expects = None
+        op_expects = "null"
     try:
         responses = param[method]["responses"]
         op_returns = ""
@@ -166,7 +166,7 @@ def get_ops(param, method, class_name):
                 except KeyError:
                     op_returns = try_catch_replacement(responses[response]["schema"], "type", None)
     except KeyError:
-        op_returns = None
+        op_returns = "null"
     if len(op_status) == 0:
         op_status.append({"statusCode": 200, "description": "Successful Operation"})
 
@@ -179,7 +179,7 @@ def get_ops(param, method, class_name):
                                                                       op_status))
 
 
-def get_paths(doc):
+def get_paths(doc: Dict["str", Any]) -> None:
     """
     parent function for parsing the doc
     :param doc: the oas spec doc 
@@ -188,14 +188,14 @@ def get_paths(doc):
     for path in paths:
         if len(path.split('/')) == 2:
             for method in paths[path]:
-                print("inside method " + method + "for path "+path)
+                print("inside method " + method + "for path " + path)
                 class_name, collection = check_for_ref(doc, paths[path][method])
-                print("the class name we got was "+class_name+"and the collection was "+collection)
+                print("the class name we got was " + class_name + "and the collection was " + collection)
                 if collection != "none" and class_name != "null":
                     get_ops(paths[path], method, class_name)
                     possiblePath = path.split('/')[1]
                     possiblePath = possiblePath.replace(possiblePath[0], possiblePath[0].upper())
-                    print("the path is "+possiblePath)
+                    print("the path is " + possiblePath)
 
                     if possiblePath in definitionSet:
                         if collection is "true":
@@ -211,9 +211,8 @@ if __name__ == "__main__":
             doc = yaml.load(stream)
         except yaml.YAMLError as exc:
             print(exc)
-    classAndClassDefinition = dict()
-    definitionSet = set()
-    classAndCollection = dict()
+    classAndClassDefinition = dict()  # type: Dict[str,HydraClass]
+    definitionSet = set()  # type: Set[str]
     info = try_catch_replacement(doc, "info", "")
 
     if info != "":
@@ -226,8 +225,8 @@ if __name__ == "__main__":
 
     baseURL = try_catch_replacement(doc, "host", "localhost")
     name = try_catch_replacement(doc, "basePath", "api")
-    schemes = try_catch_replacement(doc,"schemes", "http")
-    api_doc = HydraDoc(name, title, desc, name, schemes[0]+"://"+baseURL)
+    schemes = try_catch_replacement(doc, "schemes", "http")
+    api_doc = HydraDoc(name, title, desc, name, schemes[0] + "://" + baseURL)
     get_paths(doc)
     hydra_doc = api_doc.generate()
 
