@@ -43,19 +43,59 @@ doc = {
         "supportedOperation": "hydra:supportedOperation",
         "supportedProperty": "hydra:supportedProperty",
         "title": "hydra:title",
-        "vocab": "petstore.swagger.io/v2/vocab#",
+        "vocab": "http://petstore.swagger.io/v2/vocab#",
         "writeonly": "hydra:writeonly"
     },
-    "@id": "petstore.swagger.io/v2/vocab",
+    "@id": "http://petstore.swagger.io/v2/vocab",
     "@type": "ApiDocumentation",
     "description": "This is a sample server Petstore server.  You can find out more about Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).  For this sample, you can use the api key `special-key` to test the authorization filters.",
     "possibleStatus": [],
     "supportedClass": [
         {
-            "@id": "vocab:Order",
+            "@id": "vocab:Pet",
             "@type": "hydra:Class",
-            "description": "this is def",
-            "supportedOperation": [],
+            "description": "Pet",
+            "supportedOperation": [
+                {
+                    "@type": "http://schema.org/UpdateAction",
+                    "expects": "vocab:Pet",
+                    "method": "POST",
+                    "possibleStatus": [
+                        {
+                            "description": "Invalid input",
+                            "statusCode": "405"
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Add a new pet to the store"
+                },
+                {
+                    "@type": "http://schema.org/AddAction",
+                    "expects": "vocab:Pet",
+                    "method": "PUT",
+                    "possibleStatus": [
+                        {
+                            "description": "Invalid ID supplied",
+                            "statusCode": "400"
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Update an existing pet"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "null",
+                    "method": "GET",
+                    "possibleStatus": [
+                        {
+                            "description": "successful operation",
+                            "statusCode": "200"
+                        }
+                    ],
+                    "returns": "vocab:Pet",
+                    "title": "get all pets"
+                }
+            ],
             "supportedProperty": [
                 {
                     "@type": "SupportedProperty",
@@ -67,26 +107,34 @@ doc = {
                 },
                 {
                     "@type": "SupportedProperty",
-                    "property": "vocab:petId",
+                    "property": "vocab:category",
                     "readonly": "true",
                     "required": "false",
-                    "title": "petId",
+                    "title": "category",
                     "writeonly": "true"
                 },
                 {
                     "@type": "SupportedProperty",
-                    "property": "vocab:quantity",
+                    "property": "vocab:name",
                     "readonly": "true",
-                    "required": "false",
-                    "title": "quantity",
+                    "required": "true",
+                    "title": "name",
                     "writeonly": "true"
                 },
                 {
                     "@type": "SupportedProperty",
-                    "property": "vocab:shipDate",
+                    "property": "vocab:photoUrls",
+                    "readonly": "true",
+                    "required": "true",
+                    "title": "photoUrls",
+                    "writeonly": "true"
+                },
+                {
+                    "@type": "SupportedProperty",
+                    "property": "vocab:tags",
                     "readonly": "true",
                     "required": "false",
-                    "title": "shipDate",
+                    "title": "tags",
                     "writeonly": "true"
                 },
                 {
@@ -96,17 +144,9 @@ doc = {
                     "required": "false",
                     "title": "status",
                     "writeonly": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:complete",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "complete",
-                    "writeonly": "true"
                 }
             ],
-            "title": "Order"
+            "title": "Pet"
         },
         {
             "@id": "vocab:User",
@@ -114,14 +154,15 @@ doc = {
             "description": "User",
             "supportedOperation": [
                 {
-                    "@type": "http://schema.org/FindAction",
+                    "@type": "http://schema.org/UpdateAction",
                     "expects": "vocab:User",
-                    "method": "post",
-                    "possibleStatus": {
-                        "default": {
-                            "description": "successful operation"
+                    "method": "POST",
+                    "possibleStatus": [
+                        {
+                            "description": "successful operation",
+                            "statusCode": "default"
                         }
-                    },
+                    ],
                     "returns": "null",
                     "title": "Create user"
                 }
@@ -195,525 +236,72 @@ doc = {
             "title": "User"
         },
         {
-            "@id": "vocab:Category",
+            "@id": "http://www.w3.org/ns/hydra/core#Collection",
             "@type": "hydra:Class",
-            "description": "Category",
+            "description": "null",
             "supportedOperation": [],
             "supportedProperty": [
                 {
                     "@type": "SupportedProperty",
-                    "property": "vocab:id",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "id",
-                    "writeonly": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:name",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "name",
-                    "writeonly": "true"
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "null",
+                    "title": "members",
+                    "writeonly": "false"
                 }
             ],
-            "title": "Category"
+            "title": "Collection"
         },
         {
-            "@id": "vocab:Tag",
+            "@id": "http://www.w3.org/ns/hydra/core#Resource",
             "@type": "hydra:Class",
-            "description": "Tag",
+            "description": "null",
             "supportedOperation": [],
-            "supportedProperty": [
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:id",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "id",
-                    "writeonly": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:name",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "name",
-                    "writeonly": "true"
-                }
-            ],
-            "title": "Tag"
+            "supportedProperty": [],
+            "title": "Resource"
         },
         {
-            "@id": "vocab:Pet",
+            "@id": "vocab:PetCollection",
             "@type": "hydra:Class",
-            "description": "Pet",
+            "description": "A collection of pet",
+            "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
             "supportedOperation": [
                 {
+                    "@id": "_:pet_collection_retrieve",
                     "@type": "http://schema.org/FindAction",
+                    "description": "Retrieves all Pet entities",
+                    "expects": "null",
+                    "method": "GET",
+                    "returns": "vocab:PetCollection",
+                    "statusCodes": []
+                },
+                {
+                    "@id": "_:pet_create",
+                    "@type": "http://schema.org/AddAction",
+                    "description": "Create new Pet entitity",
                     "expects": "vocab:Pet",
-                    "method": "post",
-                    "possibleStatus": {
-                        "405": {
-                            "description": "Invalid input"
+                    "method": "PUT",
+                    "returns": "vocab:Pet",
+                    "statusCodes": [
+                        {
+                            "description": "If the Pet entity was created successfully.",
+                            "statusCode": 201
                         }
-                    },
-                    "returns": "null",
-                    "title": "Add a new pet to the store"
-                },
-                {
-                    "@type": "http://schema.org/FindAction",
-                    "expects": "vocab:Pet",
-                    "method": "put",
-                    "possibleStatus": {
-                        "400": {
-                            "description": "Invalid ID supplied"
-                        },
-                        "404": {
-                            "description": "Pet not found"
-                        },
-                        "405": {
-                            "description": "Validation exception"
-                        }
-                    },
-                    "returns": "null",
-                    "title": "Update an existing pet"
+                    ]
                 }
             ],
             "supportedProperty": [
                 {
                     "@type": "SupportedProperty",
-                    "property": "vocab:id",
-                    "readonly": "true",
+                    "description": "The pet",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
                     "required": "false",
-                    "title": "id",
-                    "writeonly": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:category",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "category",
-                    "writeonly": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:name",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "name",
-                    "writeonly": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:photoUrls",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "photoUrls",
-                    "writeonly": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:tags",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "tags",
-                    "writeonly": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:status",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "status",
-                    "writeonly": "true"
-                }
-            ],
-            "title": "Pet"
-        },
-        {
-            "@id": "vocab:ApiResponse",
-            "@type": "hydra:Class",
-            "description": "ApiResponse",
-            "supportedOperation": [],
-            "supportedProperty": [
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:code",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "code",
-                    "writeonly": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:type",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "type",
-                    "writeonly": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:message",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "message",
-                    "writeonly": "true"
-                }
-            ],
-            "title": "ApiResponse"
-        },
-        {
-            "@id": "http://www.w3.org/ns/hydra/core#Collection",
-            "@type": "hydra:Class",
-            "description": "null",
-            "supportedOperation": [],
-            "supportedProperty": [
-                {
-                    "@type": "SupportedProperty",
-                    "property": "http://www.w3.org/ns/hydra/core#member",
-                    "readonly": "false",
-                    "required": "null",
                     "title": "members",
                     "writeonly": "false"
                 }
             ],
-            "title": "Collection"
-        },
-        {
-            "@id": "http://www.w3.org/ns/hydra/core#Resource",
-            "@type": "hydra:Class",
-            "description": "null",
-            "supportedOperation": [],
-            "supportedProperty": [],
-            "title": "Resource"
-        },
-        {
-            "@id": "http://www.w3.org/ns/hydra/core#Collection",
-            "@type": "hydra:Class",
-            "description": "null",
-            "supportedOperation": [],
-            "supportedProperty": [
-                {
-                    "@type": "SupportedProperty",
-                    "property": "http://www.w3.org/ns/hydra/core#member",
-                    "readonly": "false",
-                    "required": "null",
-                    "title": "members",
-                    "writeonly": "false"
-                }
-            ],
-            "title": "Collection"
-        },
-        {
-            "@id": "http://www.w3.org/ns/hydra/core#Resource",
-            "@type": "hydra:Class",
-            "description": "null",
-            "supportedOperation": [],
-            "supportedProperty": [],
-            "title": "Resource"
-        },
-        {
-            "@id": "http://www.w3.org/ns/hydra/core#Collection",
-            "@type": "hydra:Class",
-            "description": "null",
-            "supportedOperation": [],
-            "supportedProperty": [
-                {
-                    "@type": "SupportedProperty",
-                    "property": "http://www.w3.org/ns/hydra/core#member",
-                    "readonly": "false",
-                    "required": "null",
-                    "title": "members",
-                    "writeonly": "false"
-                }
-            ],
-            "title": "Collection"
-        },
-        {
-            "@id": "http://www.w3.org/ns/hydra/core#Resource",
-            "@type": "hydra:Class",
-            "description": "null",
-            "supportedOperation": [],
-            "supportedProperty": [],
-            "title": "Resource"
-        },
-        {
-            "@id": "http://www.w3.org/ns/hydra/core#Collection",
-            "@type": "hydra:Class",
-            "description": "null",
-            "supportedOperation": [],
-            "supportedProperty": [
-                {
-                    "@type": "SupportedProperty",
-                    "property": "http://www.w3.org/ns/hydra/core#member",
-                    "readonly": "false",
-                    "required": "null",
-                    "title": "members",
-                    "writeonly": "false"
-                }
-            ],
-            "title": "Collection"
-        },
-        {
-            "@id": "http://www.w3.org/ns/hydra/core#Resource",
-            "@type": "hydra:Class",
-            "description": "null",
-            "supportedOperation": [],
-            "supportedProperty": [],
-            "title": "Resource"
-        },
-        {
-            "@id": "http://www.w3.org/ns/hydra/core#Collection",
-            "@type": "hydra:Class",
-            "description": "null",
-            "supportedOperation": [],
-            "supportedProperty": [
-                {
-                    "@type": "SupportedProperty",
-                    "property": "http://www.w3.org/ns/hydra/core#member",
-                    "readonly": "false",
-                    "required": "null",
-                    "title": "members",
-                    "writeonly": "false"
-                }
-            ],
-            "title": "Collection"
-        },
-        {
-            "@id": "http://www.w3.org/ns/hydra/core#Resource",
-            "@type": "hydra:Class",
-            "description": "null",
-            "supportedOperation": [],
-            "supportedProperty": [],
-            "title": "Resource"
-        },
-        {
-            "@id": "http://www.w3.org/ns/hydra/core#Collection",
-            "@type": "hydra:Class",
-            "description": "null",
-            "supportedOperation": [],
-            "supportedProperty": [
-                {
-                    "@type": "SupportedProperty",
-                    "property": "http://www.w3.org/ns/hydra/core#member",
-                    "readonly": "false",
-                    "required": "null",
-                    "title": "members",
-                    "writeonly": "false"
-                }
-            ],
-            "title": "Collection"
-        },
-        {
-            "@id": "http://www.w3.org/ns/hydra/core#Resource",
-            "@type": "hydra:Class",
-            "description": "null",
-            "supportedOperation": [],
-            "supportedProperty": [],
-            "title": "Resource"
-        },
-        {
-            "@id": "http://www.w3.org/ns/hydra/core#Collection",
-            "@type": "hydra:Class",
-            "description": "null",
-            "supportedOperation": [],
-            "supportedProperty": [
-                {
-                    "@type": "SupportedProperty",
-                    "property": "http://www.w3.org/ns/hydra/core#member",
-                    "readonly": "false",
-                    "required": "null",
-                    "title": "members",
-                    "writeonly": "false"
-                }
-            ],
-            "title": "Collection"
-        },
-        {
-            "@id": "http://www.w3.org/ns/hydra/core#Resource",
-            "@type": "hydra:Class",
-            "description": "null",
-            "supportedOperation": [],
-            "supportedProperty": [],
-            "title": "Resource"
-        },
-        {
-            "@id": "http://www.w3.org/ns/hydra/core#Collection",
-            "@type": "hydra:Class",
-            "description": "null",
-            "supportedOperation": [],
-            "supportedProperty": [
-                {
-                    "@type": "SupportedProperty",
-                    "property": "http://www.w3.org/ns/hydra/core#member",
-                    "readonly": "false",
-                    "required": "null",
-                    "title": "members",
-                    "writeonly": "false"
-                }
-            ],
-            "title": "Collection"
-        },
-        {
-            "@id": "http://www.w3.org/ns/hydra/core#Resource",
-            "@type": "hydra:Class",
-            "description": "null",
-            "supportedOperation": [],
-            "supportedProperty": [],
-            "title": "Resource"
-        },
-        {
-            "@id": "http://www.w3.org/ns/hydra/core#Collection",
-            "@type": "hydra:Class",
-            "description": "null",
-            "supportedOperation": [],
-            "supportedProperty": [
-                {
-                    "@type": "SupportedProperty",
-                    "property": "http://www.w3.org/ns/hydra/core#member",
-                    "readonly": "false",
-                    "required": "null",
-                    "title": "members",
-                    "writeonly": "false"
-                }
-            ],
-            "title": "Collection"
-        },
-        {
-            "@id": "http://www.w3.org/ns/hydra/core#Resource",
-            "@type": "hydra:Class",
-            "description": "null",
-            "supportedOperation": [],
-            "supportedProperty": [],
-            "title": "Resource"
-        },
-        {
-            "@id": "http://www.w3.org/ns/hydra/core#Collection",
-            "@type": "hydra:Class",
-            "description": "null",
-            "supportedOperation": [],
-            "supportedProperty": [
-                {
-                    "@type": "SupportedProperty",
-                    "property": "http://www.w3.org/ns/hydra/core#member",
-                    "readonly": "false",
-                    "required": "null",
-                    "title": "members",
-                    "writeonly": "false"
-                }
-            ],
-            "title": "Collection"
-        },
-        {
-            "@id": "http://www.w3.org/ns/hydra/core#Resource",
-            "@type": "hydra:Class",
-            "description": "null",
-            "supportedOperation": [],
-            "supportedProperty": [],
-            "title": "Resource"
-        },
-        {
-            "@id": "http://www.w3.org/ns/hydra/core#Collection",
-            "@type": "hydra:Class",
-            "description": "null",
-            "supportedOperation": [],
-            "supportedProperty": [
-                {
-                    "@type": "SupportedProperty",
-                    "property": "http://www.w3.org/ns/hydra/core#member",
-                    "readonly": "false",
-                    "required": "null",
-                    "title": "members",
-                    "writeonly": "false"
-                }
-            ],
-            "title": "Collection"
-        },
-        {
-            "@id": "http://www.w3.org/ns/hydra/core#Resource",
-            "@type": "hydra:Class",
-            "description": "null",
-            "supportedOperation": [],
-            "supportedProperty": [],
-            "title": "Resource"
-        },
-        {
-            "@id": "http://www.w3.org/ns/hydra/core#Collection",
-            "@type": "hydra:Class",
-            "description": "null",
-            "supportedOperation": [],
-            "supportedProperty": [
-                {
-                    "@type": "SupportedProperty",
-                    "property": "http://www.w3.org/ns/hydra/core#member",
-                    "readonly": "false",
-                    "required": "null",
-                    "title": "members",
-                    "writeonly": "false"
-                }
-            ],
-            "title": "Collection"
-        },
-        {
-            "@id": "http://www.w3.org/ns/hydra/core#Resource",
-            "@type": "hydra:Class",
-            "description": "null",
-            "supportedOperation": [],
-            "supportedProperty": [],
-            "title": "Resource"
-        },
-        {
-            "@id": "http://www.w3.org/ns/hydra/core#Collection",
-            "@type": "hydra:Class",
-            "description": "null",
-            "supportedOperation": [],
-            "supportedProperty": [
-                {
-                    "@type": "SupportedProperty",
-                    "property": "http://www.w3.org/ns/hydra/core#member",
-                    "readonly": "false",
-                    "required": "null",
-                    "title": "members",
-                    "writeonly": "false"
-                }
-            ],
-            "title": "Collection"
-        },
-        {
-            "@id": "http://www.w3.org/ns/hydra/core#Resource",
-            "@type": "hydra:Class",
-            "description": "null",
-            "supportedOperation": [],
-            "supportedProperty": [],
-            "title": "Resource"
-        },
-        {
-            "@id": "http://www.w3.org/ns/hydra/core#Collection",
-            "@type": "hydra:Class",
-            "description": "null",
-            "supportedOperation": [],
-            "supportedProperty": [
-                {
-                    "@type": "SupportedProperty",
-                    "property": "http://www.w3.org/ns/hydra/core#member",
-                    "readonly": "false",
-                    "required": "null",
-                    "title": "members",
-                    "writeonly": "false"
-                }
-            ],
-            "title": "Collection"
-        },
-        {
-            "@id": "http://www.w3.org/ns/hydra/core#Resource",
-            "@type": "hydra:Class",
-            "description": "null",
-            "supportedOperation": [],
-            "supportedProperty": [],
-            "title": "Resource"
+            "title": "PetCollection"
         },
         {
             "@id": "vocab:EntryPoint",
@@ -730,7 +318,142 @@ doc = {
                     "statusCodes": "vocab:EntryPoint"
                 }
             ],
-            "supportedProperty": [],
+            "supportedProperty": [
+                {
+                    "hydra:description": "The Pet Class",
+                    "hydra:title": "pet",
+                    "property": {
+                        "@id": "vocab:EntryPoint/Pet",
+                        "@type": "hydra:Link",
+                        "description": "Pet",
+                        "domain": "vocab:EntryPoint",
+                        "label": "Pet",
+                        "range": "vocab:Pet",
+                        "supportedOperation": [
+                            {
+                                "@id": "_:add a new pet to the store",
+                                "@type": "http://schema.org/UpdateAction",
+                                "description": "null",
+                                "expects": "vocab:Pet",
+                                "label": "Add a new pet to the store",
+                                "method": "POST",
+                                "returns": "null",
+                                "statusCodes": [
+                                    {
+                                        "description": "Invalid input",
+                                        "statusCode": "405"
+                                    }
+                                ]
+                            },
+                            {
+                                "@id": "_:update an existing pet",
+                                "@type": "http://schema.org/AddAction",
+                                "description": "null",
+                                "expects": "vocab:Pet",
+                                "label": "Update an existing pet",
+                                "method": "PUT",
+                                "returns": "null",
+                                "statusCodes": [
+                                    {
+                                        "description": "Invalid ID supplied",
+                                        "statusCode": "400"
+                                    }
+                                ]
+                            },
+                            {
+                                "@id": "_:get all pets",
+                                "@type": "http://schema.org/FindAction",
+                                "description": "null",
+                                "expects": "null",
+                                "label": "get all pets",
+                                "method": "GET",
+                                "returns": "vocab:Pet",
+                                "statusCodes": [
+                                    {
+                                        "description": "successful operation",
+                                        "statusCode": "200"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "readonly": "true",
+                    "required": "null",
+                    "writeonly": "false"
+                },
+                {
+                    "hydra:description": "The User Class",
+                    "hydra:title": "user",
+                    "property": {
+                        "@id": "vocab:EntryPoint/User",
+                        "@type": "hydra:Link",
+                        "description": "User",
+                        "domain": "vocab:EntryPoint",
+                        "label": "User",
+                        "range": "vocab:User",
+                        "supportedOperation": [
+                            {
+                                "@id": "_:create user",
+                                "@type": "http://schema.org/UpdateAction",
+                                "description": "null",
+                                "expects": "vocab:User",
+                                "label": "Create user",
+                                "method": "POST",
+                                "returns": "null",
+                                "statusCodes": [
+                                    {
+                                        "description": "successful operation",
+                                        "statusCode": "default"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "readonly": "true",
+                    "required": "null",
+                    "writeonly": "false"
+                },
+                {
+                    "hydra:description": "The PetCollection collection",
+                    "hydra:title": "petcollection",
+                    "property": {
+                        "@id": "vocab:EntryPoint/PetCollection",
+                        "@type": "hydra:Link",
+                        "description": "The PetCollection collection",
+                        "domain": "vocab:EntryPoint",
+                        "label": "PetCollection",
+                        "range": "vocab:PetCollection",
+                        "supportedOperation": [
+                            {
+                                "@id": "_:_:pet_collection_retrieve",
+                                "@type": "http://schema.org/FindAction",
+                                "description": "Retrieves all Pet entities",
+                                "expects": "null",
+                                "method": "GET",
+                                "returns": "vocab:PetCollection",
+                                "statusCodes": []
+                            },
+                            {
+                                "@id": "_:_:pet_create",
+                                "@type": "http://schema.org/AddAction",
+                                "description": "Create new Pet entitity",
+                                "expects": "vocab:Pet",
+                                "method": "PUT",
+                                "returns": "vocab:Pet",
+                                "statusCodes": [
+                                    {
+                                        "description": "If the Pet entity was created successfully.",
+                                        "statusCode": 201
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "readonly": "true",
+                    "required": "null",
+                    "writeonly": "false"
+                }
+            ],
             "title": "EntryPoint"
         }
     ],
