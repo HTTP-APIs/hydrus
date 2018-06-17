@@ -35,7 +35,7 @@ from hydrus.data.exceptions import (ClassNotFound, InstanceExists, PropertyNotFo
                                     NotInstanceProperty, NotAbstractProperty,
                                     InstanceNotFound)
 from hydrus.data.user import check_authorization, add_token, check_token, create_nonce
-from hydrus.utils import get_session, get_doc, get_api_name, get_hydrus_server_url, get_authentication,get_token
+from hydrus.utils import get_session, get_doc, get_api_name, get_hydrus_server_url, get_authentication, get_token
 
 from flask.wrappers import Response
 from typing import Dict, List, Any, Union
@@ -75,7 +75,7 @@ def failed_authentication(incorrect: bool) -> Response:
         realm = 'Basic realm="Incorrect credentials"'
     nonce = create_nonce(get_session())
     response = set_response_headers(jsonify(message), status_code=401,
-                                    headers=[{'WWW-Authenticate': realm},{'X-Authentication': nonce}])
+                                    headers=[{'WWW-Authenticate': realm}, {'X-Authentication': nonce}])
     return response
 
 
@@ -128,6 +128,7 @@ def checkClassOp(class_type: str, method: str) -> bool:
             return True
     return False
 
+
 def verify_user() -> Union[Response, None]:
     """
     Verify the credentials of the user and assign token.
@@ -145,7 +146,8 @@ def verify_user() -> Union[Response, None]:
         return set_response_headers(jsonify(message), status_code=status_code)
     return None
 
-def check_authentication_response() -> Union[Response,None]:
+
+def check_authentication_response() -> Union[Response, None]:
     """
     Return the response as per the authentication requirements.
     """
@@ -162,6 +164,7 @@ def check_authentication_response() -> Union[Response,None]:
         else:
             return verify_user()
     return None
+
 
 class Index(Resource):
     """Class for the EntryPoint."""
@@ -440,11 +443,12 @@ class ItemCollection(Resource):
                                 object_=object_, session=get_session(), api_name=get_api_name())
                             headers_ = [{"Location": get_hydrus_server_url(
                             ) + get_api_name() + "/" + path + "/"}]
-                            response = {"message": "Object successfully updated"}
+                            response = {
+                                "message": "Object successfully updated"}
                             return set_response_headers(jsonify(response), headers=headers_)
                         except (ClassNotFound, InstanceNotFound, InstanceExists, PropertyNotFound) as e:
-                             status_code, message = e.get_HTTP()
-                             return set_response_headers(jsonify(message), status_code=status_code)
+                            status_code, message = e.get_HTTP()
+                            return set_response_headers(jsonify(message), status_code=status_code)
 
                 return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
 
