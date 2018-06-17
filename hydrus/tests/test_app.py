@@ -68,7 +68,7 @@ class ViewsTestCase(unittest.TestCase):
         self.session_util.__enter__()
         self.doc_util.__enter__()
         self.client.__enter__()
-        
+
         print("Setup done, running tests...")
 
     @classmethod

@@ -26,7 +26,7 @@ def error_mapping(body: str=None) -> str :
 
 
 def input_key_check(body: Dict[str, Any], key: str=None, body_type: str=None, literal: bool=False) -> dict :
-    """Function to validate key inside the dictonary payload  
+    """Function to validate key inside the dictonary payload
     :param body: JSON body in which we have to check the key
     :param key: To check if its value exit in the body
     :param body_type: Name of JSON body
@@ -85,9 +85,9 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str=None, API_NAME: str=N
 
     # add all parsed_classes
     for class_ in result["supportedClass"]:
-        class_obj, collection = create_class(entrypoint_obj, class_)
+        class_obj, collection, collection_path = create_class(entrypoint_obj, class_)
         if class_obj:
-            apidoc.add_supported_class(class_obj, collection=collection)
+            apidoc.add_supported_class(class_obj, collection=collection, collection_path=collection_path)
 
     # add possibleStatus
     for status in result["possibleStatus"]:
@@ -108,7 +108,7 @@ def create_class(entrypoint: Dict[str, Any], class_dict: Dict[str, Any]) -> Tupl
                     entrypoint["@id"]]
     id_ = class_dict["@id"]
     if id_ in exclude_list:
-        return None, None
+        return None, None, None
     match_obj = re.match(r'vocab:(.*)', id_, re.M | re.I)
     if match_obj:
         id_ = match_obj.group(1)
@@ -127,16 +127,16 @@ def create_class(entrypoint: Dict[str, Any], class_dict: Dict[str, Any]) -> Tupl
     # See if class_dict is a Collection Class
     collection = re.match(r'(.*)Collection(.*)', result["title"], re.M | re.I) #type: Union[Match[Any], bool]
     if collection:
-        return None, None
+        return None, None, None
 
     # Check if class has it's own endpoint
-    endpoint = class_in_endpoint(class_dict, entrypoint)
+    endpoint, path = class_in_endpoint(class_dict, entrypoint)
 
     # Check if class has a Collection
-    collection = collection_in_endpoint(class_dict, entrypoint)
+    collection, collection_path = collection_in_endpoint(class_dict, entrypoint)
 
     # Create the HydraClass object
-    class_ = HydraClass(id_, result["title"], result["description"], endpoint=endpoint)
+    class_ = HydraClass(id_, result["title"], result["description"], path, endpoint=endpoint)
 
     # Add supportedProperty for the Class
     for prop in result["supportedProperty"]:
@@ -148,7 +148,7 @@ def create_class(entrypoint: Dict[str, Any], class_dict: Dict[str, Any]) -> Tupl
         op_obj = create_operation(op)
         class_.add_supported_op(op_obj)
 
-    return class_, collection
+    return class_, collection, collection_path
 
 
 def get_entrypoint(doc: Dict[str, Any]) -> Dict[str, Any]:
@@ -211,7 +211,6 @@ def create_property(supported_prop: Dict[str, Any]) -> HydraClassProp:
 
 def class_in_endpoint(class_: Dict[str, Any], entrypoint: Dict[str, Any]) -> bool:
     """Check if a given class is in the EntryPoint object as a class."""
-    regex = r'(vocab:)?(.*)EntryPoint/(.*/)?' + re.escape(class_["title"]) + r'$'
     # Check supportedProperty for the EntryPoint
     try:
         supported_property = entrypoint["supportedProperty"]
@@ -226,19 +225,19 @@ def class_in_endpoint(class_: Dict[str, Any], entrypoint: Dict[str, Any]) -> boo
         except KeyError:
             raise SyntaxError("supportedProperty must have [property]")
         try:
-            id_ = property_["@id"]
+            label = property_["label"]
         except KeyError:
-            raise SyntaxError("property must have [@id]")
+            raise SyntaxError("property must have [label]")
         # Match the title with regular expression
-        match_obj = re.match(regex, id_)
-        if match_obj:
-            return True
-    return False
+
+        if label == class_['title']:
+            path = "/".join(property_['@id'].split("/")[1:])
+            return True, path
+    return False, None
 
 
 def collection_in_endpoint(class_: Dict[str, Any], entrypoint: Dict[str, Any]) -> bool:
     """Check if a given class is in the EntryPoint object as a collection."""
-    regex = r'(vocab:)?(.*)EntryPoint/(.*/)?' + class_["title"] + "Collection"
     # Check supportedProperty for the EntryPoint
     try:
         supported_property = entrypoint["supportedProperty"]
@@ -253,14 +252,14 @@ def collection_in_endpoint(class_: Dict[str, Any], entrypoint: Dict[str, Any]) -
         except KeyError:
             raise SyntaxError("supportedProperty must have [property]")
         try:
-            id_ = property_["@id"]
+            label = property_["label"]
         except KeyError:
-            raise SyntaxError("property must have [@id]")
+            raise SyntaxError("property must have [label]")
         # Match the title with regular expression
-        match_obj = re.match(regex, id_)
-        if match_obj:
-            return True
-    return False
+        if label == class_["title"] + "Collection":
+            path = "/".join(property_['@id'].split("/")[1:])
+            return True, path
+    return False, None
 
 
 def create_operation(supported_op: Dict[str, Any]) -> HydraClassOp:

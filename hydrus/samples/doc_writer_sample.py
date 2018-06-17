@@ -64,7 +64,7 @@ class_.add_supported_op(op1)
 
 
 """Add the classes to the HydraDoc"""
-api_doc.add_supported_class(class_, collection=True)
+api_doc.add_supported_class(class_, collection=True, collection_path="DcTest")
 # NOTE: Using collection=True creates a HydraCollection for the class.
 #       The name of the Collection is class_.title+"Collection"
 #       The collection inherently supports GET and PUT operations
