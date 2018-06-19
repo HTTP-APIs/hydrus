@@ -10,7 +10,7 @@ import base64
 from sqlalchemy.orm.session import Session
 from werkzeug.local import LocalProxy
 from random import randrange
-from datetime import datetime,timedelta
+from datetime import datetime, timedelta
 from uuid import uuid4
 
 
@@ -19,9 +19,11 @@ def add_user(id_: int, paraphrase: str, session: Session) -> None:
     if session.query(exists().where(User.id == id_)).scalar():
         raise UserExists(id_=id_)
     else:
-        new_user = User(id=id_, paraphrase=sha224(paraphrase.encode('utf-8')).hexdigest())
+        new_user = User(id=id_, paraphrase=sha224(
+            paraphrase.encode('utf-8')).hexdigest())
         session.add(new_user)
         session.commit()
+
 
 def check_nonce(request: LocalProxy, session: Session) -> bool:
     """check validity of nonce passed by the user."""
@@ -32,15 +34,16 @@ def check_nonce(request: LocalProxy, session: Session) -> bool:
         present = present - nonce.timestamp
         session.delete(nonce)
         session.commit()
-        if present > timedelta(0,0,0,0,1,0,0):
+        if present > timedelta(0, 0, 0, 0, 1, 0, 0):
             return False
     except:
         return False
-    return True        
+    return True
+
 
 def create_nonce(session: Session) -> str:
     """
-    Create a one time use nonce valid for a short time 
+    Create a one time use nonce valid for a short time
     for user authentication.
     """
     nonce = str(uuid4())
@@ -50,9 +53,10 @@ def create_nonce(session: Session) -> str:
     session.commit()
     return nonce
 
+
 def add_token(request: LocalProxy, session: Session) -> str:
     """
-    Create a new token for the user or return a 
+    Create a new token for the user or return a
     valid existing token to the user.
     """
     token = None
@@ -61,7 +65,7 @@ def add_token(request: LocalProxy, session: Session) -> str:
         token = session.query(Token).filter(Token.user_id == id_).one()
         present = datetime.now()
         present = present - token.timestamp
-        if present > timedelta(0,0,0,0,45,0,0):
+        if present > timedelta(0, 0, 0, 0, 45, 0, 0):
             update_token = '%030x' % randrange(16**30)
             token.id = update_token
             token.timestamp = datetime.now()
@@ -75,6 +79,7 @@ def add_token(request: LocalProxy, session: Session) -> str:
         return token
     return token.id
 
+
 def check_token(request: LocalProxy, session: Session) -> bool:
     """
     check validity of the token passed by the user.
@@ -85,11 +90,12 @@ def check_token(request: LocalProxy, session: Session) -> bool:
         token = session.query(Token).filter(Token.id == id_).one()
         present = datetime.now()
         present = present - token.timestamp
-        if present > timedelta(0,0,0,0,45,0,0):
+        if present > timedelta(0, 0, 0, 0, 45, 0, 0):
             return False
     except:
         return False
     return True
+
 
 def generate_basic_digest(id_: int, paraphrase: str) -> str:
     """Create the digest to be added to the HTTP Authorization header."""

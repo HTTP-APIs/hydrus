@@ -3,7 +3,7 @@
 import unittest
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker,scoped_session
+from sqlalchemy.orm import sessionmaker, scoped_session
 import hydrus.data.crud as crud
 from hydrus.data.db_models import Base
 from hydrus.data import doc_parse
@@ -23,7 +23,8 @@ def gen_dummy_object(class_, doc):
                 prop_class = prop.prop.replace("vocab:", "")
                 object_[prop.title] = gen_dummy_object(prop_class, doc)
             else:
-                object_[prop.title] = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6))
+                object_[prop.title] = ''.join(random.choice(
+                    string.ascii_uppercase + string.digits) for _ in range(6))
         return object_
 
 
@@ -58,7 +59,8 @@ class TestCRUD(unittest.TestCase):
         object_ = gen_dummy_object("dummyClass", self.doc)
         id_ = 2
         response = crud.insert(object_=object_, id_=id_, session=self.session)
-        object_ = crud.get(id_=id_, type_=object_["@type"], session=self.session, api_name="api")
+        object_ = crud.get(id_=id_, type_=object_[
+                           "@type"], session=self.session, api_name="api")
         assert type(response) is int
         assert int(object_["@id"].split("/")[-1]) == id_
 
@@ -67,9 +69,12 @@ class TestCRUD(unittest.TestCase):
         object_ = gen_dummy_object("dummyClass", self.doc)
         new_object = gen_dummy_object("dummyClass", self.doc)
         id_ = 30
-        insert_response = crud.insert(object_=object_, id_=id_, session=self.session)
-        update_response = crud.update(id_=id_, type_=object_["@type"], object_=new_object, session=self.session, api_name="api")
-        test_object = crud.get(id_=id_, type_=object_["@type"], session=self.session, api_name="api")
+        insert_response = crud.insert(
+            object_=object_, id_=id_, session=self.session)
+        update_response = crud.update(id_=id_, type_=object_[
+                                      "@type"], object_=new_object, session=self.session, api_name="api")
+        test_object = crud.get(id_=id_, type_=object_[
+                               "@type"], session=self.session, api_name="api")
         assert type(insert_response) is int
         assert type(update_response) is int
         assert insert_response == update_response
@@ -79,12 +84,15 @@ class TestCRUD(unittest.TestCase):
         """Test CRUD delete."""
         object_ = gen_dummy_object("dummyClass", self.doc)
         id_ = 4
-        insert_response = crud.insert(object_=object_, id_=id_, session=self.session)
-        delete_response = crud.delete(id_=id_, type_=object_["@type"], session=self.session)
+        insert_response = crud.insert(
+            object_=object_, id_=id_, session=self.session)
+        delete_response = crud.delete(
+            id_=id_, type_=object_["@type"], session=self.session)
         assert type(insert_response) is int
         response_code = None
         try:
-            get_response = crud.get(id_=id_, type_=object_["@type"], session=self.session, api_name="api")
+            get_response = crud.get(id_=id_, type_=object_[
+                                    "@type"], session=self.session, api_name="api")
         except Exception as e:
             response_code, message = e.get_HTTP()
         assert 404 == response_code
@@ -95,7 +103,8 @@ class TestCRUD(unittest.TestCase):
         type_ = "dummyClass"
         response_code = None
         try:
-            get_response = crud.get(id_=id_, type_=type_, session=self.session, api_name="api")
+            get_response = crud.get(
+                id_=id_, type_=type_, session=self.session, api_name="api")
         except Exception as e:
             response_code, message = e.get_HTTP()
         assert 404 == response_code
@@ -106,7 +115,8 @@ class TestCRUD(unittest.TestCase):
         type_ = "otherClass"
         response_code = None
         try:
-            get_response = crud.get(id_=id_, type_=type_, session=self.session, api_name="api")
+            get_response = crud.get(
+                id_=id_, type_=type_, session=self.session, api_name="api")
         except Exception as e:
             response_code, message = e.get_HTTP()
         assert 400 == response_code
@@ -115,12 +125,14 @@ class TestCRUD(unittest.TestCase):
         """Test CRUD delete when wrong/undefined class is given."""
         object_ = gen_dummy_object("dummyClass", self.doc)
         id_ = 50
-        insert_response = crud.insert(object_=object_, id_=id_, session=self.session)
+        insert_response = crud.insert(
+            object_=object_, id_=id_, session=self.session)
         assert type(insert_response) is int
         assert insert_response == id_
         response_code = None
         try:
-            delete_response = crud.delete(id_=id_, type_="otherClass", session=self.session)
+            delete_response = crud.delete(
+                id_=id_, type_="otherClass", session=self.session)
         except Exception as e:
             response_code, message = e.get_HTTP()
         assert 400 == response_code
@@ -129,10 +141,12 @@ class TestCRUD(unittest.TestCase):
         """Test CRUD delete when wrong/undefined ID is given."""
         object_ = gen_dummy_object("dummyClass", self.doc)
         id_ = 6
-        insert_response = crud.insert(object_=object_, id_=id_, session=self.session)
+        insert_response = crud.insert(
+            object_=object_, id_=id_, session=self.session)
         response_code = None
         try:
-            delete_response = crud.delete(id_=999, type_=object_["@type"], session=self.session)
+            delete_response = crud.delete(
+                id_=999, type_=object_["@type"], session=self.session)
         except Exception as e:
             response_code, message = e.get_HTTP()
         assert 404 == response_code
@@ -146,7 +160,8 @@ class TestCRUD(unittest.TestCase):
         object_["@type"] = "otherClass"
         response_code = None
         try:
-            insert_response = crud.insert(object_=object_, id_=id_, session=self.session)
+            insert_response = crud.insert(
+                object_=object_, id_=id_, session=self.session)
         except Exception as e:
             response_code, message = e.get_HTTP()
         assert 400 == response_code
@@ -157,7 +172,8 @@ class TestCRUD(unittest.TestCase):
         id_ = 1
         response_code = None
         try:
-            insert_response = crud.insert(object_=object_, id_=id_, session=self.session)
+            insert_response = crud.insert(
+                object_=object_, id_=id_, session=self.session)
         except Exception as e:
             response_code, message = e.get_HTTP()
         assert 400 == response_code
