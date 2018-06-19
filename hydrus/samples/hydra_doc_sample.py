@@ -63,7 +63,7 @@ doc = {
                     "possibleStatus": [
                         {
                             "description": "Invalid input",
-                            "statusCode": "405"
+                            "statusCode": 405
                         }
                     ],
                     "returns": "null",
@@ -76,7 +76,7 @@ doc = {
                     "possibleStatus": [
                         {
                             "description": "Invalid ID supplied",
-                            "statusCode": "400"
+                            "statusCode": 400
                         }
                     ],
                     "returns": "null",
@@ -89,7 +89,7 @@ doc = {
                     "possibleStatus": [
                         {
                             "description": "successful operation",
-                            "statusCode": "200"
+                            "statusCode": 200
                         }
                     ],
                     "returns": "vocab:Pet",
@@ -99,7 +99,7 @@ doc = {
             "supportedProperty": [
                 {
                     "@type": "SupportedProperty",
-                    "property": "vocab:id",
+                    "property": "https://schema.org/Integer",
                     "readonly": "true",
                     "required": "false",
                     "title": "id",
@@ -107,7 +107,7 @@ doc = {
                 },
                 {
                     "@type": "SupportedProperty",
-                    "property": "vocab:category",
+                    "property": "vocab#/definitions/Category",
                     "readonly": "true",
                     "required": "false",
                     "title": "category",
@@ -115,7 +115,7 @@ doc = {
                 },
                 {
                     "@type": "SupportedProperty",
-                    "property": "vocab:name",
+                    "property": "https://schema.org/Text",
                     "readonly": "true",
                     "required": "true",
                     "title": "name",
@@ -123,7 +123,7 @@ doc = {
                 },
                 {
                     "@type": "SupportedProperty",
-                    "property": "vocab:photoUrls",
+                    "property": 0,
                     "readonly": "true",
                     "required": "true",
                     "title": "photoUrls",
@@ -131,7 +131,7 @@ doc = {
                 },
                 {
                     "@type": "SupportedProperty",
-                    "property": "vocab:tags",
+                    "property": 0,
                     "readonly": "true",
                     "required": "false",
                     "title": "tags",
@@ -139,7 +139,7 @@ doc = {
                 },
                 {
                     "@type": "SupportedProperty",
-                    "property": "vocab:status",
+                    "property": "https://schema.org/Text",
                     "readonly": "true",
                     "required": "false",
                     "title": "status",
@@ -159,8 +159,8 @@ doc = {
                     "method": "POST",
                     "possibleStatus": [
                         {
-                            "description": "successful operation",
-                            "statusCode": "default"
+                            "description": "Successful Operation",
+                            "statusCode": 200
                         }
                     ],
                     "returns": "null",
@@ -170,7 +170,7 @@ doc = {
             "supportedProperty": [
                 {
                     "@type": "SupportedProperty",
-                    "property": "vocab:id",
+                    "property": "https://schema.org/Integer",
                     "readonly": "true",
                     "required": "false",
                     "title": "id",
@@ -178,7 +178,7 @@ doc = {
                 },
                 {
                     "@type": "SupportedProperty",
-                    "property": "vocab:username",
+                    "property": "https://schema.org/Text",
                     "readonly": "true",
                     "required": "false",
                     "title": "username",
@@ -186,7 +186,7 @@ doc = {
                 },
                 {
                     "@type": "SupportedProperty",
-                    "property": "vocab:firstName",
+                    "property": "https://schema.org/Text",
                     "readonly": "true",
                     "required": "false",
                     "title": "firstName",
@@ -194,7 +194,7 @@ doc = {
                 },
                 {
                     "@type": "SupportedProperty",
-                    "property": "vocab:lastName",
+                    "property": "https://schema.org/Text",
                     "readonly": "true",
                     "required": "false",
                     "title": "lastName",
@@ -202,7 +202,7 @@ doc = {
                 },
                 {
                     "@type": "SupportedProperty",
-                    "property": "vocab:email",
+                    "property": "https://schema.org/Text",
                     "readonly": "true",
                     "required": "false",
                     "title": "email",
@@ -210,7 +210,7 @@ doc = {
                 },
                 {
                     "@type": "SupportedProperty",
-                    "property": "vocab:password",
+                    "property": "https://schema.org/Text",
                     "readonly": "true",
                     "required": "false",
                     "title": "password",
@@ -218,7 +218,7 @@ doc = {
                 },
                 {
                     "@type": "SupportedProperty",
-                    "property": "vocab:phone",
+                    "property": "https://schema.org/Text",
                     "readonly": "true",
                     "required": "false",
                     "title": "phone",
@@ -226,7 +226,7 @@ doc = {
                 },
                 {
                     "@type": "SupportedProperty",
-                    "property": "vocab:userStatus",
+                    "property": "https://schema.org/Integer",
                     "readonly": "true",
                     "required": "false",
                     "title": "userStatus",
@@ -341,7 +341,7 @@ doc = {
                                 "statusCodes": [
                                     {
                                         "description": "Invalid input",
-                                        "statusCode": "405"
+                                        "statusCode": 405
                                     }
                                 ]
                             },
@@ -356,7 +356,7 @@ doc = {
                                 "statusCodes": [
                                     {
                                         "description": "Invalid ID supplied",
-                                        "statusCode": "400"
+                                        "statusCode": 400
                                     }
                                 ]
                             },
@@ -371,7 +371,7 @@ doc = {
                                 "statusCodes": [
                                     {
                                         "description": "successful operation",
-                                        "statusCode": "200"
+                                        "statusCode": 200
                                     }
                                 ]
                             }
@@ -402,8 +402,8 @@ doc = {
                                 "returns": "null",
                                 "statusCodes": [
                                     {
-                                        "description": "successful operation",
-                                        "statusCode": "default"
+                                        "description": "Successful Operation",
+                                        "statusCode": 200
                                     }
                                 ]
                             }

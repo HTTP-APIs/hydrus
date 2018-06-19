@@ -37,18 +37,58 @@ def check_if_collection(schema_block: Dict[str, Any]) -> str:
     :param schema_block: child of response object where schema is defined for return variables
     :return: collection (string)
     """
-    print(schema_block)
     try:
         type = schema_block["type"]
         print("type is " + type)
         if type == "array":
             collection = "true"
         else:
-            # TODO here in type we will get object,string,integer etc
             collection = type
     except KeyError:
         collection = "false"
     return collection
+
+
+def parse_prop(prop, properties, definitionSet: Set["str"], doc, classAndClassDefinition):
+    dataType_ref_map = dict()
+    #todo add support for byte , binary , password ,double data types
+    dataType_ref_map["integer"] = "https://schema.org/Integer"
+    dataType_ref_map["string"] = "https://schema.org/Text"
+    dataType_ref_map["long"] = "http://books.xmlschemata.org/relaxng/ch19-77199.html"
+    dataType_ref_map["float"] = "https://schema.org/Float"
+    dataType_ref_map["boolean"] = "https://schema.org/Boolean"
+    dataType_ref_map["dateTime"] = "https://schema.org/DateTime"
+    dataType_ref_map["date"] = "https://schema.org/Date"
+
+    type = ""
+    try:
+        type = properties[prop]["type"]
+    except KeyError:
+        pass
+    try:
+        type = properties[prop]["$ref"]
+        if type.split('/')[2] not in definitionSet:
+            get_class_details(type, doc, classAndClassDefinition, definitionSet)
+    except KeyError:
+        pass
+    if type != "":
+        #check if type is object or array here and do respective actions
+        print("type is "+type)
+        if len(type.split('/')) != 1:
+            return "vocab"+type
+        elif len(type.split('/')) == 1:
+            if type in dataType_ref_map:
+                print("return"+dataType_ref_map[type])
+                return dataType_ref_map[type]
+            else:
+                # call external parser here
+                pass
+        else:
+            pass
+    else:
+         pass
+
+    return 0
 
 
 def get_class_details(class_location: List[str], doc: Dict["str", Any], classAndClassDefinition: Dict["str",HydraClass],
@@ -77,12 +117,13 @@ def get_class_details(class_location: List[str], doc: Dict["str", Any], classAnd
         except KeyError:
             required = set()
         for prop in properties:
+            result_prop = parse_prop(prop,properties,definitionSet,doc,classAndClassDefinition)
+            print(result_prop)
             # todo parse one more level to check 'type' and define class if needed
-            # check required from required list and add when true
             flag = False
             if prop in required and len(required) > 0:
                 flag = True
-            classDefinition.add_supported_prop(HydraClassProp("vocab:" + prop,
+            classDefinition.add_supported_prop(HydraClassProp(result_prop,
                                                               prop,
                                                               required=flag,
                                                               read=True,
@@ -105,9 +146,7 @@ def check_for_ref(doc: Dict["str", Any], block: Dict[str, Any], classAndClassDef
     for obj in block["responses"]:
 
         try:
-            print(block["responses"][obj]["schema"])
             collection = check_if_collection(block["responses"][obj]["schema"])
-            print("from cfr the collection is " + collection)
             try:
                 class_location = block["responses"][obj]["schema"]["$ref"].split('/')
             except KeyError:
@@ -115,22 +154,17 @@ def check_for_ref(doc: Dict["str", Any], block: Dict[str, Any], classAndClassDef
             get_class_details(class_location, doc, classAndClassDefinition, definitionSet)
             return class_location[2], collection
         except KeyError:
-            print(block["responses"][obj])
             pass
 
     # when we would be able to take arrays as parameters we will use check_if_collection here as well c
     for obj in block["parameters"]:
-        print(obj)
         try:
-            print("we are in try for paramerters")
             class_location = obj["schema"]["$ref"].split('/')
-            print(class_location)
             get_class_details(class_location, doc, classAndClassDefinition , definitionSet)
             return class_location[2], "false"
         except KeyError:
             pass
 
-    print(block)
     return "null", "none"
 
 
@@ -198,15 +232,11 @@ def get_paths(doc: Dict["str", Any], classAndClassDefinition: Dict["str",HydraCl
     for path in paths:
         if len(path.split('/')) == 2:
             for method in paths[path]:
-                print("inside method " + method + "for path " + path)
                 class_name, collection = check_for_ref(doc, paths[path][method], classAndClassDefinition, definitionSet)
-                print("the class name we got was " + class_name + "and the collection was " + collection)
                 if collection != "none" and class_name != "null":
                     get_ops(paths[path], method, class_name,classAndClassDefinition)
                     possiblePath = path.split('/')[1]
                     possiblePath = possiblePath.replace(possiblePath[0], possiblePath[0].upper())
-                    print("the path is " + possiblePath)
-
                     if possiblePath in definitionSet:
                         if collection is "true":
                             api_doc.add_supported_class(classAndClassDefinition[class_name], collection=True)
