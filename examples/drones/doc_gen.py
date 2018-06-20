@@ -3,6 +3,7 @@
 from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp
 import json
 
+
 def doc_gen(API: str, BASE_URL: str) -> HydraDoc:
     """Generate API Doc for server."""
     # Main API Doc
@@ -15,21 +16,32 @@ def doc_gen(API: str, BASE_URL: str) -> HydraDoc:
     # State Class
     state = HydraClass("State", "State", "Class for drone state objects")
     # Properties
-    state.add_supported_prop(HydraClassProp("http://auto.schema.org/speed", "Speed", False, False, True))
-    state.add_supported_prop(HydraClassProp("http://schema.org/geo", "Position", False, False, True))
-    state.add_supported_prop(HydraClassProp("http://schema.org/Property", "Direction", False, False, True))
-    state.add_supported_prop(HydraClassProp("http://schema.org/fuelCapacity", "Battery", False, False, True))
-    state.add_supported_prop(HydraClassProp("https://schema.org/status", "SensorStatus", False, False, True))
-    state.add_supported_prop(HydraClassProp("http://schema.org/identifier", "DroneID", False, False, True))
+    state.add_supported_prop(HydraClassProp(
+        "http://auto.schema.org/speed", "Speed", False, False, True))
+    state.add_supported_prop(HydraClassProp(
+        "http://schema.org/geo", "Position", False, False, True))
+    state.add_supported_prop(HydraClassProp(
+        "http://schema.org/Property", "Direction", False, False, True))
+    state.add_supported_prop(HydraClassProp(
+        "http://schema.org/fuelCapacity", "Battery", False, False, True))
+    state.add_supported_prop(HydraClassProp(
+        "https://schema.org/status", "SensorStatus", False, False, True))
+    state.add_supported_prop(HydraClassProp(
+        "http://schema.org/identifier", "DroneID", False, False, True))
 
     # Drone Class
     drone = HydraClass("Drone", "Drone", "Class for a drone")
     # Properties
-    drone.add_supported_prop(HydraClassProp("vocab:State", "DroneState", False, False, True))
-    drone.add_supported_prop(HydraClassProp("http://schema.org/name", "name", False, False, True))
-    drone.add_supported_prop(HydraClassProp("http://schema.org/model", "model", False, False, True))
-    drone.add_supported_prop(HydraClassProp("http://auto.schema.org/speed", "MaxSpeed", False, False, True))
-    drone.add_supported_prop(HydraClassProp("http://schema.org/device", "Sensor", False, False, True))
+    drone.add_supported_prop(HydraClassProp(
+        "vocab:State", "DroneState", False, False, True))
+    drone.add_supported_prop(HydraClassProp(
+        "http://schema.org/name", "name", False, False, True))
+    drone.add_supported_prop(HydraClassProp(
+        "http://schema.org/model", "model", False, False, True))
+    drone.add_supported_prop(HydraClassProp(
+        "http://auto.schema.org/speed", "MaxSpeed", False, False, True))
+    drone.add_supported_prop(HydraClassProp(
+        "http://schema.org/device", "Sensor", False, False, True))
     # Operations
     # Drones will submit their state to the server at certain intervals or when some event happens
     drone.add_supported_op(HydraClassOp("SubmitDrone",
@@ -51,8 +63,10 @@ def doc_gen(API: str, BASE_URL: str) -> HydraDoc:
 
     # NOTE: Commands are stored in a collection. You may GET a command or you may DELETE it, there is not UPDATE.
     command = HydraClass("Command", "Command", "Class for drone commands")
-    command.add_supported_prop(HydraClassProp("http://schema.org/identifier", "DroneID", False, False, True))
-    command.add_supported_prop(HydraClassProp("vocab:State", "State", False, False, True))
+    command.add_supported_prop(HydraClassProp(
+        "http://schema.org/identifier", "DroneID", False, False, True))
+    command.add_supported_prop(HydraClassProp(
+        "vocab:State", "State", False, False, True))
     # Used by mechanics to get newly added commands
     command.add_supported_op(HydraClassOp("GetCommand",
                                           "GET",
@@ -76,15 +90,22 @@ def doc_gen(API: str, BASE_URL: str) -> HydraDoc:
     # Logs to be accessed mostly by the GUI. Mechanics should add logs for every event.
     log = HydraClass("LogEntry", "LogEntry", "Class for a log entry")
     # Subject
-    log.add_supported_prop(HydraClassProp("http://schema.org/identifier", "DroneID", True, True, False))
+    log.add_supported_prop(HydraClassProp(
+        "http://schema.org/identifier", "DroneID", True, True, False))
     # Predicate
-    log.add_supported_prop(HydraClassProp("http://schema.org/UpdateAction", "Update", False, True, False))
-    log.add_supported_prop(HydraClassProp("http://schema.org/ReplyAction", "Get", False, True, False))
-    log.add_supported_prop(HydraClassProp("http://schema.org/SendAction", "Send", False, True, False))
+    log.add_supported_prop(HydraClassProp(
+        "http://schema.org/UpdateAction", "Update", False, True, False))
+    log.add_supported_prop(HydraClassProp(
+        "http://schema.org/ReplyAction", "Get", False, True, False))
+    log.add_supported_prop(HydraClassProp(
+        "http://schema.org/SendAction", "Send", False, True, False))
     # Objects
-    log.add_supported_prop(HydraClassProp("vocab:State", "State", False, True, False))
-    log.add_supported_prop(HydraClassProp("vocab:Datastream", "Data", False, True, False))
-    log.add_supported_prop(HydraClassProp("vocab:Command", "Command", False, True, False))
+    log.add_supported_prop(HydraClassProp(
+        "vocab:State", "State", False, True, False))
+    log.add_supported_prop(HydraClassProp(
+        "vocab:Datastream", "Data", False, True, False))
+    log.add_supported_prop(HydraClassProp(
+        "vocab:Command", "Command", False, True, False))
     # GUI will get a certain log entry.
     log.add_supported_op(HydraClassOp("GetLog",
                                       "GET",
@@ -100,10 +121,14 @@ def doc_gen(API: str, BASE_URL: str) -> HydraDoc:
 
     # Data is stored as a collection. Each data object can be read.
     # New data added to the collection
-    datastream = HydraClass("Datastream", "Datastream", "Class for a datastream entry")
-    datastream.add_supported_prop(HydraClassProp("http://schema.org/QuantitativeValue", "Temperature", False, False, True))
-    datastream.add_supported_prop(HydraClassProp("http://schema.org/identifier", "DroneID", False, False, True))
-    datastream.add_supported_prop(HydraClassProp("http://schema.org/geo", "Position", False, False, True))
+    datastream = HydraClass("Datastream", "Datastream",
+                            "Class for a datastream entry")
+    datastream.add_supported_prop(HydraClassProp(
+        "http://schema.org/QuantitativeValue", "Temperature", False, False, True))
+    datastream.add_supported_prop(HydraClassProp(
+        "http://schema.org/identifier", "DroneID", False, False, True))
+    datastream.add_supported_prop(HydraClassProp(
+        "http://schema.org/geo", "Position", False, False, True))
     datastream.add_supported_op(HydraClassOp("ReadDatastream",
                                              "GET",
                                              None,
@@ -122,10 +147,13 @@ def doc_gen(API: str, BASE_URL: str) -> HydraDoc:
                                              [{"statusCode": 200, "description": "Data deleted"}]))
 
     # Single object representing the area of interest. No collections.
-    area = HydraClass("Area", "Area", "Class for Area of Interest of the server", endpoint=True)
+    area = HydraClass(
+        "Area", "Area", "Class for Area of Interest of the server", endpoint=True)
     # Using two positions to have a bounding box
-    area.add_supported_prop(HydraClassProp("http://schema.org/geo", "TopLeft", False, False, True))
-    area.add_supported_prop(HydraClassProp("http://schema.org/geo", "BottomRight", False, False, True))
+    area.add_supported_prop(HydraClassProp(
+        "http://schema.org/geo", "TopLeft", False, False, True))
+    area.add_supported_prop(HydraClassProp(
+        "http://schema.org/geo", "BottomRight", False, False, True))
     # Allowing updation of the area of interest
     area.add_supported_op(HydraClassOp("UpdateArea",
                                        "POST",
@@ -139,8 +167,10 @@ def doc_gen(API: str, BASE_URL: str) -> HydraDoc:
                                        [{"statusCode": 404, "description": "Area of interest not found"},
                                         {"statusCode": 200, "description": "Area of interest returned"}]))
 
-    message = HydraClass("Message", "Message", "Class for messages received by the GUI interface")
-    message.add_supported_prop(HydraClassProp("http://schema.org/Text", "MessageString", False, False, True))
+    message = HydraClass("Message", "Message",
+                         "Class for messages received by the GUI interface")
+    message.add_supported_prop(HydraClassProp(
+        "http://schema.org/Text", "MessageString", False, False, True))
     message.add_supported_op(HydraClassOp("GetMessage",
                                           "GET",
                                           None,
@@ -168,7 +198,8 @@ def doc_gen(API: str, BASE_URL: str) -> HydraDoc:
 
 
 if __name__ == "__main__":
-    dump = json.dumps(doc_gen("api", "http://localhost:8080/").generate(), indent=4, sort_keys=True)
+    dump = json.dumps(
+        doc_gen("api", "http://localhost:8080/").generate(), indent=4, sort_keys=True)
     doc = '''"""\nGenerated API Documentation for Server API using server_doc_gen.py."""\n\ndoc = %s''' % dump
     doc = doc.replace('true', '"true"')
     doc = doc.replace('false', '"false"')

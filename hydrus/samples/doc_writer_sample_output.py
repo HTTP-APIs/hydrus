@@ -177,7 +177,7 @@ doc = {
                     "hydra:description": "The dummyClassCollection collection",
                     "hydra:title": "dummyclasscollection",
                     "property": {
-                        "@id": "vocab:EntryPoint/dummyClassCollection",
+                        "@id": "vocab:EntryPoint/DcTest",
                         "@type": "hydra:Link",
                         "description": "The dummyClassCollection collection",
                         "domain": "vocab:EntryPoint",

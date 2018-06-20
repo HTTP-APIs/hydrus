@@ -44,7 +44,8 @@ if __name__ == "__main__":
 
     print("Adding Classes and Properties")
     # Get all the classes from the doc
-    classes = doc_parse.get_classes(apidoc.generate())     # You can also pass dictionary defined in hydrus/hydraspec/doc_writer_sample_output.py
+    # You can also pass dictionary defined in hydrus/hydraspec/doc_writer_sample_output.py
+    classes = doc_parse.get_classes(apidoc.generate())
 
     # Get all the properties from the classes
     properties = doc_parse.get_all_properties(classes)
@@ -63,7 +64,7 @@ if __name__ == "__main__":
     print("Starting the application")
     with set_authentication(app, True):
         # Use authentication for all requests
-        with set_token(app, True): 
+        with set_token(app, True):
             with set_api_name(app, "serverapi"):
                 # Set the API Documentation
                 with set_doc(app, apidoc):
