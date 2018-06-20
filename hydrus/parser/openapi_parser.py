@@ -115,7 +115,7 @@ def check_for_ref(doc: Dict["str", Any], block: Dict[str, Any], classAndClassDef
             except KeyError:
                 class_location = block["responses"][obj]["schema"]["items"]["$ref"].split(
                     '/')
-            get_class_details(class_location, doc)
+            get_class_details(class_location, doc,classAndClassDefinition,definitionSet)
             return class_location[2], collection
         except KeyError:
             print(block["responses"][obj])
