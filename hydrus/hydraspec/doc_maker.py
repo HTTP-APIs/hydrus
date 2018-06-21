@@ -103,7 +103,7 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str=None, API_NAME: str=N
     return apidoc
 
 
-def create_class(entrypoint: Dict[str, Any], class_dict: Dict[str, Any]) -> Tuple[HydraClass, bool]:
+def create_class(entrypoint: Dict[str, Any], class_dict: Dict[str, Any]) -> Tuple[HydraClass, bool, str]:
     """Create HydraClass objects for classes in the API Documentation."""
     # Base classes not used
     exclude_list = ['http://www.w3.org/ns/hydra/core#Resource',
@@ -217,7 +217,7 @@ def create_property(supported_prop: Dict[str, Any]) -> HydraClassProp:
     return prop
 
 
-def class_in_endpoint(class_: Dict[str, Any], entrypoint: Dict[str, Any]) -> bool:
+def class_in_endpoint(class_: Dict[str, Any], entrypoint: Dict[str, Any]) -> Tuple[bool, bool]:
     """Check if a given class is in the EntryPoint object as a class."""
     # Check supportedProperty for the EntryPoint
     try:
@@ -244,7 +244,7 @@ def class_in_endpoint(class_: Dict[str, Any], entrypoint: Dict[str, Any]) -> boo
     return False, None
 
 
-def collection_in_endpoint(class_: Dict[str, Any], entrypoint: Dict[str, Any]) -> bool:
+def collection_in_endpoint(class_: Dict[str, Any], entrypoint: Dict[str, Any]) -> Tuple[bool, bool]:
     """Check if a given class is in the EntryPoint object as a collection."""
     # Check supportedProperty for the EntryPoint
     try:
