@@ -81,12 +81,18 @@ def parse_prop(prop, properties, definitionSet: Set["str"], doc, classAndClassDe
             if type in dataType_ref_map:
                 print("return"+dataType_ref_map[type])
                 return dataType_ref_map[type]
+            elif type == "object":
+                # call external parser
+                pass
+            elif type == "array":
+                # check items object
+                pass
             else:
                 # call external parser here
                 pass
-        else:
-            pass
+
     else:
+         # will come here if
          pass
 
     return 0
