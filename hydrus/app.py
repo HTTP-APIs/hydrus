@@ -199,7 +199,7 @@ class Item(Resource):
         GET object with id = id_ from the database.
 
         :param id : Item ID
-        :param path : Item type
+        :param path : Path for Item ( Specified in APIDoc @id)
         """
         auth_response = check_authentication_response()
         if type(auth_response) == Response:
@@ -224,7 +224,7 @@ class Item(Resource):
         """Update object of type<path> at ID<id_> with new object_ using HTTP POST.
 
         :param id_ - ID of Item to be updated
-        :param path - Type(Class name) of Item to be updated
+        :param path - Path for Item type( Specified in APIDoc @id)
         """
         auth_response = check_authentication_response()
         if type(auth_response) == Response:
@@ -262,7 +262,7 @@ class Item(Resource):
         """Add new object_ optional <id_> parameter using HTTP PUT.
 
         :param id_ - ID of Item to be updated
-        :param path - Type(Class name) of Item to be updated
+        :param path - Path for Item type( Specified in APIDoc @id) to be updated
         """
         auth_response = check_authentication_response()
         if type(auth_response) == Response:
@@ -362,7 +362,7 @@ class ItemCollection(Resource):
         Method executed for PUT requests.
         Used to add an item to a collection
 
-        :param path - Item type
+        :param path - Path for Item type ( Specified in APIDoc @id)
         """
         auth_response = check_authentication_response()
         if type(auth_response) == Response:
@@ -425,7 +425,7 @@ class ItemCollection(Resource):
         Method executed for POST requests.
         Used to update a non-collection class.
 
-        :param path - Item type
+        :param path - Path for Item type ( Specified in APIDoc @id)
         """
         auth_response = check_authentication_response()
         if type(auth_response) == Response:
@@ -459,7 +459,7 @@ class ItemCollection(Resource):
         Method executed for DELETE requests.
         Used to delete a non-collection class.
 
-        :param path - Item type
+        :param path - Path for Item ( Specified in APIDoc @id)
         """
         auth_response = check_authentication_response()
         if type(auth_response) == Response:
