@@ -3,10 +3,10 @@
 
 from setuptools import setup, find_packages
 
-try: # for pip >= 10
+try:  # for pip >= 10
     from pip._internal.req import parse_requirements
     from pip._internal.download import PipSession
-except ImportError: # for pip <= 9.0.3
+except ImportError:  # for pip <= 9.0.3
     from pip.req import parse_requirements
     from pip.download import PipSession
 
@@ -24,9 +24,10 @@ setup(name='hydrus',
       py_modules=['cli'],
       python_requires='>=3',
       install_requires=dependencies,
-      packages=find_packages(exclude=['contrib', 'docs', 'tests*', 'hydrus.egg-info']),
+      packages=find_packages(
+          exclude=['contrib', 'docs', 'tests*', 'hydrus.egg-info']),
       package_dir={'hydrus':
-                    'hydrus'},
+                   'hydrus'},
       entry_points='''
             [console_scripts]
             hydrus=cli:startserver
