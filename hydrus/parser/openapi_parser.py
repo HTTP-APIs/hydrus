@@ -59,6 +59,7 @@ def parse_prop(prop, properties, definitionSet: Set["str"], doc, classAndClassDe
     dataType_ref_map["boolean"] = "https://schema.org/Boolean"
     dataType_ref_map["dateTime"] = "https://schema.org/DateTime"
     dataType_ref_map["date"] = "https://schema.org/Date"
+    dataType_ref_map["array"] = "hydra:Collection"
 
     type = ""
     try:
