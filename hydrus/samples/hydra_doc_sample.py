@@ -123,7 +123,7 @@ doc = {
                 },
                 {
                     "@type": "SupportedProperty",
-                    "property": 0,
+                    "property": "hydra:Collection",
                     "readonly": "true",
                     "required": "true",
                     "title": "photoUrls",
@@ -131,7 +131,7 @@ doc = {
                 },
                 {
                     "@type": "SupportedProperty",
-                    "property": 0,
+                    "property": "hydra:Collection",
                     "readonly": "true",
                     "required": "false",
                     "title": "tags",
