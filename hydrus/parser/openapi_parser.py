@@ -22,6 +22,19 @@ def try_catch_replacement(block: Any, get_this: str, default: Any) -> str:
         return default
 
 
+def get_class_name(class_location):
+    return class_location[len(class_location)-1]
+
+
+def get_data_at_location(class_location, doc):
+    data = doc
+    index = 0
+    while index <= len(class_location) - 3:
+        data = data[class_location[index + 1]][class_location[index + 2]]
+        index = index + 1
+    return data
+
+
 def generateEntrypoint(api_doc: HydraDoc) -> None:
     """
     Generates Entrypoint , Base Collection and Base Resource for the documentation
@@ -61,20 +74,21 @@ def get_class_details(class_location: List[str], doc: Dict["str", Any], classAnd
     :param doc: the whole doc
     :return:
     """
-    class_name = class_location[2]
+    class_name = get_class_name(class_location)
     # we simply check if the class has been defined or not
     if class_name not in definitionSet:
+
+        desc = get_data_at_location(class_location,doc)
         try:
-            desc = doc[class_location[1]][class_location[2]]["description"]
+            desc = desc["description"]
         except KeyError:
-            desc = class_location[2]
+            desc = class_name
 
-        classDefinition = HydraClass(
-            class_name, class_name, desc, endpoint=True)
+        classDefinition = HydraClass(class_name, class_name, desc, endpoint=True)
 
-        properties = doc[class_location[1]][class_location[2]]["properties"]
+        properties = get_data_at_location(class_location, doc)["properties"]
         try:
-            required = doc[class_location[1]][class_location[2]]["required"]
+            required = get_data_at_location(class_location, doc)["required"]
         except KeyError:
             required = set()
         for prop in properties:
@@ -99,6 +113,8 @@ def check_for_ref(doc: Dict["str", Any], block: Dict[str, Any], classAndClassDef
     """
     checks the location of schema object in the given method , can be parameter or responses block
     and takes the collection from check_if_collection and passes to parent function
+    :param classAndClassDefinition:
+    :param definitionSet:
     :param doc: whole OAS defined doc
     :param block: the method block from doc
     :return: class name and collection variable
