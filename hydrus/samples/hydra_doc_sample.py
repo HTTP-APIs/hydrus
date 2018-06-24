@@ -107,7 +107,7 @@ doc = {
                 },
                 {
                     "@type": "SupportedProperty",
-                    "property": "vocab#/definitions/Category",
+                    "property": "vocabCategory",
                     "readonly": "true",
                     "required": "false",
                     "title": "category",
@@ -123,7 +123,7 @@ doc = {
                 },
                 {
                     "@type": "SupportedProperty",
-                    "property": "hydra:Collection",
+                    "property": 0,
                     "readonly": "true",
                     "required": "true",
                     "title": "photoUrls",
@@ -131,7 +131,7 @@ doc = {
                 },
                 {
                     "@type": "SupportedProperty",
-                    "property": "hydra:Collection",
+                    "property": 0,
                     "readonly": "true",
                     "required": "false",
                     "title": "tags",
@@ -206,6 +206,14 @@ doc = {
                     "readonly": "true",
                     "required": "false",
                     "title": "email",
+                    "writeonly": "true"
+                },
+                {
+                    "@type": "SupportedProperty",
+                    "property": "vocabxyz",
+                    "readonly": "true",
+                    "required": "false",
+                    "title": "xyz",
                     "writeonly": "true"
                 },
                 {

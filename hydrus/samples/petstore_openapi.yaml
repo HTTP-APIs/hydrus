@@ -642,6 +642,15 @@ definitions:
         type:                     string
       email:
         type:                     string
+      xyz:
+        type: "object"
+        properties:
+          id:
+            type: "integer"
+            format: "int64"
+          Did:
+            type: "integer"
+            format: "int64"
       password:
         type:                     string
       phone:

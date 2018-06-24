@@ -49,7 +49,16 @@ def check_if_collection(schema_block: Dict[str, Any]) -> str:
     return collection
 
 
-def parse_prop(prop, properties, definitionSet: Set["str"], doc, classAndClassDefinition):
+def parse_prop(prop, properties, definitionSet: Set["str"], doc, classAndClassDefinition) -> str:
+    """
+
+    :param prop:
+    :param properties:
+    :param definitionSet:
+    :param doc:
+    :param classAndClassDefinition:
+    :return:
+    """
     dataType_ref_map = dict()
     #todo add support for byte , binary , password ,double data types
     dataType_ref_map["integer"] = "https://schema.org/Integer"
@@ -59,7 +68,6 @@ def parse_prop(prop, properties, definitionSet: Set["str"], doc, classAndClassDe
     dataType_ref_map["boolean"] = "https://schema.org/Boolean"
     dataType_ref_map["dateTime"] = "https://schema.org/DateTime"
     dataType_ref_map["date"] = "https://schema.org/Date"
-    dataType_ref_map["array"] = "hydra:Collection"
 
     type = ""
     try:
@@ -73,29 +81,52 @@ def parse_prop(prop, properties, definitionSet: Set["str"], doc, classAndClassDe
     except KeyError:
         pass
     if type != "":
-        #check if type is object or array here and do respective actions
         print("type is "+type)
         if len(type.split('/')) != 1:
-            return "vocab"+type
+            return "vocab"+type.split('/')[(len(type.split('/')))-1]
         elif len(type.split('/')) == 1:
             if type in dataType_ref_map:
                 print("return"+dataType_ref_map[type])
                 return dataType_ref_map[type]
             elif type == "object":
-                # call external parser
-                pass
+                # parse the "properties" child
+                if prop not in definitionSet:
+                    try:
+                        desc = properties[prop]["description"]
+                    except KeyError:
+                        desc = prop
+
+                    classDefinition = HydraClass(
+                        prop, prop, desc, endpoint=True)
+
+                    properties = properties[prop]["properties"]
+                    try:
+                        required = properties[prop]["required"]
+                    except KeyError:
+                        required = set()
+                    for property in properties:
+                        result_prop = parse_prop(property, properties, definitionSet, doc, classAndClassDefinition)
+                        print(result_prop)
+                        flag = False
+                        if prop in required and len(required) > 0:
+                            flag = True
+                        classDefinition.add_supported_prop(HydraClassProp(result_prop,
+                                                                          property,
+                                                                          required=flag,
+                                                                          read=True,
+                                                                          write=True))
+                    classAndClassDefinition[prop] = classDefinition
+                    definitionSet.add(prop)
+                    return "vocab"+prop
+                else:
+                    pass
             elif type == "array":
                 # check items object
                 pass
-            else:
-                # call external parser here
-                pass
-
     else:
-         # will come here if
-         pass
+        pass
 
-    return 0
+    return "0"
 
 
 def get_class_details(class_location: List[str], doc: Dict["str", Any], classAndClassDefinition: Dict["str",HydraClass],
@@ -261,7 +292,6 @@ def get_paths(doc: Dict["str", Any], classAndClassDefinition: Dict["str",HydraCl
                                 classAndClassDefinition[class_name], collection=True)
                         else:
                             api_doc.add_supported_class(classAndClassDefinition[class_name], collection=False)
-    generateEntrypoint(api_doc)
 
 
 def parse(doc):
@@ -282,6 +312,7 @@ def parse(doc):
     schemes = try_catch_replacement(doc, "schemes", "http")
     api_doc = HydraDoc(name, title, desc, name, schemes[0] + "://" + baseURL)
     get_paths(doc, classAndClassDefinition, definitionSet, api_doc)
+    generateEntrypoint(api_doc)
     hydra_doc = api_doc.generate()
     dump = json.dumps(hydra_doc, indent=4, sort_keys=True)
     hydra_doc = '''"""\nGenerated API Documentation for Server API using server_doc_gen.py."""\n\ndoc = %s''' % dump
