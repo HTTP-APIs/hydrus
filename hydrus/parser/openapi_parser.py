@@ -50,11 +50,11 @@ def check_if_collection(schema_block: Dict[str, Any]) -> str:
 
 
 def parse_prop(
-        prop,
-        properties,
+        prop:str,
+        properties:Dict["str",Any],
         definitionSet: Set["str"],
-        doc,
-        classAndClassDefinition) -> str:
+        doc: Dict["str",Any],
+        classAndClassDefinition:Dict["str",HydraClass]) -> str:
     """
 
     :param prop: property being parsed
@@ -83,7 +83,7 @@ def parse_prop(
         type = properties[prop]["$ref"]
         if type.split('/')[2] not in definitionSet:
             get_class_details(
-                type,
+                type.split('/'),
                 doc,
                 classAndClassDefinition,
                 definitionSet)
@@ -255,7 +255,7 @@ def get_ops(param: Dict["str", Any], method: str, class_name: str,
     :param class_name: class name
     """
     op_method = method
-    op_expects = ""
+    op_expects = None
     op_name = try_catch_replacement(param[method], "summary", class_name)
     op_status = list()
     try:
@@ -270,7 +270,7 @@ def get_ops(param: Dict["str", Any], method: str, class_name: str,
         op_expects = None
     try:
         responses = param[method]["responses"]
-        op_returns = ""
+        op_returns = None
         for response in responses:
             if response != 'default':
                 op_status.append({"statusCode": int(
@@ -280,7 +280,7 @@ def get_ops(param: Dict["str", Any], method: str, class_name: str,
                     responses[response]["schema"]["$ref"].split('/')[2]
             except KeyError:
                 pass
-            if op_returns == "":
+            if op_returns is None:
                 try:
                     op_returns = "vocab:" + \
                         responses[response]["schema"]["items"]["$ref"].split(
