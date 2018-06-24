@@ -24,16 +24,17 @@ def try_catch_replacement(block: Any, get_this: str, default: Any) -> str:
 
 def get_class_name(class_location: List[str]) -> str:
     """
-
+    To get class name from the class location reference given
     :param class_location: list containing the class location
     :return: name of class
     """
-    return class_location[len(class_location)-1]
+    return class_location[len(class_location) - 1]
 
 
-def get_data_at_location(class_location: List[str], doc: Dict[str,Any]) -> Dict[str,Any]:
+def get_data_at_location(
+        class_location: List[str], doc: Dict[str, Any]) -> Dict[str, Any]:
     """
-
+    TO get the dict at the class location provided
     :param class_location: list containing the class location
     :param doc: the open api doc
     :return: class defined at class location in the doc
@@ -49,6 +50,7 @@ def get_data_at_location(class_location: List[str], doc: Dict[str,Any]) -> Dict[
 def generateEntrypoint(api_doc: HydraDoc) -> None:
     """
     Generates Entrypoint , Base Collection and Base Resource for the documentation
+    :param api_doc: contains the Hydra Doc created
     """
     api_doc.add_baseCollection()
     api_doc.add_baseResource()
@@ -75,7 +77,11 @@ def check_if_collection(schema_block: Dict[str, Any]) -> str:
     return collection
 
 
-def get_class_details(class_location: List[str], doc: Dict["str", Any], classAndClassDefinition: Dict["str",HydraClass],
+def get_class_details(class_location: List[str],
+                      doc: Dict["str",
+                                Any],
+                      classAndClassDefinition: Dict["str",
+                                                    HydraClass],
                       definitionSet: Set["str"]) -> None:
     """
     fetches details of class and adds the class to the dict along with the classDefinition untill this point
@@ -89,13 +95,14 @@ def get_class_details(class_location: List[str], doc: Dict["str", Any], classAnd
     # we simply check if the class has been defined or not
     if class_name not in definitionSet:
 
-        desc = get_data_at_location(class_location,doc)
+        desc = get_data_at_location(class_location, doc)
         classDefinition = HydraClass
         try:
-            classDefinition = HydraClass(class_name, class_name, desc["description"], endpoint=True)
+            classDefinition = HydraClass(
+                class_name, class_name, desc["description"], endpoint=True)
         except KeyError:
-            classDefinition = HydraClass(class_name, class_name, class_name, endpoint=True)
-
+            classDefinition = HydraClass(
+                class_name, class_name, class_name, endpoint=True)
 
         properties = get_data_at_location(class_location, doc)["properties"]
         try:
@@ -119,8 +126,14 @@ def get_class_details(class_location: List[str], doc: Dict["str", Any], classAnd
         return
 
 
-def check_for_ref(doc: Dict["str", Any], block: Dict[str, Any], classAndClassDefinition: Dict["str",HydraClass],
-                  definitionSet: Set["str"]) -> Tuple[str, str]:
+def check_for_ref(doc: Dict["str",
+                            Any],
+                  block: Dict[str,
+                              Any],
+                  classAndClassDefinition: Dict["str",
+                                                HydraClass],
+                  definitionSet: Set["str"]) -> Tuple[str,
+                                                      str]:
     """
     checks the location of schema object in the given method , can be parameter or responses block
     and takes the collection from check_if_collection and passes to parent function
@@ -142,20 +155,29 @@ def check_for_ref(doc: Dict["str", Any], block: Dict[str, Any], classAndClassDef
             except KeyError:
                 class_location = block["responses"][obj]["schema"]["items"]["$ref"].split(
                     '/')
-            get_class_details(class_location, doc,classAndClassDefinition,definitionSet)
+            get_class_details(
+                class_location,
+                doc,
+                classAndClassDefinition,
+                definitionSet)
             return class_location[2], collection
         except KeyError:
             print(block["responses"][obj])
             pass
 
-    # when we would be able to take arrays as parameters we will use check_if_collection here as well c
+    # when we would be able to take arrays as parameters we will use
+    # check_if_collection here as well c
     for obj in block["parameters"]:
         print(obj)
         try:
             print("we are in try for paramerters")
             class_location = obj["schema"]["$ref"].split('/')
             print(class_location)
-            get_class_details(class_location, doc, classAndClassDefinition , definitionSet)
+            get_class_details(
+                class_location,
+                doc,
+                classAndClassDefinition,
+                definitionSet)
             return class_location[2], "false"
         except KeyError:
             pass
@@ -164,17 +186,17 @@ def check_for_ref(doc: Dict["str", Any], block: Dict[str, Any], classAndClassDef
     return "null", "none"
 
 
-def get_ops(param: Dict["str", Any], method: str, class_name: str, classAndClassDefinition:Dict["str",HydraClass]) \
-        -> None:
+def get_ops(param: Dict["str", Any], method: str, class_name: str,
+            classAndClassDefinition: Dict["str", HydraClass]) -> None:
     """
-    parses the method block and adds the operation to the already defined class definition
+    Extracting the operations defined for the class in the 'paths' object
     :param classAndClassDefinition:
     :param param: the path block
     :param method: the method name ["post,"put","get"]
-    :param class_name: class name
+    :param class_name: name of class
     """
     op_method = method
-    op_expects = ""
+    op_expects = None
     op_name = try_catch_replacement(param[method], "summary", class_name)
     op_status = list()
     try:
@@ -189,7 +211,7 @@ def get_ops(param: Dict["str", Any], method: str, class_name: str, classAndClass
         op_expects = None
     try:
         responses = param[method]["responses"]
-        op_returns = ""
+        op_returns = None
         for response in responses:
             if response != 'default':
                 op_status.append({"statusCode": int(
@@ -199,7 +221,7 @@ def get_ops(param: Dict["str", Any], method: str, class_name: str, classAndClass
                     responses[response]["schema"]["$ref"].split('/')[2]
             except KeyError:
                 pass
-            if op_returns == "":
+            if op_returns is None:
                 try:
                     op_returns = "vocab:" + \
                         responses[response]["schema"]["items"]["$ref"].split(
@@ -215,17 +237,19 @@ def get_ops(param: Dict["str", Any], method: str, class_name: str, classAndClass
 
     print(" we are going to add an operation with name " + op_name)
 
-    classAndClassDefinition[class_name].add_supported_op(HydraClassOp(op_name,
-                                                                      op_method.upper(),
-                                                                      op_expects,
-                                                                      op_returns,
-                                                                      op_status))
+    classAndClassDefinition[class_name].add_supported_op(HydraClassOp(
+        op_name, op_method.upper(), op_expects, op_returns, op_status))
 
 
-def get_paths(doc: Dict["str", Any], classAndClassDefinition: Dict["str",HydraClass], definitionSet: Set["str"],
+def get_paths(doc: Dict["str",
+                        Any],
+              classAndClassDefinition: Dict["str",
+                                            HydraClass],
+              definitionSet: Set["str"],
               api_doc: HydraDoc) -> None:
     """
-    parent function for parsing the doc
+    to parse the methods defined in the paths object
+    and to add the parsed classes to the hydra api documentation
     :param api_doc: HydraDoc defined for the spec
     :param definitionSet: set containing all the classes already parsed
     :param classAndClassDefinition: dict containing class and respective defined class definition
@@ -236,11 +260,20 @@ def get_paths(doc: Dict["str", Any], classAndClassDefinition: Dict["str",HydraCl
         if len(path.split('/')) == 2:
             for method in paths[path]:
                 print("inside method " + method + "for path " + path)
-                class_name, collection = check_for_ref(doc, paths[path][method], classAndClassDefinition, definitionSet)
-                print("the class name we got was " + class_name + "and the collection was " + collection)
+                class_name, collection = check_for_ref(
+                    doc, paths[path][method], classAndClassDefinition, definitionSet)
+                print(
+                    "the class name we got was " +
+                    class_name +
+                    "and the collection was " +
+                    collection)
 
                 if collection != "none" and class_name != "null":
-                    get_ops(paths[path], method, class_name,classAndClassDefinition)
+                    get_ops(
+                        paths[path],
+                        method,
+                        class_name,
+                        classAndClassDefinition)
                     possiblePath = path.split('/')[1]
                     possiblePath = possiblePath.replace(
                         possiblePath[0], possiblePath[0].upper())
@@ -251,13 +284,14 @@ def get_paths(doc: Dict["str", Any], classAndClassDefinition: Dict["str",HydraCl
                             api_doc.add_supported_class(
                                 classAndClassDefinition[class_name], collection=True)
                         else:
-                            api_doc.add_supported_class(classAndClassDefinition[class_name], collection=False)
+                            api_doc.add_supported_class(
+                                classAndClassDefinition[class_name], collection=False)
     generateEntrypoint(api_doc)
 
 
-def parse(doc: Dict[str,Any]) -> str:
+def parse(doc: Dict[str, Any]) -> str:
     """
-    parent function for parsing the doc
+    parent function for parsing the open api documentation
     :param doc: the open api documentation
     :return:  hydra doc created
     """
