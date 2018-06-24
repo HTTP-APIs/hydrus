@@ -107,7 +107,7 @@ doc = {
                 },
                 {
                     "@type": "SupportedProperty",
-                    "property": "vocabCategory",
+                    "property": "vocab:Category",
                     "readonly": "true",
                     "required": "false",
                     "title": "category",
@@ -123,7 +123,7 @@ doc = {
                 },
                 {
                     "@type": "SupportedProperty",
-                    "property": 0,
+                    "property": "0",
                     "readonly": "true",
                     "required": "true",
                     "title": "photoUrls",
@@ -131,7 +131,7 @@ doc = {
                 },
                 {
                     "@type": "SupportedProperty",
-                    "property": 0,
+                    "property": "0",
                     "readonly": "true",
                     "required": "false",
                     "title": "tags",
@@ -210,7 +210,7 @@ doc = {
                 },
                 {
                     "@type": "SupportedProperty",
-                    "property": "vocabxyz",
+                    "property": "vocab:xyz",
                     "readonly": "true",
                     "required": "false",
                     "title": "xyz",

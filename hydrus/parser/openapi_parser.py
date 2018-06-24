@@ -92,7 +92,7 @@ def parse_prop(
     if type != "":
         print("type is " + type)
         if len(type.split('/')) != 1:
-            return "vocab" + type.split('/')[(len(type.split('/'))) - 1]
+            return "vocab:" + type.split('/')[(len(type.split('/'))) - 1]
         elif len(type.split('/')) == 1:
             if type in dataType_ref_map:
                 print("return" + dataType_ref_map[type])
@@ -127,7 +127,7 @@ def parse_prop(
                                                             write=True))
                     classAndClassDefinition[prop] = classDefinition
                     definitionSet.add(prop)
-                    return "vocab" + prop
+                    return "vocab:" + prop
                 else:
                     pass
             elif type == "array":
