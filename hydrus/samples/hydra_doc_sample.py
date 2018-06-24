@@ -63,7 +63,7 @@ doc = {
                     "possibleStatus": [
                         {
                             "description": "Invalid input",
-                            "statusCode": "405"
+                            "statusCode": 405
                         }
                     ],
                     "returns": "null",
@@ -76,7 +76,7 @@ doc = {
                     "possibleStatus": [
                         {
                             "description": "Invalid ID supplied",
-                            "statusCode": "400"
+                            "statusCode": 400
                         }
                     ],
                     "returns": "null",
@@ -89,7 +89,7 @@ doc = {
                     "possibleStatus": [
                         {
                             "description": "successful operation",
-                            "statusCode": "200"
+                            "statusCode": 200
                         }
                     ],
                     "returns": "vocab:Pet",
@@ -159,8 +159,8 @@ doc = {
                     "method": "POST",
                     "possibleStatus": [
                         {
-                            "description": "successful operation",
-                            "statusCode": "default"
+                            "description": "Successful Operation",
+                            "statusCode": 200
                         }
                     ],
                     "returns": "null",
@@ -341,7 +341,7 @@ doc = {
                                 "statusCodes": [
                                     {
                                         "description": "Invalid input",
-                                        "statusCode": "405"
+                                        "statusCode": 405
                                     }
                                 ]
                             },
@@ -356,7 +356,7 @@ doc = {
                                 "statusCodes": [
                                     {
                                         "description": "Invalid ID supplied",
-                                        "statusCode": "400"
+                                        "statusCode": 400
                                     }
                                 ]
                             },
@@ -371,7 +371,7 @@ doc = {
                                 "statusCodes": [
                                     {
                                         "description": "successful operation",
-                                        "statusCode": "200"
+                                        "statusCode": 200
                                     }
                                 ]
                             }
@@ -402,8 +402,8 @@ doc = {
                                 "returns": "null",
                                 "statusCodes": [
                                     {
-                                        "description": "successful operation",
-                                        "statusCode": "default"
+                                        "description": "Successful Operation",
+                                        "statusCode": 200
                                     }
                                 ]
                             }

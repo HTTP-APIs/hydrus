@@ -22,11 +22,22 @@ def try_catch_replacement(block: Any, get_this: str, default: Any) -> str:
         return default
 
 
-def get_class_name(class_location):
+def get_class_name(class_location: List[str]) -> str:
+    """
+
+    :param class_location: list containing the class location
+    :return: name of class 
+    """
     return class_location[len(class_location)-1]
 
 
-def get_data_at_location(class_location, doc):
+def get_data_at_location(class_location: List[str], doc: Dict[str,Any]) -> Dict[str,Any]:
+    """
+
+    :param class_location: list containing the class location
+    :param doc: the open api doc
+    :return: class defined at class location in the doc
+    """
     data = doc
     index = 0
     while index <= len(class_location) - 3:
@@ -244,7 +255,12 @@ def get_paths(doc: Dict["str", Any], classAndClassDefinition: Dict["str",HydraCl
     generateEntrypoint(api_doc)
 
 
-def parse(doc):
+def parse(doc: Dict[str,Any]) -> str:
+    """
+    parent function for parsing the doc
+    :param doc: the open api documentation
+    :return:  hydra doc created
+    """
     classAndClassDefinition = dict()  # type: Dict[str,HydraClass]
     definitionSet = set()  # type: Set[str]
     info = try_catch_replacement(doc, "info", "")
