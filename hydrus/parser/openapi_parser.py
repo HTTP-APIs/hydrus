@@ -223,6 +223,7 @@ def check_for_ref(doc: Dict["str",
                 doc,
                 classAndClassDefinition,
                 definitionSet)
+
             return class_location[2], collection
         except KeyError:
             pass
