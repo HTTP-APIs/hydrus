@@ -26,7 +26,7 @@ def get_class_name(class_location: List[str]) -> str:
     """
 
     :param class_location: list containing the class location
-    :return: name of class 
+    :return: name of class
     """
     return class_location[len(class_location)-1]
 
@@ -90,12 +90,12 @@ def get_class_details(class_location: List[str], doc: Dict["str", Any], classAnd
     if class_name not in definitionSet:
 
         desc = get_data_at_location(class_location,doc)
+        classDefinition = HydraClass
         try:
-            desc = desc["description"]
+            classDefinition = HydraClass(class_name, class_name, desc["description"], endpoint=True)
         except KeyError:
-            desc = class_name
+            classDefinition = HydraClass(class_name, class_name, class_name, endpoint=True)
 
-        classDefinition = HydraClass(class_name, class_name, desc, endpoint=True)
 
         properties = get_data_at_location(class_location, doc)["properties"]
         try:
