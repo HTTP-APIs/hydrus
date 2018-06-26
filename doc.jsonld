@@ -144,6 +144,19 @@
                     "title": "UpdateArea"
                 },
                 {
+                    "@type": "http://schema.org/AddAction",
+                    "expects": "vocab:Area",
+                    "method": "PUT",
+                    "possibleStatus": [
+                        {
+                            "description": "Area of interest added",
+                            "statusCode": 201
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "AddArea"
+                },
+                {
                     "@type": "hydra:Operation",
                     "expects": "null",
                     "method": "GET",
@@ -288,6 +301,21 @@
                                     {
                                         "description": "Area of interest changed",
                                         "statusCode": 200
+                                    }
+                                ]
+                            },
+                            {
+                                "@id": "_:addarea",
+                                "@type": "hydra:Operation",
+                                "description": "null",
+                                "expects": "vocab:Area",
+                                "label": "AddArea",
+                                "method": "PUT",
+                                "returns": "null",
+                                "statusCodes": [
+                                    {
+                                        "description": "Area of interest added",
+                                        "statusCode": 201
                                     }
                                 ]
                             },
