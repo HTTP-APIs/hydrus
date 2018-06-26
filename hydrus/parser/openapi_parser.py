@@ -10,11 +10,11 @@ from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, Hy
 
 def try_catch_replacement(block: Any, get_this: str, default: Any) -> str:
     """
-    replacement for the try catch blocks. HELPER FUNCTION
-    :param block:
-    :param get_this:
-    :param default:
-    :return:
+    Replacement for the try catch blocks. HELPER FUNCTION
+    :param block: Data from where information has to be parsed
+    :param get_this: The key using which we have to fetch values from the block
+    :param default: default value incase the key does not exist
+    :return: string containing the value
     """
     try:
         return block[get_this]
@@ -70,7 +70,6 @@ def check_if_collection(schema_block: Dict[str, Any]) -> str:
         if type == "array":
             collection = "true"
         else:
-            # TODO here in type we will get object,string,integer etc
             collection = type
     except KeyError:
         collection = "false"
@@ -84,12 +83,12 @@ def get_class_details(class_location: List[str],
                                                     HydraClass],
                       definitionSet: Set["str"]) -> None:
     """
-    fetches details of class and adds the class to the dict along with the classDefinition untill this point
-    :param classAndClassDefinition:
-    :param definitionSet:
+    fetches details of class and adds the class to the dict along with the classDefinition until this point
+    :param classAndClassDefinition:  dict containing class and respective defined class definition
+    :param definitionSet: set containing the names of all parsed classes
     :param class_location: location of class definition in the doc , we extract name from here
     :param doc: the whole doc
-    :return:
+    :return: None
     """
     class_name = get_class_name(class_location)
     # we simply check if the class has been defined or not
@@ -135,10 +134,10 @@ def check_for_ref(doc: Dict["str",
                   definitionSet: Set["str"]) -> Tuple[str,
                                                       str]:
     """
-    checks the location of schema object in the given method , can be parameter or responses block
-    and takes the collection from check_if_collection and passes to parent function
-    :param classAndClassDefinition:
-    :param definitionSet:
+    checks the location of schema object in the given method , can be "parameter"
+    or "responses" block and checks if the method is a collection
+    :param classAndClassDefinition: dict containing class and respective defined class definition
+    :param definitionSet: set containing the names of all parsed classes
     :param doc: whole OAS defined doc
     :param block: the method block from doc
     :return: class name and collection variable
@@ -190,7 +189,8 @@ def get_ops(param: Dict["str", Any], method: str, class_name: str,
             classAndClassDefinition: Dict["str", HydraClass]) -> None:
     """
     Extracting the operations defined for the class in the 'paths' object
-    :param classAndClassDefinition:
+    :param classAndClassDefinition: dict containing class and respective
+                                    defined class definition
     :param param: the path block
     :param method: the method name ["post,"put","get"]
     :param class_name: name of class
@@ -248,8 +248,8 @@ def get_paths(doc: Dict["str",
               definitionSet: Set["str"],
               api_doc: HydraDoc) -> None:
     """
-    to parse the methods defined in the paths object
-    and to add the parsed classes to the hydra api documentation
+    To parse the methods defined in the paths object
+    And to add the parsed classes to the hydra api documentation
     :param api_doc: HydraDoc defined for the spec
     :param definitionSet: set containing all the classes already parsed
     :param classAndClassDefinition: dict containing class and respective defined class definition
@@ -291,7 +291,7 @@ def get_paths(doc: Dict["str",
 
 def parse(doc: Dict[str, Any]) -> str:
     """
-    parent function for parsing the open api documentation
+    To parse the "info" block and create Hydra Doc
     :param doc: the open api documentation
     :return:  hydra doc created
     """
