@@ -224,17 +224,12 @@ def get_paths(doc: Dict["str", Any], classAndClassDefinition: Dict["str",HydraCl
                     if collection is "true":
                         api_doc.add_supported_class(
                             classAndClassDefinition[class_name], collection=True)
-                        definitionSet.remove(class_name)
                     else:
                         api_doc.add_supported_class(classAndClassDefinition[class_name], collection=False)
-                        definitionSet.remove(class_name)
 
-    for index in range(len(definitionSet)):
-        try:
-            print("start adding"+definitionSet[index])
-            api_doc.add_supported_class(classAndClassDefinition[definitionSet[index]], collection=False)
-        except KeyError:
-            pass
+    for name in definitionSet:
+        api_doc.add_supported_class(
+            classAndClassDefinition[name], collection=False)
     generateEntrypoint(api_doc)
 
 
