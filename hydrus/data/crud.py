@@ -357,3 +357,95 @@ def delete_single(type_: str, session: scoped_session) -> None:
         raise InstanceNotFound(type_=rdf_class.name)
 
     return delete(instance.id, type_, session=session)
+
+def insert_multiple(object_: Dict[str, Any], session: scoped_session, id_: Optional[int] =None):
+    rdf_class = None
+    instance = None
+
+
+    # Check for class in the begging
+    try:
+        rdf_class = session.query(RDFClass).filter(
+            RDFClass.name == object_["@type"]).one()
+    except NoResultFound:
+        raise ClassNotFound(type_=object_["@type"])
+
+    if id_ is not None:
+        if session.query(exists().where(Instance.id == id_)).scalar():
+            raise InstanceExists(type_=rdf_class.name, id_=id_)
+        else:
+            instance = Instance(id=id_, type_=rdf_class.id)
+    else:
+        instance = Instance(type_=rdf_class.id)
+    session.add(instance)
+    session.flush()
+
+    for prop_name in object_:
+        if prop_name not in ["@type", "@context"]:
+            try:
+                property_ = session.query(properties).filter(
+                    properties.name == prop_name).one()
+            except NoResultFound:
+                # Adds new Property
+                session.close()
+                raise PropertyNotFound(type_=prop_name)
+
+            # For insertion in III
+            if type(object_[prop_name]) == dict:
+                instance_id = insert(object_[prop_name], session=session)
+                instance_object = session.query(Instance).filter(
+                    Instance.id == instance_id).one()
+
+                if property_.type_ == "PROPERTY" or property_.type_ == "INSTANCE":
+                    property_.type_ = "INSTANCE"
+                    session.add(property_)
+                    triple = GraphIII(
+                        subject=instance.id, predicate=property_.id, object_=instance_object.id)
+                    session.add(triple)
+                else:
+                    session.close()
+                    raise NotInstanceProperty(type_=prop_name)
+
+            # For insertion in IAC
+            elif session.query(exists().where(RDFClass.name == str(object_[prop_name]))).scalar():
+                if property_.type_ == "PROPERTY" or property_.type_ == "ABSTRACT":
+                    property_.type_ = "ABSTRACT"
+                    session.add(property_)
+                    class_ = session.query(RDFClass).filter(
+                        RDFClass.name == object_[prop_name]).one()
+                    triple = GraphIAC(subject=instance.id,
+                                      predicate=property_.id, object_=class_.id)
+                    session.add(triple)
+                else:
+                    session.close()
+                    raise NotAbstractProperty(type_=prop_name)
+
+            # For insertion in IIT
+            else:
+                terminal = Terminal(value=object_[prop_name])
+                session.add(terminal)
+                session.flush()  # Assigns ID without committing
+
+                if property_.type_ == "PROPERTY" or property_.type_ == "INSTANCE":
+                    property_.type_ = "INSTANCE"
+                    session.add(property_)
+                    triple = GraphIIT(
+                        subject=instance.id, predicate=property_.id, object_=terminal.id)
+                    # Add things directly to session, if anything fails whole transaction is aborted
+                    session.add(triple)
+                else:
+                    session.close()
+                    raise NotInstanceProperty(type_=prop_name)
+
+    session.commit()
+    return instance.id
+
+
+
+
+
+
+def update_multiple():
+    pass
+def delete_multiple():
+    pass
