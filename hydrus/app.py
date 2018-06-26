@@ -364,6 +364,7 @@ class ItemCollection(Resource):
 
         :param path - Path for Item type ( Specified in APIDoc @id)
         """
+        print("in put")
         auth_response = check_authentication_response()
         if type(auth_response) == Response:
             return auth_response
@@ -509,6 +510,12 @@ class Contexts(Resource):
                 return set_response_headers(jsonify(response), status_code=404)
 
 
+class Items(Resource):
+    def put(self, path: str) -> Response:
+        print("hello beautiful ")
+        pass
+
+
 def app_factory(API_NAME: str="api") -> Flask:
     """Create an app object."""
     app = Flask(__name__)
@@ -527,6 +534,9 @@ def app_factory(API_NAME: str="api") -> Flask:
                      "/<string:path>", endpoint="item_collection")
     api.add_resource(Item, "/" + API_NAME +
                      "/<string:path>/<int:id_>", endpoint="item")
+    api.add_resource(Items,"/"+ API_NAME +
+                     "/<string:path>/list",endpoint="items")
+
 
     return app
 

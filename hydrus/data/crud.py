@@ -116,14 +116,15 @@ def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[int] 
     """Insert an object to database [POST] and returns the inserted object."""
     rdf_class = None
     instance = None
-
+    print("from insert with params ")
+    print(object_,session,id_)
     # Check for class in the begging
     try:
         rdf_class = session.query(RDFClass).filter(
             RDFClass.name == object_["@type"]).one()
     except NoResultFound:
         raise ClassNotFound(type_=object_["@type"])
-
+    print(rdf_class)
     if id_ is not None:
         if session.query(exists().where(Instance.id == id_)).scalar():
             raise InstanceExists(type_=rdf_class.name, id_=id_)
@@ -131,14 +132,20 @@ def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[int] 
             instance = Instance(id=id_, type_=rdf_class.id)
     else:
         instance = Instance(type_=rdf_class.id)
+    print("the instance is")
+    print(instance)
     session.add(instance)
     session.flush()
 
     for prop_name in object_:
+        print(prop_name)
         if prop_name not in ["@type", "@context"]:
             try:
                 property_ = session.query(properties).filter(
                     properties.name == prop_name).one()
+                print("property is ")
+                print(property_.type_)
+                print(properties)
             except NoResultFound:
                 # Adds new Property
                 session.close()
@@ -146,22 +153,30 @@ def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[int] 
 
             # For insertion in III
             if type(object_[prop_name]) == dict:
+                print("insert in III")
                 instance_id = insert(object_[prop_name], session=session)
                 instance_object = session.query(Instance).filter(
                     Instance.id == instance_id).one()
-
+                print("the instance vars")
+                print(instance_id)
+                print(instance_object)
                 if property_.type_ == "PROPERTY" or property_.type_ == "INSTANCE":
                     property_.type_ = "INSTANCE"
+                    print("inside if")
                     session.add(property_)
                     triple = GraphIII(
                         subject=instance.id, predicate=property_.id, object_=instance_object.id)
+                    print("triple is ")
+                    print(triple)
                     session.add(triple)
                 else:
+                    print("inside else ")
                     session.close()
                     raise NotInstanceProperty(type_=prop_name)
 
             # For insertion in IAC
             elif session.query(exists().where(RDFClass.name == str(object_[prop_name]))).scalar():
+                print("insert in IAC")
                 if property_.type_ == "PROPERTY" or property_.type_ == "ABSTRACT":
                     property_.type_ = "ABSTRACT"
                     session.add(property_)
@@ -176,6 +191,7 @@ def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[int] 
 
             # For insertion in IIT
             else:
+                print("Insert in IIT")
                 terminal = Terminal(value=object_[prop_name])
                 session.add(terminal)
                 session.flush()     # Assigns ID without committing
@@ -193,6 +209,8 @@ def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[int] 
 
     session.commit()
     return instance.id
+
+
 
 
 def delete(id_: int, type_: str, session: scoped_session) -> None:
@@ -242,7 +260,7 @@ def update(id_: int, type_: str, object_: Dict[str, str], session: scoped_sessio
     # Keep the object as fail safe
     instance = get(id_=id_, type_=type_, session=session, api_name=api_name)
     instance.pop("@id")
-
+    print("frkom update")
     # Delete the old object
     delete(id_=id_, type_=type_, session=session)
     # Try inserting new object
@@ -357,3 +375,5 @@ def delete_single(type_: str, session: scoped_session) -> None:
         raise InstanceNotFound(type_=rdf_class.name)
 
     return delete(instance.id, type_, session=session)
+
+
