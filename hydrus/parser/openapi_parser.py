@@ -279,14 +279,16 @@ def get_paths(doc: Dict["str",
                         possiblePath[0], possiblePath[0].upper())
                     print("the path is " + possiblePath)
 
-                    if possiblePath in definitionSet:
-                        if collection is "true":
-                            api_doc.add_supported_class(
-                                classAndClassDefinition[class_name], collection=True)
-                        else:
-                            api_doc.add_supported_class(
-                                classAndClassDefinition[class_name], collection=False)
-    generateEntrypoint(api_doc)
+                    if collection is "true":
+                        api_doc.add_supported_class(
+                            classAndClassDefinition[class_name], collection=True)
+                    else:
+                        api_doc.add_supported_class(classAndClassDefinition[class_name], collection=False)
+
+    for name in definitionSet:
+        api_doc.add_supported_class(
+            classAndClassDefinition[name], collection=False)
+
 
 
 def parse(doc: Dict[str, Any]) -> str:
@@ -312,6 +314,7 @@ def parse(doc: Dict[str, Any]) -> str:
     schemes = try_catch_replacement(doc, "schemes", "http")
     api_doc = HydraDoc(name, title, desc, name, schemes[0] + "://" + baseURL)
     get_paths(doc, classAndClassDefinition, definitionSet, api_doc)
+    generateEntrypoint(api_doc)
     hydra_doc = api_doc.generate()
     dump = json.dumps(hydra_doc, indent=4, sort_keys=True)
     hydra_doc = '''"""\nGenerated API Documentation for Server API using server_doc_gen.py."""\n\ndoc = %s''' % dump
@@ -319,6 +322,7 @@ def parse(doc: Dict[str, Any]) -> str:
     hydra_doc = hydra_doc.replace('true', '"true"')
     hydra_doc = hydra_doc.replace('false', '"false"')
     hydra_doc = hydra_doc.replace('null', '"null"')
+
     return hydra_doc
 
 
