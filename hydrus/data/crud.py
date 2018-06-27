@@ -116,7 +116,6 @@ def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[int] 
     """Insert an object to database [POST] and returns the inserted object."""
     rdf_class = None
     instance = None
-
     # Check for class in the begging
     try:
         rdf_class = session.query(RDFClass).filter(
@@ -319,7 +318,8 @@ def insert_single(object_: Dict[str, Any], session: scoped_session) -> Any:
         session.query(Instance).filter(
             Instance.type_ == rdf_class.id).all()[-1]
     except (NoResultFound, IndexError, ValueError):
-        return insert(object_, session=session)
+        print("inside single")
+        return insert_multiple([object_,object_], session=session)
 
     raise InstanceExists(type_=rdf_class.name)
 
@@ -358,26 +358,30 @@ def delete_single(type_: str, session: scoped_session) -> None:
 
     return delete(instance.id, type_, session=session)
 
-def insert_multiple(object_: Dict[str, Any], session: scoped_session, id_: Optional[int] =None):
+def insert_multiple(objects_: List[Dict[str, Any]], session: scoped_session, id_: Optional[int] =None):
+    print("inside multiple")
     rdf_class = None
     instance = None
+    instances = List()
 
+    for object_ in objects_:
+        # Check for class in the begging
+        try:
+            rdf_class = session.query(RDFClass).filter(
+                RDFClass.name == object_["@type"]).one()
+        except NoResultFound:
+            raise ClassNotFound(type_=object_["@type"])
 
-    # Check for class in the begging
-    try:
-        rdf_class = session.query(RDFClass).filter(
-            RDFClass.name == object_["@type"]).one()
-    except NoResultFound:
-        raise ClassNotFound(type_=object_["@type"])
-
-    if id_ is not None:
-        if session.query(exists().where(Instance.id == id_)).scalar():
-            raise InstanceExists(type_=rdf_class.name, id_=id_)
+        if id_ is not None:
+            if session.query(exists().where(Instance.id == id_)).scalar():
+                raise InstanceExists(type_=rdf_class.name, id_=id_)
+            else:
+                instance = Instance(id=id_, type_=rdf_class.id)
+                instances.append(instance)
         else:
-            instance = Instance(id=id_, type_=rdf_class.id)
-    else:
-        instance = Instance(type_=rdf_class.id)
-    session.add(instance)
+            instance = Instance(type_=rdf_class.id)
+            instances.append(instance)
+    session.bulk_save_objects(instances)
     session.flush()
 
     for prop_name in object_:
