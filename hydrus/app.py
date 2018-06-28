@@ -52,6 +52,21 @@ def validObject(object_: Dict[str, Any]) -> bool:
         return True
     return False
 
+def validObjectList(objects_: List[Dict[str, Any]]) -> bool:
+    """
+        Check if the List of Dicts passed are of the valid format or not.
+        (if there's an "@type" key in the dict)
+
+    :param objects_: Object to be checked
+    """
+    for object_ in objects_:
+        if "@type" not in object_:
+            print("FALSE HERE ")
+            print(object_)
+            return False
+    return True
+
+
 
 def token_response(token: str) -> Response:
     """
@@ -513,7 +528,6 @@ class Items(Resource):
     def get(self,path,int_list):
         pass
     def put(self,path,int_list) -> Response:
-        print("inside put method with list "+int_list)
         auth_response = check_authentication_response()
         if type(auth_response) == Response:
             return auth_response
@@ -522,16 +536,15 @@ class Items(Resource):
         if endpoint_['method']:
             # If endpoint and PUT method is supported in the API
             object_ = json.loads(request.data.decode('utf-8'))
-            print("object is")
-            print(object_)
+            object_=object_["data"]
             if path in get_doc().collections:
                 # If collection name in document's collections
                 collection = get_doc().collections[path]["collection"]
 
                 # title of HydraClass object corresponding to collection
                 obj_type = collection.class_.title
-
-                if validObject(object_):
+                print(object_)
+                if validObjectList(object_):
                     # If Item in request's JSON is a valid object
                     # ie. @type is one of the keys in object_
                     if object_["@type"] == obj_type:

@@ -383,64 +383,83 @@ def insert_multiple(objects_: List[Dict[str, Any]], session: scoped_session, id_
             instances.append(instance)
     session.bulk_save_objects(instances)
     session.flush()
-
-    for prop_name in object_:
-        if prop_name not in ["@type", "@context"]:
-            try:
-                property_ = session.query(properties).filter(
-                    properties.name == prop_name).one()
-            except NoResultFound:
-                # Adds new Property
-                session.close()
-                raise PropertyNotFound(type_=prop_name)
-
-            # For insertion in III
-            if type(object_[prop_name]) == dict:
-                instance_id = insert(object_[prop_name], session=session)
-                instance_object = session.query(Instance).filter(
-                    Instance.id == instance_id).one()
-
-                if property_.type_ == "PROPERTY" or property_.type_ == "INSTANCE":
-                    property_.type_ = "INSTANCE"
-                    session.add(property_)
-                    triple = GraphIII(
-                        subject=instance.id, predicate=property_.id, object_=instance_object.id)
-                    session.add(triple)
-                else:
+    triples_list = list()
+    property_list = list()
+    for object_ in objects_:
+        for prop_name in object_:
+            if prop_name not in ["@type", "@context"]:
+                try:
+                    property_ = session.query(properties).filter(
+                        properties.name == prop_name).one()
+                except NoResultFound:
+                    # Adds new Property
                     session.close()
-                    raise NotInstanceProperty(type_=prop_name)
+                    raise PropertyNotFound(type_=prop_name)
 
-            # For insertion in IAC
-            elif session.query(exists().where(RDFClass.name == str(object_[prop_name]))).scalar():
-                if property_.type_ == "PROPERTY" or property_.type_ == "ABSTRACT":
-                    property_.type_ = "ABSTRACT"
-                    session.add(property_)
-                    class_ = session.query(RDFClass).filter(
-                        RDFClass.name == object_[prop_name]).one()
-                    triple = GraphIAC(subject=instance.id,
-                                      predicate=property_.id, object_=class_.id)
-                    session.add(triple)
+                # For insertion in III
+                if type(object_[prop_name]) == dict:
+                    instance_id = insert(object_[prop_name], session=session)
+                    instance_object = session.query(Instance).filter(
+                        Instance.id == instance_id).one()
+
+                    if property_.type_ == "PROPERTY" or property_.type_ == "INSTANCE":
+                        property_.type_ = "INSTANCE"
+                        session.add(property_)
+                        property_list.append(property_)
+
+                        triple = GraphIII(
+                            subject=instance.id, predicate=property_.id, object_=instance_object.id)
+                        session.add(triple)
+                        triples_list.append(triple)
+
+                    else:
+                        session.close()
+                        property_list.append("")
+                        triples_list.append("")
+                        raise NotInstanceProperty(type_=prop_name)
+
+                # For insertion in IAC
+                elif session.query(exists().where(RDFClass.name == str(object_[prop_name]))).scalar():
+                    if property_.type_ == "PROPERTY" or property_.type_ == "ABSTRACT":
+                        property_.type_ = "ABSTRACT"
+                        session.add(property_)
+                        property_list.append(property_)
+
+                        class_ = session.query(RDFClass).filter(
+                            RDFClass.name == object_[prop_name]).one()
+                        triple = GraphIAC(subject=instance.id,
+                                          predicate=property_.id, object_=class_.id)
+                        session.add(triple)
+                        triples_list.append(triple)
+
+                    else:
+                        session.close()
+                        property_list.append("")
+                        triples_list.append("")
+                        raise NotAbstractProperty(type_=prop_name)
+
+                # For insertion in IIT
                 else:
-                    session.close()
-                    raise NotAbstractProperty(type_=prop_name)
+                    terminal = Terminal(value=object_[prop_name])
+                    session.add(terminal)
+                    session.flush()  # Assigns ID without committing
 
-            # For insertion in IIT
-            else:
-                terminal = Terminal(value=object_[prop_name])
-                session.add(terminal)
-                session.flush()  # Assigns ID without committing
-
-                if property_.type_ == "PROPERTY" or property_.type_ == "INSTANCE":
-                    property_.type_ = "INSTANCE"
-                    session.add(property_)
-                    triple = GraphIIT(
-                        subject=instance.id, predicate=property_.id, object_=terminal.id)
-                    # Add things directly to session, if anything fails whole transaction is aborted
-                    session.add(triple)
-                else:
-                    session.close()
-                    raise NotInstanceProperty(type_=prop_name)
-
+                    if property_.type_ == "PROPERTY" or property_.type_ == "INSTANCE":
+                        property_.type_ = "INSTANCE"
+                        property_list.append(property_)
+                        session.add(property_)
+                        triple = GraphIIT(
+                            subject=instance.id, predicate=property_.id, object_=terminal.id)
+                        # Add things directly to session, if anything fails whole transaction is aborted
+                        session.add(triple)
+                        triples_list.append(triple)
+                    else:
+                        session.close()
+                        property_list.append("")
+                        triples_list.append("")
+                        raise NotInstanceProperty(type_=prop_name)
+    print(property_list)
+    print(triples_list)
     session.commit()
     return instance.id
 
