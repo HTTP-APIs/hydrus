@@ -205,7 +205,6 @@ class Item(Resource):
         :param id : Item ID
         :param path : Path for Item ( Specified in APIDoc @id)
         """
-        print("path is "+path)
         auth_response = check_authentication_response()
         if type(auth_response) == Response:
             return auth_response
@@ -330,7 +329,6 @@ class ItemCollection(Resource):
         """
         Retrieve a collection of items from the database.
         """
-        print("path is item collection "+path)
         auth_response = check_authentication_response()
         if type(auth_response) == Response:
             return auth_response
@@ -371,8 +369,6 @@ class ItemCollection(Resource):
 
         :param path - Path for Item type ( Specified in APIDoc @id)
         """
-        print("in put")
-        print(path)
         auth_response = check_authentication_response()
         if type(auth_response) == Response:
             return auth_response
@@ -494,10 +490,7 @@ class Contexts(Resource):
 
     def get(self, category: str) -> Response:
         """Return the context for the specified class."""
-        print("from context the category is "+category)
         if "Collection" in category:
-            print("in if condition")
-            print(get_doc().collections)
             if category in get_doc().collections:
                 # type: Union[Dict[str,Any],Dict[int,str]]
                 response = {
@@ -509,8 +502,6 @@ class Contexts(Resource):
                 return set_response_headers(jsonify(response), status_code=404)
 
         else:
-            print("in else ")
-            print(get_doc().parsed_classes)
             if category in get_doc().parsed_classes:
                 response = {
                     "@context": get_doc().parsed_classes[category]["context"].generate()}
@@ -523,7 +514,6 @@ class Contexts(Resource):
 
 class Items(Resource):
     def put(self, path: str) -> Response:
-        print("hello beautiful ")
         pass
 
 
