@@ -509,6 +509,74 @@ class Contexts(Resource):
                 return set_response_headers(jsonify(response), status_code=404)
 
 
+class Items(Resource):
+    def get(self,path,int_list):
+        pass
+    def put(self,path,int_list) -> Response:
+        print("inside put method with list "+int_list)
+        auth_response = check_authentication_response()
+        if type(auth_response) == Response:
+            return auth_response
+
+        endpoint_ = checkEndpoint("PUT", path)
+        if endpoint_['method']:
+            # If endpoint and PUT method is supported in the API
+            object_ = json.loads(request.data.decode('utf-8'))
+            print("object is")
+            print(object_)
+            if path in get_doc().collections:
+                # If collection name in document's collections
+                collection = get_doc().collections[path]["collection"]
+
+                # title of HydraClass object corresponding to collection
+                obj_type = collection.class_.title
+
+                if validObject(object_):
+                    # If Item in request's JSON is a valid object
+                    # ie. @type is one of the keys in object_
+                    if object_["@type"] == obj_type:
+                        # If the right Item type is being added to the collection
+                        try:
+                            # Insert object and return location in Header
+                            object_id = crud.insert(
+                                object_=object_, session=get_session())
+                            headers_ = [{"Location": get_hydrus_server_url(
+                            ) + get_api_name() + "/" + path + "/" + str(object_id)}]
+                            response = {
+                                "message": "Object with ID %s successfully added" % (object_id)}
+                            return set_response_headers(jsonify(response), headers=headers_, status_code=201)
+                        except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
+                            status_code, message = e.get_HTTP()
+                            return set_response_headers(jsonify(message), status_code=status_code)
+
+                return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
+
+            elif path in get_doc().parsed_classes and path + "Collection" not in get_doc().collections:
+                # If path is in parsed_classes but is not a collection
+                obj_type = getType(path, "PUT")
+                if object_["@type"] == obj_type:
+                    if validObject(object_):
+                        try:
+                            object_id = crud.insert(
+                                object_=object_, session=get_session())
+                            headers_ = [{"Location": get_hydrus_server_url(
+                            ) + get_api_name() + "/" + path + "/"}]
+                            response = {"message": "Object successfully added"}
+                            return set_response_headers(jsonify(response), headers=headers_, status_code=201)
+                        except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
+                            status_code, message = e.get_HTTP()
+                            return set_response_headers(jsonify(message), status_code=status_code)
+
+                return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
+
+        abort(endpoint_['status'])
+
+    def post(self, path, int_list):
+        print(request.data.decode('utf-8'))
+        print(json.loads(request.data.decode('utf-8')))
+        print(type(json.loads(request.data.decode('utf-8'))  ))
+
+
 def app_factory(API_NAME: str="api") -> Flask:
     """Create an app object."""
     app = Flask(__name__)
@@ -527,6 +595,8 @@ def app_factory(API_NAME: str="api") -> Flask:
                      "/<string:path>", endpoint="item_collection")
     api.add_resource(Item, "/" + API_NAME +
                      "/<string:path>/<int:id_>", endpoint="item")
+    api.add_resource(Items,"/" + API_NAME +
+                     "/<string:path>/<int_list>")
 
     return app
 
