@@ -206,7 +206,6 @@ def delete(id_: int, type_: str, session: scoped_session) -> None:
         rdf_class = session.query(RDFClass).filter(
             RDFClass.name == type_).one()
     except NoResultFound:
-        print(type_)
         raise ClassNotFound(type_=type_)
     try:
         instance = session.query(Instance).filter(
@@ -247,7 +246,6 @@ def update(id_: int, type_: str, object_: Dict[str, str], session: scoped_sessio
     # Keep the object as fail safe
     instance = get(id_=id_, type_=type_, session=session, api_name=api_name)
     instance.pop("@id")
-    print("frkom update")
     # Delete the old object
     delete(id_=id_, type_=type_, session=session)
     # Try inserting new object
@@ -324,7 +322,6 @@ def get_single(type_: str, api_name: str, session: scoped_session, path:str=None
         object_["@id"] = "/" + api_name + "/" + path
     else:
         object_["@id"] = "/" + api_name + "/" + type_
-    print(object_)
     return object_
 
 
