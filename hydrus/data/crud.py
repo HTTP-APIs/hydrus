@@ -126,7 +126,6 @@ def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[int] 
             RDFClass.name == object_["@type"]).one()
     except NoResultFound:
         raise ClassNotFound(type_=object_["@type"])
-    print(rdf_class)
     if id_ is not None:
         if session.query(exists().where(Instance.id == id_)).scalar():
             raise InstanceExists(type_=rdf_class.name, id_=id_)
@@ -134,20 +133,15 @@ def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[int] 
             instance = Instance(id=id_, type_=rdf_class.id)
     else:
         instance = Instance(type_=rdf_class.id)
-    print("the instance is")
-    print(instance)
     session.add(instance)
     session.flush()
 
     for prop_name in object_:
-        print(prop_name)
+
         if prop_name not in ["@type", "@context"]:
             try:
                 property_ = session.query(properties).filter(
                     properties.name == prop_name).one()
-                print("property is ")
-                print(property_.type_)
-                print(properties)
             except NoResultFound:
                 # Adds new Property
                 session.close()
@@ -155,30 +149,22 @@ def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[int] 
 
             # For insertion in III
             if type(object_[prop_name]) == dict:
-                print("insert in III")
                 instance_id = insert(object_[prop_name], session=session)
                 instance_object = session.query(Instance).filter(
                     Instance.id == instance_id).one()
-                print("the instance vars")
-                print(instance_id)
-                print(instance_object)
                 if property_.type_ == "PROPERTY" or property_.type_ == "INSTANCE":
                     property_.type_ = "INSTANCE"
-                    print("inside if")
                     session.add(property_)
                     triple = GraphIII(
                         subject=instance.id, predicate=property_.id, object_=instance_object.id)
-                    print("triple is ")
                     print(triple)
                     session.add(triple)
                 else:
-                    print("inside else ")
                     session.close()
                     raise NotInstanceProperty(type_=prop_name)
 
             # For insertion in IAC
             elif session.query(exists().where(RDFClass.name == str(object_[prop_name]))).scalar():
-                print("insert in IAC")
                 if property_.type_ == "PROPERTY" or property_.type_ == "ABSTRACT":
                     property_.type_ = "ABSTRACT"
                     session.add(property_)
@@ -193,7 +179,6 @@ def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[int] 
 
             # For insertion in IIT
             else:
-                print("Insert in IIT")
                 terminal = Terminal(value=object_[prop_name])
                 session.add(terminal)
                 session.flush()     # Assigns ID without committing
