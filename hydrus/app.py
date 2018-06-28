@@ -38,7 +38,7 @@ from hydrus.data.user import check_authorization, add_token, check_token, create
 from hydrus.utils import get_session, get_doc, get_api_name, get_hydrus_server_url, get_authentication, get_token
 
 from flask.wrappers import Response
-from typing import Dict, List, Any, Union
+from typing import Dict, List, Any, Union,Optional
 
 
 def validObject(object_: Dict[str, Any]) -> bool:
@@ -90,10 +90,14 @@ def set_response_headers(resp: Response, ct: str="application/ld+json", headers:
     return resp
 
 
-def hydrafy(object_: Dict[str, Any]) -> Dict[str, Any]:
+def hydrafy(object_: Dict[str, Any], path: Optional[str]) -> Dict[str, Any]:
     """Add hydra context to objects."""
-    object_["@context"] = "/" + get_api_name() + "/contexts/" + \
-        object_["@type"] + ".jsonld"
+    if path == object_["@type"]:
+        object_["@context"] = "/" + get_api_name() + "/contexts/" + \
+            object_["@type"] + ".jsonld"
+    else:
+        object_["@context"] = "/" + get_api_name() + "/contexts/" + \
+            path + ".jsonld"
     return object_
 
 
@@ -201,6 +205,7 @@ class Item(Resource):
         :param id : Item ID
         :param path : Path for Item ( Specified in APIDoc @id)
         """
+        print("path is "+path)
         auth_response = check_authentication_response()
         if type(auth_response) == Response:
             return auth_response
@@ -213,7 +218,8 @@ class Item(Resource):
                 # Try getting the Item based on ID and Class type
                 response = crud.get(
                     id_, class_type, api_name=get_api_name(), session=get_session())
-                return set_response_headers(jsonify(hydrafy(response)))
+
+                return set_response_headers(jsonify(hydrafy(response,path=path)))
 
             except (ClassNotFound, InstanceNotFound) as e:
                 status_code, message = e.get_HTTP()
@@ -324,6 +330,7 @@ class ItemCollection(Resource):
         """
         Retrieve a collection of items from the database.
         """
+        print("path is item collection "+path)
         auth_response = check_authentication_response()
         if type(auth_response) == Response:
             return auth_response
@@ -337,7 +344,7 @@ class ItemCollection(Resource):
                     # Get collection details from the database
                     response = crud.get_collection(
                         get_api_name(), collection.class_.title, session=get_session())
-                    return set_response_headers(jsonify(hydrafy(response)))
+                    return set_response_headers(jsonify(hydrafy(response,path=path)))
 
                 except ClassNotFound as e:
                     status_code, message = e.get_HTTP()
@@ -349,7 +356,7 @@ class ItemCollection(Resource):
                     class_type = get_doc().parsed_classes[path]['class'].title
                     response = crud.get_single(
                         class_type, api_name=get_api_name(), session=get_session())
-                    return set_response_headers(jsonify(hydrafy(response)))
+                    return set_response_headers(jsonify(hydrafy(response,path=path)))
 
                 except (ClassNotFound, InstanceNotFound) as e:
                     status_code, message = e.get_HTTP()
@@ -365,6 +372,7 @@ class ItemCollection(Resource):
         :param path - Path for Item type ( Specified in APIDoc @id)
         """
         print("in put")
+        print(path)
         auth_response = check_authentication_response()
         if type(auth_response) == Response:
             return auth_response
@@ -486,8 +494,10 @@ class Contexts(Resource):
 
     def get(self, category: str) -> Response:
         """Return the context for the specified class."""
+        print("from context the category is "+category)
         if "Collection" in category:
-
+            print("in if condition")
+            print(get_doc().collections)
             if category in get_doc().collections:
                 # type: Union[Dict[str,Any],Dict[int,str]]
                 response = {
@@ -499,7 +509,8 @@ class Contexts(Resource):
                 return set_response_headers(jsonify(response), status_code=404)
 
         else:
-
+            print("in else ")
+            print(get_doc().parsed_classes)
             if category in get_doc().parsed_classes:
                 response = {
                     "@context": get_doc().parsed_classes[category]["context"].generate()}
@@ -536,7 +547,6 @@ def app_factory(API_NAME: str="api") -> Flask:
                      "/<string:path>/<int:id_>", endpoint="item")
     api.add_resource(Items,"/"+ API_NAME +
                      "/<string:path>/list",endpoint="items")
-
 
     return app
 
