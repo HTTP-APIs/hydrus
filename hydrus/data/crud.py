@@ -157,7 +157,6 @@ def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[int] 
                     session.add(property_)
                     triple = GraphIII(
                         subject=instance.id, predicate=property_.id, object_=instance_object.id)
-                    print(triple)
                     session.add(triple)
                 else:
                     session.close()
@@ -348,7 +347,6 @@ def update_single(object_: Dict[str, Any], session: scoped_session, api_name: st
         rdf_class = session.query(RDFClass).filter(
             RDFClass.name == object_["@type"]).one()
     except NoResultFound:
-        print("Class not found in update_single")
         raise ClassNotFound(type_=object_["@type"])
 
     try:
