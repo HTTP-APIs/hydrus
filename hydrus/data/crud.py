@@ -48,7 +48,7 @@ triples = with_polymorphic(Graph, '*')
 properties = with_polymorphic(BaseProperty, "*")
 
 
-def get(id_: int, type_: str, api_name: str, session: scoped_session, recursive: bool = False) -> Dict[str, str]:
+def get(id_: int, type_: str, api_name: str, session: scoped_session, recursive: bool = False, path: str=None) -> Dict[str, str]:
     """Retrieve an Instance with given ID from the database [GET]."""
     object_template = {
         "@type": "",
@@ -106,8 +106,12 @@ def get(id_: int, type_: str, api_name: str, session: scoped_session, recursive:
             object_template[prop_name] = ""
     object_template["@type"] = rdf_class.name
     if not recursive:
-        object_template["@id"] = "/" + api_name + \
-            "/" + type_ + "Collection/" + str(id_)
+        if path is not None:
+            object_template["@id"] = "/" + api_name + \
+                                     "/" + path + "Collection/" + str(id_)
+        else:
+            object_template["@id"] = "/" + api_name + \
+                                     "/" + type_ + "Collection/" + str(id_)
 
     return object_template
 
@@ -116,8 +120,6 @@ def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[int] 
     """Insert an object to database [POST] and returns the inserted object."""
     rdf_class = None
     instance = None
-    print("from insert with params ")
-    print(object_,session,id_)
     # Check for class in the begging
     try:
         rdf_class = session.query(RDFClass).filter(
@@ -255,7 +257,7 @@ def delete(id_: int, type_: str, session: scoped_session) -> None:
     session.commit()
 
 
-def update(id_: int, type_: str, object_: Dict[str, str], session: scoped_session, api_name: str) -> int:
+def update(id_: int, type_: str, object_: Dict[str, str], session: scoped_session, api_name: str,path:str=None) -> int:
     """Update an object properties based on the given object [PUT]."""
     # Keep the object as fail safe
     instance = get(id_=id_, type_=type_, session=session, api_name=api_name)
@@ -271,18 +273,26 @@ def update(id_: int, type_: str, object_: Dict[str, str], session: scoped_sessio
         insert(object_=instance, id_=id_, session=session)
         raise e
 
-    get(id_=id_, type_=type_, session=session, api_name=api_name)
+    get(id_=id_, type_=type_, session=session, api_name=api_name,path=path)
     return id_
 
 
-def get_collection(API_NAME: str, type_: str, session: scoped_session) -> Dict[str, Any]:
+def get_collection(API_NAME: str, type_: str, session: scoped_session, path: str=None) -> Dict[str, Any]:
     """Retrieve a type of collection from the database."""
-    collection_template = {
-        "@id": "/" + API_NAME + "/" + type_ + "Collection/",
-        "@context": None,
-        "@type": type_ + "Collection",
-        "members": list()
-    }  # type: Dict[str, Any]
+    if path is not None :
+        collection_template = {
+            "@id": "/" + API_NAME + "/" + path + "/",
+            "@context": None,
+            "@type": type_ + "Collection",
+            "members": list()
+        }  # type: Dict[str, Any]
+    else:
+        collection_template = {
+            "@id": "/" + API_NAME + "/" + type_ + "Collection/",
+            "@context": None,
+            "@type": type_ + "Collection",
+            "members": list()
+        }  # type: Dict[str, Any]
     try:
         rdf_class = session.query(RDFClass).filter(
             RDFClass.name == type_).one()
@@ -296,15 +306,21 @@ def get_collection(API_NAME: str, type_: str, session: scoped_session) -> Dict[s
         instances = list()
 
     for instance_ in instances:
-        object_template = {
-            "@id": "/" + API_NAME + "/" + type_ + "Collection/" + str(instance_.id),
-            "@type": type_
-        }
+        if path is not None:
+            object_template = {
+                "@id": "/" + API_NAME + "/" + path + "/" + str(instance_.id),
+                "@type": type_
+            }
+        else:
+            object_template = {
+                "@id": "/" + API_NAME + "/" + type_ + "Collection/" + str(instance_.id),
+                "@type": type_
+            }
         collection_template["members"].append(object_template)
     return collection_template
 
 
-def get_single(type_: str, api_name: str, session: scoped_session) -> Dict[str, Any]:
+def get_single(type_: str, api_name: str, session: scoped_session, path:str=None) -> Dict[str, Any]:
     """Get instance of classes with single objects."""
     try:
         rdf_class = session.query(RDFClass).filter(
@@ -318,10 +334,12 @@ def get_single(type_: str, api_name: str, session: scoped_session) -> Dict[str, 
     except (NoResultFound, IndexError, ValueError):
         raise InstanceNotFound(type_=rdf_class.name)
     object_ = get(instance.id, rdf_class.name,
-                  session=session, api_name=api_name)
-
-    object_["@id"] = "/" + api_name + "/" + type_
-
+                  session=session, api_name=api_name,path=path)
+    if path is not None:
+        object_["@id"] = "/" + api_name + "/" + path
+    else:
+        object_["@id"] = "/" + api_name + "/" + type_
+    print(object_)
     return object_
 
 
@@ -342,7 +360,7 @@ def insert_single(object_: Dict[str, Any], session: scoped_session) -> Any:
     raise InstanceExists(type_=rdf_class.name)
 
 
-def update_single(object_: Dict[str, Any], session: scoped_session, api_name: str) -> int:
+def update_single(object_: Dict[str, Any], session: scoped_session, api_name: str,path: str=None) -> int:
     """Update instance of classes with single objects."""
     try:
         rdf_class = session.query(RDFClass).filter(
@@ -357,7 +375,7 @@ def update_single(object_: Dict[str, Any], session: scoped_session, api_name: st
     except (NoResultFound, IndexError, ValueError):
         raise InstanceNotFound(type_=rdf_class.name)
 
-    return update(id_=instance.id, type_=object_["@type"], object_=object_, session=session, api_name=api_name)
+    return update(id_=instance.id, type_=object_["@type"], object_=object_, session=session, api_name=api_name, path=path)
 
 
 def delete_single(type_: str, session: scoped_session) -> None:
