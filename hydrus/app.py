@@ -341,7 +341,7 @@ class ItemCollection(Resource):
                 try:
                     # Get collection details from the database
                     response = crud.get_collection(
-                        get_api_name(), collection.class_.title, session=get_session())
+                        get_api_name(), collection.class_.title, session=get_session(),path=path)
                     return set_response_headers(jsonify(hydrafy(response,path=path)))
 
                 except ClassNotFound as e:
@@ -353,7 +353,7 @@ class ItemCollection(Resource):
                 try:
                     class_type = get_doc().parsed_classes[path]['class'].title
                     response = crud.get_single(
-                        class_type, api_name=get_api_name(), session=get_session())
+                        class_type, api_name=get_api_name(), session=get_session(),path=path)
                     return set_response_headers(jsonify(hydrafy(response,path=path)))
 
                 except (ClassNotFound, InstanceNotFound) as e:
@@ -445,7 +445,7 @@ class ItemCollection(Resource):
                     if object_["@type"] == obj_type:
                         try:
                             crud.update_single(
-                                object_=object_, session=get_session(), api_name=get_api_name())
+                                object_=object_, session=get_session(), api_name=get_api_name(),path=path)
                             headers_ = [{"Location": get_hydrus_server_url(
                             ) + get_api_name() + "/" + path + "/"}]
                             response = {
