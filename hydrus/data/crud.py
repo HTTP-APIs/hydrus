@@ -195,9 +195,7 @@ def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[int] 
 
 def insert_multiple(objects_: List[Dict[str, Any]], session: scoped_session, id_: Optional[List[int]] = None):
     """
-    so yahan ek aur function banega joh ki har baar loop mein call hoga , end mein bulk save ke liye hume list
-    chahiye hogi poori toh hum log , hum external funtion ko instance denge , object denge woh hame joh return mein dega
-    hum usko list mein daalte jayenge , phir end mein jake poori list to daal denge , easy !
+    Adds a list of object with given ids to the database
     :param objects_:
     :param session:
     :param id_:
@@ -208,6 +206,8 @@ def insert_multiple(objects_: List[Dict[str, Any]], session: scoped_session, id_
     triples_list = list()
     properties_list = list()
     instances = list()
+    id_list = id_[0::2]
+
     # the number of objects would be the same as number of instances
     for index in range(len(objects_)):
         try:
@@ -215,19 +215,27 @@ def insert_multiple(objects_: List[Dict[str, Any]], session: scoped_session, id_
                 RDFClass.name == objects_[index]["@type"]).one()
         except NoResultFound:
             raise ClassNotFound(type_=objects_[index]["@type"])
-
-        if id_[index] is not None:
-            if session.query(exists().where(Instance.id == id_[index])).scalar():
+        if id_list[index] is not None:
+            if session.query(exists().where(Instance.id == id_list[index])).scalar():
                 # TODO handle where intance already exists , if event is fetched later anyways remove this
-                raise InstanceExists(type_=rdf_class.name, id_=id_[index])
+                raise InstanceExists(type_=rdf_class.name, id_=id_list[index])
             else:
-                instance = Instance(id=id_[index], type_=rdf_class.id)
+                instance = Instance(id=id_list[index], type_=rdf_class.id)
+                print(instance.id)
+                print(instance.type_)
+
                 instances.append(instance)
         else:
             instance = Instance(type_=rdf_class.id)
+            print(instance.id )
+            print(instance.type_)
+
             instances.append(instance)
     print(type(instances))
-    print(type(instances[0]))
+    print(len(instances))
+    for instance in instances:
+        print(instance.id)
+        print(instance.type_)
     session.bulk_save_objects(instances)
     session.flush()
     pass

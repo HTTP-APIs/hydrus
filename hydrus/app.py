@@ -532,8 +532,7 @@ def type_match(object_, obj_type) -> bool:
     return True
 
 class Items(Resource):
-    def get(self,path,int_list):
-        pass
+
     def put(self,path,int_list) -> Response:
         auth_response = check_authentication_response()
         if type(auth_response) == Response:
@@ -573,11 +572,11 @@ class Items(Resource):
             elif path in get_doc().parsed_classes and path + "Collection" not in get_doc().collections:
                 # If path is in parsed_classes but is not a collection
                 obj_type = getType(path, "PUT")
-                if object_["@type"] == obj_type:
-                    if validObject(object_):
+                if type_match(object_,obj_type):
+                    if validObjectList(object_):
                         try:
-                            object_id = crud.insert(
-                                object_=object_, session=get_session())
+                            object_id = crud.insert_multiple(
+                                object_=object_, session=get_session(),id_=int_list)
                             headers_ = [{"Location": get_hydrus_server_url(
                             ) + get_api_name() + "/" + path + "/"}]
                             response = {"message": "Object successfully added"}
@@ -591,9 +590,9 @@ class Items(Resource):
         abort(endpoint_['status'])
 
     def post(self, path, int_list):
-        print(request.data.decode('utf-8'))
-        print(json.loads(request.data.decode('utf-8')))
-        print(type(json.loads(request.data.decode('utf-8'))  ))
+        pass
+    def delete(self,path,int_list):
+        pass
 
 
 def app_factory(API_NAME: str="api") -> Flask:
