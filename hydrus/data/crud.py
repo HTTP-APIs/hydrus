@@ -221,24 +221,16 @@ def insert_multiple(objects_: List[Dict[str, Any]], session: scoped_session, id_
                 raise InstanceExists(type_=rdf_class.name, id_=id_list[index])
             else:
                 instance = Instance(id=id_list[index], type_=rdf_class.id)
-                print(instance.id)
-                print(instance.type_)
-
                 instances.append(instance)
         else:
             instance = Instance(type_=rdf_class.id)
-            print(instance.id )
-            print(instance.type_)
-
             instances.append(instance)
-    print(type(instances))
-    print(len(instances))
-    for instance in instances:
-        print(instance.id)
-        print(instance.type_)
+
+
     session.bulk_save_objects(instances)
     session.flush()
-    pass
+  
+
 
 def delete(id_: int, type_: str, session: scoped_session) -> None:
     """Delete an Instance and all its relations from DB given id [DELETE]."""
