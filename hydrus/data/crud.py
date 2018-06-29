@@ -229,7 +229,65 @@ def insert_multiple(objects_: List[Dict[str, Any]], session: scoped_session, id_
 
     session.bulk_save_objects(instances)
     session.flush()
-  
+    for index in range(len(objects_)):
+        for prop_name in objects_[index]:
+            if prop_name not in ["@type", "@context"]:
+                try:
+                    property_ = session.query(properties).filter(
+                        properties.name == prop_name).one()
+                except NoResultFound:
+                    # Adds new Property
+                    session.close()
+                    raise PropertyNotFound(type_=prop_name)
+
+                # For insertion in III
+                if type(objects_[index][prop_name]) == dict:
+                    instance_id = insert(objects_[index][prop_name], session=session)
+                    instance_object = session.query(Instance).filter(
+                        Instance.id == instance_id).one()
+
+                    if property_.type_ == "PROPERTY" or property_.type_ == "INSTANCE":
+                        property_.type_ = "INSTANCE"
+                        session.add(property_)
+                        triple = GraphIII(
+                            subject=instance.id, predicate=property_.id, object_=instance_object.id)
+                        session.add(triple)
+                    else:
+                        session.close()
+                        raise NotInstanceProperty(type_=prop_name)
+
+                # For insertion in IAC
+                elif session.query(exists().where(RDFClass.name == str(objects_[index][prop_name]))).scalar():
+                    if property_.type_ == "PROPERTY" or property_.type_ == "ABSTRACT":
+                        property_.type_ = "ABSTRACT"
+                        session.add(property_)
+                        class_ = session.query(RDFClass).filter(
+                            RDFClass.name == objects_[index][prop_name]).one()
+                        triple = GraphIAC(subject=instance.id,
+                                          predicate=property_.id, object_=class_.id)
+                        session.add(triple)
+                    else:
+                        session.close()
+                        raise NotAbstractProperty(type_=prop_name)
+
+                # For insertion in IIT
+                else:
+                    terminal = Terminal(value=objects_[index][prop_name])
+                    session.add(terminal)
+                    session.flush()     # Assigns ID without committing
+
+                    if property_.type_ == "PROPERTY" or property_.type_ == "INSTANCE":
+                        property_.type_ = "INSTANCE"
+                        session.add(property_)
+                        triple = GraphIIT(
+                            subject=instance.id, predicate=property_.id, object_=terminal.id)
+                        # Add things directly to session, if anything fails whole transaction is aborted
+                        session.add(triple)
+                    else:
+                        session.close()
+                        raise NotInstanceProperty(type_=prop_name)
+
+
 
 
 def delete(id_: int, type_: str, session: scoped_session) -> None:
