@@ -196,9 +196,9 @@ def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[int] 
 def insert_multiple(objects_: List[Dict[str, Any]], session: scoped_session, id_: Optional[List[int]] = None):
     """
     Adds a list of object with given ids to the database
-    :param objects_:
-    :param session:
-    :param id_:
+    :param objects_: List of dict's to be added to the database
+    :param session: scoped session from getSession in utils
+    :param id_: optional parameter containing the ids of objects that have to be inserted
     :return:
     """
     # instance list to store instances

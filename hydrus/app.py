@@ -525,7 +525,14 @@ class Contexts(Resource):
                 return set_response_headers(jsonify(response), status_code=404)
 
 
-def type_match(object_, obj_type) -> bool:
+def type_match(object_ : List[Dict[str,Any]], obj_type: str) -> bool:
+    """
+    Checks if the object type matches for every object in list.
+    :param object_: List of objects
+    :param obj_type: The required object type
+    :return: True if all object of list have the right type
+            False otherwise
+    """
     for obj in object_:
         if obj["@type"] != obj_type:
             return  False
