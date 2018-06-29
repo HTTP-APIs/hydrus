@@ -207,7 +207,7 @@ def insert_multiple(objects_: List[Dict[str, Any]], session: scoped_session, id_
     properties_list = list()
     instances = list()
     id_list = id_[0::2]
-
+    print("inside insert multiple")
     # the number of objects would be the same as number of instances
     for index in range(len(objects_)):
         try:
@@ -229,6 +229,7 @@ def insert_multiple(objects_: List[Dict[str, Any]], session: scoped_session, id_
 
     session.bulk_save_objects(instances)
     session.flush()
+
     for index in range(len(objects_)):
         for prop_name in objects_[index]:
             if prop_name not in ["@type", "@context"]:
@@ -248,10 +249,10 @@ def insert_multiple(objects_: List[Dict[str, Any]], session: scoped_session, id_
 
                     if property_.type_ == "PROPERTY" or property_.type_ == "INSTANCE":
                         property_.type_ = "INSTANCE"
-                        session.add(property_)
+                        properties_list.append(property_)
                         triple = GraphIII(
-                            subject=instance.id, predicate=property_.id, object_=instance_object.id)
-                        session.add(triple)
+                            subject=instances[index].id, predicate=property_.id, object_=instance_object.id)
+                        triples_list.append(triple)
                     else:
                         session.close()
                         raise NotInstanceProperty(type_=prop_name)
@@ -260,12 +261,13 @@ def insert_multiple(objects_: List[Dict[str, Any]], session: scoped_session, id_
                 elif session.query(exists().where(RDFClass.name == str(objects_[index][prop_name]))).scalar():
                     if property_.type_ == "PROPERTY" or property_.type_ == "ABSTRACT":
                         property_.type_ = "ABSTRACT"
-                        session.add(property_)
+                        properties_list.append(property_)
                         class_ = session.query(RDFClass).filter(
                             RDFClass.name == objects_[index][prop_name]).one()
-                        triple = GraphIAC(subject=instance.id,
+                        triple = GraphIAC(subject=instances[index].id,
                                           predicate=property_.id, object_=class_.id)
-                        session.add(triple)
+                        triples_list.append(triple)
+
                     else:
                         session.close()
                         raise NotAbstractProperty(type_=prop_name)
@@ -278,14 +280,19 @@ def insert_multiple(objects_: List[Dict[str, Any]], session: scoped_session, id_
 
                     if property_.type_ == "PROPERTY" or property_.type_ == "INSTANCE":
                         property_.type_ = "INSTANCE"
-                        session.add(property_)
+                        properties_list.append(property_)
                         triple = GraphIIT(
-                            subject=instance.id, predicate=property_.id, object_=terminal.id)
+                            subject=instances[index].id, predicate=property_.id, object_=terminal.id)
                         # Add things directly to session, if anything fails whole transaction is aborted
-                        session.add(triple)
+                        triples_list.append(triple)
                     else:
                         session.close()
                         raise NotInstanceProperty(type_=prop_name)
+    #session.bulk_save_objects(properties_list)
+    #session.bulk_save_objects(triples_list)
+
+    session.commit()
+    return 0
 
 
 
