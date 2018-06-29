@@ -38,7 +38,7 @@ from hydrus.data.user import check_authorization, add_token, check_token, create
 from hydrus.utils import get_session, get_doc, get_api_name, get_hydrus_server_url, get_authentication, get_token
 
 from flask.wrappers import Response
-from typing import Dict, List, Any, Union
+from typing import Dict, List, Any, Union,Optional
 
 
 def validObject(object_: Dict[str, Any]) -> bool:
@@ -90,10 +90,14 @@ def set_response_headers(resp: Response, ct: str="application/ld+json", headers:
     return resp
 
 
-def hydrafy(object_: Dict[str, Any]) -> Dict[str, Any]:
+def hydrafy(object_: Dict[str, Any], path: Optional[str]) -> Dict[str, Any]:
     """Add hydra context to objects."""
-    object_["@context"] = "/" + get_api_name() + "/contexts/" + \
-        object_["@type"] + ".jsonld"
+    if path == object_["@type"]:
+        object_["@context"] = "/" + get_api_name() + "/contexts/" + \
+            object_["@type"] + ".jsonld"
+    else:
+        object_["@context"] = "/" + get_api_name() + "/contexts/" + \
+            path + ".jsonld"
     return object_
 
 
@@ -213,7 +217,8 @@ class Item(Resource):
                 # Try getting the Item based on ID and Class type
                 response = crud.get(
                     id_, class_type, api_name=get_api_name(), session=get_session())
-                return set_response_headers(jsonify(hydrafy(response)))
+
+                return set_response_headers(jsonify(hydrafy(response,path=path)))
 
             except (ClassNotFound, InstanceNotFound) as e:
                 status_code, message = e.get_HTTP()
@@ -336,8 +341,8 @@ class ItemCollection(Resource):
                 try:
                     # Get collection details from the database
                     response = crud.get_collection(
-                        get_api_name(), collection.class_.title, session=get_session())
-                    return set_response_headers(jsonify(hydrafy(response)))
+                        get_api_name(), collection.class_.title, session=get_session(),path=path)
+                    return set_response_headers(jsonify(hydrafy(response,path=path)))
 
                 except ClassNotFound as e:
                     status_code, message = e.get_HTTP()
@@ -348,8 +353,8 @@ class ItemCollection(Resource):
                 try:
                     class_type = get_doc().parsed_classes[path]['class'].title
                     response = crud.get_single(
-                        class_type, api_name=get_api_name(), session=get_session())
-                    return set_response_headers(jsonify(hydrafy(response)))
+                        class_type, api_name=get_api_name(), session=get_session(),path=path)
+                    return set_response_headers(jsonify(hydrafy(response,path=path)))
 
                 except (ClassNotFound, InstanceNotFound) as e:
                     status_code, message = e.get_HTTP()
@@ -440,7 +445,7 @@ class ItemCollection(Resource):
                     if object_["@type"] == obj_type:
                         try:
                             crud.update_single(
-                                object_=object_, session=get_session(), api_name=get_api_name())
+                                object_=object_, session=get_session(), api_name=get_api_name(),path=path)
                             headers_ = [{"Location": get_hydrus_server_url(
                             ) + get_api_name() + "/" + path + "/"}]
                             response = {
@@ -486,7 +491,6 @@ class Contexts(Resource):
     def get(self, category: str) -> Response:
         """Return the context for the specified class."""
         if "Collection" in category:
-
             if category in get_doc().collections:
                 # type: Union[Dict[str,Any],Dict[int,str]]
                 response = {
@@ -498,7 +502,6 @@ class Contexts(Resource):
                 return set_response_headers(jsonify(response), status_code=404)
 
         else:
-
             if category in get_doc().parsed_classes:
                 response = {
                     "@context": get_doc().parsed_classes[category]["context"].generate()}
@@ -507,6 +510,11 @@ class Contexts(Resource):
             else:
                 response = {404: "NOT FOUND"}
                 return set_response_headers(jsonify(response), status_code=404)
+
+
+class Items(Resource):
+    def put(self, path: str) -> Response:
+        pass
 
 
 def app_factory(API_NAME: str="api") -> Flask:
@@ -527,6 +535,8 @@ def app_factory(API_NAME: str="api") -> Flask:
                      "/<string:path>", endpoint="item_collection")
     api.add_resource(Item, "/" + API_NAME +
                      "/<string:path>/<int:id_>", endpoint="item")
+    api.add_resource(Items,"/"+ API_NAME +
+                     "/<string:path>/list",endpoint="items")
 
     return app
 
