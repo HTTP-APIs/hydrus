@@ -122,7 +122,6 @@ def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[int] 
             RDFClass.name == object_["@type"]).one()
     except NoResultFound:
         raise ClassNotFound(type_=object_["@type"])
-
     if id_ is not None:
         if session.query(exists().where(Instance.id == id_)).scalar():
             raise InstanceExists(type_=rdf_class.name, id_=id_)
@@ -193,6 +192,45 @@ def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[int] 
     session.commit()
     return instance.id
 
+
+def insert_multiple(objects_: List[Dict[str, Any]], session: scoped_session, id_: Optional[List[int]] = None):
+    """
+    so yahan ek aur function banega joh ki har baar loop mein call hoga , end mein bulk save ke liye hume list
+    chahiye hogi poori toh hum log , hum external funtion ko instance denge , object denge woh hame joh return mein dega
+    hum usko list mein daalte jayenge , phir end mein jake poori list to daal denge , easy !
+    :param objects_:
+    :param session:
+    :param id_:
+    :return:
+    """
+    # instance list to store instances
+    instance_list = list()
+    triples_list = list()
+    properties_list = list()
+    instances = list()
+    # the number of objects would be the same as number of instances
+    for index in range(len(objects_)):
+        try:
+            rdf_class = session.query(RDFClass).filter(
+                RDFClass.name == objects_[index]["@type"]).one()
+        except NoResultFound:
+            raise ClassNotFound(type_=objects_[index]["@type"])
+
+        if id_[index] is not None:
+            if session.query(exists().where(Instance.id == id_[index])).scalar():
+                # TODO handle where intance already exists , if event is fetched later anyways remove this
+                raise InstanceExists(type_=rdf_class.name, id_=id_[index])
+            else:
+                instance = Instance(id=id_[index], type_=rdf_class.id)
+                instances.append(instance)
+        else:
+            instance = Instance(type_=rdf_class.id)
+            instances.append(instance)
+    print(type(instances))
+    print(type(instances[0]))
+    session.bulk_save_objects(instances)
+    session.flush()
+    pass
 
 def delete(id_: int, type_: str, session: scoped_session) -> None:
     """Delete an Instance and all its relations from DB given id [DELETE]."""
@@ -318,8 +356,7 @@ def insert_single(object_: Dict[str, Any], session: scoped_session) -> Any:
         session.query(Instance).filter(
             Instance.type_ == rdf_class.id).all()[-1]
     except (NoResultFound, IndexError, ValueError):
-        print("inside single")
-        return insert_multiple([object_,object_], session=session)
+        return insert(object_, session=session)
 
     raise InstanceExists(type_=rdf_class.name)
 
@@ -357,111 +394,6 @@ def delete_single(type_: str, session: scoped_session) -> None:
         raise InstanceNotFound(type_=rdf_class.name)
 
     return delete(instance.id, type_, session=session)
-
-def insert_multiple(objects_: List[Dict[str, Any]], session: scoped_session, id_: Optional[int] =None):
-    print("inside multiple")
-    rdf_class = None
-    instance = None
-    instances = List()
-
-    for object_ in objects_:
-        # Check for class in the begging
-        try:
-            rdf_class = session.query(RDFClass).filter(
-                RDFClass.name == object_["@type"]).one()
-        except NoResultFound:
-            raise ClassNotFound(type_=object_["@type"])
-
-        if id_ is not None:
-            if session.query(exists().where(Instance.id == id_)).scalar():
-                raise InstanceExists(type_=rdf_class.name, id_=id_)
-            else:
-                instance = Instance(id=id_, type_=rdf_class.id)
-                instances.append(instance)
-        else:
-            instance = Instance(type_=rdf_class.id)
-            instances.append(instance)
-    session.bulk_save_objects(instances)
-    session.flush()
-    triples_list = list()
-    property_list = list()
-    for object_ in objects_:
-        for prop_name in object_:
-            if prop_name not in ["@type", "@context"]:
-                try:
-                    property_ = session.query(properties).filter(
-                        properties.name == prop_name).one()
-                except NoResultFound:
-                    # Adds new Property
-                    session.close()
-                    raise PropertyNotFound(type_=prop_name)
-
-                # For insertion in III
-                if type(object_[prop_name]) == dict:
-                    instance_id = insert(object_[prop_name], session=session)
-                    instance_object = session.query(Instance).filter(
-                        Instance.id == instance_id).one()
-
-                    if property_.type_ == "PROPERTY" or property_.type_ == "INSTANCE":
-                        property_.type_ = "INSTANCE"
-                        session.add(property_)
-                        property_list.append(property_)
-
-                        triple = GraphIII(
-                            subject=instance.id, predicate=property_.id, object_=instance_object.id)
-                        session.add(triple)
-                        triples_list.append(triple)
-
-                    else:
-                        session.close()
-                        property_list.append("")
-                        triples_list.append("")
-                        raise NotInstanceProperty(type_=prop_name)
-
-                # For insertion in IAC
-                elif session.query(exists().where(RDFClass.name == str(object_[prop_name]))).scalar():
-                    if property_.type_ == "PROPERTY" or property_.type_ == "ABSTRACT":
-                        property_.type_ = "ABSTRACT"
-                        session.add(property_)
-                        property_list.append(property_)
-
-                        class_ = session.query(RDFClass).filter(
-                            RDFClass.name == object_[prop_name]).one()
-                        triple = GraphIAC(subject=instance.id,
-                                          predicate=property_.id, object_=class_.id)
-                        session.add(triple)
-                        triples_list.append(triple)
-
-                    else:
-                        session.close()
-                        property_list.append("")
-                        triples_list.append("")
-                        raise NotAbstractProperty(type_=prop_name)
-
-                # For insertion in IIT
-                else:
-                    terminal = Terminal(value=object_[prop_name])
-                    session.add(terminal)
-                    session.flush()  # Assigns ID without committing
-
-                    if property_.type_ == "PROPERTY" or property_.type_ == "INSTANCE":
-                        property_.type_ = "INSTANCE"
-                        property_list.append(property_)
-                        session.add(property_)
-                        triple = GraphIIT(
-                            subject=instance.id, predicate=property_.id, object_=terminal.id)
-                        # Add things directly to session, if anything fails whole transaction is aborted
-                        session.add(triple)
-                        triples_list.append(triple)
-                    else:
-                        session.close()
-                        property_list.append("")
-                        triples_list.append("")
-                        raise NotInstanceProperty(type_=prop_name)
-    print(property_list)
-    print(triples_list)
-    session.commit()
-    return instance.id
 
 
 

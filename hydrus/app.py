@@ -295,6 +295,7 @@ class Item(Resource):
                         # Add the object with given ID
                         object_id = crud.insert(
                             object_=object_, id_=id_, session=get_session())
+                        print("the object is is "+object_id)
                         headers_ = [{"Location": get_hydrus_server_url(
                         ) + get_api_name() + "/" + path + "/" + str(object_id)}]
                         response = {
@@ -524,6 +525,12 @@ class Contexts(Resource):
                 return set_response_headers(jsonify(response), status_code=404)
 
 
+def type_match(object_, obj_type) -> bool:
+    for obj in object_:
+        if obj["@type"] != obj_type:
+            return  False
+    return True
+
 class Items(Resource):
     def get(self,path,int_list):
         pass
@@ -540,19 +547,18 @@ class Items(Resource):
             if path in get_doc().collections:
                 # If collection name in document's collections
                 collection = get_doc().collections[path]["collection"]
-
                 # title of HydraClass object corresponding to collection
                 obj_type = collection.class_.title
-                print(object_)
                 if validObjectList(object_):
+                    type_result =  type_match(object_,obj_type)
                     # If Item in request's JSON is a valid object
                     # ie. @type is one of the keys in object_
-                    if object_["@type"] == obj_type:
+                    if type_result:
                         # If the right Item type is being added to the collection
                         try:
                             # Insert object and return location in Header
-                            object_id = crud.insert(
-                                object_=object_, session=get_session())
+                            object_id = crud.insert_multiple(
+                                objects_=object_, session=get_session(),id_=int_list)
                             headers_ = [{"Location": get_hydrus_server_url(
                             ) + get_api_name() + "/" + path + "/" + str(object_id)}]
                             response = {
