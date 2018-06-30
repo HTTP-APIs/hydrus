@@ -292,9 +292,8 @@ def insert_multiple(objects_: List[Dict[str, Any]], session: scoped_session, id_
                     else:
                         session.close()
                         raise NotInstanceProperty(type_=prop_name)
-    #session.bulk_save_objects(properties_list)
-    #session.bulk_save_objects(triples_list)
-
+    session.bulk_save_objects(properties_list)
+    session.bulk_save_objects(triples_list)
     session.commit()
     return 0
 
