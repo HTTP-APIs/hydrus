@@ -3,7 +3,6 @@ from hydrus.data.crud import insert
 from hydrus.data.generator import gen_cots
 
 
-
 # Random generated objects
 
 def insert_data(objects):
@@ -17,6 +16,8 @@ def insert_data(objects):
         except:
             print("Error occured, skipping object.")
     return insertion_ids
+
+
 # # Temporary storge for the Graph
 # triple_store = list()
 #

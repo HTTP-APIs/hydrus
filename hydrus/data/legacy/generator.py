@@ -110,17 +110,21 @@ def randomValue(interval: Dict[str, int]) -> int:
     return random.randrange(interval['min'], interval['max'], 1) // 1
 
 
-def generateObject(name: str, subsystem: Dict[str, Any]) -> Optional[Dict[str, Any]]: # type: ignore
+# type: ignore
+def generateObject(name: str, subsystem: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     """Generate random components from given input dictionary."""
-    result = {} # type: Dict
+    result = {}  # type: Dict
     result['hasMass'] = randomValue(subsystem['hasMass'])
     if 'minWorkingTemperature' in subsystem.keys():
         if not name == 'structure':
             result['hasPower'] = randomValue(subsystem['hasPower'])
-        result['minWorkingTemperature'] = randomValue(subsystem['minWorkingTemperature'])
-        result['maxWorkingTemperature'] = randomValue(subsystem['maxWorkingTemperature'])
+        result['minWorkingTemperature'] = randomValue(
+            subsystem['minWorkingTemperature'])
+        result['maxWorkingTemperature'] = randomValue(
+            subsystem['maxWorkingTemperature'])
         if 'density' in subsystem.keys():  # rule power or battery
-            result['hasVolume'] = int(result['hasMass'] / subsystem['density']) // 1
+            result['hasVolume'] = int(
+                result['hasMass'] / subsystem['density']) // 1
             if name == 'primary power':
                 result['hasMonetaryValue'] = result['hasPower'] * 5
                 return result
@@ -135,12 +139,14 @@ def generateObject(name: str, subsystem: Dict[str, Any]) -> Optional[Dict[str, A
                     result['type'] = random.choice(
                         ['interferometer', 'spectrometer', 'photometer', 'optical', 'dust detector'])
 
-                result['hasMonetaryValue'] = randomValue(subsystem['hasMonetaryValue'])
+                result['hasMonetaryValue'] = randomValue(
+                    subsystem['hasMonetaryValue'])
                 return result
             else:
                 if name == 'structure':
                     result['hasPower'] = 0
-                    result['hasMonetaryValue'] = int(350000 / result['hasMass']) // 1
+                    result['hasMonetaryValue'] = int(
+                        350000 / result['hasMass']) // 1
                     return result
                 elif name == 'attitude and orbit control':
                     if result['hasPower'] > 0:
@@ -152,18 +158,21 @@ def generateObject(name: str, subsystem: Dict[str, Any]) -> Optional[Dict[str, A
                         result['type'] = 'active'
                         result['mechanism'] = random.choice(
                             subsystem['active'])
-                    result['hasMonetaryValue'] = randomValue(subsystem['hasMonetaryValue'])
+                    result['hasMonetaryValue'] = randomValue(
+                        subsystem['hasMonetaryValue'])
                     return result
 
     else:
-        result['hasVolume'] = result['hasMass'] + randomValue({'min': -5, 'max': 5})
+        result['hasVolume'] = result['hasMass'] + \
+            randomValue({'min': -5, 'max': 5})
         result['hasPower'] = randomValue(subsystem['hasPower'])
         if result['hasPower'] > 0:
             result['hasPower'] = 0
         result['minTemperature'] = randomValue(subsystem['minTemperature'])
         result['maxTemperature'] = randomValue(subsystem['maxTemperature'])
 
-        result['hasMonetaryValue'] = (result['maxTemperature'] - result['minTemperature']) * 20
+        result['hasMonetaryValue'] = (
+            result['maxTemperature'] - result['minTemperature']) * 20
 
         if result['hasPower'] == 0:
             result['type'] = 'passive'
@@ -195,24 +204,25 @@ def generateObject(name: str, subsystem: Dict[str, Any]) -> Optional[Dict[str, A
 # gen_cots will generate n number of spacecraft parts with random properties
 def gen_random_object() -> Dict[str, Any]:
     """Generate a random object."""
-    index = random.randint(0, len(subsystems.keys())-1)
+    index = random.randint(0, len(subsystems.keys()) - 1)
     k, v = list(subsystems.items())[index]
     name = str(random.randrange(0, 50)) + \
         str(random.choice(['T', 'W', 'KV', 'JFG'])) + ' ' + k
-    obj = {} # type: Dict[str, Any]
+    obj = {}  # type: Dict[str, Any]
     obj['name'] = name
     obj['@type'] = classes_keymap[k]
-    obj['object'] = generateObject(k, v) #type: ignore
+    obj['object'] = generateObject(k, v)  # type: ignore
     return obj
 
 
 def gen_cots(n: int) -> List[Dict[str, Any]]:
     """Generate n number of spacecraft parts with random properties."""
-    output = [] # type: List[Dict[str, Any]]
+    output = []  # type: List[Dict[str, Any]]
     for num in range(n):
         obj = gen_random_object()
         output.append(obj)
     return output
+
 
 import json
 
