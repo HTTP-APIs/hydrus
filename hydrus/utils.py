@@ -22,7 +22,7 @@ hydrus.hydraspec.doc_writer.HydraDoc : Class for Hydra Documentation
 from contextlib import contextmanager
 from flask import appcontext_pushed
 from flask import g
-from hydrus.hydraspec import doc_writer_sample
+from hydrus.samples import doc_writer_sample
 from hydrus.data.db_models import engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.orm.session import Session
@@ -57,8 +57,9 @@ def get_authentication() -> bool:
     :return authentication : Bool. API Auth needed or not
             <bool>
     """
-    authentication = getattr(g, 'authentication_', None)
-    if authentication is None:
+    try:
+        authentication = getattr(g, 'authentication_')
+    except AttributeError:
         authentication = False
         g.authentication_ = authentication
     return authentication
@@ -89,8 +90,9 @@ def get_api_name() -> str:
     :return api_name : API/Server name or EntryPoint
             <str>
     """
-    api_name = getattr(g, 'api_name', None)
-    if api_name is None:
+    try:
+        api_name = getattr(g, 'api_name')
+    except AttributeError:
         api_name = "api"
         g.doc = api_name
     return api_name
@@ -114,7 +116,17 @@ def set_doc(application: Flask, APIDOC: HydraDoc) -> Iterator:
     with appcontext_pushed.connected_to(handler, application):
         yield
 
+@contextmanager        
+def set_token(application: Flask, token: bool) -> Iterator:
+    """Set whether API needs to implement token based authentication."""
+    if not isinstance(token, bool):
+        raise TypeError("Token flag must be of type <bool>")
 
+    def handler(sender: Flask, **kwargs: Any) -> None:
+        g.token_ = token
+    with appcontext_pushed.connected_to(handler, application):
+        yield
+        
 def get_doc() -> HydraDoc:
     """
     Get the server API Documentation.
@@ -122,13 +134,22 @@ def get_doc() -> HydraDoc:
     :return apidoc : Hydra Documentation object
             <hydrus.hydraspec.doc_writer.HydraDoc>
     """
-    apidoc = getattr(g, 'doc', None)
-    if apidoc is None:
-        apidoc = doc_writer_sample.api_doc
-        g.doc = apidoc
+    try:
+        apidoc = getattr(g, 'doc')
+    except AttributeError:
+        g.doc = apidoc = doc_writer_sample.api_doc
     return apidoc
 
 
+def get_token() -> bool:
+    """Check wether API needs to be authenticated or not."""
+    try:
+        token = getattr(g, 'token_')
+    except AttributeError:
+        token = False
+        g.token_ = token
+    return token
+  
 @contextmanager
 def set_hydrus_server_url(application: Flask, server_url: str) -> Iterator:
     """
@@ -140,7 +161,6 @@ def set_hydrus_server_url(application: Flask, server_url: str) -> Iterator:
     """
     if not isinstance(server_url, str):
         raise TypeError("The server_url is not of type <str>")
-
     def handler(sender: Flask, **kwargs: Any) -> None:
         g.hydrus_server_url = server_url
     with appcontext_pushed.connected_to(handler, application):
@@ -154,8 +174,9 @@ def get_hydrus_server_url() -> str:
     :return hydrus_server_url : Server URL
             <str>
     """
-    hydrus_server_url = getattr(g, 'hydrus_server_url', None)
-    if hydrus_server_url is None:
+    try:
+        hydrus_server_url = getattr(g, 'hydrus_server_url')
+    except AttributeError:
         hydrus_server_url = "http://localhost/"
         g.hydrus_server_url = hydrus_server_url
     return hydrus_server_url
@@ -170,9 +191,9 @@ def set_session(application: Flask, DB_SESSION: scoped_session) -> Iterator:
     :param DB_SESSION: SQLalchemy Session object
             <sqlalchemy.orm.session.Session>
     """
-    if not isinstance(DB_SESSION, scoped_session):
+    if not isinstance(DB_SESSION, scoped_session) and not isinstance(DB_SESSION, Session):
         raise TypeError(
-            "The API Doc is not of type or <sqlalchemy.orm.scoping.scoped_session>")
+            "The API Doc is not of type <sqlalchemy.orm.session.Session> or <sqlalchemy.orm.scoping.scoped_session>")
 
     def handler(sender: Flask, **kwargs: Any) -> None:
         g.dbsession = DB_SESSION
@@ -187,8 +208,9 @@ def get_session() -> scoped_session:
     :return session : SQLalchemy Session object
             <sqlalchemy.orm.scoped_session>
     """
-    session = getattr(g, 'dbsession', None)
-    if session is None:
+    try:
+        session = getattr(g, 'dbsession')
+    except AttributeError:
         session = scoped_session(sessionmaker(bind=engine))
         g.dbsession = session
     return session

@@ -2,7 +2,7 @@
 
 from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, DateTime
 from typing import Any
 # from hydrus.settings import DB_URL
 
@@ -199,6 +199,20 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     paraphrase = Column(String)
 
+class Token(Base):
+    """Model for storing tokens for the users."""
+
+    __tablename__ = "tokens"
+    id = Column(String, primary_key = True)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    timestamp = Column(DateTime) 
+
+class Nonce(Base):
+    """Model for storing nonce for the users."""
+
+    __tablename__  = "nonce"
+    id = Column(String, primary_key = True)
+    timestamp = Column(DateTime)
 
 if __name__ == "__main__":
     print("Creating models....")

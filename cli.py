@@ -3,12 +3,13 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 
 from hydrus.app import app_factory
 from hydrus.utils import (set_session, set_doc, set_hydrus_server_url,
-                            set_api_name, set_authentication)
+                            set_token, set_api_name, set_authentication)
 from hydrus.data import doc_parse
 from hydrus.hydraspec import doc_maker
 from hydrus.data.db_models import Base
 from hydrus.data.user import add_user
 from gevent.wsgi import WSGIServer
+from typing import Tuple
 import json
 import click
 
@@ -19,23 +20,43 @@ import click
                 help="The API name.", type=str)
 @click.option("--auth/--no-auth", default=True,
                 help="Set authentication to True or False.")
-@click.option("--dburl", default="sqlite:///:memory:", help="Set database url", type=str)
+@click.option("--dburl", default="sqlite:///:memory:",
+                help="Set database url", type=str)
 @click.option("--hydradoc", "-d", default="doc.jsonld",
                 help="Location to HydraDocumentation (JSON-LD) of server.",
                 type=click.File('r'))
 @click.option("--port", "-p", default=8080,
                 help="The port the app is hosted at.", type=int)
-@click.option("--serverurl", default= "http://localhost", help="Set server url", type=str)
+@click.option("--token/--no-token", default=True,
+                help="Toggle token based user authentication.")
+@click.option("--serverurl", default= "http://localhost",
+                help="Set server url", type=str)
 @click.argument("serve", required=True)
-def startserver(adduser, api, auth, dburl, hydradoc, port, serverurl, serve):
-    """Python Hydrus CLI"""
+def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
+                hydradoc: str, port: int, serverurl: str, token: bool,
+                serve: None) -> None:
+    """
+    Python Hydrus CLI
+
+    :param adduser <tuple>  : Contains the user credentials.
+    :param api <str>                    : Sets the API name for the server.
+    :param auth <bool>                  : Toggles the authentication.
+    :param dburl <str>                  : Sets the database URL.
+    :param hydradoc <str>               : Sets the link to the HydraDoc file.
+    :param port <int>                   : Sets the API server port.
+    :param serverurl <str>              : Sets the API server url.
+    :param token <bool>                 : Toggle token based user auth.
+    :param serve                        : Starts up the server.
+
+    :return                             : None.
+    """
     # The database connection URL
     # See http://docs.sqlalchemy.org/en/rel_1_0/core/engines.html#sqlalchemy.create_engine for more info
     # DB_URL = 'sqlite:///database.db'
     DB_URL = dburl
 
     # Define the server URL, this is what will be displayed on the Doc
-    HYDRUS_SERVER_URL = serverurl + ":" + str(port) + "/"
+    HYDRUS_SERVER_URL = "{}:{}/".format(serverurl, str(port))
 
     # The name of the API or the EntryPoint, the api will be at http://localhost/<API_NAME>
     API_NAME = api
@@ -83,21 +104,22 @@ def startserver(adduser, api, auth, dburl, hydradoc, port, serverurl, serve):
     click.echo("Starting the application")
     with set_authentication(app, auth):
         # Use authentication for all requests
-        with set_api_name(app, api):
-            # Set the API Documentation
-            with set_doc(app, apidoc):
-                # Set HYDRUS_SERVER_URL
-                with set_hydrus_server_url(app, HYDRUS_SERVER_URL):
-                    # Set the Database session
-                    with set_session(app, session):
-                        # Start the Hydrus app
-                        http_server = WSGIServer(('', port), app)
-                        click.echo("Server running at:")
-                        click.echo(HYDRUS_SERVER_URL + API_NAME)
-                        try:
-                            http_server.serve_forever()
-                        except KeyboardInterrupt:
-                            pass
+        with set_token(app, token):
+            with set_api_name(app, api):
+                # Set the API Documentation
+                with set_doc(app, apidoc):
+                    # Set HYDRUS_SERVER_URL
+                    with set_hydrus_server_url(app, HYDRUS_SERVER_URL):
+                        # Set the Database session
+                        with set_session(app, session):
+                            # Start the Hydrus app
+                            http_server = WSGIServer(('', port), app)
+                            click.echo("Server running at:")
+                            click.echo(HYDRUS_SERVER_URL + API_NAME)
+                            try:
+                                http_server.serve_forever()
+                            except KeyboardInterrupt:
+                                pass
 
 
 if __name__ == "__main__":

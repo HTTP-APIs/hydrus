@@ -7,10 +7,9 @@ from sqlalchemy.orm import sessionmaker,scoped_session
 import hydrus.data.crud as crud
 from hydrus.data.db_models import Base
 from hydrus.data import doc_parse
-from hydrus.hydraspec.doc_writer_sample import api_doc as doc
+from hydrus.samples.doc_writer_sample import api_doc as doc
 import random
 import string
-import pdb
 
 
 def gen_dummy_object(class_, doc):

@@ -31,12 +31,14 @@ from flask_restful import Api, Resource
 from flask_cors import CORS
 
 from hydrus.data import crud
-from hydrus.data.user import check_authorization
-from hydrus.utils import get_session, get_doc, get_api_name, get_hydrus_server_url, get_authentication
+from hydrus.data.user import check_authorization, add_token, check_token, create_nonce
+from hydrus.data.exceptions import (ClassNotFound, InstanceExists, PropertyNotFound,
+                                    NotInstanceProperty, NotAbstractProperty,
+                                    InstanceNotFound)
+from hydrus.utils import get_session, get_doc, get_api_name, get_hydrus_server_url, get_authentication,get_token
 
 from flask.wrappers import Response
 from typing import Dict, List, Any, Union
-from pprint import pprint
 
 
 def validObject(object_: Dict[str, Any]) -> bool:
@@ -50,12 +52,28 @@ def validObject(object_: Dict[str, Any]) -> bool:
         return True
     return False
 
+def token_response(token: str) -> Response:
+    """
+    Return succesful token generation object
+    """
+    message = {200: "User token generated"}
+    response = set_response_headers(jsonify(message), status_code=200,
+                                    headers=[{'X-Authorization': token}])
+    return response
 
-def failed_authentication() -> Response:
-    """Return failed authentication object."""
-    message = {401: "Need credentials to authenticate"}
+def failed_authentication(incorrect: bool) -> Response:
+    """
+    Return failed authentication object.
+    """
+    if not incorrect:
+        message = {401: "Need credentials to authenticate"}
+        realm = 'Basic realm="Login required"'
+    else:
+        message = {401: "Incorrect credentials"}
+        realm = 'Basic realm="Incorrect credentials"'        
+    nonce = create_nonce(get_session())
     response = set_response_headers(jsonify(message), status_code=401,
-                                    headers=[{'WWW-Authenticate': 'Basic realm="Login Required"'}])
+                                    headers=[{'WWW-Authenticate': realm},{'X-Authentication': nonce}])
     return response
 
 
@@ -108,6 +126,40 @@ def checkClassOp(class_type: str, method: str) -> bool:
             return True
     return False
 
+def verify_user() -> Union[Response, None]:
+    """ 
+    Verify the credentials of the user and assign token.
+    """
+    try:
+        auth = check_authorization(request, get_session())
+        if auth is False:
+            return failed_authentication(True)
+        else:
+            if get_token():
+                token = add_token(request, get_session())
+                return token_response(token)
+    except Exception as e:
+        status_code, message = e.get_HTTP()  # type: ignore
+        return set_response_headers(jsonify(message), status_code=status_code)
+    return None  
+
+def check_authentication_response() -> Union[Response,None]:
+    """ 
+    Return the response as per the authentication requirements.
+    """
+    if get_authentication():
+        if get_token():
+            token = check_token(request, get_session())
+            if not token:
+                if request.authorization is None:
+                    return failed_authentication(False)
+                else:
+                    return verify_user()
+        elif request.authorization is None:
+            return failed_authentication(False)
+        else:
+            return verify_user()
+    return None
 
 class Index(Resource):
     """Class for the EntryPoint."""
@@ -144,17 +196,9 @@ class Item(Resource):
         :param id : Item ID
         :param type_ : Item type
         """
-        if get_authentication():
-            if request.authorization is None:
-                return failed_authentication()
-            else:
-                try:
-                    auth = check_authorization(request, get_session())
-                    if auth is False:
-                        return failed_authentication()
-                except Exception as e:
-                    status_code, message = e.get_HTTP()  # type: ignore
-                    return set_response_headers(jsonify(message), status_code=status_code)
+        auth_response = check_authentication_response()
+        if type(auth_response) == Response:
+            return auth_response
 
         class_type = get_doc().collections[type_]["collection"].class_.title
 
@@ -166,8 +210,8 @@ class Item(Resource):
                     id_, class_type, api_name=get_api_name(), session=get_session())
                 return set_response_headers(jsonify(hydrafy(response)))
 
-            except Exception as e:
-                status_code, message = e.get_HTTP()  # type: ignore
+            except (ClassNotFound, InstanceNotFound) as e:
+                status_code, message = e.get_HTTP()
                 return set_response_headers(jsonify(message), status_code=status_code)
         abort(405)
 
@@ -177,17 +221,9 @@ class Item(Resource):
         :param id_ - ID of Item to be updated
         :param type_ - Type(Class name) of Item to be updated
         """
-        if get_authentication():
-            if request.authorization is None:
-                return failed_authentication()
-            else:
-                try:
-                    auth = check_authorization(request, get_session())
-                    if auth is False:
-                        return failed_authentication()
-                except Exception as e:
-                    status_code, message = e.get_HTTP()  # type: ignore
-                    return set_response_headers(jsonify(message), status_code=status_code)
+        auth_response = check_authentication_response()
+        if type(auth_response) == Response:
+            return auth_response
 
         class_type = get_doc().collections[type_]["collection"].class_.title
 
@@ -209,8 +245,8 @@ class Item(Resource):
                             "message": "Object with ID %s successfully updated" % (object_id)}
                         return set_response_headers(jsonify(response), headers=headers_)
 
-                    except Exception as e:
-                        status_code, message = e.get_HTTP()  # type: ignore
+                    except (ClassNotFound, InstanceNotFound, InstanceExists, PropertyNotFound) as e:
+                        status_code, message = e.get_HTTP()
                         return set_response_headers(jsonify(message), status_code=status_code)
 
             return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
@@ -223,17 +259,9 @@ class Item(Resource):
         :param id_ - ID of Item to be updated
         :param type_ - Type(Class name) of Item to be updated
         """
-        if get_authentication():
-            if request.authorization is None:
-                return failed_authentication()
-            else:
-                try:
-                    auth = check_authorization(request, get_session())
-                    if auth is False:
-                        return failed_authentication()
-                except Exception as e:
-                    status_code, message = e.get_HTTP()  # type: ignore
-                    return set_response_headers(jsonify(message), status_code=status_code)
+        auth_response = check_authentication_response()
+        if type(auth_response) == Response:
+            return auth_response
 
         class_type = get_doc().collections[type_]["collection"].class_.title
 
@@ -253,8 +281,8 @@ class Item(Resource):
                         response = {
                             "message": "Object with ID %s successfully added" % (object_id)}
                         return set_response_headers(jsonify(response), headers=headers_, status_code=201)
-                    except Exception as e:
-                        status_code, message = e.get_HTTP()  # type: ignore
+                    except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
+                        status_code, message = e.get_HTTP()
                         return set_response_headers(jsonify(message), status_code=status_code)
 
             return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
@@ -263,17 +291,9 @@ class Item(Resource):
 
     def delete(self, id_: int, type_: str) -> Response:
         """Delete object with id=id_ from database."""
-        if get_authentication():
-            if request.authorization is None:
-                return failed_authentication()
-            else:
-                try:
-                    auth = check_authorization(request, get_session())
-                    if auth is False:
-                        return failed_authentication()
-                except Exception as e:
-                    status_code, message = e.get_HTTP()  # type: ignore
-                    return set_response_headers(jsonify(message), status_code=status_code)
+        auth_response = check_authentication_response()
+        if type(auth_response) == Response:
+            return auth_response
 
         class_type = get_doc().collections[type_]["collection"].class_.title
 
@@ -286,8 +306,8 @@ class Item(Resource):
                     "message": "Object with ID %s successfully deleted" % (id_)}
                 return set_response_headers(jsonify(response))
 
-            except Exception as e:
-                status_code, message = e.get_HTTP()  # type: ignore
+            except (ClassNotFound, InstanceNotFound) as e:
+                status_code, message = e.get_HTTP()
                 return set_response_headers(jsonify(message), status_code=status_code)
 
         abort(405)
@@ -300,19 +320,10 @@ class ItemCollection(Resource):
         """
         Retrieve a collection of items from the database.
         """
-        if get_authentication():
-            if request.authorization is None:
-                return failed_authentication()
-            else:
-                try:
-                    auth = check_authorization(request, get_session())
-                    if auth is False:
-                        return failed_authentication()
-                except Exception as e:
-                    status_code, message = e.get_HTTP()  # type: ignore
-                    return set_response_headers(jsonify(message), status_code=status_code)
-
-        endpoint_ = checkEndpoint("GET", type_)
+        auth_response = check_authentication_response()
+        if type(auth_response) == Response:
+            return auth_response
+        endpoint_ = checkEndpoint("GET",type_)
         if endpoint_['method']:
             # If endpoint and GET method is supported in the API
             if type_ in get_doc().collections:
@@ -324,8 +335,8 @@ class ItemCollection(Resource):
                         get_api_name(), collection.class_.title, session=get_session())
                     return set_response_headers(jsonify(hydrafy(response)))
 
-                except Exception as e:
-                    status_code, message = e.get_HTTP()  # type: ignore
+                except ClassNotFound as e:
+                    status_code, message = e.get_HTTP()
                     return set_response_headers(jsonify(message), status_code=status_code)
 
             # If class is supported
@@ -335,8 +346,8 @@ class ItemCollection(Resource):
                         type_, api_name=get_api_name(), session=get_session())
                     return set_response_headers(jsonify(hydrafy(response)))
 
-                except Exception as e:
-                    status_code, message = e.get_HTTP()  # type: ignore
+                except (ClassNotFound, InstanceNotFound) as e:
+                    status_code, message = e.get_HTTP()
                     return set_response_headers(jsonify(message), status_code=status_code)
 
         abort(endpoint_['status'])
@@ -344,23 +355,14 @@ class ItemCollection(Resource):
     def put(self, type_: str) -> Response:
         """
         Method executed for PUT requests.
-        Used to add an item to a colllection
+        Used to add an item to a collection
 
         :param type_ - Item type
         """
-        if get_authentication():
-            # Check if authorization is required
-            if request.authorization is None:
-                return failed_authentication()
-            else:
-                try:
-                    auth = check_authorization(request, get_session())
-                    if auth is False:
-                        return failed_authentication()
-                except Exception as e:
-                    status_code, message = e.get_HTTP()  # type: ignore
-                    return set_response_headers(jsonify(message), status_code=status_code)
-
+        auth_response = check_authentication_response()
+        if type(auth_response) == Response:
+            return auth_response
+        
         endpoint_ = checkEndpoint("PUT", type_)
         if endpoint_['method']:
             # If endpoint and PUT method is supported in the API
@@ -387,8 +389,8 @@ class ItemCollection(Resource):
                             response = {
                                 "message": "Object with ID %s successfully added" % (object_id)}
                             return set_response_headers(jsonify(response), headers=headers_, status_code=201)
-                        except Exception as e:
-                            status_code, message = e.get_HTTP()  # type: ignore
+                        except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
+                            status_code, message = e.get_HTTP()
                             return set_response_headers(jsonify(message), status_code=status_code)
 
                 return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
@@ -405,8 +407,8 @@ class ItemCollection(Resource):
                             ) + get_api_name() + "/" + type_ + "/"}]
                             response = {"message": "Object successfully added"}
                             return set_response_headers(jsonify(response), headers=headers_, status_code=201)
-                        except Exception as e:
-                            status_code, message = e.get_HTTP()  # type: ignore
+                        except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
+                            status_code, message = e.get_HTTP()
                             return set_response_headers(jsonify(message), status_code=status_code)
 
                 return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
@@ -420,17 +422,9 @@ class ItemCollection(Resource):
 
         :param type_ - Item type
         """
-        if get_authentication():
-            if request.authorization is None:
-                return failed_authentication()
-            else:
-                try:
-                    auth = check_authorization(request, get_session())
-                    if auth is False:
-                        return failed_authentication()
-                except Exception as e:
-                    status_code, message = e.get_HTTP()  # type: ignore
-                    return set_response_headers(jsonify(message), status_code=status_code)
+        auth_response = check_authentication_response()
+        if type(auth_response) == Response:
+            return auth_response
 
         endpoint_ = checkEndpoint("POST", type_)
         if endpoint_['method']:
@@ -439,16 +433,16 @@ class ItemCollection(Resource):
                 obj_type = getType(type_, "POST")
                 if validObject(object_):
                     if object_["@type"] == obj_type:
-                        # try:
-                        crud.update_single(
-                            object_=object_, session=get_session(), api_name=get_api_name())
-                        headers_ = [{"Location": get_hydrus_server_url(
-                        ) + get_api_name() + "/" + type_ + "/"}]
-                        response = {"message": "Object successfully updated"}
-                        return set_response_headers(jsonify(response), headers=headers_)
-                        # except Exception as e:
-                        #     status_code, message = e.get_HTTP()
-                        #     return set_response_headers(jsonify(message), status_code=status_code)
+                        try:
+                            crud.update_single(
+                                object_=object_, session=get_session(), api_name=get_api_name())
+                            headers_ = [{"Location": get_hydrus_server_url(
+                            ) + get_api_name() + "/" + type_ + "/"}]
+                            response = {"message": "Object successfully updated"}
+                            return set_response_headers(jsonify(response), headers=headers_)
+                        except (ClassNotFound, InstanceNotFound, InstanceExists, PropertyNotFound) as e:
+                             status_code, message = e.get_HTTP()
+                             return set_response_headers(jsonify(message), status_code=status_code)
 
                 return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
 
@@ -461,18 +455,10 @@ class ItemCollection(Resource):
 
         :param type_ - Item type
         """
-        if get_authentication():
-            if request.authorization is None:
-                return failed_authentication()
-            else:
-                try:
-                    auth = check_authorization(request, get_session())
-                    if auth is False:
-                        return failed_authentication()
-                except Exception as e:
-                    status_code, message = e.get_HTTP()  # type: ignore
-                    return set_response_headers(jsonify(message), status_code=status_code)
-
+        auth_response = check_authentication_response()
+        if type(auth_response) == Response:
+            return auth_response
+          
         endpoint_ = checkEndpoint("DELETE", type_)
         if endpoint_['method']:
             # No Delete Operation for collections
@@ -481,8 +467,8 @@ class ItemCollection(Resource):
                     crud.delete_single(type_, session=get_session())
                     response = {"message": "Object successfully deleted"}
                     return set_response_headers(jsonify(response))
-                except Exception as e:
-                    status_code, message = e.get_HTTP()  # type: ignore
+                except (ClassNotFound, InstanceNotFound) as e:
+                    status_code, message = e.get_HTTP()
                     return set_response_headers(jsonify(message), status_code=status_code)
         abort(endpoint_['status'])
 
@@ -519,7 +505,7 @@ class Contexts(Resource):
 def app_factory(API_NAME: str="api") -> Flask:
     """Create an app object."""
     app = Flask(__name__)
-
+    app.config['SECRET_KEY'] = 'secret key'
     CORS(app)
     app.url_map.strict_slashes = False
     api = Api(app)
