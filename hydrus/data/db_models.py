@@ -4,6 +4,7 @@ from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, DateTime
 from typing import Any
+import uuid
 # from hydrus.settings import DB_URL
 
 engine = create_engine('sqlite:///database.db')
@@ -18,7 +19,8 @@ class RDFClass(Base):
 
     __tablename__ = "classes"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(String,  default=lambda: str(uuid.uuid4()), unique=True,primary_key=True)
+#    id = Column(Integer, primary_key=True)
     name = Column(String, unique=True)
 
     def __repr__(self) -> str:
@@ -33,8 +35,9 @@ class Instance(Base):
 
     __tablename__ = "instances"
 
-    id = Column(Integer, primary_key=True)
-    type_ = Column(Integer, ForeignKey("classes.id"), nullable=True)
+    id = Column(String,  default=lambda: str(uuid.uuid4()), unique=True,primary_key=True)
+#    id = Column(Integer, primary_key=True)
+    type_ = Column(String, ForeignKey("classes.id"), nullable=True)
 
 
 class BaseProperty(Base):
@@ -42,7 +45,8 @@ class BaseProperty(Base):
 
     __tablename__ = "property"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(String,  default=lambda: str(uuid.uuid4()), unique=True,primary_key=True)
+#    id = Column(Integer, primary_key=True)
     name = Column(String, unique=True, nullable=False)
     type_ = Column(String)
 
@@ -96,7 +100,8 @@ class Terminal(Base):
 
     __tablename__ = "terminals"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(String,  default=lambda: str(uuid.uuid4()), unique=True,primary_key=True)
+#    id = Column(Integer, primary_key=True)
     value = Column(String)
     unit = Column(String)
 
@@ -110,7 +115,8 @@ class Graph(Base):
 
     __tablename__ = "graph"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(String,  default=lambda: str(uuid.uuid4()), unique=True,primary_key=True)
+#    id = Column(Integer, primary_key=True)
     type = Column(String)
 
     __mapper_args__ = {
@@ -123,10 +129,10 @@ class GraphCAC(Graph):
     """Graph model for Class >> AbstractProperty >> Class."""
 
     __tablename__ = 'graphcac'
-    id = Column(Integer, ForeignKey('graph.id'), primary_key=True)
-    subject = Column(Integer, ForeignKey("classes.id"))
-    predicate = Column(Integer, ForeignKey("property.id"))
-    object_ = Column(Integer, ForeignKey("classes.id"))
+    id = Column(String, ForeignKey('graph.id'), primary_key=True)
+    subject = Column(String, ForeignKey("classes.id"))
+    predicate = Column(String, ForeignKey("property.id"))
+    object_ = Column(String, ForeignKey("classes.id"))
 
     __mapper_args__ = {
         'polymorphic_identity': 'graphcac',
@@ -141,10 +147,10 @@ class GraphIAC(Graph):
     """Graph model for Instance >> AbstractProperty >> Class."""
 
     __tablename__ = 'graphiac'
-    id = Column(Integer, ForeignKey('graph.id'), primary_key=True)
-    subject = Column(Integer, ForeignKey("instances.id"))
-    predicate = Column(Integer, ForeignKey("property.id"))
-    object_ = Column(Integer, ForeignKey("classes.id"))
+    id = Column(String, ForeignKey('graph.id'), primary_key=True)
+    subject = Column(String, ForeignKey("instances.id"))
+    predicate = Column(String, ForeignKey("property.id"))
+    object_ = Column(String, ForeignKey("classes.id"))
 
     __mapper_args__ = {
         'polymorphic_identity': 'graphiac',
@@ -159,10 +165,10 @@ class GraphIII(Graph):
     """Graph model for Instance >> InstanceProperty >> Instance."""
 
     __tablename__ = 'graphiii'
-    id = Column(Integer, ForeignKey('graph.id'), primary_key=True)
-    subject = Column(Integer, ForeignKey("instances.id"))
-    predicate = Column(Integer, ForeignKey("property.id"))
-    object_ = Column(Integer, ForeignKey("instances.id"))
+    id = Column(String, ForeignKey('graph.id'), primary_key=True)
+    subject = Column(String, ForeignKey("instances.id"))
+    predicate = Column(String, ForeignKey("property.id"))
+    object_ = Column(String, ForeignKey("instances.id"))
 
     __mapper_args__ = {
         'polymorphic_identity': 'graphiii',
@@ -177,10 +183,10 @@ class GraphIIT(Graph):
     """Graph model for Instance >> InstanceProperty >> Terminal."""
 
     __tablename__ = 'graphiit'
-    id = Column(Integer, ForeignKey('graph.id'), primary_key=True)
-    subject = Column(Integer, ForeignKey("instances.id"))
-    predicate = Column(Integer, ForeignKey("property.id"))
-    object_ = Column(Integer, ForeignKey("terminals.id"))
+    id = Column(String, ForeignKey('graph.id'), primary_key=True)
+    subject = Column(String, ForeignKey("instances.id"))
+    predicate = Column(String, ForeignKey("property.id"))
+    object_ = Column(String, ForeignKey("terminals.id"))
 
     __mapper_args__ = {
         'polymorphic_identity': 'graphiit',

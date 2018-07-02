@@ -48,7 +48,7 @@ triples = with_polymorphic(Graph, '*')
 properties = with_polymorphic(BaseProperty, "*")
 
 
-def get(id_: int, type_: str, api_name: str, session: scoped_session, recursive: bool = False, path: str=None) -> Dict[str, str]:
+def get(id_: str, type_: str, api_name: str, session: scoped_session, recursive: bool = False, path: str=None) -> Dict[str, str]:
     """Retrieve an Instance with given ID from the database [GET]."""
     object_template = {
         "@type": "",
@@ -116,7 +116,7 @@ def get(id_: int, type_: str, api_name: str, session: scoped_session, recursive:
     return object_template
 
 
-def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[int] =None) -> int:
+def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[str] =None) -> str:
     """Insert an object to database [POST] and returns the inserted object."""
     rdf_class = None
     instance = None
@@ -199,7 +199,7 @@ def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[int] 
 
 
 
-def delete(id_: int, type_: str, session: scoped_session) -> None:
+def delete(id_: str, type_: str, session: scoped_session) -> None:
     """Delete an Instance and all its relations from DB given id [DELETE]."""
     try:
         rdf_class = session.query(RDFClass).filter(
@@ -240,7 +240,7 @@ def delete(id_: int, type_: str, session: scoped_session) -> None:
     session.commit()
 
 
-def update(id_: int, type_: str, object_: Dict[str, str], session: scoped_session, api_name: str,path:str=None) -> int:
+def update(id_: str, type_: str, object_: Dict[str, str], session: scoped_session, api_name: str,path:str=None) -> str:
     """Update an object properties based on the given object [PUT]."""
     # Keep the object as fail safe
     instance = get(id_=id_, type_=type_, session=session, api_name=api_name)
@@ -341,7 +341,7 @@ def insert_single(object_: Dict[str, Any], session: scoped_session) -> Any:
     raise InstanceExists(type_=rdf_class.name)
 
 
-def update_single(object_: Dict[str, Any], session: scoped_session, api_name: str,path: str=None) -> int:
+def update_single(object_: Dict[str, Any], session: scoped_session, api_name: str,path: str=None) -> str:
     """Update instance of classes with single objects."""
     try:
         rdf_class = session.query(RDFClass).filter(
