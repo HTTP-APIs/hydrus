@@ -586,7 +586,7 @@ class Items(Resource):
                     if validObjectList(object_):
                         try:
                             object_id = crud.insert_multiple(
-                                object_=object_, session=get_session(),id_=int_list)
+                                objects_=object_, session=get_session(),id_=int_list)
                             headers_ = [{"Location": get_hydrus_server_url(
                             ) + get_api_name() + "/" + path + "/"}]
                             response = {"message": "Object successfully added"}
@@ -600,7 +600,38 @@ class Items(Resource):
         abort(endpoint_['status'])
 
     def post(self, path, int_list):
-        pass
+        auth_response = check_authentication_response()
+        if type(auth_response) == Response:
+            return auth_response
+
+        class_type = get_doc().collections[path]["collection"].class_.title
+        if checkClassOp(class_type, "POST"):
+            # Check if class_type supports POST operation
+            object_ = json.loads(request.data.decode('utf-8'))
+            object_ = object_["data"]
+            obj_type = getType(class_type, "POST")
+            # Load new object and type
+            if validObjectList(object_):
+                if type_match(object_,obj_type):
+                    try:
+                        # Update the right ID if the object is valid and matches
+                        # type of Item
+                        object_id = crud.update_multiple(objects_=object_, id_=int_list.split(','), type_= obj_type,
+                                                         session=get_session(), api_name=get_api_name())
+                        headers_ = [{"Location": get_hydrus_server_url(
+                        ) + get_api_name() + "/" + path + "/" + str(object_id)}]
+                        response = {
+                            "message": "Object with ID %s successfully updated" % (object_id)}
+                        return set_response_headers(jsonify(response), headers=headers_)
+
+                    except (ClassNotFound, InstanceNotFound, InstanceExists, PropertyNotFound) as e:
+                        status_code, message = e.get_HTTP()
+                        return set_response_headers(jsonify(message), status_code=status_code)
+
+            return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
+
+        abort(405)
+
     def delete(self,path,int_list):
         pass
 

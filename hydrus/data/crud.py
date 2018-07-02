@@ -197,7 +197,7 @@ def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[int] 
     return instance.id
 
 
-def insert_multiple(objects_: List[Dict[str, Any]], session: scoped_session, id_: Optional[List[int]] = None):
+def insert_multiple(objects_: List[Dict[str, Any]], session: scoped_session, id_: Optional[List[int]] = None) -> List[int]:
     """
     Adds a list of object with given ids to the database
     :param objects_: List of dict's to be added to the database
@@ -210,7 +210,7 @@ def insert_multiple(objects_: List[Dict[str, Any]], session: scoped_session, id_
     triples_list = list()
     properties_list = list()
     instances = list()
-    id_list = id_[0::2]
+    id_list = id_.split(',')
     print("inside insert multiple")
     # the number of objects would be the same as number of instances
     for index in range(len(objects_)):
@@ -295,8 +295,30 @@ def insert_multiple(objects_: List[Dict[str, Any]], session: scoped_session, id_
     session.bulk_save_objects(properties_list)
     session.bulk_save_objects(triples_list)
     session.commit()
-    return 0
+    return id_
 
+
+
+
+
+def update_multiple(ids_: List[int], type_: str, objects_: List[Dict[str, str]], session: scoped_session, api_name: str,path:str=None):
+    instances =list()
+    for id_ in ids_:
+        instance = get(id_=id_, type_=type_, session=session, api_name=api_name)
+        instance.pop("@id")
+        instances.append(instance)
+        delete(id_=id_, type_=type_, session=session)
+
+    # Try inserting new object
+    try:
+        insert_multiple(objects_=objects_, id_=ids_, session=session)
+    except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
+        # Put old object back
+        insert_multiple(object_=instances, id_=ids_, session=session)
+        raise e
+    for id_ in ids_:
+        get(id_=id_, type_=type_, session=session, api_name=api_name, path=path)
+    return ids_
 
 
 
@@ -340,6 +362,8 @@ def delete(id_: int, type_: str, session: scoped_session) -> None:
 
     session.delete(instance)
     session.commit()
+
+
 
 
 def update(id_: int, type_: str, object_: Dict[str, str], session: scoped_session, api_name: str,path:str=None) -> int:
@@ -460,6 +484,7 @@ def update_single(object_: Dict[str, Any], session: scoped_session, api_name: st
     return update(id_=instance.id, type_=object_["@type"], object_=object_, session=session, api_name=api_name, path=path)
 
 
+
 def delete_single(type_: str, session: scoped_session) -> None:
     """Delete instance of classes with single objects."""
     try:
@@ -475,15 +500,4 @@ def delete_single(type_: str, session: scoped_session) -> None:
         raise InstanceNotFound(type_=rdf_class.name)
 
     return delete(instance.id, type_, session=session)
-
-
-
-
-
-
-
-def update_multiple():
-    pass
-def delete_multiple():
-    pass
 
