@@ -517,7 +517,7 @@ class ItemCollection(Resource):
 
 class Items(Resource):
 
-    def put(self,path,int_list) -> Response:
+    def put(self,path,int_list="") -> Response:
         auth_response = check_authentication_response()
         if type(auth_response) == Response:
             return auth_response

@@ -197,7 +197,7 @@ def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[int] 
     return instance.id
 
 
-def insert_multiple(objects_: List[Dict[str, Any]], session: scoped_session, id_: Optional[List[int]] = None) -> List[int]:
+def insert_multiple(objects_: List[Dict[str, Any]], session: scoped_session, id_: Optional[str] = "") -> List[int]:
     """
     Adds a list of object with given ids to the database
     :param objects_: List of dict's to be added to the database
@@ -211,7 +211,9 @@ def insert_multiple(objects_: List[Dict[str, Any]], session: scoped_session, id_
     properties_list = list()
     instances = list()
     id_list = id_.split(',')
-    print("inside insert multiple")
+    print("id list is")
+    print(type(id_list))
+    print(id_list)
     # the number of objects would be the same as number of instances
     for index in range(len(objects_)):
         try:
@@ -219,7 +221,7 @@ def insert_multiple(objects_: List[Dict[str, Any]], session: scoped_session, id_
                 RDFClass.name == objects_[index]["@type"]).one()
         except NoResultFound:
             raise ClassNotFound(type_=objects_[index]["@type"])
-        if id_list[index] is not None:
+        if index in range(len(id_list)) and id_list[index]!="":
             if session.query(exists().where(Instance.id == id_list[index])).scalar():
                 # TODO handle where intance already exists , if event is fetched later anyways remove this
                 raise InstanceExists(type_=rdf_class.name, id_=id_list[index])
