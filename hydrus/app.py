@@ -616,7 +616,7 @@ class Items(Resource):
                     try:
                         # Update the right ID if the object is valid and matches
                         # type of Item
-                        object_id = crud.update_multiple(objects_=object_, id_=int_list.split(','), type_= obj_type,
+                        object_id = crud.update_multiple(objects_=object_, ids_=int_list, type_= obj_type,
                                                          session=get_session(), api_name=get_api_name())
                         headers_ = [{"Location": get_hydrus_server_url(
                         ) + get_api_name() + "/" + path + "/" + str(object_id)}]

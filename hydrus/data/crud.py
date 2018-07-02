@@ -303,6 +303,8 @@ def insert_multiple(objects_: List[Dict[str, Any]], session: scoped_session, id_
 
 def update_multiple(ids_: List[int], type_: str, objects_: List[Dict[str, str]], session: scoped_session, api_name: str,path:str=None):
     instances =list()
+    ids_string = ids_
+    ids_ = ids_.split(',')
     for id_ in ids_:
         instance = get(id_=id_, type_=type_, session=session, api_name=api_name)
         instance.pop("@id")
@@ -311,10 +313,10 @@ def update_multiple(ids_: List[int], type_: str, objects_: List[Dict[str, str]],
 
     # Try inserting new object
     try:
-        insert_multiple(objects_=objects_, id_=ids_, session=session)
+        insert_multiple(objects_=objects_, id_=ids_string, session=session)
     except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
         # Put old object back
-        insert_multiple(object_=instances, id_=ids_, session=session)
+        insert_multiple(object_=instances, id_=ids_string, session=session)
         raise e
     for id_ in ids_:
         get(id_=id_, type_=type_, session=session, api_name=api_name, path=path)
