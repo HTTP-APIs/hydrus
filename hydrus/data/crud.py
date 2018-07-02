@@ -135,6 +135,7 @@ def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[int] 
         instance = Instance(type_=rdf_class.id)
     session.add(instance)
     session.flush()
+    print(instance.id)
 
     for prop_name in object_:
 
@@ -211,6 +212,7 @@ def insert_multiple(objects_: List[Dict[str, Any]], session: scoped_session, id_
     properties_list = list()
     instances = list()
     id_list = id_.split(',')
+    instance_id_list = list()
     print("id list is")
     print(type(id_list))
     print(id_list)
@@ -222,19 +224,30 @@ def insert_multiple(objects_: List[Dict[str, Any]], session: scoped_session, id_
         except NoResultFound:
             raise ClassNotFound(type_=objects_[index]["@type"])
         if index in range(len(id_list)) and id_list[index]!="":
+            print("inside if fist ")
+            print(id_list[index])
             if session.query(exists().where(Instance.id == id_list[index])).scalar():
                 # TODO handle where intance already exists , if event is fetched later anyways remove this
                 raise InstanceExists(type_=rdf_class.name, id_=id_list[index])
             else:
+                print("inside else")
+                print(id_list[index])
                 instance = Instance(id=id_list[index], type_=rdf_class.id)
+                print(instance.id)
                 instances.append(instance)
+                instance_id_list.append(instance.id)
         else:
+            print("second else ")
             instance = Instance(type_=rdf_class.id)
+            print(instance.id)
             instances.append(instance)
+            instance_id_list.append(instance.id)
 
 
     session.bulk_save_objects(instances)
     session.flush()
+    print(len(instances))
+    print(instances[0].id)
 
     for index in range(len(objects_)):
         for prop_name in objects_[index]:
@@ -297,7 +310,7 @@ def insert_multiple(objects_: List[Dict[str, Any]], session: scoped_session, id_
     session.bulk_save_objects(properties_list)
     session.bulk_save_objects(triples_list)
     session.commit()
-    return id_
+    return instance_id_list
 
 
 
