@@ -67,6 +67,18 @@ def validObjectList(objects_: List[Dict[str, Any]]) -> bool:
     return True
 
 
+def type_match(object_ : List[Dict[str,Any]], obj_type: str) -> bool:
+    """
+    Checks if the object type matches for every object in list.
+    :param object_: List of objects
+    :param obj_type: The required object type
+    :return: True if all object of list have the right type
+            False otherwise
+    """
+    for obj in object_:
+        if obj["@type"] != obj_type:
+            return  False
+    return True
 
 def token_response(token: str) -> Response:
     """
@@ -501,45 +513,7 @@ class ItemCollection(Resource):
         abort(endpoint_['status'])
 
 
-class Contexts(Resource):
-    """Dynamically genereated contexts."""
 
-    def get(self, category: str) -> Response:
-        """Return the context for the specified class."""
-        if "Collection" in category:
-            if category in get_doc().collections:
-                # type: Union[Dict[str,Any],Dict[int,str]]
-                response = {
-                    "@context": get_doc().collections[category]["context"].generate()}
-                return set_response_headers(jsonify(response))
-
-            else:
-                response = {404: "NOT FOUND"}
-                return set_response_headers(jsonify(response), status_code=404)
-
-        else:
-            if category in get_doc().parsed_classes:
-                response = {
-                    "@context": get_doc().parsed_classes[category]["context"].generate()}
-                return set_response_headers(jsonify(response))
-
-            else:
-                response = {404: "NOT FOUND"}
-                return set_response_headers(jsonify(response), status_code=404)
-
-
-def type_match(object_ : List[Dict[str,Any]], obj_type: str) -> bool:
-    """
-    Checks if the object type matches for every object in list.
-    :param object_: List of objects
-    :param obj_type: The required object type
-    :return: True if all object of list have the right type
-            False otherwise
-    """
-    for obj in object_:
-        if obj["@type"] != obj_type:
-            return  False
-    return True
 
 class Items(Resource):
 
@@ -600,6 +574,7 @@ class Items(Resource):
         abort(endpoint_['status'])
 
     def post(self, path, int_list):
+        print("post came")
         auth_response = check_authentication_response()
         if type(auth_response) == Response:
             return auth_response
@@ -632,8 +607,35 @@ class Items(Resource):
 
         abort(405)
 
-    def delete(self,path,int_list):
-        pass
+
+
+class Contexts(Resource):
+    """Dynamically genereated contexts."""
+
+    def get(self, category: str) -> Response:
+        """Return the context for the specified class."""
+        if "Collection" in category:
+            if category in get_doc().collections:
+                # type: Union[Dict[str,Any],Dict[int,str]]
+                response = {
+                    "@context": get_doc().collections[category]["context"].generate()}
+                return set_response_headers(jsonify(response))
+
+            else:
+                response = {404: "NOT FOUND"}
+                return set_response_headers(jsonify(response), status_code=404)
+
+        else:
+            if category in get_doc().parsed_classes:
+                response = {
+                    "@context": get_doc().parsed_classes[category]["context"].generate()}
+                return set_response_headers(jsonify(response))
+
+            else:
+                response = {404: "NOT FOUND"}
+                return set_response_headers(jsonify(response), status_code=404)
+
+
 
 
 def app_factory(API_NAME: str="api") -> Flask:
@@ -655,7 +657,7 @@ def app_factory(API_NAME: str="api") -> Flask:
     api.add_resource(Item, "/" + API_NAME +
                      "/<string:path>/<int:id_>", endpoint="item")
     api.add_resource(Items,"/" + API_NAME +
-                     "/<string:path>/<int_list>")
+                     "/<string:path>/add/<int_list>")
 
 
     return app
