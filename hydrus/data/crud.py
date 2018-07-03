@@ -378,6 +378,48 @@ def delete(id_: int, type_: str, session: scoped_session) -> None:
     session.delete(instance)
     session.commit()
 
+def delete_multiple(id_: List[int], type_: str, session: scoped_session) -> None:
+    try:
+        rdf_class = session.query(RDFClass).filter(
+            RDFClass.name == type_).one()
+    except NoResultFound:
+        raise ClassNotFound(type_=type_)
+
+    instances = list()
+    for index in id_:
+        try:
+            instance = session.query(Instance).filter(
+                Instance.id == index and type_ == rdf_class.id).one()
+            instances.append(instance)
+        except NoResultFound:
+            raise InstanceNotFound(type_=rdf_class.name, id_=index)
+    data_IIT = session.query(triples).filter(
+        triples.GraphIIT.subject == id_).all()
+    data_IAC = session.query(triples).filter(
+        triples.GraphIAC.subject == id_).all()
+    data_III = session.query(triples).filter(
+        triples.GraphIII.subject == id_).all()
+    print(type(data_III))
+    print(type(data_IIT))
+    print(type(data_IAC))
+    data = data_III + data_IIT + data_IAC
+    for item in data:
+        session.delete(item)
+
+    for data in data_IIT:
+        terminal = session.query(Terminal).filter(
+            Terminal.id == data.object_).one()
+        session.delete(terminal)
+
+    for data in data_III:
+        III_instance = session.query(Instance).filter(
+            Instance.id == data.object_).one()
+        III_instance_type = session.query(RDFClass).filter(
+            RDFClass.id == III_instance.type_).one()
+        # Get the III object type_
+        delete(III_instance.id, III_instance_type.name, session=session)
+    Instance.__table__.delete().where(id=id_)
+    session.commit()
 
 
 
