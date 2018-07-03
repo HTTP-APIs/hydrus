@@ -19,8 +19,12 @@ class RDFClass(Base):
 
     __tablename__ = "classes"
 
-    id = Column(String,  default=lambda: str(uuid.uuid4()), unique=True,primary_key=True)
-#    id = Column(Integer, primary_key=True)
+    id = Column(
+        String,
+        default=lambda: str(
+            uuid.uuid4()),
+        unique=True,
+        primary_key=True)
     name = Column(String, unique=True)
 
     def __repr__(self) -> str:
@@ -35,8 +39,12 @@ class Instance(Base):
 
     __tablename__ = "instances"
 
-    id = Column(String,  default=lambda: str(uuid.uuid4()), unique=True,primary_key=True)
-#    id = Column(Integer, primary_key=True)
+    id = Column(
+        String,
+        default=lambda: str(
+            uuid.uuid4()),
+        unique=True,
+        primary_key=True)
     type_ = Column(String, ForeignKey("classes.id"), nullable=True)
 
 
@@ -45,8 +53,12 @@ class BaseProperty(Base):
 
     __tablename__ = "property"
 
-    id = Column(String,  default=lambda: str(uuid.uuid4()), unique=True,primary_key=True)
-#    id = Column(Integer, primary_key=True)
+    id = Column(
+        String,
+        default=lambda: str(
+            uuid.uuid4()),
+        unique=True,
+        primary_key=True)
     name = Column(String, unique=True, nullable=False)
     type_ = Column(String)
 
@@ -69,7 +81,8 @@ class InstanceProperty(BaseProperty):
 
     def __repr__(self) -> str:
         """Verbose object name."""
-        return "<id='%s', name='%s', type='%s'>" % (self.id, self.name, self.type_)
+        return "<id='%s', name='%s', type='%s'>" % (
+            self.id, self.name, self.type_)
 
 
 class AbstractProperty(BaseProperty):
@@ -87,7 +100,8 @@ class AbstractProperty(BaseProperty):
 
     def __repr__(self) -> str:
         """Verbose object name."""
-        return "<id='%s', name='%s', type='%s'>" % (self.id, self.name, self.type_)
+        return "<id='%s', name='%s', type='%s'>" % (
+            self.id, self.name, self.type_)
 
 
 class Terminal(Base):
@@ -100,14 +114,19 @@ class Terminal(Base):
 
     __tablename__ = "terminals"
 
-    id = Column(String,  default=lambda: str(uuid.uuid4()), unique=True,primary_key=True)
-#    id = Column(Integer, primary_key=True)
+    id = Column(
+        String,
+        default=lambda: str(
+            uuid.uuid4()),
+        unique=True,
+        primary_key=True)
     value = Column(String)
     unit = Column(String)
 
     def __repr__(self) -> str:
         """Verbose object name."""
-        return "<id='%s', value='%s', unit='%s'>" % (self.id, self.value, self.unit)
+        return "<id='%s', value='%s', unit='%s'>" % (
+            self.id, self.value, self.unit)
 
 
 class Graph(Base):
@@ -115,8 +134,12 @@ class Graph(Base):
 
     __tablename__ = "graph"
 
-    id = Column(String,  default=lambda: str(uuid.uuid4()), unique=True,primary_key=True)
-#    id = Column(Integer, primary_key=True)
+    id = Column(
+        String,
+        default=lambda: str(
+            uuid.uuid4()),
+        unique=True,
+        primary_key=True)
     type = Column(String)
 
     __mapper_args__ = {
@@ -140,7 +163,8 @@ class GraphCAC(Graph):
 
     def __repr__(self) -> str:
         """Verbose object name."""
-        return "<subject='%s', predicate='%s', object_='%s'>" % (self.subject, self.predicate, self.object_)
+        return "<subject='%s', predicate='%s', object_='%s'>" % (
+            self.subject, self.predicate, self.object_)
 
 
 class GraphIAC(Graph):
@@ -158,7 +182,8 @@ class GraphIAC(Graph):
 
     def __repr__(self) -> str:
         """Verbose object name."""
-        return "<subject='%s', predicate='%s', object_='%s'>" % (self.subject, self.predicate, self.object_)
+        return "<subject='%s', predicate='%s', object_='%s'>" % (
+            self.subject, self.predicate, self.object_)
 
 
 class GraphIII(Graph):
@@ -176,7 +201,8 @@ class GraphIII(Graph):
 
     def __repr__(self) -> str:
         """Verbose object name."""
-        return "<subject='%s', predicate='%s', object_='%s'>" % (self.subject, self.predicate, self.object_)
+        return "<subject='%s', predicate='%s', object_='%s'>" % (
+            self.subject, self.predicate, self.object_)
 
 
 class GraphIIT(Graph):
@@ -194,7 +220,8 @@ class GraphIIT(Graph):
 
     def __repr__(self) -> str:
         """Verbose object name."""
-        return "<subject='%s', predicate='%s', object_='%s'>" % (self.subject, self.predicate, self.object_)
+        return "<subject='%s', predicate='%s', object_='%s'>" % (
+            self.subject, self.predicate, self.object_)
 
 
 class User(Base):
