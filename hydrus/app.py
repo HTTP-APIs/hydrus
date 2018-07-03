@@ -329,6 +329,7 @@ class ItemCollection(Resource):
         """
         Retrieve a collection of items from the database.
         """
+        print("get",path)
         auth_response = check_authentication_response()
         if type(auth_response) == Response:
             return auth_response
@@ -369,6 +370,7 @@ class ItemCollection(Resource):
 
         :param path - Path for Item type ( Specified in APIDoc @id)
         """
+        print("put")
         auth_response = check_authentication_response()
         if type(auth_response) == Response:
             return auth_response
