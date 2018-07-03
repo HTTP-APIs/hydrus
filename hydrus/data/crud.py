@@ -235,20 +235,18 @@ def insert_multiple(objects_: List[Dict[str, Any]], session: scoped_session, id_
                 instance = Instance(id=id_list[index], type_=rdf_class.id)
                 print(instance.id)
                 instances.append(instance)
-                instance_id_list.append(instance.id)
         else:
             print("second else ")
             instance = Instance(type_=rdf_class.id)
             print(instance.id)
             instances.append(instance)
-            instance_id_list.append(instance.id)
 
 
-    session.bulk_save_objects(instances)
+    session.add_all(instances)
     session.flush()
-    print(len(instances))
-    print(instances[0].id)
-
+    for i in range(len(instances)):
+        instance_id_list.append(instances[i].id)
+    
     for index in range(len(objects_)):
         for prop_name in objects_[index]:
             if prop_name not in ["@type", "@context"]:
