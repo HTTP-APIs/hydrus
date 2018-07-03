@@ -133,7 +133,7 @@ def checkEndpoint(method: str, path: str) -> Dict[str, Union[bool, int]]:
     status_val = 404
     if path == 'vocab':
         return {'method': False, 'status': 405}
-
+    print(get_doc().entrypoint.entrypoint.supportedProperty)
     for endpoint in get_doc().entrypoint.entrypoint.supportedProperty:
         if path == "/".join(endpoint.id_.split("/")[1:]):
             status_val = 405
@@ -607,6 +607,29 @@ class Items(Resource):
 
         abort(405)
 
+    def delete(self,path,int_list):
+        auth_response = check_authentication_response()
+        if type(auth_response) == Response:
+            return auth_response
+        print("received delete ")
+        class_type = get_doc().collections[path]["collection"].class_.title
+
+        if checkClassOp(class_type, "DELETE"):
+            print("inside if ")
+            # Check if class_type supports PUT operation
+            try:
+                # Delete the Item with ID == id_
+                crud.delete_multiple(int_list, class_type, session=get_session())
+                response = {
+                    "message": "Object with ID %s successfully deleted" % (int_list.split(','))}
+                return set_response_headers(jsonify(response))
+
+            except (ClassNotFound, InstanceNotFound) as e:
+                status_code, message = e.get_HTTP()
+                print("catch ")
+                return set_response_headers(jsonify(message), status_code=status_code)
+
+        abort(405)
 
 
 class Contexts(Resource):

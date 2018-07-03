@@ -379,6 +379,7 @@ def delete(id_: int, type_: str, session: scoped_session) -> None:
     session.commit()
 
 def delete_multiple(id_: List[int], type_: str, session: scoped_session) -> None:
+    id_ = id_.split(',')
     try:
         rdf_class = session.query(RDFClass).filter(
             RDFClass.name == type_).one()
@@ -386,23 +387,30 @@ def delete_multiple(id_: List[int], type_: str, session: scoped_session) -> None
         raise ClassNotFound(type_=type_)
 
     instances = list()
+    data_III = list()
+    data_IAC = list()
+    data_IIT = list()
+
+    print("works till here ")
     for index in id_:
+        print(index)
         try:
             instance = session.query(Instance).filter(
                 Instance.id == index and type_ == rdf_class.id).one()
             instances.append(instance)
         except NoResultFound:
             raise InstanceNotFound(type_=rdf_class.name, id_=index)
-    data_IIT = session.query(triples).filter(
-        triples.GraphIIT.subject == id_).all()
-    data_IAC = session.query(triples).filter(
-        triples.GraphIAC.subject == id_).all()
-    data_III = session.query(triples).filter(
-        triples.GraphIII.subject == id_).all()
-    print(type(data_III))
-    print(type(data_IIT))
-    print(type(data_IAC))
+        data_IIT += session.query(triples).filter(
+            triples.GraphIIT.subject == index).all()
+        data_IAC += session.query(triples).filter(
+            triples.GraphIAC.subject == index).all()
+        data_III += session.query(triples).filter(
+            triples.GraphIII.subject == index).all()
+    print("works till here 2")
+
+
     data = data_III + data_IIT + data_IAC
+    print(data)
     for item in data:
         session.delete(item)
 
@@ -418,7 +426,8 @@ def delete_multiple(id_: List[int], type_: str, session: scoped_session) -> None
             RDFClass.id == III_instance.type_).one()
         # Get the III object type_
         delete(III_instance.id, III_instance_type.name, session=session)
-    Instance.__table__.delete().where(id=id_)
+    result = Instance.__table__.delete().where(id_)
+    session.execute(result)
     session.commit()
 
 
