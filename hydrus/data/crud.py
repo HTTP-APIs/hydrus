@@ -49,7 +49,15 @@ properties = with_polymorphic(BaseProperty, "*")
 
 
 def get(id_: int, type_: str, api_name: str, session: scoped_session, recursive: bool = False, path: str=None) -> Dict[str, str]:
-    """Retrieve an Instance with given ID from the database [GET]."""
+    """Retrieve an Instance with given ID from the database [GET].
+    :param id_: id of object to be fetched
+    :param type_: type of object
+    :param api_name: name of api specified while starting server
+    :param session: sqlalchemy scoped session
+    :param recursive: flag used to form value for key "@id"
+    :param path: endpoint
+    :return: response to the request
+    """
     object_template = {
         "@type": "",
     }  # type: Dict[str, Any]
@@ -117,7 +125,12 @@ def get(id_: int, type_: str, api_name: str, session: scoped_session, recursive:
 
 
 def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[int] =None) -> int:
-    """Insert an object to database [POST] and returns the inserted object."""
+    """Insert an object to database [POST] and returns the inserted object.
+    :param object_: object to be inserted
+    :param session: sqlalchemy scoped session
+    :param id_: id of the object to be inserted (optional param)
+    :return: ID of object inserted
+    """
     rdf_class = None
     instance = None
     # Check for class in the begging
@@ -339,7 +352,11 @@ def update_multiple(ids_: List[int], type_: str, objects_: List[Dict[str, str]],
 
 
 def delete(id_: int, type_: str, session: scoped_session) -> None:
-    """Delete an Instance and all its relations from DB given id [DELETE]."""
+    """Delete an Instance and all its relations from DB given id [DELETE].
+    :param id_: id of object to be deleted
+    :param type_: type of object to be deleted
+    :param session: sqlalchemy scoped session
+    """
     try:
         rdf_class = session.query(RDFClass).filter(
             RDFClass.name == type_).one()
@@ -433,7 +450,15 @@ def delete_multiple(id_: List[int], type_: str, session: scoped_session) -> None
 
 
 def update(id_: int, type_: str, object_: Dict[str, str], session: scoped_session, api_name: str,path:str=None) -> int:
-    """Update an object properties based on the given object [PUT]."""
+    """Update an object properties based on the given object [PUT].
+    :param id_: if of object to be updated
+    :param type_: type of object to be updated
+    :param object_: object that has to be inserted
+    :param session: sqlalchemy scoped session
+    :param api_name: api name specified while starting server
+    :param path: endpoint
+    :return: id of updated object
+    """
     # Keep the object as fail safe
     instance = get(id_=id_, type_=type_, session=session, api_name=api_name)
     instance.pop("@id")
@@ -452,7 +477,13 @@ def update(id_: int, type_: str, object_: Dict[str, str], session: scoped_sessio
 
 
 def get_collection(API_NAME: str, type_: str, session: scoped_session, path: str=None) -> Dict[str, Any]:
-    """Retrieve a type of collection from the database."""
+    """Retrieve a type of collection from the database.
+    :param API_NAME: api name specified while starting server
+    :param type_: type of object to be updated
+    :param session: sqlalchemy scoped session
+    :param path: endpoint
+    :return: response containing all the objects of that particular type_
+    """
     if path is not None :
         collection_template = {
             "@id": "/" + API_NAME + "/" + path + "/",
@@ -495,7 +526,13 @@ def get_collection(API_NAME: str, type_: str, session: scoped_session, path: str
 
 
 def get_single(type_: str, api_name: str, session: scoped_session, path:str=None) -> Dict[str, Any]:
-    """Get instance of classes with single objects."""
+    """Get instance of classes with single objects.
+    :param type_: type of object to be updated
+    :param api_name: api name specified while starting server
+    :param session: sqlalchemy scoped session
+    :param path: endpoint
+    :return: response containing information about a single object
+    """
     try:
         rdf_class = session.query(RDFClass).filter(
             RDFClass.name == type_).one()
@@ -517,7 +554,11 @@ def get_single(type_: str, api_name: str, session: scoped_session, path:str=None
 
 
 def insert_single(object_: Dict[str, Any], session: scoped_session) -> Any:
-    """Insert instance of classes with single objects."""
+    """Insert instance of classes with single objects.
+    :param object_: object to be inserted
+    :param session: sqlalchemy scoped session
+    :return:
+    """
     try:
         rdf_class = session.query(RDFClass).filter(
             RDFClass.name == object_["@type"]).one()
@@ -534,7 +575,13 @@ def insert_single(object_: Dict[str, Any], session: scoped_session) -> Any:
 
 
 def update_single(object_: Dict[str, Any], session: scoped_session, api_name: str,path: str=None) -> int:
-    """Update instance of classes with single objects."""
+    """Update instance of classes with single objects.
+    :param object_: new object
+    :param session: sqlalchemy scoped session
+    :param api_name: api name specified while starting server
+    :param path: endpoint
+    :return: id of the updated object
+    """
     try:
         rdf_class = session.query(RDFClass).filter(
             RDFClass.name == object_["@type"]).one()
@@ -552,7 +599,11 @@ def update_single(object_: Dict[str, Any], session: scoped_session, api_name: st
 
 
 def delete_single(type_: str, session: scoped_session) -> None:
-    """Delete instance of classes with single objects."""
+    """Delete instance of classes with single objects.
+    :param type_: type of object to be deleted
+    :param session: sqlalchemy scoped session
+    :return: None 
+    """
     try:
         rdf_class = session.query(RDFClass).filter(
             RDFClass.name == type_).one()
