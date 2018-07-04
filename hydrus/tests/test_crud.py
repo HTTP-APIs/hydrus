@@ -178,6 +178,14 @@ class TestCRUD(unittest.TestCase):
             response_code, message = e.get_HTTP()
         assert 400 == response_code
 
+    def test_insert_ids(self):
+        """Test CRUD insert when multiple ID's are given """
+        object = gen_dummy_object("dummyClass",self.doc)
+        ids = "1,2,3"
+        response_code = None
+        try:
+            
+
     @classmethod
     def tearDownClass(self):
         """Undo the setUp steps for the Class."""
