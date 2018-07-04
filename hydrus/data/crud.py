@@ -340,47 +340,6 @@ def insert_multiple(objects_: List[Dict[str,
     return instance_id_list
 
 
-def update_multiple(ids_: List[int],
-                    type_: str,
-                    objects_: List[Dict[str,
-                                        str]],
-                    session: scoped_session,
-                    api_name: str,
-                    path: str=None) -> List[int]:
-    """
-    To update multiple object using a single request
-    :param ids_: List of ids for objects to be updated
-    :param type_: type of object
-    :param objects_: list of objects
-    :param session: sqlalchemy scoped session
-    :param api_name: api name specified while starting server
-    :param path: endpoint
-    :return: Ids that have been updated
-    """
-    instances = list()
-    ids_string = ids_
-    ids_ = ids_.split(',')
-    for id_ in ids_:
-        instance = get(
-            id_=id_,
-            type_=type_,
-            session=session,
-            api_name=api_name)
-        instance.pop("@id")
-        instances.append(instance)
-        delete(id_=id_, type_=type_, session=session)
-
-    # Try inserting new object
-    try:
-        insert_multiple(objects_=objects_, id_=ids_string, session=session)
-    except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
-        # Put old object back
-        insert_multiple(object_=instances, id_=ids_string, session=session)
-        raise e
-    for id_ in ids_:
-        get(id_=id_, type_=type_, session=session, api_name=api_name, path=path)
-    return ids_
-
 
 def delete(id_: int, type_: str, session: scoped_session) -> None:
     """Delete an Instance and all its relations from DB given id [DELETE].
