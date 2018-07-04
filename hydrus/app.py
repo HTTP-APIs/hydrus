@@ -515,6 +515,12 @@ class ItemCollection(Resource):
 class Items(Resource):
 
     def put(self,path,int_list="") -> Response:
+        """
+        To insert multiple objects into the database
+        :param path: endpoint
+        :param int_list: Optional String containing ',' separated ID's
+        :return:
+        """
         auth_response = check_authentication_response()
         if type(auth_response) == Response:
             return auth_response
@@ -571,6 +577,12 @@ class Items(Resource):
         abort(endpoint_['status'])
 
     def post(self, path, int_list):
+        """
+        To update multiple  objects
+        :param path: endpoint
+        :param int_list: Optional String containing ',' separated ID's
+        :return:
+        """
         auth_response = check_authentication_response()
         if type(auth_response) == Response:
             return auth_response
@@ -604,6 +616,12 @@ class Items(Resource):
         abort(405)
 
     def delete(self,path,int_list):
+        """
+        To delete multiple objects
+        :param path: endpoints
+        :param int_list: Optional String containing ',' separated ID's
+        :return:
+        """
         auth_response = check_authentication_response()
         if type(auth_response) == Response:
             return auth_response

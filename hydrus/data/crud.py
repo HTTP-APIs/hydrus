@@ -216,7 +216,7 @@ def insert_multiple(objects_: List[Dict[str, Any]], session: scoped_session, id_
     :param objects_: List of dict's to be added to the database
     :param session: scoped session from getSession in utils
     :param id_: optional parameter containing the ids of objects that have to be inserted
-    :return:
+    :return: Ids that have been inserted
     """
     # instance list to store instances
     instance_list = list()
@@ -317,7 +317,17 @@ def insert_multiple(objects_: List[Dict[str, Any]], session: scoped_session, id_
 
 
 
-def update_multiple(ids_: List[int], type_: str, objects_: List[Dict[str, str]], session: scoped_session, api_name: str,path:str=None):
+def update_multiple(ids_: List[int], type_: str, objects_: List[Dict[str, str]], session: scoped_session, api_name: str,path:str=None) -> List[int]:
+    """
+    To update multiple object using a single request
+    :param ids_: List of ids for objects to be updated
+    :param type_: type of object
+    :param objects_: list of objects
+    :param session: sqlalchemy scoped session
+    :param api_name: api name specified while starting server
+    :param path: endpoint
+    :return: Ids that have been updated
+    """
     instances =list()
     ids_string = ids_
     ids_ = ids_.split(',')
@@ -386,6 +396,12 @@ def delete(id_: int, type_: str, session: scoped_session) -> None:
     session.commit()
 
 def delete_multiple(id_: List[int], type_: str, session: scoped_session) -> None:
+    """
+    To delete multiple rows in a single request
+    :param id_: list of ids for objects to be deleted\
+    :param type_: type of object to be deleted
+    :param session: sqlalchemy scoped session
+    """
     id_ = id_.split(',')
     try:
         rdf_class = session.query(RDFClass).filter(
