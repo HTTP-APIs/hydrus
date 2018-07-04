@@ -148,7 +148,6 @@ def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[int] 
         instance = Instance(type_=rdf_class.id)
     session.add(instance)
     session.flush()
-    print(instance.id)
 
     for prop_name in object_:
 
@@ -226,9 +225,7 @@ def insert_multiple(objects_: List[Dict[str, Any]], session: scoped_session, id_
     instances = list()
     id_list = id_.split(',')
     instance_id_list = list()
-    print("id list is")
-    print(type(id_list))
-    print(id_list)
+
     # the number of objects would be the same as number of instances
     for index in range(len(objects_)):
         try:
@@ -237,21 +234,14 @@ def insert_multiple(objects_: List[Dict[str, Any]], session: scoped_session, id_
         except NoResultFound:
             raise ClassNotFound(type_=objects_[index]["@type"])
         if index in range(len(id_list)) and id_list[index]!="":
-            print("inside if fist ")
-            print(id_list[index])
             if session.query(exists().where(Instance.id == id_list[index])).scalar():
                 # TODO handle where intance already exists , if event is fetched later anyways remove this
                 raise InstanceExists(type_=rdf_class.name, id_=id_list[index])
             else:
-                print("inside else")
-                print(id_list[index])
                 instance = Instance(id=id_list[index], type_=rdf_class.id)
-                print(instance.id)
                 instances.append(instance)
         else:
-            print("second else ")
             instance = Instance(type_=rdf_class.id)
-            print(instance.id)
             instances.append(instance)
 
 
@@ -408,9 +398,7 @@ def delete_multiple(id_: List[int], type_: str, session: scoped_session) -> None
     data_IAC = list()
     data_IIT = list()
 
-    print("works till here ")
     for index in id_:
-        print(index)
         try:
             instance = session.query(Instance).filter(
                 Instance.id == index and type_ == rdf_class.id).one()
@@ -423,11 +411,9 @@ def delete_multiple(id_: List[int], type_: str, session: scoped_session) -> None
             triples.GraphIAC.subject == index).all()
         data_III += session.query(triples).filter(
             triples.GraphIII.subject == index).all()
-    print("works till here 2")
 
 
     data = data_III + data_IIT + data_IAC
-    print(data)
     for item in data:
         session.delete(item)
 
