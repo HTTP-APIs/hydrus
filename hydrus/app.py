@@ -61,8 +61,6 @@ def validObjectList(objects_: List[Dict[str, Any]]) -> bool:
     """
     for object_ in objects_:
         if "@type" not in object_:
-            print("FALSE HERE ")
-            print(object_)
             return False
     return True
 
@@ -133,7 +131,7 @@ def checkEndpoint(method: str, path: str) -> Dict[str, Union[bool, int]]:
     status_val = 404
     if path == 'vocab':
         return {'method': False, 'status': 405}
-    print(get_doc().entrypoint.entrypoint.supportedProperty)
+
     for endpoint in get_doc().entrypoint.entrypoint.supportedProperty:
         if path == "/".join(endpoint.id_.split("/")[1:]):
             status_val = 405
@@ -312,7 +310,6 @@ class Item(Resource):
                         # Add the object with given ID
                         object_id = crud.insert(
                             object_=object_, id_=id_, session=get_session())
-                        print("the object is is "+object_id)
                         headers_ = [{"Location": get_hydrus_server_url(
                         ) + get_api_name() + "/" + path + "/" + str(object_id)}]
                         response = {
@@ -574,7 +571,6 @@ class Items(Resource):
         abort(endpoint_['status'])
 
     def post(self, path, int_list):
-        print("post came")
         auth_response = check_authentication_response()
         if type(auth_response) == Response:
             return auth_response
@@ -611,11 +607,9 @@ class Items(Resource):
         auth_response = check_authentication_response()
         if type(auth_response) == Response:
             return auth_response
-        print("received delete ")
         class_type = get_doc().collections[path]["collection"].class_.title
 
         if checkClassOp(class_type, "DELETE"):
-            print("inside if ")
             # Check if class_type supports PUT operation
             try:
                 # Delete the Item with ID == id_
@@ -626,7 +620,6 @@ class Items(Resource):
 
             except (ClassNotFound, InstanceNotFound) as e:
                 status_code, message = e.get_HTTP()
-                print("catch ")
                 return set_response_headers(jsonify(message), status_code=status_code)
 
         abort(405)
