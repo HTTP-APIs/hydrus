@@ -681,7 +681,8 @@ def app_factory(API_NAME: str="api") -> Flask:
                      "/<string:path>/<int:id_>", endpoint="item")
     api.add_resource(Items,"/" + API_NAME +
                      "/<string:path>/add/<int_list>","/" + API_NAME +
-                     "/<string:path>/add")
+                     "/<string:path>/add","/" + API_NAME +
+                     "/<string:path>/delete/<int_list>")
 
 
     return app
