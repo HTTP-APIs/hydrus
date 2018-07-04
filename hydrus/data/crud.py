@@ -253,7 +253,10 @@ def insert_multiple(objects_: List[Dict[str,
             if session.query(
                 exists().where(
                     Instance.id == id_list[index])).scalar():
-                # TODO handle where intance already exists , if event is
+                print(session.query(
+                exists().where(
+                    Instance.id == id_list[index])))
+                # TODO handle where intance already exists , if instance is
                 # fetched later anyways remove this
                 raise InstanceExists(type_=rdf_class.name, id_=id_list[index])
             else:

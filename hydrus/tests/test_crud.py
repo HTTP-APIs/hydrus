@@ -182,7 +182,7 @@ class TestCRUD(unittest.TestCase):
         """Test CRUD insert when multiple ID's are given """
         objects = list()
         ids = "1,2,3"
-        for index in range(ids.split(',')) :
+        for index in range(len(ids.split(','))) :
             object = gen_dummy_object("dummyClass",self.doc)
             objects.append(object)
         response_code = None
