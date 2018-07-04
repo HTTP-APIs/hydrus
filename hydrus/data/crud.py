@@ -426,8 +426,8 @@ def delete_multiple(id_: List[int], type_: str, session: scoped_session) -> None
             RDFClass.id == III_instance.type_).one()
         # Get the III object type_
         delete(III_instance.id, III_instance_type.name, session=session)
-    result = Instance.__table__.delete().where(id_)
-    session.execute(result)
+    for instance in instances:
+        session.delete(instance)
     session.commit()
 
 
