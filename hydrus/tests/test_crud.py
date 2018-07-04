@@ -180,11 +180,18 @@ class TestCRUD(unittest.TestCase):
 
     def test_insert_ids(self):
         """Test CRUD insert when multiple ID's are given """
-        object = gen_dummy_object("dummyClass",self.doc)
+        objects = list()
         ids = "1,2,3"
+        for index in range(ids.split(',')) :
+            object = gen_dummy_object("dummyClass",self.doc)
+            objects.append(object)
         response_code = None
         try:
-            
+            insert_response = crud.insert_multiple(objects_=objects,
+                                    session=self.session,id_=ids)
+        except Exception as e:
+            response_code,message = e.getHTTP()
+        assert 400 == response_code
 
     @classmethod
     def tearDownClass(self):
