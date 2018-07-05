@@ -63,7 +63,7 @@ def check_if_collection(schema_block: Dict[str, Any]) -> str:
     :param schema_block: child of response object where schema is defined for return variables
     :return: collection (string)
     """
-    print(schema_block)
+
     try:
         type = schema_block["type"]
         print("type is " + type)
@@ -95,7 +95,7 @@ def get_class_details(class_location: List[str],
     if class_name not in definitionSet:
 
         desc = get_data_at_location(class_location, doc)
-        classDefinition = HydraClass
+        classDefinition = HydraClass()
         try:
             classDefinition = HydraClass(
                 class_name, class_name, desc["description"], endpoint=True)
@@ -177,7 +177,7 @@ def check_for_ref(doc: Dict["str",
                 doc,
                 classAndClassDefinition,
                 definitionSet)
-            return class_location[2], "false"
+            return class_location[2], False
         except KeyError:
             pass
 
@@ -257,33 +257,32 @@ def get_paths(doc: Dict["str",
     """
     paths = doc["paths"]
     for path in paths:
-        if len(path.split('/')) == 2:
-            for method in paths[path]:
-                print("inside method " + method + "for path " + path)
-                class_name, collection = check_for_ref(
-                    doc, paths[path][method], classAndClassDefinition, definitionSet)
-                print(
-                    "the class name we got was " +
-                    class_name +
-                    "and the collection was " +
-                    collection)
+        for method in paths[path]:
+            print("inside method " + method + "for path " + path)
+            class_name, collection = check_for_ref(
+                doc, paths[path][method], classAndClassDefinition, definitionSet)
+            print(
+                "the class name we got was " +
+                class_name +
+                "and the collection was " +
+                collection)
 
-                if collection != "none" and class_name != "null":
-                    get_ops(
-                        paths[path],
-                        method,
-                        class_name,
-                        classAndClassDefinition)
-                    possiblePath = path.split('/')[1]
-                    possiblePath = possiblePath.replace(
-                        possiblePath[0], possiblePath[0].upper())
-                    print("the path is " + possiblePath)
+            if collection != "none" and class_name != "null":
+                get_ops(
+                    paths[path],
+                    method,
+                    class_name,
+                    classAndClassDefinition)
+                possiblePath = path.split('/')[1]
+                possiblePath = possiblePath.replace(
+                    possiblePath[0], possiblePath[0].upper())
+                print("the path is " + possiblePath)
 
-                    if collection is "true":
-                        api_doc.add_supported_class(
-                            classAndClassDefinition[class_name], collection=True)
-                    else:
-                        api_doc.add_supported_class(classAndClassDefinition[class_name], collection=False)
+                if collection is "true":
+                    api_doc.add_supported_class(
+                        classAndClassDefinition[class_name], collection=True)
+                else:
+                    api_doc.add_supported_class(classAndClassDefinition[class_name], collection=False)
 
     for name in definitionSet:
         api_doc.add_supported_class(
@@ -327,7 +326,7 @@ def parse(doc: Dict[str, Any]) -> str:
 
 
 if __name__ == "__main__":
-    with open("../samples/petstore_openapi.yaml", 'r') as stream:
+    with open("../samples/petstore_mini.yaml", 'r') as stream:
         try:
             doc = yaml.load(stream)
         except yaml.YAMLError as exc:
