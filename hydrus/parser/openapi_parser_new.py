@@ -62,12 +62,13 @@ def check_collection(class_name, global_,schema_obj,method):
         collection=True
 
     object_ = generate_empty_object()
-    print(global_["doc"]["paths"])
     # checks if the method is supported by parser at the moment or not
     if check_array_param(global_["doc"]["paths"][method]) and valid_endpoint(method)!="False" :
+        print("inside if ")
         try :
             # if the class has already been parsed we will update the collection var
-            name = global_[class_name]
+            print("here")
+            print(global_[class_name])
             if not global_[class_name]["collection"]:
                 global_[class_name]["collection"]=True
         except KeyError:
@@ -75,17 +76,12 @@ def check_collection(class_name, global_,schema_obj,method):
             object_["class_name"] = class_name
             object_["collection"]=collection
             global_[class_name]= object_
-
+    print(object_)
     return object_
 
 
 def check_array_param(paths_):
-    print("from CAP")
-    print(paths_)
     for method in paths_:
-        print(method)
-        print(paths_[method])
-
         for param in paths_[method]["parameters"]:
             try:
                 if param["type"] == "array" and method == "get":
@@ -163,13 +159,14 @@ def get_class_details(class_location: List[str],global_) -> None:
                 flag = True
             # TODO copy stuff from semantic ref branch regarding prop exists in definitionset or not
             global_[class_name]["prop_definition"].append(HydraClassProp("vocab:" + prop,
-                                                              prop,
-                                                              required=flag,
-                                                              read=True,
-                                                              write=True))
+                                                                         prop,
+                                                                         required=flag,
+                                                                         read=True,
+                                                                         write=True))
 
-    global_[class_name]["class_definition"] = classDefinition
-    global_["class_names"].add(class_name)
+        global_[class_name]["class_definition"] = classDefinition
+        global_["class_names"].add(class_name)
+    print("hear hear")
 
 
 
@@ -228,6 +225,7 @@ def get_paths(global_) -> None:
             class_name = check_for_ref(global_,path,paths[path][method])
             if class_name != "":
                 pass
+    print(global_["class_names"])
 
 
 
@@ -270,7 +268,7 @@ def parse(doc: Dict[str, Any]) -> str:
 
 
 if __name__ == "__main__":
-    with open("../samples/petstore_openapi.yaml", 'r') as stream:
+    with open("../samples/petstore_mini.yaml", 'r') as stream:
         try:
             doc = yaml.load(stream)
         except yaml.YAMLError as exc:
