@@ -33,7 +33,7 @@ def generateEntrypoint(api_doc: HydraDoc) -> None:
 def generate_empty_object():
     object = {
         "class_name":"",
-        "class_definition":HydraClass(),
+        "class_definition":HydraClass,
         "prop_definition":list(),
         "op_definition":list(),
         "collection": False
@@ -62,6 +62,7 @@ def check_collection(class_name, global_,schema_obj,method):
         collection=True
 
     object_ = generate_empty_object()
+    print(global_["doc"]["paths"])
     # checks if the method is supported by parser at the moment or not
     if check_array_param(global_["doc"]["paths"][method]) and valid_endpoint(method)!="False" :
         try :
@@ -79,9 +80,18 @@ def check_collection(class_name, global_,schema_obj,method):
 
 
 def check_array_param(paths_):
+    print("from CAP")
+    print(paths_)
     for method in paths_:
-        if paths_[method]["parameters"]["type"] == "array" and method == "get":
-            return False
+        print(method)
+        print(paths_[method])
+
+        for param in paths_[method]["parameters"]:
+            try:
+                if param["type"] == "array" and method == "get":
+                    return False
+            except KeyError:
+                pass
     return True
 
 def valid_endpoint(path):
@@ -158,17 +168,16 @@ def get_class_details(class_location: List[str],global_) -> None:
                                                               read=True,
                                                               write=True))
 
-        global_[class_name]["class_definition"] = classDefinition
-        global_["class_names"].add(class_name)
+    global_[class_name]["class_definition"] = classDefinition
+    global_["class_names"].add(class_name)
 
 
 
 
 
-def check_for_ref(global_, method):
+def check_for_ref(global_, path,block):
     # will check if there is an external ref , go to that location , add the class in globals , will also verify
     # if we can parse this method or not , if all good will return class name
-    block = global_["doc"]["paths"][method]
     for obj in block["responses"]:
         try:
             try:
@@ -178,7 +187,7 @@ def check_for_ref(global_, method):
                 class_location = block["responses"][obj]["schema"]["items"]["$ref"].split(
                     '/')
             object_=check_collection(class_name=class_location[2],global_=global_,schema_obj=block["responses"][obj]["schema"],
-                             method=method)
+                             method=path)
 
             if object_["class_name"]=="":
                 # cannot parse because method not supported
@@ -194,23 +203,31 @@ def check_for_ref(global_, method):
     # check_if_collection here as well c
     for obj in block["parameters"]:
         try:
-            class_location = obj["schema"]["$ref"].split('/')
-            print(class_location)
+            try:
+                class_location = obj["schema"]["$ref"].split('/')
+            except KeyError:
+                class_location = obj["schema"]["items"]["$ref"].split('/')
+            object_ = check_collection(class_location[2],global_,obj["schema"],path)
+            if object_["class_name"]=="":
+                # cannot parse because method not supported
+                return object_["class_name"]
             get_class_details(
                 class_location,
                 global_)
             return class_location[2]
         except KeyError:
+            print("external ref not found in params")
             pass
     # cannot parse because no external ref
     return ""
 
 def get_paths(global_) -> None:
-    doc = global_["doc"]
-    for method in doc["paths"]:
-        class_name = check_for_ref(global_,method)
-        if class_name != "":
-            pass
+    paths = global_["doc"]["paths"]
+    for path in paths:
+        for method in paths[path]:
+            class_name = check_for_ref(global_,path,paths[path][method])
+            if class_name != "":
+                pass
 
 
 
