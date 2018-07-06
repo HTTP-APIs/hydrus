@@ -21,6 +21,7 @@ def try_catch_replacement(block: Any, get_this: str, default: Any) -> str:
     except KeyError:
         return default
 
+
 def generateEntrypoint(api_doc: HydraDoc) -> None:
     """
     Generates Entrypoint , Base Collection and Base Resource for the documentation
@@ -30,20 +31,20 @@ def generateEntrypoint(api_doc: HydraDoc) -> None:
     api_doc.add_baseResource()
     api_doc.gen_EntryPoint()
 
+
 def generate_empty_object():
     object = {
-        "class_name":"",
-        "class_definition":HydraClass,
-        "prop_definition":list(),
-        "op_definition":list(),
+        "class_name": "",
+        "class_definition": HydraClass,
+        "prop_definition": list(),
+        "op_definition": list(),
         "collection": False,
-        "path":""
+        "path": ""
     }
     return object
 
 
-
-def check_collection(class_name, global_,schema_obj,method):
+def check_collection(class_name, global_, schema_obj, method):
     collection = bool
     # get the object type from schema block
     try:
@@ -57,23 +58,24 @@ def check_collection(class_name, global_,schema_obj,method):
     except KeyError:
         collection = False
     # checks if the method is something like 'pet/{petid}'
-    if valid_endpoint(method)=="collection" and collection==False:
-        collection=True
+    if valid_endpoint(method) == "collection" and collection == False:
+        collection = True
     object_ = generate_empty_object()
     # checks if the method is supported by parser at the moment or not
     # TODO see if it is required
     flag = check_array_param(global_["doc"]["paths"][method])
 
-    if valid_endpoint(method)!="False" :
-        try :
-            # if the class has already been parsed we will update the collection var
+    if valid_endpoint(method) != "False":
+        try:
+            # if the class has already been parsed we will update the
+            # collection var
             if not global_[class_name]["collection"]:
-                global_[class_name]["collection"]=True
+                global_[class_name]["collection"] = True
         except KeyError:
             # if the class has not been parsed we will insert the object
             object_["class_name"] = class_name
-            object_["collection"]=collection
-            global_[class_name]= object_
+            object_["collection"] = collection
+            global_[class_name] = object_
     return object_
 
 
@@ -87,6 +89,7 @@ def check_array_param(paths_):
                 pass
     return True
 
+
 def valid_endpoint(path):
     # "collection" or true means valid
     path_ = path.split('/')
@@ -98,6 +101,7 @@ def valid_endpoint(path):
                 return "Collection"
     return "True"
 
+
 def get_class_name(class_location: List[str]) -> str:
     """
     To get class name from the class location reference given
@@ -105,6 +109,7 @@ def get_class_name(class_location: List[str]) -> str:
     :return: name of class
     """
     return class_location[len(class_location) - 1]
+
 
 def get_data_at_location(
         class_location: List[str], doc: Dict[str, Any]) -> Dict[str, Any]:
@@ -134,8 +139,7 @@ def sanitise_path(path):
     return '/'.join(new_path)
 
 
-
-def get_class_details(global_,data,class_name,path="") -> None:
+def get_class_details(global_, data, class_name, path="") -> None:
     """
     fetches details of class and adds the class to the dict along with the classDefinition until this point
     :param classAndClassDefinition:  dict containing class and respective defined class definition
@@ -155,10 +159,14 @@ def get_class_details(global_,data,class_name,path="") -> None:
         desc = data
         try:
             classDefinition = HydraClass(
-                class_name, class_name, desc["description"], endpoint=True,path=path)
+                class_name,
+                class_name,
+                desc["description"],
+                endpoint=True,
+                path=path)
         except KeyError:
             classDefinition = HydraClass(
-                class_name, class_name, class_name, endpoint=True,path=path)
+                class_name, class_name, class_name, endpoint=True, path=path)
 
         properties = data["properties"]
         try:
@@ -171,18 +179,16 @@ def get_class_details(global_,data,class_name,path="") -> None:
             flag = False
             if prop in required and len(required) > 0:
                 flag = True
-            # TODO copy stuff from semantic ref branch regarding prop exists in definitionset or not
-            global_[class_name]["prop_definition"].append(HydraClassProp("vocab:" + prop,
-                                                                         prop,
-                                                                         required=flag,
-                                                                         read=True,
-                                                                         write=True))
+            # TODO copy stuff from semantic ref branch regarding prop exists in
+            # definitionset or not
+            global_[class_name]["prop_definition"].append(HydraClassProp(
+                "vocab:" + prop, prop, required=flag, read=True, write=True))
         global_[class_name]["path"] = path
         global_[class_name]["class_definition"] = classDefinition
         global_["class_names"].add(class_name)
 
 
-def check_for_ref(global_, path,block):
+def check_for_ref(global_, path, block):
     # will check if there is an external ref , go to that location , add the class in globals , will also verify
     # if we can parse this method or not , if all good will return class name
     for obj in block["responses"]:
@@ -193,14 +199,22 @@ def check_for_ref(global_, path,block):
             except KeyError:
                 class_location = block["responses"][obj]["schema"]["items"]["$ref"].split(
                     '/')
-            object_=check_collection(class_name=class_location[2],global_=global_,schema_obj=block["responses"][obj]["schema"],
-                             method=path)
+            object_ = check_collection(
+                class_name=class_location[2],
+                global_=global_,
+                schema_obj=block["responses"][obj]["schema"],
+                method=path)
 
-            if object_["class_name"]=="":
+            if object_["class_name"] == "":
                 # cannot parse because method not supported
                 return object_["class_name"]
             get_class_details(
-                global_,get_data_at_location(class_location,global_["doc"]),get_class_name(class_location),path=path)
+                global_,
+                get_data_at_location(
+                    class_location,
+                    global_["doc"]),
+                get_class_name(class_location),
+                path=path)
             return class_location[2]
         except KeyError:
             pass
@@ -213,12 +227,18 @@ def check_for_ref(global_, path,block):
                 class_location = obj["schema"]["$ref"].split('/')
             except KeyError:
                 class_location = obj["schema"]["items"]["$ref"].split('/')
-            object_ = check_collection(class_location[2],global_,obj["schema"],path)
-            if object_["class_name"]=="":
+            object_ = check_collection(
+                class_location[2], global_, obj["schema"], path)
+            if object_["class_name"] == "":
                 # cannot parse because method not supported
                 return object_["class_name"]
             get_class_details(
-                global_, get_data_at_location(class_location, global_["doc"]), get_class_name(class_location),path=path)
+                global_,
+                get_data_at_location(
+                    class_location,
+                    global_["doc"]),
+                get_class_name(class_location),
+                path=path)
             return class_location[2]
         except KeyError:
             pass
@@ -234,7 +254,7 @@ def allow_parameter(parameter):
     print("here")
     print(parameter)
     if parameter["in"] not in params_location:
-        print("yo"+parameter["in"])
+        print("yo" + parameter["in"])
         return False
     return True
 
@@ -251,56 +271,68 @@ def type_ref_mapping(type):
     dataType_ref_map["date"] = "https://schema.org/Date"
     return dataType_ref_map[type]
 
+
 def get_parameters(global_, path, method, class_name):
     param = str
     for parameter in global_["doc"]["paths"][path][method]["parameters"]:
         if allow_parameter(parameter):
             try:
                 # check if class has been parsed
-                if parameter["schema"]["$ref"].split('/')[2] in global_["class_names"]:
+                if parameter["schema"]["$ref"].split(
+                        '/')[2] in global_["class_names"]:
                     param = "vocab:" + \
-                             parameter["schema"]["$ref"].split('/')[2]
+                        parameter["schema"]["$ref"].split('/')[2]
 
                 else:
                     # if not go to that location and parse and add
-                    get_class_details(global_,get_data_at_location(parameter["schema"]["$ref"]),
-                                      parameter["schema"]["$ref"].split('/')[2],path=path)
+                    get_class_details(
+                        global_,
+                        get_data_at_location(
+                            parameter["schema"]["$ref"]),
+                        parameter["schema"]["$ref"].split('/')[2],
+                        path=path)
                     param = "vocab:" + \
                             parameter["schema"]["$ref"].split('/')[2]
             except KeyError:
                 type = parameter["type"]
-                if type=="array":
-                    # TODO change this after we find a way to represent array in parameter using semantics
+                if type == "array":
+                    # TODO change this after we find a way to represent array
+                    # in parameter using semantics
                     items = parameter["schema"]["items"]
                     try:
-                        if items["$ref"].split('/')[2] in global_["class_names"]:
-                            param = "vocab"+items["$ref"].split('/')[2]
+                        if items["$ref"].split(
+                                '/')[2] in global_["class_names"]:
+                            param = "vocab" + items["$ref"].split('/')[2]
                         else:
-                            get_class_details(global_, get_data_at_location(items["$ref"]),
-                                      items["$ref"].split('/')[2],path=path)
-                            param = "vocab"+items["$ref"].split('/')[2]
+                            get_class_details(
+                                global_, get_data_at_location(
+                                    items["$ref"]), items["$ref"].split('/')[2], path=path)
+                            param = "vocab" + items["$ref"].split('/')[2]
                     except KeyError:
                         param = type_ref_mapping(items["type"])
-                elif type=="object":
+                elif type == "object":
                     print("parameter type object !!")
                     print("converted to string")
                     param = "string"
                 else:
                     param = type_ref_mapping(type)
 
-        else :
+        else:
             print("cannot process the parameter")
             print(parameter)
             # do further tasks
     return param
 
 
-def get_ops(global_,path,method,class_name):
+def get_ops(global_, path, method, class_name):
     op_method = method
     op_expects = None
-    op_name = try_catch_replacement(global_["doc"]["paths"][path][method], "summary", class_name)
+    op_name = try_catch_replacement(
+        global_["doc"]["paths"][path][method],
+        "summary",
+        class_name)
     op_status = list()
-    op_expects = get_parameters(global_,path,method,class_name)
+    op_expects = get_parameters(global_, path, method, class_name)
     try:
         responses = global_["doc"]["paths"][path][method]["responses"]
         op_returns = None
@@ -333,18 +365,14 @@ def get_ops(global_,path,method,class_name):
         op_name, op_method.upper(), op_expects, op_returns, op_status))
 
 
-
 def get_paths(global_) -> None:
     paths = global_["doc"]["paths"]
     for path in paths:
         for method in paths[path]:
-            class_name = check_for_ref(global_,path,paths[path][method])
+            class_name = check_for_ref(global_, path, paths[path][method])
             if class_name != "":
-            # do further processing 
-                get_ops(global_,path,method,class_name)
-
-
-
+                # do further processing
+                get_ops(global_, path, method, class_name)
 
 
 def parse(doc: Dict[str, Any]) -> str:
@@ -356,8 +384,8 @@ def parse(doc: Dict[str, Any]) -> str:
     classAndClassDefinition = dict()  # type: Dict[str,HydraClass]
     definitionSet = set()  # type: Set[str]
     info = try_catch_replacement(doc, "info", "")
-    global_= dict()
-    global_["class_names"]=definitionSet
+    global_ = dict()
+    global_["class_names"] = definitionSet
     global_["doc"] = doc
 
     if info != "":
@@ -378,7 +406,10 @@ def parse(doc: Dict[str, Any]) -> str:
             global_[name]["class_definition"].add_supported_prop(prop)
         for op in global_[name]["op_definition"]:
             global_[name]["class_definition"].add_supported_op(op)
-        api_doc.add_supported_class(global_[name]["class_definition"],global_[name]["collection"],collection_path=global_[name]["path"])
+        api_doc.add_supported_class(
+            global_[name]["class_definition"],
+            global_[name]["collection"],
+            collection_path=global_[name]["path"])
 
     generateEntrypoint(api_doc)
     hydra_doc = api_doc.generate()
