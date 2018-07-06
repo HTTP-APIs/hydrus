@@ -193,7 +193,23 @@ class TestCRUD(unittest.TestCase):
             response_code,message = e.get_HTTP()
         assert 400 == response_code
 
-    
+    def test_delete_ids(self):
+        objects=list()
+        ids ="1,2,3"
+        for index in range(len(ids.split(','))):
+            object = gen_dummy_object("dummyClass", self.doc)
+            objects.append(object)
+        insert_response = crud.insert_multiple(objects_=objects,
+                                               session=self.session, id_=ids)
+        response_code = None
+        try:
+            delete_response = crud.delete_multiple(
+                id_="4,7,8", type_=objects[0]["@type"], session=self.session)
+        except Exception as e:
+            response_code, message = e.get_HTTP()
+        assert 404 == response_code
+        assert type(insert_response) is int
+        assert insert_response == ids.split(',')
 
     @classmethod
     def tearDownClass(self):
