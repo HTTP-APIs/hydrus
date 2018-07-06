@@ -60,7 +60,7 @@ def check_collection(class_name, global_,schema_obj,method):
         collection=True
     object_ = generate_empty_object()
     # checks if the method is supported by parser at the moment or not
-    # TODO see if it is required 
+    # TODO see if it is required
     flag = check_array_param(global_["doc"]["paths"][method])
 
     if valid_endpoint(method)!="False" :
