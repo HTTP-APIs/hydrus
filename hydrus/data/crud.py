@@ -37,9 +37,13 @@ from sqlalchemy.orm.exc import NoResultFound
 from hydrus.data.db_models import (Graph, BaseProperty, RDFClass, Instance,
                                    Terminal, GraphIAC, GraphIIT, GraphIII)
 
-from hydrus.data.exceptions import (ClassNotFound, InstanceExists, PropertyNotFound,
-                                    NotInstanceProperty, NotAbstractProperty,
-                                    InstanceNotFound)
+from hydrus.data.exceptions import (
+    ClassNotFound,
+    InstanceExists,
+    PropertyNotFound,
+    NotInstanceProperty,
+    NotAbstractProperty,
+    InstanceNotFound)
 # from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.scoping import scoped_session
 from typing import Dict, Optional, Any, List
@@ -48,7 +52,8 @@ triples = with_polymorphic(Graph, '*')
 properties = with_polymorphic(BaseProperty, "*")
 
 
-def get(id_: int, type_: str, api_name: str, session: scoped_session, recursive: bool = False, path: str=None) -> Dict[str, str]:
+def get(id_: int, type_: str, api_name: str, session: scoped_session,
+        recursive: bool = False, path: str=None) -> Dict[str, str]:
     """Retrieve an Instance with given ID from the database [GET].
     :param id_: id of object to be fetched
     :param type_: type of object
@@ -109,7 +114,7 @@ def get(id_: int, type_: str, api_name: str, session: scoped_session, recursive:
             Terminal.id == data.object_).one()
         try:
             object_template[prop_name] = terminal.value
-        except:
+        except BaseException:
             # If terminal is none
             object_template[prop_name] = ""
     object_template["@type"] = rdf_class.name
@@ -124,7 +129,8 @@ def get(id_: int, type_: str, api_name: str, session: scoped_session, recursive:
     return object_template
 
 
-def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[int] =None) -> int:
+def insert(object_: Dict[str, Any], session: scoped_session,
+           id_: Optional[int] =None) -> int:
     """Insert an object to database [POST] and returns the inserted object.
     :param object_: object to be inserted
     :param session: sqlalchemy scoped session
@@ -161,7 +167,7 @@ def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[int] 
                 raise PropertyNotFound(type_=prop_name)
 
             # For insertion in III
-            if type(object_[prop_name]) == dict:
+            if isinstance(object_[prop_name], dict):
                 instance_id = insert(object_[prop_name], session=session)
                 instance_object = session.query(Instance).filter(
                     Instance.id == instance_id).one()
@@ -169,7 +175,9 @@ def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[int] 
                     property_.type_ = "INSTANCE"
                     session.add(property_)
                     triple = GraphIII(
-                        subject=instance.id, predicate=property_.id, object_=instance_object.id)
+                        subject=instance.id,
+                        predicate=property_.id,
+                        object_=instance_object.id)
                     session.add(triple)
                 else:
                     session.close()
@@ -182,8 +190,10 @@ def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[int] 
                     session.add(property_)
                     class_ = session.query(RDFClass).filter(
                         RDFClass.name == object_[prop_name]).one()
-                    triple = GraphIAC(subject=instance.id,
-                                      predicate=property_.id, object_=class_.id)
+                    triple = GraphIAC(
+                        subject=instance.id,
+                        predicate=property_.id,
+                        object_=class_.id)
                     session.add(triple)
                 else:
                     session.close()
@@ -199,8 +209,11 @@ def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[int] 
                     property_.type_ = "INSTANCE"
                     session.add(property_)
                     triple = GraphIIT(
-                        subject=instance.id, predicate=property_.id, object_=terminal.id)
-                    # Add things directly to session, if anything fails whole transaction is aborted
+                        subject=instance.id,
+                        predicate=property_.id,
+                        object_=terminal.id)
+                    # Add things directly to session, if anything fails whole
+                    # transaction is aborted
                     session.add(triple)
                 else:
                     session.close()
@@ -209,6 +222,125 @@ def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[int] 
     session.commit()
     return instance.id
 
+
+def insert_multiple(objects_: List[Dict[str,
+                                        Any]],
+                    session: scoped_session,
+                    id_: Optional[str] = "") -> List[int]:
+    """
+    Adds a list of object with given ids to the database
+    :param objects_: List of dict's to be added to the database
+    :param session: scoped session from getSession in utils
+    :param id_: optional parameter containing the ids of objects that have to be inserted
+    :return: Ids that have been inserted
+    """
+    # instance list to store instances
+    instance_list = list()
+    triples_list = list()
+    properties_list = list()
+    instances = list()
+    id_list = id_.split(',')
+    instance_id_list = list()
+
+    # the number of objects would be the same as number of instances
+    for index in range(len(objects_)):
+        try:
+            rdf_class = session.query(RDFClass).filter(
+                RDFClass.name == objects_[index]["@type"]).one()
+        except NoResultFound:
+            raise ClassNotFound(type_=objects_[index]["@type"])
+        if index in range(len(id_list)) and id_list[index] != "":
+            if session.query(
+                exists().where(
+                    Instance.id == id_list[index])).scalar():
+                print(session.query(
+                exists().where(
+                    Instance.id == id_list[index])))
+                # TODO handle where intance already exists , if instance is
+                # fetched later anyways remove this
+                raise InstanceExists(type_=rdf_class.name, id_=id_list[index])
+            else:
+                instance = Instance(id=id_list[index], type_=rdf_class.id)
+                instances.append(instance)
+        else:
+            instance = Instance(type_=rdf_class.id)
+            instances.append(instance)
+
+    session.add_all(instances)
+    session.flush()
+    for i in range(len(instances)):
+        instance_id_list.append(instances[i].id)
+
+    for index in range(len(objects_)):
+        for prop_name in objects_[index]:
+            if prop_name not in ["@type", "@context"]:
+                try:
+                    property_ = session.query(properties).filter(
+                        properties.name == prop_name).one()
+                except NoResultFound:
+                    # Adds new Property
+                    session.close()
+                    raise PropertyNotFound(type_=prop_name)
+
+                # For insertion in III
+                if isinstance(objects_[index][prop_name], dict):
+                    instance_id = insert(
+                        objects_[index][prop_name], session=session)
+                    instance_object = session.query(Instance).filter(
+                        Instance.id == instance_id).one()
+
+                    if property_.type_ == "PROPERTY" or property_.type_ == "INSTANCE":
+                        property_.type_ = "INSTANCE"
+                        properties_list.append(property_)
+                        triple = GraphIII(
+                            subject=instances[index].id,
+                            predicate=property_.id,
+                            object_=instance_object.id)
+                        triples_list.append(triple)
+                    else:
+                        session.close()
+                        raise NotInstanceProperty(type_=prop_name)
+
+                # For insertion in IAC
+                elif session.query(exists().where(RDFClass.name == str(objects_[index][prop_name]))).scalar():
+                    if property_.type_ == "PROPERTY" or property_.type_ == "ABSTRACT":
+                        property_.type_ = "ABSTRACT"
+                        properties_list.append(property_)
+                        class_ = session.query(RDFClass).filter(
+                            RDFClass.name == objects_[index][prop_name]).one()
+                        triple = GraphIAC(
+                            subject=instances[index].id,
+                            predicate=property_.id,
+                            object_=class_.id)
+                        triples_list.append(triple)
+
+                    else:
+                        session.close()
+                        raise NotAbstractProperty(type_=prop_name)
+
+                # For insertion in IIT
+                else:
+                    terminal = Terminal(value=objects_[index][prop_name])
+                    session.add(terminal)
+                    session.flush()     # Assigns ID without committing
+
+                    if property_.type_ == "PROPERTY" or property_.type_ == "INSTANCE":
+                        property_.type_ = "INSTANCE"
+                        properties_list.append(property_)
+                        triple = GraphIIT(
+                            subject=instances[index].id,
+                            predicate=property_.id,
+                            object_=terminal.id)
+                        # Add things directly to session, if anything fails
+                        # whole transaction is aborted
+                        triples_list.append(triple)
+                    else:
+                        session.close()
+                        raise NotInstanceProperty(type_=prop_name)
+    session.bulk_save_objects(properties_list)
+    session.bulk_save_objects(triples_list)
+    session.commit()
+    return instance_id_list
 
 
 
@@ -257,7 +389,70 @@ def delete(id_: int, type_: str, session: scoped_session) -> None:
     session.commit()
 
 
-def update(id_: int, type_: str, object_: Dict[str, str], session: scoped_session, api_name: str,path:str=None) -> int:
+def delete_multiple(
+        id_: List[int],
+        type_: str,
+        session: scoped_session) -> None:
+    """
+    To delete multiple rows in a single request
+    :param id_: list of ids for objects to be deleted\
+    :param type_: type of object to be deleted
+    :param session: sqlalchemy scoped session
+    """
+    id_ = id_.split(',')
+    try:
+        rdf_class = session.query(RDFClass).filter(
+            RDFClass.name == type_).one()
+    except NoResultFound:
+        raise ClassNotFound(type_=type_)
+
+    instances = list()
+    data_III = list()
+    data_IAC = list()
+    data_IIT = list()
+
+    for index in id_:
+        try:
+            instance = session.query(Instance).filter(
+                Instance.id == index and type_ == rdf_class.id).one()
+            instances.append(instance)
+        except NoResultFound:
+            raise InstanceNotFound(type_=rdf_class.name, id_=index)
+        data_IIT += session.query(triples).filter(
+            triples.GraphIIT.subject == index).all()
+        data_IAC += session.query(triples).filter(
+            triples.GraphIAC.subject == index).all()
+        data_III += session.query(triples).filter(
+            triples.GraphIII.subject == index).all()
+
+    data = data_III + data_IIT + data_IAC
+    for item in data:
+        session.delete(item)
+
+    for data in data_IIT:
+        terminal = session.query(Terminal).filter(
+            Terminal.id == data.object_).one()
+        session.delete(terminal)
+
+    for data in data_III:
+        III_instance = session.query(Instance).filter(
+            Instance.id == data.object_).one()
+        III_instance_type = session.query(RDFClass).filter(
+            RDFClass.id == III_instance.type_).one()
+        # Get the III object type_
+        delete(III_instance.id, III_instance_type.name, session=session)
+    for instance in instances:
+        session.delete(instance)
+    session.commit()
+
+
+def update(id_: int,
+           type_: str,
+           object_: Dict[str,
+                         str],
+           session: scoped_session,
+           api_name: str,
+           path: str=None) -> int:
     """Update an object properties based on the given object [PUT].
     :param id_: if of object to be updated
     :param type_: type of object to be updated
@@ -280,11 +475,15 @@ def update(id_: int, type_: str, object_: Dict[str, str], session: scoped_sessio
         insert(object_=instance, id_=id_, session=session)
         raise e
 
-    get(id_=id_, type_=type_, session=session, api_name=api_name,path=path)
+    get(id_=id_, type_=type_, session=session, api_name=api_name, path=path)
     return id_
 
 
-def get_collection(API_NAME: str, type_: str, session: scoped_session, path: str=None) -> Dict[str, Any]:
+def get_collection(API_NAME: str,
+                   type_: str,
+                   session: scoped_session,
+                   path: str=None) -> Dict[str,
+                                           Any]:
     """Retrieve a type of collection from the database.
     :param API_NAME: api name specified while starting server
     :param type_: type of object to be updated
@@ -292,7 +491,7 @@ def get_collection(API_NAME: str, type_: str, session: scoped_session, path: str
     :param path: endpoint
     :return: response containing all the objects of that particular type_
     """
-    if path is not None :
+    if path is not None:
         collection_template = {
             "@id": "/" + API_NAME + "/" + path + "/",
             "@context": None,
@@ -325,15 +524,18 @@ def get_collection(API_NAME: str, type_: str, session: scoped_session, path: str
                 "@type": type_
             }
         else:
-            object_template = {
-                "@id": "/" + API_NAME + "/" + type_ + "Collection/" + str(instance_.id),
-                "@type": type_
-            }
+            object_template = {"@id": "/" +
+                               API_NAME +
+                               "/" +
+                               type_ +
+                               "Collection/" +
+                               str(instance_.id), "@type": type_}
         collection_template["members"].append(object_template)
     return collection_template
 
 
-def get_single(type_: str, api_name: str, session: scoped_session, path:str=None) -> Dict[str, Any]:
+def get_single(type_: str, api_name: str, session: scoped_session,
+               path: str=None) -> Dict[str, Any]:
     """Get instance of classes with single objects.
     :param type_: type of object to be updated
     :param api_name: api name specified while starting server
@@ -353,7 +555,7 @@ def get_single(type_: str, api_name: str, session: scoped_session, path:str=None
     except (NoResultFound, IndexError, ValueError):
         raise InstanceNotFound(type_=rdf_class.name)
     object_ = get(instance.id, rdf_class.name,
-                  session=session, api_name=api_name,path=path)
+                  session=session, api_name=api_name, path=path)
     if path is not None:
         object_["@id"] = "/" + api_name + "/" + path
     else:
@@ -382,7 +584,11 @@ def insert_single(object_: Dict[str, Any], session: scoped_session) -> Any:
     raise InstanceExists(type_=rdf_class.name)
 
 
-def update_single(object_: Dict[str, Any], session: scoped_session, api_name: str,path: str=None) -> int:
+def update_single(object_: Dict[str,
+                                Any],
+                  session: scoped_session,
+                  api_name: str,
+                  path: str=None) -> int:
     """Update instance of classes with single objects.
     :param object_: new object
     :param session: sqlalchemy scoped session
@@ -402,14 +608,20 @@ def update_single(object_: Dict[str, Any], session: scoped_session, api_name: st
     except (NoResultFound, IndexError, ValueError):
         raise InstanceNotFound(type_=rdf_class.name)
 
-    return update(id_=instance.id, type_=object_["@type"], object_=object_, session=session, api_name=api_name, path=path)
+    return update(
+        id_=instance.id,
+        type_=object_["@type"],
+        object_=object_,
+        session=session,
+        api_name=api_name,
+        path=path)
 
 
 def delete_single(type_: str, session: scoped_session) -> None:
     """Delete instance of classes with single objects.
     :param type_: type of object to be deleted
     :param session: sqlalchemy scoped session
-    :return: None 
+    :return: None
     """
     try:
         rdf_class = session.query(RDFClass).filter(
@@ -424,5 +636,3 @@ def delete_single(type_: str, session: scoped_session) -> None:
         raise InstanceNotFound(type_=rdf_class.name)
 
     return delete(instance.id, type_, session=session)
-
-
