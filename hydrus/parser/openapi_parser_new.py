@@ -36,7 +36,8 @@ def generate_empty_object():
         "class_definition":HydraClass,
         "prop_definition":list(),
         "op_definition":list(),
-        "collection": False
+        "collection": False,
+        "path":""
     }
     return object
 
@@ -120,6 +121,20 @@ def get_data_at_location(
         index = index + 1
     return data
 
+
+def sanitise_path(path):
+    path_ = path.split('/')
+    new_path = list()
+    for subPath in path_:
+        if "{" in subPath:
+            pass
+        else:
+            new_path.append(subPath)
+
+    return '/'.join(new_path)
+
+
+
 def get_class_details(global_,data,class_name,path="") -> None:
     """
     fetches details of class and adds the class to the dict along with the classDefinition until this point
@@ -130,6 +145,9 @@ def get_class_details(global_,data,class_name,path="") -> None:
     :return: None
     """
     doc = global_["doc"]
+    path = sanitise_path(path)
+    print("yoyo")
+    print(path)
     class_name = class_name
     # we simply check if the class has been defined or not
     if class_name not in global_["class_names"]:
@@ -159,7 +177,7 @@ def get_class_details(global_,data,class_name,path="") -> None:
                                                                          required=flag,
                                                                          read=True,
                                                                          write=True))
-
+        global_[class_name]["path"] = path
         global_[class_name]["class_definition"] = classDefinition
         global_["class_names"].add(class_name)
 
@@ -360,7 +378,7 @@ def parse(doc: Dict[str, Any]) -> str:
             global_[name]["class_definition"].add_supported_prop(prop)
         for op in global_[name]["op_definition"]:
             global_[name]["class_definition"].add_supported_op(op)
-        api_doc.add_supported_class(global_[name]["class_definition"],global_[name]["collection"])
+        api_doc.add_supported_class(global_[name]["class_definition"],global_[name]["collection"],collection_path=global_[name]["path"])
 
     generateEntrypoint(api_doc)
     hydra_doc = api_doc.generate()
