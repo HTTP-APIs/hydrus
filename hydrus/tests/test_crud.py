@@ -53,7 +53,7 @@ class TestCRUD(unittest.TestCase):
         """Test CRUD insert."""
         object_ = gen_dummy_object("dummyClass", self.doc)
         response = crud.insert(object_=object_, id_=1, session=self.session)
-        assert type(response) is int
+        assert isinstance(response, int)
 
     def test_get(self):
         """Test CRUD get."""
@@ -62,7 +62,7 @@ class TestCRUD(unittest.TestCase):
         response = crud.insert(object_=object_, id_=id_, session=self.session)
         object_ = crud.get(id_=id_, type_=object_[
                            "@type"], session=self.session, api_name="api")
-        assert type(response) is int
+        assert isinstance(response, int)
         assert int(object_["@id"].split("/")[-1]) == id_
 
     def test_update(self):
@@ -72,12 +72,16 @@ class TestCRUD(unittest.TestCase):
         id_ = 30
         insert_response = crud.insert(
             object_=object_, id_=id_, session=self.session)
-        update_response = crud.update(id_=id_, type_=object_[
-                                      "@type"], object_=new_object, session=self.session, api_name="api")
+        update_response = crud.update(
+            id_=id_,
+            type_=object_["@type"],
+            object_=new_object,
+            session=self.session,
+            api_name="api")
         test_object = crud.get(id_=id_, type_=object_[
                                "@type"], session=self.session, api_name="api")
-        assert type(insert_response) is int
-        assert type(update_response) is int
+        assert isinstance(insert_response, int)
+        assert isinstance(update_response, int)
         assert insert_response == update_response
         assert int(test_object["@id"].split("/")[-1]) == id_
 
@@ -89,11 +93,14 @@ class TestCRUD(unittest.TestCase):
             object_=object_, id_=id_, session=self.session)
         delete_response = crud.delete(
             id_=id_, type_=object_["@type"], session=self.session)
-        assert type(insert_response) is int
+        assert isinstance(insert_response, int)
         response_code = None
         try:
-            get_response = crud.get(id_=id_, type_=object_[
-                                    "@type"], session=self.session, api_name="api")
+            get_response = crud.get(
+                id_=id_,
+                type_=object_["@type"],
+                session=self.session,
+                api_name="api")
         except Exception as e:
             response_code, message = e.get_HTTP()
         assert 404 == response_code
@@ -128,7 +135,7 @@ class TestCRUD(unittest.TestCase):
         id_ = 50
         insert_response = crud.insert(
             object_=object_, id_=id_, session=self.session)
-        assert type(insert_response) is int
+        assert isinstance(insert_response, int)
         assert insert_response == id_
         response_code = None
         try:
@@ -151,7 +158,7 @@ class TestCRUD(unittest.TestCase):
         except Exception as e:
             response_code, message = e.get_HTTP()
         assert 404 == response_code
-        assert type(insert_response) is int
+        assert isinstance(insert_response, int)
         assert insert_response == id_
 
     def test_insert_type(self):
@@ -183,20 +190,20 @@ class TestCRUD(unittest.TestCase):
         """Test CRUD insert when multiple ID's are given """
         objects = list()
         ids = "1,2,3"
-        for index in range(len(ids.split(','))) :
-            object = gen_dummy_object("dummyClass",self.doc)
+        for index in range(len(ids.split(','))):
+            object = gen_dummy_object("dummyClass", self.doc)
             objects.append(object)
         response_code = None
         try:
-            insert_response = crud.insert_multiple(objects_=objects,
-                                    session=self.session,id_=ids)
+            insert_response = crud.insert_multiple(
+                objects_=objects, session=self.session, id_=ids)
         except Exception as e:
-            response_code,message = e.get_HTTP()
+            response_code, message = e.get_HTTP()
         assert 400 == response_code
 
     def test_delete_ids(self):
-        objects=list()
-        ids ="1,2,3"
+        objects = list()
+        ids = "1,2,3"
         for index in range(len(ids.split(','))):
             object = gen_dummy_object("dummyClass", self.doc)
             objects.append(object)
@@ -209,8 +216,11 @@ class TestCRUD(unittest.TestCase):
         id_list = ids.split(',')
         try:
             for index in range(len(id_list)):
-                get_response = crud.get(id_=id_list[index], type_=objects[index][
-                    "@type"], session=self.session, api_name="api")
+                get_response = crud.get(
+                    id_=id_list[index],
+                    type_=objects[index]["@type"],
+                    session=self.session,
+                    api_name="api")
         except Exception as e:
             response_code, message = e.get_HTTP()
         assert 404 == response_code
