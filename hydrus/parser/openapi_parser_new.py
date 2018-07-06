@@ -47,7 +47,6 @@ def check_collection(class_name, global_,schema_obj,method):
     # get the object type from schema block
     try:
         type = schema_obj["type"]
-        print("type is " + type)
         # if object type is array it means the method is a collection
         if type == "array":
             collection = True
@@ -56,19 +55,17 @@ def check_collection(class_name, global_,schema_obj,method):
             collection = False
     except KeyError:
         collection = False
-
     # checks if the method is something like 'pet/{petid}'
     if valid_endpoint(method)=="collection" and collection==False:
         collection=True
-
     object_ = generate_empty_object()
     # checks if the method is supported by parser at the moment or not
-    if check_array_param(global_["doc"]["paths"][method]) and valid_endpoint(method)!="False" :
-        print("inside if ")
+    # TODO see if it is required 
+    flag = check_array_param(global_["doc"]["paths"][method])
+
+    if valid_endpoint(method)!="False" :
         try :
             # if the class has already been parsed we will update the collection var
-            print("here")
-            print(global_[class_name])
             if not global_[class_name]["collection"]:
                 global_[class_name]["collection"]=True
         except KeyError:
@@ -76,7 +73,6 @@ def check_collection(class_name, global_,schema_obj,method):
             object_["class_name"] = class_name
             object_["collection"]=collection
             global_[class_name]= object_
-    print(object_)
     return object_
 
 
@@ -124,7 +120,7 @@ def get_data_at_location(
         index = index + 1
     return data
 
-def get_class_details(class_location: List[str],global_) -> None:
+def get_class_details(global_,data,class_name) -> None:
     """
     fetches details of class and adds the class to the dict along with the classDefinition until this point
     :param classAndClassDefinition:  dict containing class and respective defined class definition
@@ -134,11 +130,11 @@ def get_class_details(class_location: List[str],global_) -> None:
     :return: None
     """
     doc = global_["doc"]
-    class_name = get_class_name(class_location)
+    class_name = class_name
     # we simply check if the class has been defined or not
     if class_name not in global_["class_names"]:
 
-        desc = get_data_at_location(class_location, doc)
+        desc = data
         try:
             classDefinition = HydraClass(
                 class_name, class_name, desc["description"], endpoint=True)
@@ -146,9 +142,9 @@ def get_class_details(class_location: List[str],global_) -> None:
             classDefinition = HydraClass(
                 class_name, class_name, class_name, endpoint=True)
 
-        properties = get_data_at_location(class_location, doc)["properties"]
+        properties = data["properties"]
         try:
-            required = get_data_at_location(class_location, doc)["required"]
+            required = data["required"]
         except KeyError:
             required = set()
         for prop in properties:
@@ -166,10 +162,6 @@ def get_class_details(class_location: List[str],global_) -> None:
 
         global_[class_name]["class_definition"] = classDefinition
         global_["class_names"].add(class_name)
-    print("hear hear")
-
-
-
 
 
 def check_for_ref(global_, path,block):
@@ -190,10 +182,9 @@ def check_for_ref(global_, path,block):
                 # cannot parse because method not supported
                 return object_["class_name"]
             get_class_details(
-                class_location,
-                global_)
+                global_,get_data_at_location(class_location,global_["doc"]),get_class_name(class_location))
+            return class_location[2]
         except KeyError:
-            print("external ref not found in responses ")
             pass
 
     # when we would be able to take arrays as parameters we will use
@@ -209,14 +200,85 @@ def check_for_ref(global_, path,block):
                 # cannot parse because method not supported
                 return object_["class_name"]
             get_class_details(
-                class_location,
-                global_)
+                global_, get_data_at_location(class_location, global_["doc"]), get_class_name(class_location))
             return class_location[2]
         except KeyError:
-            print("external ref not found in params")
             pass
     # cannot parse because no external ref
     return ""
+
+
+def allow_parameter(parameter):
+    # can add rules about param processing
+    # param can be in path too , that is already handled when we declared
+    # the class as collection from the endpoint
+    params_location = ["body"]
+    if parameter["in"] not in params_location:
+        return False
+    return True
+
+
+def type_ref_mapping(type):
+    # copy from semantic branch
+    return type
+
+
+def get_parameters(global_, path, method, class_name):
+    param = str
+    for parameter in global_["doc"]["paths"][path][method]["parameters"]:
+        print(parameter)
+        if allow_parameter(parameter):
+            try:
+                # check if class has been parsed
+                if parameter["schema"]["$ref"].split('/')[2] in global_["class_names"]:
+                    param = "vocab:" + \
+                             parameter["schema"]["$ref"].split('/')[2]
+
+                else:
+                    # if not go to that location and parse and add
+                    get_class_details(global_,get_data_at_location(parameter["schema"]["$ref"]),
+                                      parameter["schema"]["$ref"].split('/')[2])
+                    param = "vocab:" + \
+                            parameter["schema"]["$ref"].split('/')[2]
+            except KeyError:
+                type = parameter["type"]
+                if type=="array":
+                    # TODO change this after we find a way to represent array in parameter using semantics
+                    items = parameter["schema"]["items"]
+                    try:
+                        if items["$ref"].split('/')[2] in global_["class_names"]:
+                            param = "vocab"+items["$ref"].split('/')[2]
+                        else:
+                            get_class_details(global_, get_data_at_location(items["$ref"]),
+                                      items["$ref"].split('/')[2])
+                            param = "vocab"+items["$ref"].split('/')[2]
+                    except KeyError:
+                        param = type_ref_mapping(items["type"])
+                elif type=="object":
+                    print("parameter type object !!")
+                    print("converted to string")
+                    param = "string"
+                else:
+                    param = type_ref_mapping(type)
+
+        else :
+            print("cannot process the parameter")
+            print(parameter)
+            # do further tasks
+    print(param)
+    return param
+
+
+def get_ops(global_,path,method,class_name):
+    op_method = method
+    op_expects = None
+    op_name = try_catch_replacement(global_["doc"]["paths"][path][method], "summary", class_name)
+    op_status = list()
+    op_expects = get_parameters(global_,path,method,class_name)
+    print(op_expects)
+
+
+
 
 def get_paths(global_) -> None:
     paths = global_["doc"]["paths"]
@@ -224,7 +286,8 @@ def get_paths(global_) -> None:
         for method in paths[path]:
             class_name = check_for_ref(global_,path,paths[path][method])
             if class_name != "":
-                pass
+            # do further processing 
+                get_ops(global_,path,method,class_name)
     print(global_["class_names"])
 
 
@@ -268,7 +331,7 @@ def parse(doc: Dict[str, Any]) -> str:
 
 
 if __name__ == "__main__":
-    with open("../samples/petstore_mini.yaml", 'r') as stream:
+    with open("../samples/petstore_openapi.yaml", 'r') as stream:
         try:
             doc = yaml.load(stream)
         except yaml.YAMLError as exc:
