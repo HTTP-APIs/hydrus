@@ -213,20 +213,29 @@ def allow_parameter(parameter):
     # param can be in path too , that is already handled when we declared
     # the class as collection from the endpoint
     params_location = ["body"]
+    print("here")
+    print(parameter)
     if parameter["in"] not in params_location:
+        print("yo"+parameter["in"])
         return False
     return True
 
 
 def type_ref_mapping(type):
-    # copy from semantic branch
-    return type
-
+    dataType_ref_map = dict()
+    # todo add support for byte , binary , password ,double data types
+    dataType_ref_map["integer"] = "https://schema.org/Integer"
+    dataType_ref_map["string"] = "https://schema.org/Text"
+    dataType_ref_map["long"] = "http://books.xmlschemata.org/relaxng/ch19-77199.html"
+    dataType_ref_map["float"] = "https://schema.org/Float"
+    dataType_ref_map["boolean"] = "https://schema.org/Boolean"
+    dataType_ref_map["dateTime"] = "https://schema.org/DateTime"
+    dataType_ref_map["date"] = "https://schema.org/Date"
+    return dataType_ref_map[type]
 
 def get_parameters(global_, path, method, class_name):
     param = str
     for parameter in global_["doc"]["paths"][path][method]["parameters"]:
-        print(parameter)
         if allow_parameter(parameter):
             try:
                 # check if class has been parsed
@@ -265,7 +274,6 @@ def get_parameters(global_, path, method, class_name):
             print("cannot process the parameter")
             print(parameter)
             # do further tasks
-    print(param)
     return param
 
 
@@ -275,8 +283,36 @@ def get_ops(global_,path,method,class_name):
     op_name = try_catch_replacement(global_["doc"]["paths"][path][method], "summary", class_name)
     op_status = list()
     op_expects = get_parameters(global_,path,method,class_name)
-    print(op_expects)
+    try:
+        responses = global_["doc"]["paths"][path][method]["responses"]
+        op_returns = None
+        for response in responses:
+            if response != 'default':
+                op_status.append({"statusCode": int(
+                    response), "description": responses[response]["description"]})
+            try:
+                op_returns = "vocab:" + \
+                    responses[response]["schema"]["$ref"].split('/')[2]
+            except KeyError:
+                pass
+            if op_returns is None:
+                try:
+                    op_returns = "vocab:" + \
+                        responses[response]["schema"]["items"]["$ref"].split(
+                            '/')[2]
+                except KeyError:
+                    op_returns = try_catch_replacement(
+                        responses[response]["schema"], "type", None)
+    except KeyError:
+        op_returns = None
+    if len(op_status) == 0:
+        op_status.append(
+            {"statusCode": 200, "description": "Successful Operation"})
 
+    print(" we are going to add an operation with name " + op_name)
+    print(op_name)
+    global_[class_name]["op_definition"].append(HydraClassOp(
+        op_name, op_method.upper(), op_expects, op_returns, op_status))
 
 
 
@@ -288,7 +324,8 @@ def get_paths(global_) -> None:
             if class_name != "":
             # do further processing 
                 get_ops(global_,path,method,class_name)
-    print(global_["class_names"])
+
+
 
 
 
@@ -318,6 +355,13 @@ def parse(doc: Dict[str, Any]) -> str:
     schemes = try_catch_replacement(doc, "schemes", "http")
     api_doc = HydraDoc(name, title, desc, name, schemes[0] + "://" + baseURL)
     get_paths(global_)
+    for name in global_["class_names"]:
+        for prop in global_[name]["prop_definition"]:
+            global_[name]["class_definition"].add_supported_prop(prop)
+        for op in global_[name]["op_definition"]:
+            global_[name]["class_definition"].add_supported_op(op)
+        api_doc.add_supported_class(global_[name]["class_definition"],global_[name]["collection"])
+
     generateEntrypoint(api_doc)
     hydra_doc = api_doc.generate()
     dump = json.dumps(hydra_doc, indent=4, sort_keys=True)
