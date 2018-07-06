@@ -9,6 +9,7 @@ from hydrus.data.db_models import Base
 from hydrus.data import doc_parse
 from hydrus.samples.doc_writer_sample import api_doc as doc
 import random
+from typing import List
 import string
 
 
@@ -201,15 +202,18 @@ class TestCRUD(unittest.TestCase):
             objects.append(object)
         insert_response = crud.insert_multiple(objects_=objects,
                                                session=self.session, id_=ids)
+        delete_response = crud.delete_multiple(
+            id_=ids, type_=objects[0]["@type"], session=self.session)
+
         response_code = None
+        id_list = ids.split(',')
         try:
-            delete_response = crud.delete_multiple(
-                id_="4,7,8", type_=objects[0]["@type"], session=self.session)
+            for index in range(len(id_list)):
+                get_response = crud.get(id_=id_list[index], type_=objects[index][
+                    "@type"], session=self.session, api_name="api")
         except Exception as e:
             response_code, message = e.get_HTTP()
         assert 404 == response_code
-        assert type(insert_response) is int
-        assert insert_response == ids.split(',')
 
     @classmethod
     def tearDownClass(self):
