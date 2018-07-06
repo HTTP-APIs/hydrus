@@ -190,8 +190,10 @@ class TestCRUD(unittest.TestCase):
             insert_response = crud.insert_multiple(objects_=objects,
                                     session=self.session,id_=ids)
         except Exception as e:
-            response_code,message = e.getHTTP()
+            response_code,message = e.get_HTTP()
         assert 400 == response_code
+
+    
 
     @classmethod
     def tearDownClass(self):
