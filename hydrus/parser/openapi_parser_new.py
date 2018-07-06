@@ -120,7 +120,7 @@ def get_data_at_location(
         index = index + 1
     return data
 
-def get_class_details(global_,data,class_name) -> None:
+def get_class_details(global_,data,class_name,path="") -> None:
     """
     fetches details of class and adds the class to the dict along with the classDefinition until this point
     :param classAndClassDefinition:  dict containing class and respective defined class definition
@@ -137,10 +137,10 @@ def get_class_details(global_,data,class_name) -> None:
         desc = data
         try:
             classDefinition = HydraClass(
-                class_name, class_name, desc["description"], endpoint=True)
+                class_name, class_name, desc["description"], endpoint=True,path=path)
         except KeyError:
             classDefinition = HydraClass(
-                class_name, class_name, class_name, endpoint=True)
+                class_name, class_name, class_name, endpoint=True,path=path)
 
         properties = data["properties"]
         try:
@@ -182,7 +182,7 @@ def check_for_ref(global_, path,block):
                 # cannot parse because method not supported
                 return object_["class_name"]
             get_class_details(
-                global_,get_data_at_location(class_location,global_["doc"]),get_class_name(class_location))
+                global_,get_data_at_location(class_location,global_["doc"]),get_class_name(class_location),path=path)
             return class_location[2]
         except KeyError:
             pass
@@ -200,7 +200,7 @@ def check_for_ref(global_, path,block):
                 # cannot parse because method not supported
                 return object_["class_name"]
             get_class_details(
-                global_, get_data_at_location(class_location, global_["doc"]), get_class_name(class_location))
+                global_, get_data_at_location(class_location, global_["doc"]), get_class_name(class_location),path=path)
             return class_location[2]
         except KeyError:
             pass
@@ -246,7 +246,7 @@ def get_parameters(global_, path, method, class_name):
                 else:
                     # if not go to that location and parse and add
                     get_class_details(global_,get_data_at_location(parameter["schema"]["$ref"]),
-                                      parameter["schema"]["$ref"].split('/')[2])
+                                      parameter["schema"]["$ref"].split('/')[2],path=path)
                     param = "vocab:" + \
                             parameter["schema"]["$ref"].split('/')[2]
             except KeyError:
@@ -259,7 +259,7 @@ def get_parameters(global_, path, method, class_name):
                             param = "vocab"+items["$ref"].split('/')[2]
                         else:
                             get_class_details(global_, get_data_at_location(items["$ref"]),
-                                      items["$ref"].split('/')[2])
+                                      items["$ref"].split('/')[2],path=path)
                             param = "vocab"+items["$ref"].split('/')[2]
                     except KeyError:
                         param = type_ref_mapping(items["type"])
