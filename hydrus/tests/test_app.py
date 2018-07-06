@@ -238,6 +238,29 @@ class ViewsTestCase(unittest.TestCase):
                     put_response = self.client.put(endpoints[collection_name] + '/' + str(random.randint(100, 1000)),
                                                    data=json.dumps(dummy_object))
                     assert put_response.status_code == 201
+    def test_object_PUT_at_ids(self):
+        index = self.client.get("/" + self.API_NAME)
+        assert index.status_code == 200
+        endpoints = json.loads(index.data.decode('utf-8'))
+        for collection_name in endpoints:
+            if collection_name in self.doc.collections:
+                collection = self.doc.collections[collection_name]["collection"]
+                class_ = self.doc.parsed_classes[collection.class_.title]["class"]
+                class_methods = [x.method for x in class_.supportedOperation]
+                data_ = {
+                    "data": list()
+                }
+                objects = list()
+                ids=""
+                for index in range(3):
+                    objects.append(gen_dummy_object(
+                        collection.class_.title, self.doc))
+                    ids+= str(random.randint(100, 1000))
+                    ids+=','
+                data_["data"] = objects
+                if "PUT" in class_methods:
+                    put_response = self.client.put(endpoints[collection_name] + '/' + ids,data=json.dumps(data_["data"]))
+                assert put_response.status_code == 201
 
     def test_endpointClass_PUT(self):
         """Check non collection Class PUT."""
