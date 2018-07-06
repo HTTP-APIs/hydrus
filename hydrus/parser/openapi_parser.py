@@ -32,7 +32,11 @@ def generateEntrypoint(api_doc: HydraDoc) -> None:
     api_doc.gen_EntryPoint()
 
 
-def generate_empty_object():
+def generate_empty_object() -> Dict[str,Any]:
+    """
+    Generate Empty object
+    :return: empty object
+    """
     object = {
         "class_name": "",
         "class_definition": HydraClass,
@@ -44,7 +48,15 @@ def generate_empty_object():
     return object
 
 
-def check_collection(class_name, global_, schema_obj, method):
+def check_collection(class_name:str, global_ :Dict[str,Any], schema_obj:Dict[str:Any], method:str)->Dict[str,Any]:
+    """
+    Checks if the method is collection or not , checks if the method is valid
+    :param class_name: name of class being parsed
+    :param global_: global state
+    :param schema_obj: the dict containing the method object
+    :param method: method ie GET,POST,PUT,DELETE
+    :return: object that is formed or updated
+    """
     collection = bool
     # get the object type from schema block
     try:
@@ -79,7 +91,12 @@ def check_collection(class_name, global_, schema_obj, method):
     return object_
 
 
-def check_array_param(paths_):
+def check_array_param(paths_:Dict[str,Any]) -> bool:
+    """
+    Check if the path is supported or not
+    :param paths_: the path object from doc
+    :return: TRUE if the path is supported
+    """
     for method in paths_:
         for param in paths_[method]["parameters"]:
             try:
@@ -90,7 +107,13 @@ def check_array_param(paths_):
     return True
 
 
-def valid_endpoint(path):
+def valid_endpoint(path: str) -> str:
+    """
+    Checks is the path ie endpoint is constructed properly or not
+    rejects 'A/{id}/B/C'
+    :param path: endpoint
+    :return:
+    """
     # "collection" or true means valid
     path_ = path.split('/')
     for subPath in path_:
@@ -127,7 +150,12 @@ def get_data_at_location(
     return data
 
 
-def sanitise_path(path):
+def sanitise_path(path:str)->str:
+    """
+    Removed any variable present in the path
+    :param path:
+    :return:
+    """
     path_ = path.split('/')
     new_path = list()
     for subPath in path_:
@@ -139,13 +167,13 @@ def sanitise_path(path):
     return '/'.join(new_path)
 
 
-def get_class_details(global_, data, class_name, path="") -> None:
+def get_class_details(global_:Dict[str,Any], data:Dict[str,Any], class_name:str, path=str[""]) -> None:
     """
     fetches details of class and adds the class to the dict along with the classDefinition until this point
-    :param classAndClassDefinition:  dict containing class and respective defined class definition
-    :param definitionSet: set containing the names of all parsed classes
-    :param class_location: location of class definition in the doc , we extract name from here
-    :param doc: the whole doc
+    :param global_: global state
+    :param class_name: name of class
+    :param data: data from the location given in $ref
+    :param path: Optional , custom enpoint to be assigned
     :return: None
     """
     doc = global_["doc"]
@@ -188,7 +216,14 @@ def get_class_details(global_, data, class_name, path="") -> None:
         global_["class_names"].add(class_name)
 
 
-def check_for_ref(global_, path, block):
+def check_for_ref(global_:Dict[str:Any], path:str, block:Dict[str.Any])->str:
+    """
+    Checks for references in responses and parameters key , and adds classes to state
+    :param global_: global state
+    :param path: endpoint
+    :param block: block containing specific part of doc
+    :return: class name
+    """
     # will check if there is an external ref , go to that location , add the class in globals , will also verify
     # if we can parse this method or not , if all good will return class name
     for obj in block["responses"]:
@@ -246,20 +281,28 @@ def check_for_ref(global_, path, block):
     return ""
 
 
-def allow_parameter(parameter):
+def allow_parameter(parameter:Dict[str,Any])->bool:
+    """
+    Checks the validity of params that are to be processed
+    according to  rules of param passing
+    :param parameter: the parameter to be parsed
+    :return: if its valid or not
+    """
     # can add rules about param processing
     # param can be in path too , that is already handled when we declared
     # the class as collection from the endpoint
     params_location = ["body"]
-    print("here")
-    print(parameter)
     if parameter["in"] not in params_location:
-        print("yo" + parameter["in"])
         return False
     return True
 
 
-def type_ref_mapping(type):
+def type_ref_mapping(type:str)->str:
+    """
+    Returns semantic ref for OAS data types
+    :param type: data type
+    :return: ref
+    """
     dataType_ref_map = dict()
     # todo add support for byte , binary , password ,double data types
     dataType_ref_map["integer"] = "https://schema.org/Integer"
@@ -272,7 +315,15 @@ def type_ref_mapping(type):
     return dataType_ref_map[type]
 
 
-def get_parameters(global_, path, method, class_name):
+def get_parameters(global_:Dict[str,Any], path:str, method:str, class_name:str)->str:
+    """
+    Parse paramters from method object
+    :param global_: global state
+    :param path: endpoint
+    :param method: method under consideration
+    :param class_name: name of class
+    :return: param
+    """
     param = str
     for parameter in global_["doc"]["paths"][path][method]["parameters"]:
         if allow_parameter(parameter):
@@ -324,7 +375,14 @@ def get_parameters(global_, path, method, class_name):
     return param
 
 
-def get_ops(global_, path, method, class_name):
+def get_ops(global_:Dict[str,Any], path:str, method:Dict[str,Any], class_name:str)->None:
+    """
+    Get operations from path object and store in global path
+    :param global_: global state
+    :param path: endpoint
+    :param method: method block
+    :param class_name:class name
+    """
     op_method = method
     op_expects = None
     op_name = try_catch_replacement(
@@ -365,7 +423,11 @@ def get_ops(global_, path, method, class_name):
         op_name, op_method.upper(), op_expects, op_returns, op_status))
 
 
-def get_paths(global_) -> None:
+def get_paths(global_:Dict[str:Any]) -> None:
+    """
+    Parse paths iteratively
+    :param global_: Global state
+    """
     paths = global_["doc"]["paths"]
     for path in paths:
         for method in paths[path]:
