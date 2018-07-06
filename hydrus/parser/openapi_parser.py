@@ -32,7 +32,7 @@ def generateEntrypoint(api_doc: HydraDoc) -> None:
     api_doc.gen_EntryPoint()
 
 
-def generate_empty_object() -> Dict[str,Any]:
+def generate_empty_object() -> Dict[str, Any]:
     """
     Generate Empty object
     :return: empty object
@@ -48,7 +48,12 @@ def generate_empty_object() -> Dict[str,Any]:
     return object
 
 
-def check_collection(class_name:str, global_ :Dict[str,Any], schema_obj:Dict[str:Any], method:str)->Dict[str,Any]:
+def check_collection(class_name: str,
+                     global_: Dict[str,
+                                   Any],
+                     schema_obj: Dict[str:Any],
+                     method: str)->Dict[str,
+                                        Any]:
     """
     Checks if the method is collection or not , checks if the method is valid
     :param class_name: name of class being parsed
@@ -91,7 +96,7 @@ def check_collection(class_name:str, global_ :Dict[str,Any], schema_obj:Dict[str
     return object_
 
 
-def check_array_param(paths_:Dict[str,Any]) -> bool:
+def check_array_param(paths_: Dict[str, Any]) -> bool:
     """
     Check if the path is supported or not
     :param paths_: the path object from doc
@@ -150,7 +155,7 @@ def get_data_at_location(
     return data
 
 
-def sanitise_path(path:str)->str:
+def sanitise_path(path: str)->str:
     """
     Removed any variable present in the path
     :param path:
@@ -167,7 +172,12 @@ def sanitise_path(path:str)->str:
     return '/'.join(new_path)
 
 
-def get_class_details(global_:Dict[str,Any], data:Dict[str,Any], class_name:str, path=str[""]) -> None:
+def get_class_details(global_: Dict[str,
+                                    Any],
+                      data: Dict[str,
+                                 Any],
+                      class_name: str,
+                      path=str[""]) -> None:
     """
     fetches details of class and adds the class to the dict along with the classDefinition until this point
     :param global_: global state
@@ -216,7 +226,9 @@ def get_class_details(global_:Dict[str,Any], data:Dict[str,Any], class_name:str,
         global_["class_names"].add(class_name)
 
 
-def check_for_ref(global_:Dict[str:Any], path:str, block:Dict[str.Any])->str:
+def check_for_ref(global_: Dict[str:Any],
+                  path: str,
+                  block: Dict[str.Any])->str:
     """
     Checks for references in responses and parameters key , and adds classes to state
     :param global_: global state
@@ -281,7 +293,7 @@ def check_for_ref(global_:Dict[str:Any], path:str, block:Dict[str.Any])->str:
     return ""
 
 
-def allow_parameter(parameter:Dict[str,Any])->bool:
+def allow_parameter(parameter: Dict[str, Any])->bool:
     """
     Checks the validity of params that are to be processed
     according to  rules of param passing
@@ -297,7 +309,7 @@ def allow_parameter(parameter:Dict[str,Any])->bool:
     return True
 
 
-def type_ref_mapping(type:str)->str:
+def type_ref_mapping(type: str)->str:
     """
     Returns semantic ref for OAS data types
     :param type: data type
@@ -315,7 +327,8 @@ def type_ref_mapping(type:str)->str:
     return dataType_ref_map[type]
 
 
-def get_parameters(global_:Dict[str,Any], path:str, method:str, class_name:str)->str:
+def get_parameters(global_: Dict[str, Any],
+                   path: str, method: str, class_name: str)->str:
     """
     Parse paramters from method object
     :param global_: global state
@@ -375,7 +388,8 @@ def get_parameters(global_:Dict[str,Any], path:str, method:str, class_name:str)-
     return param
 
 
-def get_ops(global_:Dict[str,Any], path:str, method:Dict[str,Any], class_name:str)->None:
+def get_ops(global_: Dict[str, Any], path: str,
+            method: Dict[str, Any], class_name: str)->None:
     """
     Get operations from path object and store in global path
     :param global_: global state
@@ -423,7 +437,7 @@ def get_ops(global_:Dict[str,Any], path:str, method:Dict[str,Any], class_name:st
         op_name, op_method.upper(), op_expects, op_returns, op_status))
 
 
-def get_paths(global_:Dict[str:Any]) -> None:
+def get_paths(global_: Dict[str:Any]) -> None:
     """
     Parse paths iteratively
     :param global_: Global state
