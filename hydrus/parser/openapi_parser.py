@@ -188,8 +188,7 @@ def get_class_details(global_: Dict[str,
     """
     doc = global_["doc"]
     path = sanitise_path(path)
-    print("yoyo")
-    print(path)
+
     class_name = class_name
     # we simply check if the class has been defined or not
     if class_name not in global_["class_names"]:
@@ -375,16 +374,10 @@ def get_parameters(global_: Dict[str, Any],
                     except KeyError:
                         param = type_ref_mapping(items["type"])
                 elif type == "object":
-                    print("parameter type object !!")
-                    print("converted to string")
                     param = "string"
                 else:
                     param = type_ref_mapping(type)
 
-        else:
-            print("cannot process the parameter")
-            print(parameter)
-            # do further tasks
     return param
 
 
@@ -431,8 +424,6 @@ def get_ops(global_: Dict[str, Any], path: str,
         op_status.append(
             {"statusCode": 200, "description": "Successful Operation"})
 
-    print(" we are going to add an operation with name " + op_name)
-    print(op_name)
     global_[class_name]["op_definition"].append(HydraClassOp(
         op_name, op_method.upper(), op_expects, op_returns, op_status))
 
