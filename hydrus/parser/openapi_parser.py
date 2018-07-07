@@ -51,7 +51,7 @@ def generate_empty_object() -> Dict[str, Any]:
 def check_collection(class_name: str,
                      global_: Dict[str,
                                    Any],
-                     schema_obj: Dict[str:Any],
+                     schema_obj: Dict[str, Any],
                      method: str)->Dict[str,
                                         Any]:
     """
@@ -177,7 +177,7 @@ def get_class_details(global_: Dict[str,
                       data: Dict[str,
                                  Any],
                       class_name: str,
-                      path=str[""]) -> None:
+                      path="") -> None:
     """
     fetches details of class and adds the class to the dict along with the classDefinition until this point
     :param global_: global state
@@ -225,9 +225,9 @@ def get_class_details(global_: Dict[str,
         global_["class_names"].add(class_name)
 
 
-def check_for_ref(global_: Dict[str:Any],
+def check_for_ref(global_: Dict[str, Any],
                   path: str,
-                  block: Dict[str.Any])->str:
+                  block: Dict[str,Any])->str:
     """
     Checks for references in responses and parameters key , and adds classes to state
     :param global_: global state
@@ -428,7 +428,7 @@ def get_ops(global_: Dict[str, Any], path: str,
         op_name, op_method.upper(), op_expects, op_returns, op_status))
 
 
-def get_paths(global_: Dict[str:Any]) -> None:
+def get_paths(global_: Dict[str, Any]) -> None:
     """
     Parse paths iteratively
     :param global_: Global state
