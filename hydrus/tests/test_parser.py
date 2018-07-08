@@ -66,8 +66,13 @@ class TestParser(unittest.TestCase):
         result = openapi_parser.allow_parameter(parameter_block)
         assert result is True
         assert type(result) is bool
-
-
+        parameter_block = self.doc["paths"]["/pet"]["get"]["parameters"][0]
+        result = openapi_parser.allow_parameter(parameter_block)
+        assert result is False
+        assert type(result) is bool
+    def test_parse(self):
+        result = openapi_parser.parse(self.doc)
+        assert type(result) is str
 
 
 if __name__ == '__main__':
