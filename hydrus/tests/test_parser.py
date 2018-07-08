@@ -59,12 +59,17 @@ class TestParser(unittest.TestCase):
     def test_sanitise_path(self):
         path = "A/B/C/{id}"
         result = openapi_parser.sanitise_path(path)
-        print(result)
-        print(type(path))
-        print(type(result))
         assert result == 'A/B/C'
-        assert result is str
-        
+        assert type(result) is str
+    def test_allow_parameter(self):
+        parameter_block = self.doc["paths"]["/pet"]["post"]["parameters"][0]
+        result = openapi_parser.allow_parameter(parameter_block)
+        assert result is True
+        assert type(result) is bool
+
+
+
+
 if __name__ == '__main__':
     print("Starting tests ..")
     unittest.main()
