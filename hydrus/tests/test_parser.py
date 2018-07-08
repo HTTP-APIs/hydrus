@@ -32,7 +32,18 @@ class TestParser(unittest.TestCase):
         assert type(object_["collection"]) is bool
 
     def test_valid_endpoint(self):
-
+        path = 'A/B/{id}/C/D'
+        result = openapi_parser.valid_endpoint(path)
+        assert result is "False"
+        assert type(result) is str
+        path = 'A/B/{id}'
+        result = openapi_parser.valid_endpoint(path)
+        assert result is "Collection"
+        assert type(result) is str
+        path = 'A/B/id'
+        result = openapi_parser.valid_endpoint(path)
+        assert result is "True"
+        assert type(result) is str
 
 
 if __name__ == '__main__':
