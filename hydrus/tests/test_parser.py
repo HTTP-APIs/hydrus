@@ -44,6 +44,12 @@ class TestParser(unittest.TestCase):
         result = openapi_parser.valid_endpoint(path)
         assert result is "True"
         assert type(result) is str
+    def test_get_class_name(self):
+        path = "A/B/C/Pet"
+        path_list = path.split('/')
+        result = openapi_parser.get_class_name(path_list)
+        assert result is path_list[3]
+        assert type(result) is str
 
 
 if __name__ == '__main__':
