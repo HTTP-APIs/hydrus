@@ -50,8 +50,21 @@ class TestParser(unittest.TestCase):
         result = openapi_parser.get_class_name(path_list)
         assert result is path_list[3]
         assert type(result) is str
-
-
+    def test_get_data_from_location(self):
+        path = '#/definitions/Order'
+        path_list = path.split('/')
+        result = openapi_parser.get_data_at_location(path_list,self.doc)
+        response = self.doc["definitions"]["Order"]
+        assert response is result
+    def test_sanitise_path(self):
+        path = "A/B/C/{id}"
+        result = openapi_parser.sanitise_path(path)
+        print(result)
+        print(type(path))
+        print(type(result))
+        assert result == 'A/B/C'
+        assert result is str
+        
 if __name__ == '__main__':
     print("Starting tests ..")
     unittest.main()
