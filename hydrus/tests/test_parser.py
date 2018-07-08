@@ -25,6 +25,7 @@ class TestParser(unittest.TestCase):
         pass
 
     def test_generate_empty_object(self):
+        """Test if the empty object is being generated correctly """
         object_ = openapi_parser.generate_empty_object()
         assert isinstance(object_["prop_definition"], list)
         assert isinstance(object_["op_definition"], list)
@@ -32,6 +33,7 @@ class TestParser(unittest.TestCase):
         assert isinstance(object_["collection"], bool)
 
     def test_valid_endpoint(self):
+        """Test if the endpoint is valid and can be parsed """
         path = 'A/B/{id}/C/D'
         result = openapi_parser.valid_endpoint(path)
         assert result is "False"
@@ -46,6 +48,7 @@ class TestParser(unittest.TestCase):
         assert isinstance(result, str)
 
     def test_get_class_name(self):
+        """Test if the class name is being extracted properly from the path """
         path = "A/B/C/Pet"
         path_list = path.split('/')
         result = openapi_parser.get_class_name(path_list)
@@ -53,6 +56,7 @@ class TestParser(unittest.TestCase):
         assert isinstance(result, str)
 
     def test_get_data_from_location(self):
+        """Test if the data from the location given is being fetched correctly"""
         path = '#/definitions/Order'
         path_list = path.split('/')
         result = openapi_parser.get_data_at_location(path_list, self.doc)
@@ -60,12 +64,14 @@ class TestParser(unittest.TestCase):
         assert response is result
 
     def test_sanitise_path(self):
+        """Test if the variables can be removed from the path"""
         path = "A/B/C/{id}"
         result = openapi_parser.sanitise_path(path)
         assert result == 'A/B/C'
         assert isinstance(result, str)
 
     def test_allow_parameter(self):
+        """Test if the rules are being followed """
         parameter_block = self.doc["paths"]["/pet"]["post"]["parameters"][0]
         result = openapi_parser.allow_parameter(parameter_block)
         assert result is True
@@ -76,6 +82,7 @@ class TestParser(unittest.TestCase):
         assert isinstance(result, bool)
 
     def test_parse(self):
+        """Test the hydra documentation """
         result = openapi_parser.parse(self.doc)
         assert isinstance(result, str)
 
