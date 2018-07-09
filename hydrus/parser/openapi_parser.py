@@ -448,7 +448,6 @@ def parse(doc: Dict[str, Any]) -> str:
     :param doc: the open api documentation
     :return:  hydra doc created
     """
-    classAndClassDefinition = dict()  # type: Dict[str,HydraClass]
     definitionSet = set()  # type: Set[str]
     info = try_catch_replacement(doc, "info", "")
     global_ = dict()
