@@ -7,7 +7,9 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 import hydrus.data.crud as crud
 from hydrus.data.db_models import Base
 from hydrus.data import doc_parse
-from hydrus.samples.doc_writer_sample import api_doc as doc
+from hydrus.hydraspec import doc_maker
+from hydrus.samples import doc_writer_sample
+
 import random
 from typing import List
 import string
@@ -39,9 +41,12 @@ class TestCRUD(unittest.TestCase):
         engine = create_engine('sqlite:///:memory:')
         Base.metadata.create_all(engine)
         session = scoped_session(sessionmaker(bind=engine))
-
+        self.API_NAME = "demoapi"
+        self.HYDRUS_SERVER_URL = "http://hydrus.com/"
         self.session = session
-        self.doc = doc
+        self.doc = doc_maker.create_doc(
+            doc_writer_sample.api_doc.generate(), self.HYDRUS_SERVER_URL, self.API_NAME)
+
         test_classes = doc_parse.get_classes(self.doc.generate())
         test_properties = doc_parse.get_all_properties(test_classes)
         doc_parse.insert_classes(test_classes, self.session)
