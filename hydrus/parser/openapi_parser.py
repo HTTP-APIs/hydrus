@@ -476,7 +476,6 @@ def parse(doc: Dict[str, Any]) -> str:
         if global_[name]["path"] is not "" :
             if global_[name]["class_definition"].endpoint is True:
                 global_[name]["class_definition"].endpoint = False
-            print(global_[name]["class_definition"].endpoint)
 
         api_doc.add_supported_class(
             global_[name]["class_definition"],
