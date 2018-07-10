@@ -168,8 +168,9 @@ def sanitise_path(path: str)->str:
             pass
         else:
             new_path.append(subPath)
+    result = '/'.join(new_path)[1:]
 
-    return '/'.join(new_path)
+    return result
 
 
 def get_class_details(global_: Dict[str,
@@ -472,6 +473,9 @@ def parse(doc: Dict[str, Any]) -> str:
             global_[name]["class_definition"].add_supported_prop(prop)
         for op in global_[name]["op_definition"]:
             global_[name]["class_definition"].add_supported_op(op)
+        if global_[name]["path"] is True :
+            if global_[name]["class_definition"].endpoint is True:
+                global_[name]["class_definition"].endpoint = False
         api_doc.add_supported_class(
             global_[name]["class_definition"],
             global_[name]["collection"],
