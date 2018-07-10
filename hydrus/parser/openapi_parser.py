@@ -168,8 +168,9 @@ def sanitise_path(path: str)->str:
             pass
         else:
             new_path.append(subPath)
+    result = '/'.join(new_path)[1:]
 
-    return '/'.join(new_path)
+    return result
 
 
 def get_class_details(global_: Dict[str,
