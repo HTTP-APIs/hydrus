@@ -473,9 +473,11 @@ def parse(doc: Dict[str, Any]) -> str:
             global_[name]["class_definition"].add_supported_prop(prop)
         for op in global_[name]["op_definition"]:
             global_[name]["class_definition"].add_supported_op(op)
-        if global_[name]["path"] is True :
+        if global_[name]["path"] is not "" :
             if global_[name]["class_definition"].endpoint is True:
                 global_[name]["class_definition"].endpoint = False
+            print(global_[name]["class_definition"].endpoint)
+
         api_doc.add_supported_class(
             global_[name]["class_definition"],
             global_[name]["collection"],
