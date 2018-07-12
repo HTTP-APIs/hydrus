@@ -116,7 +116,8 @@ def set_doc(application: Flask, APIDOC: HydraDoc) -> Iterator:
     with appcontext_pushed.connected_to(handler, application):
         yield
 
-@contextmanager        
+
+@contextmanager
 def set_token(application: Flask, token: bool) -> Iterator:
     """Set whether API needs to implement token based authentication."""
     if not isinstance(token, bool):
@@ -126,7 +127,8 @@ def set_token(application: Flask, token: bool) -> Iterator:
         g.token_ = token
     with appcontext_pushed.connected_to(handler, application):
         yield
-        
+
+
 def get_doc() -> HydraDoc:
     """
     Get the server API Documentation.
@@ -149,7 +151,8 @@ def get_token() -> bool:
         token = False
         g.token_ = token
     return token
-  
+
+
 @contextmanager
 def set_hydrus_server_url(application: Flask, server_url: str) -> Iterator:
     """
@@ -161,6 +164,7 @@ def set_hydrus_server_url(application: Flask, server_url: str) -> Iterator:
     """
     if not isinstance(server_url, str):
         raise TypeError("The server_url is not of type <str>")
+
     def handler(sender: Flask, **kwargs: Any) -> None:
         g.hydrus_server_url = server_url
     with appcontext_pushed.connected_to(handler, application):

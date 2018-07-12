@@ -8,7 +8,7 @@ from typing import Any
 
 engine = create_engine('sqlite:///database.db')
 
-Base = declarative_base() # type: Any
+Base = declarative_base()  # type: Any
 
 
 class RDFClass(Base):
@@ -199,20 +199,23 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     paraphrase = Column(String)
 
+
 class Token(Base):
     """Model for storing tokens for the users."""
 
     __tablename__ = "tokens"
-    id = Column(String, primary_key = True)
+    id = Column(String, primary_key=True)
     user_id = Column(Integer, ForeignKey('user.id'))
-    timestamp = Column(DateTime) 
+    timestamp = Column(DateTime)
+
 
 class Nonce(Base):
     """Model for storing nonce for the users."""
 
-    __tablename__  = "nonce"
-    id = Column(String, primary_key = True)
+    __tablename__ = "nonce"
+    id = Column(String, primary_key=True)
     timestamp = Column(DateTime)
+
 
 if __name__ == "__main__":
     print("Creating models....")
