@@ -369,7 +369,7 @@ class EntryPointCollection():
             "writeonly": False
         }  # type: Dict[str, Any]
         for op in self.supportedOperation:
-            operation = EntryPointOp("_:" + op.id_.lower(), op.method,
+            operation = EntryPointOp(op.id_.lower(), op.method,
                                      op.desc, op.expects, op.returns, op.status, type_=op.type_)
             object_["property"]["supportedOperation"].append(
                 operation.generate())
@@ -408,7 +408,7 @@ class EntryPointClass():
             "writeonly": False
         }  # type: Dict[str, Any]
         for op in self.supportedOperation:
-            operation = EntryPointOp("_:" + op.title.lower(), op.method,
+            operation = EntryPointOp(op.title.lower(), op.method,
                                      None, op.expects, op.returns, op.status, label=op.title)
             object_["property"]["supportedOperation"].append(
                 operation.generate())
