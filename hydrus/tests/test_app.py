@@ -51,7 +51,9 @@ class ViewsTestCase(unittest.TestCase):
         print("going for create doc")
 
         self.doc = doc_maker.create_doc(
-            doc_writer_sample.api_doc.generate(), self.HYDRUS_SERVER_URL, self.API_NAME)
+            doc_writer_sample.api_doc.generate(),
+            self.HYDRUS_SERVER_URL,
+            self.API_NAME)
         test_classes = doc_parse.get_classes(self.doc.generate())
         test_properties = doc_parse.get_all_properties(test_classes)
         doc_parse.insert_classes(test_classes, self.session)
@@ -235,9 +237,38 @@ class ViewsTestCase(unittest.TestCase):
                 if "PUT" in class_methods:
                     dummy_object = gen_dummy_object(
                         collection.class_.title, self.doc)
-                    put_response = self.client.put(endpoints[collection_name] + '/' + str(random.randint(100, 1000)),
-                                                   data=json.dumps(dummy_object))
+                    put_response = self.client.put(
+                        endpoints[collection_name] + '/' + str(
+                            random.randint(
+                                100, 1000)), data=json.dumps(dummy_object))
                     assert put_response.status_code == 201
+
+    def test_object_PUT_at_ids(self):
+        index = self.client.get("/" + self.API_NAME)
+        assert index.status_code == 200
+        endpoints = json.loads(index.data.decode('utf-8'))
+        for collection_name in endpoints:
+            if collection_name in self.doc.collections:
+                collection = self.doc.collections[collection_name]["collection"]
+                class_ = self.doc.parsed_classes[collection.class_.title]["class"]
+                class_methods = [x.method for x in class_.supportedOperation]
+                data_ = {
+                    "data": list()
+                }
+                objects = list()
+                ids = ""
+                for index in range(3):
+                    objects.append(gen_dummy_object(
+                        collection.class_.title, self.doc))
+                    ids += str(random.randint(100, 1000))
+                    ids += ','
+                data_["data"] = objects
+                if "PUT" in class_methods:
+                    put_response = self.client.put(
+                        endpoints[collection_name] + '/' + ids,
+                        data=json.dumps(
+                            data_["data"]))
+                assert put_response.status_code == 201
 
     def test_endpointClass_PUT(self):
         """Check non collection Class PUT."""
@@ -326,7 +357,10 @@ class ViewsTestCase(unittest.TestCase):
         for collection_name in endpoints:
             if collection_name in self.doc.collections:
                 bad_response_put = self.client.put(
-                    endpoints[collection_name], data=json.dumps(dict(foo='bar')))
+                    endpoints[collection_name],
+                    data=json.dumps(
+                        dict(
+                            foo='bar')))
                 assert bad_response_put.status_code == 400
 
     def test_bad_requests(self):

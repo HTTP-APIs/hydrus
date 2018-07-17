@@ -185,7 +185,7 @@ doc = {
                         "range": "vocab:dummyClassCollection",
                         "supportedOperation": [
                             {
-                                "@id": "_:_:dummyclass_collection_retrieve",
+                                "@id": "_:dummyclass_collection_retrieve",
                                 "@type": "http://schema.org/FindAction",
                                 "description": "Retrieves all dummyClass entities",
                                 "expects": "null",
@@ -194,7 +194,7 @@ doc = {
                                 "statusCodes": []
                             },
                             {
-                                "@id": "_:_:dummyclass_create",
+                                "@id": "_:dummyclass_create",
                                 "@type": "http://schema.org/AddAction",
                                 "description": "Create new dummyClass entitity",
                                 "expects": "vocab:dummyClass",

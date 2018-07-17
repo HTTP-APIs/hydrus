@@ -31,14 +31,18 @@ from flask_restful import Api, Resource
 from flask_cors import CORS
 
 from hydrus.data import crud
-from hydrus.data.exceptions import (ClassNotFound, InstanceExists, PropertyNotFound,
-                                    NotInstanceProperty, NotAbstractProperty,
-                                    InstanceNotFound)
+from hydrus.data.exceptions import (
+    ClassNotFound,
+    InstanceExists,
+    PropertyNotFound,
+    NotInstanceProperty,
+    NotAbstractProperty,
+    InstanceNotFound)
 from hydrus.data.user import check_authorization, add_token, check_token, create_nonce
 from hydrus.utils import get_session, get_doc, get_api_name, get_hydrus_server_url, get_authentication, get_token
 
 from flask.wrappers import Response
-from typing import Dict, List, Any, Union,Optional
+from typing import Dict, List, Any, Union, Optional
 
 
 def validObject(object_: Dict[str, Any]) -> bool:
@@ -51,6 +55,33 @@ def validObject(object_: Dict[str, Any]) -> bool:
     if "@type" in object_:
         return True
     return False
+
+
+def validObjectList(objects_: List[Dict[str, Any]]) -> bool:
+    """
+        Check if the List of Dicts passed are of the valid format or not.
+        (if there's an "@type" key in the dict)
+
+    :param objects_: Object to be checked
+    """
+    for object_ in objects_:
+        if "@type" not in object_:
+            return False
+    return True
+
+
+def type_match(object_: List[Dict[str, Any]], obj_type: str) -> bool:
+    """
+    Checks if the object type matches for every object in list.
+    :param object_: List of objects
+    :param obj_type: The required object type
+    :return: True if all object of list have the right type
+            False otherwise
+    """
+    for obj in object_:
+        if obj["@type"] != obj_type:
+            return False
+    return True
 
 
 def token_response(token: str) -> Response:
@@ -74,12 +105,16 @@ def failed_authentication(incorrect: bool) -> Response:
         message = {401: "Incorrect credentials"}
         realm = 'Basic realm="Incorrect credentials"'
     nonce = create_nonce(get_session())
-    response = set_response_headers(jsonify(message), status_code=401,
-                                    headers=[{'WWW-Authenticate': realm}, {'X-Authentication': nonce}])
+    response = set_response_headers(jsonify(message), status_code=401, headers=[
+                                    {'WWW-Authenticate': realm}, {'X-Authentication': nonce}])
     return response
 
 
-def set_response_headers(resp: Response, ct: str="application/ld+json", headers: List[Dict[str, Any]]=[], status_code: int=200) -> Response:
+def set_response_headers(resp: Response,
+                         ct: str="application/ld+json",
+                         headers: List[Dict[str,
+                                            Any]]=[],
+                         status_code: int=200) -> Response:
     """Set the response headers."""
     resp.status_code = status_code
     for header in headers:
@@ -119,15 +154,18 @@ def checkEndpoint(method: str, path: str) -> Dict[str, Union[bool, int]]:
 
 def getType(class_path: str, method: str) -> Any:
     """Return the @type of object allowed for POST/PUT."""
-    for supportedOp in get_doc().parsed_classes[class_path]["class"].supportedOperation:
+    for supportedOp in get_doc(
+    ).parsed_classes[class_path]["class"].supportedOperation:
         if supportedOp.method == method:
             return supportedOp.expects.replace("vocab:", "")
-    # NOTE: Don't use split, if there are more than one substrings with 'vocab:' not everything will be returned.
+    # NOTE: Don't use split, if there are more than one substrings with
+    # 'vocab:' not everything will be returned.
 
 
 def checkClassOp(class_type: str, method: str) -> bool:
     """Check if the Class supports the operation."""
-    for supportedOp in get_doc().parsed_classes[class_type]["class"].supportedOperation:
+    for supportedOp in get_doc(
+    ).parsed_classes[class_type]["class"].supportedOperation:
         if supportedOp.method == method:
             return True
     return False
@@ -206,7 +244,7 @@ class Item(Resource):
         :param path : Path for Item ( Specified in APIDoc @id)
         """
         auth_response = check_authentication_response()
-        if type(auth_response) == Response:
+        if isinstance(auth_response, Response):
             return auth_response
 
         class_type = get_doc().collections[path]["collection"].class_.title
@@ -216,13 +254,18 @@ class Item(Resource):
             try:
                 # Try getting the Item based on ID and Class type
                 response = crud.get(
-                    id_, class_type, api_name=get_api_name(), session=get_session())
+                    id_,
+                    class_type,
+                    api_name=get_api_name(),
+                    session=get_session())
 
-                return set_response_headers(jsonify(hydrafy(response,path=path)))
+                return set_response_headers(
+                    jsonify(hydrafy(response, path=path)))
 
             except (ClassNotFound, InstanceNotFound) as e:
                 status_code, message = e.get_HTTP()
-                return set_response_headers(jsonify(message), status_code=status_code)
+                return set_response_headers(
+                    jsonify(message), status_code=status_code)
         abort(405)
 
     def post(self, id_: str, path: str) -> Response:
@@ -232,7 +275,7 @@ class Item(Resource):
         :param path - Path for Item type( Specified in APIDoc @id)
         """
         auth_response = check_authentication_response()
-        if type(auth_response) == Response:
+        if isinstance(auth_response, Response):
             return auth_response
 
         class_type = get_doc().collections[path]["collection"].class_.title
@@ -247,19 +290,27 @@ class Item(Resource):
                     try:
                         # Update the right ID if the object is valid and matches
                         # type of Item
-                        object_id = crud.update(object_=object_, id_=id_, type_=object_[
-                                                "@type"], session=get_session(), api_name=get_api_name())
+                        object_id = crud.update(
+                            object_=object_,
+                            id_=id_,
+                            type_=object_["@type"],
+                            session=get_session(),
+                            api_name=get_api_name())
                         headers_ = [{"Location": get_hydrus_server_url(
                         ) + get_api_name() + "/" + path + "/" + str(object_id)}]
                         response = {
-                            "message": "Object with ID %s successfully updated" % (object_id)}
-                        return set_response_headers(jsonify(response), headers=headers_)
+                            "message": "Object with ID %s successfully updated" %
+                            (object_id)}
+                        return set_response_headers(
+                            jsonify(response), headers=headers_)
 
                     except (ClassNotFound, InstanceNotFound, InstanceExists, PropertyNotFound) as e:
                         status_code, message = e.get_HTTP()
-                        return set_response_headers(jsonify(message), status_code=status_code)
+                        return set_response_headers(
+                            jsonify(message), status_code=status_code)
 
-            return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
+            return set_response_headers(
+                jsonify({400: "Data is not valid"}), status_code=400)
 
         abort(405)
 
@@ -270,7 +321,7 @@ class Item(Resource):
         :param path - Path for Item type( Specified in APIDoc @id) to be updated
         """
         auth_response = check_authentication_response()
-        if type(auth_response) == Response:
+        if isinstance(auth_response, Response):
             return auth_response
 
         class_type = get_doc().collections[path]["collection"].class_.title
@@ -288,20 +339,24 @@ class Item(Resource):
                         headers_ = [{"Location": get_hydrus_server_url(
                         ) + get_api_name() + "/" + path + "/" + str(object_id)}]
                         response = {
-                            "message": "Object with ID %s successfully added" % (object_id)}
-                        return set_response_headers(jsonify(response), headers=headers_, status_code=201)
+                            "message": "Object with ID %s successfully added" %
+                            (object_id)}
+                        return set_response_headers(
+                            jsonify(response), headers=headers_, status_code=201)
                     except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
                         status_code, message = e.get_HTTP()
-                        return set_response_headers(jsonify(message), status_code=status_code)
+                        return set_response_headers(
+                            jsonify(message), status_code=status_code)
 
-            return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
+            return set_response_headers(
+                jsonify({400: "Data is not valid"}), status_code=400)
 
         abort(405)
 
     def delete(self, id_: str, path: str) -> Response:
         """Delete object with id=id_ from database."""
         auth_response = check_authentication_response()
-        if type(auth_response) == Response:
+        if isinstance(auth_response, Response):
             return auth_response
 
         class_type = get_doc().collections[path]["collection"].class_.title
@@ -312,12 +367,14 @@ class Item(Resource):
                 # Delete the Item with ID == id_
                 crud.delete(id_, class_type, session=get_session())
                 response = {
-                    "message": "Object with ID %s successfully deleted" % (id_)}
+                    "message": "Object with ID %s successfully deleted" %
+                    (id_)}
                 return set_response_headers(jsonify(response))
 
             except (ClassNotFound, InstanceNotFound) as e:
                 status_code, message = e.get_HTTP()
-                return set_response_headers(jsonify(message), status_code=status_code)
+                return set_response_headers(
+                    jsonify(message), status_code=status_code)
 
         abort(405)
 
@@ -330,7 +387,7 @@ class ItemCollection(Resource):
         Retrieve a collection of items from the database.
         """
         auth_response = check_authentication_response()
-        if type(auth_response) == Response:
+        if isinstance(auth_response, Response):
             return auth_response
         endpoint_ = checkEndpoint("GET", path)
         if endpoint_['method']:
@@ -341,24 +398,31 @@ class ItemCollection(Resource):
                 try:
                     # Get collection details from the database
                     response = crud.get_collection(
-                        get_api_name(), collection.class_.title, session=get_session(),path=path)
-                    return set_response_headers(jsonify(hydrafy(response,path=path)))
+                        get_api_name(), collection.class_.title, session=get_session(), path=path)
+                    return set_response_headers(
+                        jsonify(hydrafy(response, path=path)))
 
                 except ClassNotFound as e:
                     status_code, message = e.get_HTTP()
-                    return set_response_headers(jsonify(message), status_code=status_code)
+                    return set_response_headers(
+                        jsonify(message), status_code=status_code)
 
             # If class is supported
             elif path in get_doc().parsed_classes and path + "Collection" not in get_doc().collections:
                 try:
                     class_type = get_doc().parsed_classes[path]['class'].title
                     response = crud.get_single(
-                        class_type, api_name=get_api_name(), session=get_session(),path=path)
-                    return set_response_headers(jsonify(hydrafy(response,path=path)))
+                        class_type,
+                        api_name=get_api_name(),
+                        session=get_session(),
+                        path=path)
+                    return set_response_headers(
+                        jsonify(hydrafy(response, path=path)))
 
                 except (ClassNotFound, InstanceNotFound) as e:
                     status_code, message = e.get_HTTP()
-                    return set_response_headers(jsonify(message), status_code=status_code)
+                    return set_response_headers(
+                        jsonify(message), status_code=status_code)
 
         abort(endpoint_['status'])
 
@@ -370,7 +434,7 @@ class ItemCollection(Resource):
         :param path - Path for Item type ( Specified in APIDoc @id)
         """
         auth_response = check_authentication_response()
-        if type(auth_response) == Response:
+        if isinstance(auth_response, Response):
             return auth_response
 
         endpoint_ = checkEndpoint("PUT", path)
@@ -389,7 +453,8 @@ class ItemCollection(Resource):
                     # If Item in request's JSON is a valid object
                     # ie. @type is one of the keys in object_
                     if object_["@type"] == obj_type:
-                        # If the right Item type is being added to the collection
+                        # If the right Item type is being added to the
+                        # collection
                         try:
                             # Insert object and return location in Header
                             object_id = crud.insert(
@@ -397,13 +462,17 @@ class ItemCollection(Resource):
                             headers_ = [{"Location": get_hydrus_server_url(
                             ) + get_api_name() + "/" + path + "/" + str(object_id)}]
                             response = {
-                                "message": "Object with ID %s successfully added" % (object_id)}
-                            return set_response_headers(jsonify(response), headers=headers_, status_code=201)
+                                "message": "Object with ID %s successfully added" %
+                                (object_id)}
+                            return set_response_headers(
+                                jsonify(response), headers=headers_, status_code=201)
                         except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
                             status_code, message = e.get_HTTP()
-                            return set_response_headers(jsonify(message), status_code=status_code)
+                            return set_response_headers(
+                                jsonify(message), status_code=status_code)
 
-                return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
+                return set_response_headers(
+                    jsonify({400: "Data is not valid"}), status_code=400)
 
             elif path in get_doc().parsed_classes and path + "Collection" not in get_doc().collections:
                 # If path is in parsed_classes but is not a collection
@@ -416,12 +485,15 @@ class ItemCollection(Resource):
                             headers_ = [{"Location": get_hydrus_server_url(
                             ) + get_api_name() + "/" + path + "/"}]
                             response = {"message": "Object successfully added"}
-                            return set_response_headers(jsonify(response), headers=headers_, status_code=201)
+                            return set_response_headers(
+                                jsonify(response), headers=headers_, status_code=201)
                         except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
                             status_code, message = e.get_HTTP()
-                            return set_response_headers(jsonify(message), status_code=status_code)
+                            return set_response_headers(
+                                jsonify(message), status_code=status_code)
 
-                return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
+                return set_response_headers(
+                    jsonify({400: "Data is not valid"}), status_code=400)
 
         abort(endpoint_['status'])
 
@@ -433,29 +505,36 @@ class ItemCollection(Resource):
         :param path - Path for Item type ( Specified in APIDoc @id)
         """
         auth_response = check_authentication_response()
-        if type(auth_response) == Response:
+        if isinstance(auth_response, Response):
             return auth_response
 
         endpoint_ = checkEndpoint("POST", path)
         if endpoint_['method']:
             object_ = json.loads(request.data.decode('utf-8'))
-            if path in get_doc().parsed_classes and path + "Collection" not in get_doc().collections:
+            if path in get_doc().parsed_classes and path + \
+                    "Collection" not in get_doc().collections:
                 obj_type = getType(path, "POST")
                 if validObject(object_):
                     if object_["@type"] == obj_type:
                         try:
                             crud.update_single(
-                                object_=object_, session=get_session(), api_name=get_api_name(),path=path)
+                                object_=object_,
+                                session=get_session(),
+                                api_name=get_api_name(),
+                                path=path)
                             headers_ = [{"Location": get_hydrus_server_url(
                             ) + get_api_name() + "/" + path + "/"}]
                             response = {
                                 "message": "Object successfully updated"}
-                            return set_response_headers(jsonify(response), headers=headers_)
+                            return set_response_headers(
+                                jsonify(response), headers=headers_)
                         except (ClassNotFound, InstanceNotFound, InstanceExists, PropertyNotFound) as e:
                             status_code, message = e.get_HTTP()
-                            return set_response_headers(jsonify(message), status_code=status_code)
+                            return set_response_headers(
+                                jsonify(message), status_code=status_code)
 
-                return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
+                return set_response_headers(
+                    jsonify({400: "Data is not valid"}), status_code=400)
 
         abort(endpoint_['status'])
 
@@ -467,13 +546,14 @@ class ItemCollection(Resource):
         :param path - Path for Item ( Specified in APIDoc @id)
         """
         auth_response = check_authentication_response()
-        if type(auth_response) == Response:
+        if isinstance(auth_response, Response):
             return auth_response
 
         endpoint_ = checkEndpoint("DELETE", path)
         if endpoint_['method']:
             # No Delete Operation for collections
-            if path in get_doc().parsed_classes and path + "Collection" not in get_doc().collections:
+            if path in get_doc().parsed_classes and path + \
+                    "Collection" not in get_doc().collections:
                 try:
                     class_type = get_doc().parsed_classes[path]['class'].title
                     crud.delete_single(class_type, session=get_session())
@@ -481,8 +561,92 @@ class ItemCollection(Resource):
                     return set_response_headers(jsonify(response))
                 except (ClassNotFound, InstanceNotFound) as e:
                     status_code, message = e.get_HTTP()
-                    return set_response_headers(jsonify(message), status_code=status_code)
+                    return set_response_headers(
+                        jsonify(message), status_code=status_code)
         abort(endpoint_['status'])
+
+
+class Items(Resource):
+
+    def put(self, path, int_list="") -> Response:
+        """
+        To insert multiple objects into the database
+        :param path: endpoint
+        :param int_list: Optional String containing ',' separated ID's
+        :return:
+        """
+        auth_response = check_authentication_response()
+        if isinstance(auth_response, Response):
+            return auth_response
+
+        endpoint_ = checkEndpoint("PUT", path)
+        if endpoint_['method']:
+            # If endpoint and PUT method is supported in the API
+            object_ = json.loads(request.data.decode('utf-8'))
+            object_ = object_["data"]
+            if path in get_doc().collections:
+                # If collection name in document's collections
+                collection = get_doc().collections[path]["collection"]
+                # title of HydraClass object corresponding to collection
+                obj_type = collection.class_.title
+                if validObjectList(object_):
+                    type_result = type_match(object_, obj_type)
+                    # If Item in request's JSON is a valid object
+                    # ie. @type is one of the keys in object_
+                    if type_result:
+                        # If the right Item type is being added to the
+                        # collection
+                        try:
+                            # Insert object and return location in Header
+                            object_id = crud.insert_multiple(
+                                objects_=object_, session=get_session(), id_=int_list)
+                            headers_ = [{"Location": get_hydrus_server_url(
+                            ) + get_api_name() + "/" + path + "/" + str(object_id)}]
+                            response = {
+                                "message": "Object with ID %s successfully added" %
+                                (object_id)}
+                            return set_response_headers(
+                                jsonify(response), headers=headers_, status_code=201)
+                        except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
+                            status_code, message = e.get_HTTP()
+                            return set_response_headers(
+                                jsonify(message), status_code=status_code)
+
+                return set_response_headers(
+                    jsonify({400: "Data is not valid"}), status_code=400)
+
+            
+        abort(endpoint_['status'])
+
+    def delete(self, path, int_list):
+        """
+        To delete multiple objects
+        :param path: endpoints
+        :param int_list: Optional String containing ',' separated ID's
+        :return:
+        """
+        auth_response = check_authentication_response()
+        if isinstance(auth_response, Response):
+            return auth_response
+        class_type = get_doc().collections[path]["collection"].class_.title
+
+        if checkClassOp(class_type, "DELETE"):
+            # Check if class_type supports PUT operation
+            try:
+                # Delete the Item with ID == id_
+                crud.delete_multiple(
+                    int_list, class_type, session=get_session())
+                response = {
+                    "message": "Object with ID %s successfully deleted" %
+                    (int_list.split(','))}
+                return set_response_headers(jsonify(response))
+
+            except (ClassNotFound, InstanceNotFound) as e:
+                status_code, message = e.get_HTTP()
+                return set_response_headers(
+                    jsonify(message), status_code=status_code)
+
+        abort(405)
 
 
 class Contexts(Resource):
@@ -512,11 +676,6 @@ class Contexts(Resource):
                 return set_response_headers(jsonify(response), status_code=404)
 
 
-class Items(Resource):
-    def put(self, path: str) -> Response:
-        pass
-
-
 def app_factory(API_NAME: str="api") -> Flask:
     """Create an app object."""
     app = Flask(__name__)
@@ -535,8 +694,12 @@ def app_factory(API_NAME: str="api") -> Flask:
                      "/<string:path>", endpoint="item_collection")
     api.add_resource(Item, "/" + API_NAME +
                      "/<string:path>/<string:id_>", endpoint="item")
-    api.add_resource(Items,"/"+ API_NAME +
-                     "/<string:path>/list",endpoint="items")
+
+    api.add_resource(Items, "/" + API_NAME +
+                     "/<string:path>/add/<int_list>", "/" + API_NAME +
+                     "/<string:path>/add", "/" + API_NAME +
+                     "/<string:path>/delete/<int_list>")
+
 
     return app
 
