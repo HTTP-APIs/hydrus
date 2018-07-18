@@ -153,7 +153,7 @@ class TestCRUD(unittest.TestCase):
     def test_delete_id(self):
         """Test CRUD delete when wrong/undefined ID is given."""
         object_ = gen_dummy_object("dummyClass", self.doc)
-        id_ = 6
+        id_ = "6"
         insert_response = crud.insert(
             object_=object_, id_=id_, session=self.session)
         response_code = None
@@ -163,7 +163,9 @@ class TestCRUD(unittest.TestCase):
         except Exception as e:
             response_code, message = e.get_HTTP()
         assert 404 == response_code
-        assert isinstance(insert_response, int)
+        assert isinstance(insert_response, str)
+        print(insert_response)
+        print(id_)
         assert insert_response == id_
 
     def test_insert_type(self):

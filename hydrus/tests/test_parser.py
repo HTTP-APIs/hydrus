@@ -67,6 +67,7 @@ class TestParser(unittest.TestCase):
         """Test if the variables can be removed from the path"""
         path = "A/B/C/{id}"
         result = openapi_parser.sanitise_path(path)
+        print(result)
         assert result == 'A/B/C'
         assert isinstance(result, str)
 
