@@ -66,7 +66,7 @@ class TestParser(unittest.TestCase):
     def test_sanitise_path(self):
         """Test if the variables can be removed from the path"""
         path = "A/B/C/{id}"
-        result = openapi_parser.sanitise_path(path
+        result = openapi_parser.sanitise_path(path)
         assert isinstance(result, str)
 
     def test_allow_parameter(self):
