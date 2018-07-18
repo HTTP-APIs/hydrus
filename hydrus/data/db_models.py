@@ -171,7 +171,8 @@ class GraphIAC(Graph):
     """Graph model for Instance >> AbstractProperty >> Class."""
 
     __tablename__ = 'graphiac'
-    id = Column(String, ForeignKey('graph.id'), primary_key=True)
+    id = Column(String, ForeignKey('graph.id'), primary_key=True,default=lambda: str(
+            uuid.uuid4()))
     subject = Column(String, ForeignKey("instances.id"))
     predicate = Column(String, ForeignKey("property.id"))
     object_ = Column(String, ForeignKey("classes.id"))
@@ -190,7 +191,8 @@ class GraphIII(Graph):
     """Graph model for Instance >> InstanceProperty >> Instance."""
 
     __tablename__ = 'graphiii'
-    id = Column(String, ForeignKey('graph.id'), primary_key=True)
+    id = Column(String, ForeignKey('graph.id'), primary_key=True,default=lambda: str(
+            uuid.uuid4()))
     subject = Column(String, ForeignKey("instances.id"))
     predicate = Column(String, ForeignKey("property.id"))
     object_ = Column(String, ForeignKey("instances.id"))
@@ -209,7 +211,8 @@ class GraphIIT(Graph):
     """Graph model for Instance >> InstanceProperty >> Terminal."""
 
     __tablename__ = 'graphiit'
-    id = Column(String, ForeignKey('graph.id'), primary_key=True)
+    id = Column(String, ForeignKey('graph.id'), primary_key=True,default=lambda: str(
+            uuid.uuid4()))
     subject = Column(String, ForeignKey("instances.id"))
     predicate = Column(String, ForeignKey("property.id"))
     object_ = Column(String, ForeignKey("terminals.id"))
