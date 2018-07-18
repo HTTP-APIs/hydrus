@@ -74,7 +74,7 @@ class TestCRUD(unittest.TestCase):
         """Test CRUD update."""
         object_ = gen_dummy_object("dummyClass", self.doc)
         new_object = gen_dummy_object("dummyClass", self.doc)
-        id_ = 30
+        id_ = "30"
         insert_response = crud.insert(
             object_=object_, id_=id_, session=self.session)
         update_response = crud.update(
@@ -85,8 +85,8 @@ class TestCRUD(unittest.TestCase):
             api_name="api")
         test_object = crud.get(id_=id_, type_=object_[
                                "@type"], session=self.session, api_name="api")
-        assert isinstance(insert_response, int)
-        assert isinstance(update_response, int)
+        assert isinstance(insert_response, str)
+        assert isinstance(update_response, str)
         assert insert_response == update_response
         assert int(test_object["@id"].split("/")[-1]) == id_
 
@@ -98,7 +98,7 @@ class TestCRUD(unittest.TestCase):
             object_=object_, id_=id_, session=self.session)
         delete_response = crud.delete(
             id_=id_, type_=object_["@type"], session=self.session)
-        assert isinstance(insert_response, int)
+        assert isinstance(insert_response, str)
         response_code = None
         try:
             get_response = crud.get(
