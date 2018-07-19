@@ -63,7 +63,7 @@ class TestCRUD(unittest.TestCase):
     def test_get(self):
         """Test CRUD get."""
         object_ = gen_dummy_object("dummyClass", self.doc)
-        id_ = 2
+        id_ = "2"
         response = crud.insert(object_=object_, id_=id_, session=self.session)
         object_ = crud.get(id_=id_, type_=object_[
                            "@type"], session=self.session, api_name="api")
@@ -93,7 +93,7 @@ class TestCRUD(unittest.TestCase):
     def test_delete(self):
         """Test CRUD delete."""
         object_ = gen_dummy_object("dummyClass", self.doc)
-        id_ = 4
+        id_ = "4"
         insert_response = crud.insert(
             object_=object_, id_=id_, session=self.session)
         delete_response = crud.delete(
@@ -112,7 +112,7 @@ class TestCRUD(unittest.TestCase):
 
     def test_get_id(self):
         """Test CRUD get when wrong/undefined ID is given."""
-        id_ = 999
+        id_ = "999"
         type_ = "dummyClass"
         response_code = None
         try:
@@ -124,7 +124,7 @@ class TestCRUD(unittest.TestCase):
 
     def test_get_type(self):
         """Test CRUD get when wrong/undefined class is given."""
-        id_ = 1
+        id_ = "1"
         type_ = "otherClass"
         response_code = None
         try:
@@ -182,7 +182,7 @@ class TestCRUD(unittest.TestCase):
     def test_insert_id(self):
         """Test CRUD insert when used ID is given."""
         object_ = gen_dummy_object("dummyClass", self.doc)
-        id_ = 1
+        id_ = "1"
         response_code = None
         try:
             insert_response = crud.insert(
