@@ -68,7 +68,7 @@ class TestCRUD(unittest.TestCase):
         object_ = crud.get(id_=id_, type_=object_[
                            "@type"], session=self.session, api_name="api")
         assert isinstance(response, str)
-        assert int(object_["@id"].split("/")[-1]) == id_
+        assert object_["@id"].split("/")[-1] == id_
 
     def test_update(self):
         """Test CRUD update."""
