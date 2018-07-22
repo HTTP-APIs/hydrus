@@ -24,21 +24,25 @@ def try_catch_replacement(block: Any, get_this: str, default: Any) -> str:
 
 def schema_parser(schema_block,class_name,global_,path=""):
     if class_name not in global_["class_names"]:
+        ref = ""
         try :
             ref = schema_block["$ref"]
         except KeyError:
             # throw not supported error asking user to enter ref for now
+            # ERROR
             pass
-
-        get_class_details(
-            global_,
-            get_data_at_location(
-                schema_block["$ref"]),
-            class_name,
-            path=path)
-        return "vocab:" + class_name
-    else:
-        return "vocab:" + class_name
+        if ref.split('/')[0]!="#":
+            # means its a url
+            return ref
+        else:
+            # class defined in the doc
+            get_class_details(
+                global_,
+                get_data_at_location(
+                    schema_block["$ref"]),
+                class_name,
+                path=path)
+            return "vocab:" + class_name
 
 
 
@@ -261,6 +265,7 @@ def check_for_ref(global_: Dict[str, Any],
     for obj in block["responses"]:
         try:
             try:
+                # can only be internal
                 class_location = block["responses"][obj]["schema"]["$ref"].split(
                     '/')
             except KeyError:
@@ -287,7 +292,7 @@ def check_for_ref(global_: Dict[str, Any],
             pass
 
     # when we would be able to take arrays as parameters we will use
-    # check_if_collection here as well c
+    # check_if_collection here as well
     flag = try_catch_replacement(block,"parameters","False")
     if flag!="False":
         for obj in block["parameters"]:
