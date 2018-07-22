@@ -22,6 +22,30 @@ def try_catch_replacement(block: Any, get_this: str, default: Any) -> str:
         return default
 
 
+def schema_parser(schema_block,class_name,global_,path=""):
+    if class_name not in global_["class_names"]:
+        try :
+            ref = schema_block["$ref"]
+        except KeyError:
+            ref= ""
+        try:
+            type = schema_block["type"]
+            # ask user to insert semantic ref
+        except KeyError:
+            pass
+
+        get_class_details(
+            global_,
+            get_data_at_location(
+                schema_block["$ref"]),
+            class_name,
+            path=path)
+        return "vocab:" + class_name
+    else:
+        return "vocab:" + class_name
+
+
+
 def generateEntrypoint(api_doc: HydraDoc) -> None:
     """
     Generates Entrypoint , Base Collection and Base Resource for the documentation
@@ -268,28 +292,31 @@ def check_for_ref(global_: Dict[str, Any],
 
     # when we would be able to take arrays as parameters we will use
     # check_if_collection here as well c
-    for obj in block["parameters"]:
-        try:
+    flag = try_catch_replacement(block,"parameters","False")
+    if flag!="False":
+        for obj in block["parameters"]:
             try:
-                class_location = obj["schema"]["$ref"].split('/')
+                try:
+                    class_location = obj["schema"]["$ref"].split('/')
+                except KeyError:
+                    class_location = obj["schema"]["items"]["$ref"].split('/')
+                object_ = check_collection(
+                    class_location[2], global_, obj["schema"], path)
+                if object_["class_name"] == "":
+                    # cannot parse because method not supported
+                    return object_["class_name"]
+                get_class_details(
+                    global_,
+                    get_data_at_location(
+                        class_location,
+                        global_["doc"]),
+                    get_class_name(class_location),
+                    path=path)
+                return class_location[2]
             except KeyError:
-                class_location = obj["schema"]["items"]["$ref"].split('/')
-            object_ = check_collection(
-                class_location[2], global_, obj["schema"], path)
-            if object_["class_name"] == "":
-                # cannot parse because method not supported
-                return object_["class_name"]
-            get_class_details(
-                global_,
-                get_data_at_location(
-                    class_location,
-                    global_["doc"]),
-                get_class_name(class_location),
-                path=path)
-            return class_location[2]
-        except KeyError:
-            pass
+                pass
     # cannot parse because no external ref
+    # TODO throw exception
     return ""
 
 
@@ -339,9 +366,11 @@ def get_parameters(global_: Dict[str, Any],
     """
     param = str
     for parameter in global_["doc"]["paths"][path][method]["parameters"]:
+        # will call schema_parse with class name and schema block after checking if type exists
+        # coz there are instances where no schema key is present
         if allow_parameter(parameter):
             try:
-                # check if class has been parsed
+                # check if class has been pared
                 if parameter["schema"]["$ref"].split(
                         '/')[2] in global_["class_names"]:
                     param = "vocab:" + \
