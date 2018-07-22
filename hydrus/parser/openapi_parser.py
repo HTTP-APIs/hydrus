@@ -27,11 +27,7 @@ def schema_parser(schema_block,class_name,global_,path=""):
         try :
             ref = schema_block["$ref"]
         except KeyError:
-            ref= ""
-        try:
-            type = schema_block["type"]
-            # ask user to insert semantic ref
-        except KeyError:
+            # throw not supported error asking user to enter ref for now
             pass
 
         get_class_details(
