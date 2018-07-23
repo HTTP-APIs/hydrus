@@ -206,6 +206,7 @@ def get_class_details(global_: Dict[str,
         except KeyError:
             classDefinition = HydraClass(
                 class_name, class_name, class_name, endpoint=True, path=path)
+        # we need to add object to global before we can attach props
         object_ = generate_empty_object()
         object_["class_name"] = class_name
         object_["collection"] = False
