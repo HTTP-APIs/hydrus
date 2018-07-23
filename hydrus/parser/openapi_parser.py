@@ -192,7 +192,7 @@ def sanitise_path(path: str)->str:
             pass
         else:
             new_path.append(subPath)
-    result = '/'.join(new_path)[1:]
+    result = '/'.join(new_path)[0:]
 
     return result
 
@@ -229,22 +229,51 @@ def get_class_details(global_: Dict[str,
         except KeyError:
             classDefinition = HydraClass(
                 class_name, class_name, class_name, endpoint=True, path=path)
-
+        object_ = generate_empty_object()
+        object_["class_name"] = class_name
+        object_["collection"] = False
+        global_[class_name] = object_
+        global_[class_name]["class_definition"] = classDefinition
+        global_["class_names"].add(class_name)
         properties = data["properties"]
         try:
             required = data["required"]
         except KeyError:
             required = set()
+
         for prop in properties:
-            # todo parse one more level to check 'type' and define class if needed
-            # check required from required list and add when true
+            vocabFlag=True
+            errFlag = False
+            if prop not in global_["class_names"]:
+                print(prop)
+                try:
+                    ref = properties[prop]["$ref"].split('/')
+                    print("ref is ")
+                    print(ref)
+                    if ref[0]=="#":
+                        print("sending to get class details")
+                        get_class_details(global_,get_data_at_location(ref,global_["doc"]),get_class_name(ref),get_class_name(ref))
+                    else:
+                        vocabFlag=False
+                except KeyError:
+                    # throw exception
+                    # ERROR
+                    print("error")
+                    errFlag = True
+                    pass
             flag = False
             if prop in required and len(required) > 0:
                 flag = True
-            # TODO copy stuff from semantic ref branch regarding prop exists in
-            # definitionset or not
-            global_[class_name]["prop_definition"].append(HydraClassProp(
-                "vocab:" + prop, prop, required=flag, read=True, write=True))
+            if vocabFlag:
+                if errFlag:
+                    global_[class_name]["prop_definition"].append(HydraClassProp(
+                        "", prop, required=flag, read=True, write=True))
+                else:
+                    global_[class_name]["prop_definition"].append(HydraClassProp(
+                        "vocab:" + prop, prop, required=flag, read=True, write=True))
+            else:
+                global_[class_name]["prop_definition"].append(HydraClassProp(
+                    prop, prop, required=flag, read=True, write=True))
         global_[class_name]["path"] = path
         global_[class_name]["class_definition"] = classDefinition
         global_["class_names"].add(class_name)
