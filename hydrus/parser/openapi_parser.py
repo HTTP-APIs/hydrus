@@ -22,29 +22,6 @@ def try_catch_replacement(block: Any, get_this: str, default: Any) -> str:
         return default
 
 
-def schema_parser(schema_block,class_name,global_,path=""):
-    if class_name not in global_["class_names"]:
-        ref = ""
-        try :
-            ref = schema_block["$ref"]
-        except KeyError:
-            # throw not supported error asking user to enter ref for now
-            # ERROR
-            pass
-        if ref.split('/')[0]!="#":
-            # means its a url
-            return ref
-        else:
-            # class defined in the doc
-            get_class_details(
-                global_,
-                get_data_at_location(
-                    schema_block["$ref"]),
-                class_name,
-                path=path)
-            return "vocab:" + class_name
-
-
 
 def generateEntrypoint(api_doc: HydraDoc) -> None:
     """
