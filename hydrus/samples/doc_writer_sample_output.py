@@ -1,5 +1,4 @@
-"""
-Generated API Documentation sample using doc_writer_sample.py.
+"""Generated API Documentation sample using doc_writer_sample.py."""
 
 doc = {
     "@context": {
@@ -43,16 +42,16 @@ doc = {
         "supportedOperation": "hydra:supportedOperation",
         "supportedProperty": "hydra:supportedProperty",
         "title": "hydra:title",
-        "vocab": "https://hydrus.com/demoapi/vocab#",
+        "vocab": "https://hydrus.com/api/vocab#",
         "writeonly": "hydra:writeonly"
     },
-    "@id": "https://hydrus.com/demoapi/vocab",
+    "@id": "https://hydrus.com/api/vocab",
     "@type": "ApiDocumentation",
     "description": "Description for the API Documentation",
     "possibleStatus": [],
     "supportedClass": [
         {
-            "@id": "http://hydrus.com/dummyClass",
+            "@id": "vocab:dummyClass",
             "@type": "hydra:Class",
             "description": "A dummyClass for demo",
             "supportedOperation": [
@@ -73,7 +72,7 @@ doc = {
             "supportedProperty": [
                 {
                     "@type": "SupportedProperty",
-                    "property": "http://hydrus.com/prop1",
+                    "property": "http://props.hydrus.com/prop1",
                     "readonly": "false",
                     "required": "false",
                     "title": "Prop1",
@@ -81,7 +80,7 @@ doc = {
                 },
                 {
                     "@type": "SupportedProperty",
-                    "property": "http://hydrus.com/prop1",
+                    "property": "http://props.hydrus.com/prop1",
                     "readonly": "false",
                     "required": "false",
                     "title": "Prop2",
@@ -123,7 +122,7 @@ doc = {
             "supportedOperation": [
                 {
                     "@id": "_:dummyclass_collection_retrieve",
-                    "@type": "hydra:Operation",
+                    "@type": "http://schema.org/FindAction",
                     "description": "Retrieves all dummyClass entities",
                     "expects": "null",
                     "method": "GET",
@@ -134,9 +133,9 @@ doc = {
                     "@id": "_:dummyclass_create",
                     "@type": "http://schema.org/AddAction",
                     "description": "Create new dummyClass entitity",
-                    "expects": "http://hydrus.com/dummyClass",
+                    "expects": "vocab:dummyClass",
                     "method": "PUT",
-                    "returns": "http://hydrus.com/dummyClass",
+                    "returns": "vocab:dummyClass",
                     "statusCodes": [
                         {
                             "description": "If the dummyClass entity was created successfully.",
@@ -165,7 +164,7 @@ doc = {
             "supportedOperation": [
                 {
                     "@id": "_:entry_point",
-                    "@type": "hydra:Operation",
+                    "@type": "http://schema.org/FindAction",
                     "description": "The APIs main entry point.",
                     "expects": "null",
                     "method": "GET",
@@ -178,7 +177,7 @@ doc = {
                     "hydra:description": "The dummyClassCollection collection",
                     "hydra:title": "dummyclasscollection",
                     "property": {
-                        "@id": "vocab:EntryPoint/dummyClassCollection",
+                        "@id": "vocab:EntryPoint/DcTest",
                         "@type": "hydra:Link",
                         "description": "The dummyClassCollection collection",
                         "domain": "vocab:EntryPoint",
@@ -186,8 +185,8 @@ doc = {
                         "range": "vocab:dummyClassCollection",
                         "supportedOperation": [
                             {
-                                "@id": "_:_:dummyclass_collection_retrieve",
-                                "@type": "hydra:Operation",
+                                "@id": "_:dummyclass_collection_retrieve",
+                                "@type": "http://schema.org/FindAction",
                                 "description": "Retrieves all dummyClass entities",
                                 "expects": "null",
                                 "method": "GET",
@@ -195,12 +194,12 @@ doc = {
                                 "statusCodes": []
                             },
                             {
-                                "@id": "_:_:dummyclass_create",
+                                "@id": "_:dummyclass_create",
                                 "@type": "http://schema.org/AddAction",
                                 "description": "Create new dummyClass entitity",
-                                "expects": "http://hydrus.com/dummyClass",
+                                "expects": "vocab:dummyClass",
                                 "method": "PUT",
-                                "returns": "http://hydrus.com/dummyClass",
+                                "returns": "vocab:dummyClass",
                                 "statusCodes": [
                                     {
                                         "description": "If the dummyClass entity was created successfully.",
@@ -220,4 +219,3 @@ doc = {
     ],
     "title": "Title for the API Documentation"
 }
-"""

@@ -1,74 +1,82 @@
 """API Doc templates generator."""
+from typing import Any, Dict, List, Optional, Union
 
 
 class HydraDoc():
     """Class for an API Doc."""
 
-    def __init__(self, API, title, desc, entrypoint, base_url):
+    def __init__(self, API: str, title: str, desc: str, entrypoint: str, base_url: str) -> None:
         """Initialize the APIDoc."""
         self.API = API
         self.title = title
         self.base_url = base_url
         self.context = Context(base_url + API)
-        self.parsed_classes = dict()
-        self.other_classes = list()
-        self.collections = dict()
-        self.status = list()
+        self.parsed_classes = dict()  # type: Dict[str, Any]
+        self.other_classes = list()  # type: List[HydraClass]
+        self.collections = dict()  # type: Dict[str, Any]
+        self.status = list()  # type: List[HydraStatus]
         self.entrypoint = HydraEntryPoint(base_url, entrypoint)
         self.desc = desc
 
-    def add_supported_class(self, class_, collection=False, collectionGet=True, collectionPost=True):
+    def add_supported_class(self, class_: 'HydraClass', collection: Union[bool, 'HydraCollection']=False, collection_path: str=None, collectionGet: bool=True, collectionPost: bool=True) -> None:
         """Add a new supportedClass."""
         # self.doc["supportedClass"].append(class_.get())
         if not isinstance(class_, HydraClass):
             raise TypeError("Type is not <HydraClass>")
-        self.parsed_classes[class_.title] = {
-            "context": Context(address=self.base_url+self.API, class_=class_),
+        self.parsed_classes[class_.path] = {
+            "context": Context(address=self.base_url + self.API, class_=class_),
             "class": class_,
             "collection": collection
         }
         if collection:
-            collection = HydraCollection(class_, collectionGet, collectionPost)
-            self.collections[collection.name] = {
-                "context": Context(address=self.base_url+self.API, collection=collection),
+            collection = HydraCollection(
+                class_, collection_path, collectionGet, collectionPost)
+            self.collections[collection.path] = {
+                "context": Context(address=self.base_url + self.API, collection=collection),
                 "collection": collection
             }
 
-    def add_possible_status(self, status):
+    def add_possible_status(self, status: 'HydraStatus') -> None:
         """Add a new possibleStatus."""
         if not isinstance(status, HydraStatus):
             raise TypeError("Type is not <HydraStatus>")
         self.status.append(status)
 
-    def add_baseCollection(self):
+    def add_baseCollection(self) -> None:
         """Add Collection class to the API Doc."""
-        collection = HydraClass("http://www.w3.org/ns/hydra/core#Collection", "Collection", None)
-        member = HydraClassProp("http://www.w3.org/ns/hydra/core#member", "members", False, False, None)
+        collection = HydraClass(
+            "http://www.w3.org/ns/hydra/core#Collection", "Collection", None)
+        member = HydraClassProp(
+            "http://www.w3.org/ns/hydra/core#member", "members", False, False, None)
         collection.add_supported_prop(member)
         self.other_classes.append(collection)
 
-    def add_baseResource(self):
+    def add_baseResource(self) -> None:
         """Add Resource class to the API Doc."""
-        resource = HydraClass("http://www.w3.org/ns/hydra/core#Resource", "Resource", None)
+        resource = HydraClass(
+            "http://www.w3.org/ns/hydra/core#Resource", "Resource", None)
         self.other_classes.append(resource)
 
-    def add_to_context(self, key, value):
+    def add_to_context(self, key: str, value: Union[Dict[str, str], str]) -> None:
         """Add entries to the vocabs context."""
         self.context.add(key, value)
 
-    def gen_EntryPoint(self):
+    def gen_EntryPoint(self) -> None:
         """Generate the EntryPoint for the Hydra Doc."""
         # pdb.set_trace()
         for class_ in self.parsed_classes:
             if self.parsed_classes[class_]["class"].endpoint:
                 self.entrypoint.add_Class(self.parsed_classes[class_]["class"])
         for collection in self.collections:
-            self.entrypoint.add_Collection(self.collections[collection]["collection"])
+            self.entrypoint.add_Collection(
+                self.collections[collection]["collection"])
 
-    def generate(self):
+    def generate(self) -> Dict[str, Any]:
         """Get the Hydra API Doc as a python dict."""
-        parsed_classes = [self.parsed_classes[key]["class"] for key in self.parsed_classes]
-        collections = [self.collections[key]["collection"] for key in self.collections]
+        parsed_classes = [self.parsed_classes[key]["class"]
+                          for key in self.parsed_classes]
+        collections = [self.collections[key]["collection"]
+                       for key in self.collections]
         doc = {
             "@context": self.context.generate(),
             "@id": self.base_url + self.API + "/vocab",
@@ -84,31 +92,32 @@ class HydraDoc():
 class HydraClass():
     """Template for a new class."""
 
-    def __init__(self, id_, title, desc,  endpoint=False, sub_classof=None):
+    def __init__(self, id_: str, title: str, desc: str, path: str=None, endpoint: bool=False, sub_classof: None=None) -> None:
         """Initialize the Hydra_Class."""
-        self.id_ = id_ if "http" in id_ else "vocab:"+id_
+        self.id_ = id_ if "http" in id_ else "vocab:" + id_
         self.title = title
         self.desc = desc
+        self.path = path if path else title
         self.parents = None
         self.endpoint = endpoint
-        self.supportedProperty = list()
-        self.supportedOperation = list()
+        self.supportedProperty = list()  # type: List
+        self.supportedOperation = list()  # type: List
         if sub_classof is not None:
             self.parents = sub_classof
 
-    def add_supported_prop(self, prop):
+    def add_supported_prop(self, prop: Union['HydraClassProp', 'EntryPointClass', 'EntryPointCollection']) -> None:
         """Add a new supportedProperty."""
         if not isinstance(prop, (HydraClassProp, EntryPointClass, EntryPointCollection)):
             raise TypeError("Type is not <HydraClassProp>")
         self.supportedProperty.append(prop)
 
-    def add_supported_op(self, op):
+    def add_supported_op(self, op: Union['EntryPointOp', 'HydraClassOp']) -> None:
         """Add a new supportedOperation."""
         if not isinstance(op, (HydraClassOp, EntryPointOp)):
             raise TypeError("Type is not <HydraClassOp>")
         self.supportedOperation.append(op)
 
-    def generate(self):
+    def generate(self) -> Dict[str, Any]:
         """Get the Hydra class as a python dict."""
         class_ = {
             "@id": self.id_,
@@ -126,7 +135,14 @@ class HydraClass():
 class HydraClassProp():
     """Template for a new property."""
 
-    def __init__(self, prop, title, read, write, required, desc=""):
+    def __init__(self,
+                 prop: str,
+                 title: str,
+                 read: bool,
+                 write: bool,
+                 required: bool,
+                 desc: str="",
+                 ) -> None:
         """Initialize the Hydra_Prop."""
         self.prop = prop
         self.title = title
@@ -135,15 +151,15 @@ class HydraClassProp():
         self.required = required
         self.desc = desc
 
-    def generate(self):
+    def generate(self) -> Dict[str, Any]:
         """Get the Hydra prop as a python dict."""
         prop = {
-          "@type": "SupportedProperty",
-          "title": self.title,
-          "property": self.prop,
-          "required": self.required,
-          "readonly": self.read,
-          "writeonly": self.write
+            "@type": "SupportedProperty",
+            "title": self.title,
+            "property": self.prop,
+            "required": self.required,
+            "readonly": self.read,
+            "writeonly": self.write
         }
         if len(self.desc) > 0:
             prop["description"] = self.desc
@@ -153,7 +169,13 @@ class HydraClassProp():
 class HydraClassOp():
     """Template for a new supportedOperation."""
 
-    def __init__(self, title, method, expects, returns, status):
+    def __init__(self,
+                 title: str,
+                 method: str,
+                 expects: Optional[str],
+                 returns: Optional[str],
+                 status: List[Dict[str, Any]],
+                 ) -> None:
         """Initialize the Hydra_Prop."""
         self.title = title
         self.method = method
@@ -161,7 +183,7 @@ class HydraClassOp():
         self.returns = returns
         self.status = status
 
-    def get_type(self, method):
+    def get_type(self, method: str) -> str:
         """Return @type for op based on method type."""
         if method == "POST":
             return "http://schema.org/UpdateAction"
@@ -172,15 +194,15 @@ class HydraClassOp():
         else:
             return "http://schema.org/FindAction"
 
-    def generate(self):
+    def generate(self) -> Dict[str, Any]:
         """Get the Hydra op as a python dict."""
         op = {
-                "@type": self.get_type(self.method),
-                "title": self.title,
-                "method": self.method,
-                "expects": self.expects,
-                "returns": self.returns,
-                "possibleStatus": self.status
+            "@type": self.get_type(self.method),
+            "title": self.title,
+            "method": self.method,
+            "expects": self.expects,
+            "returns": self.returns,
+            "possibleStatus": self.status
         }
         return op
 
@@ -188,11 +210,12 @@ class HydraClassOp():
 class HydraCollection():
     """Class for Hydra Collection."""
 
-    def __init__(self, class_, get=True, post=True):
+    def __init__(self, class_: HydraClass, collection_path: str=None, get: bool=True, post: bool=True) -> None:
         """Generate Collection for a given class."""
         self.class_ = class_
         self.name = class_.title + "Collection"
-        self.supportedOperation = list()
+        self.path = collection_path if collection_path else self.name
+        self.supportedOperation = list()  # type: List
         self.supportedProperty = [HydraClassProp("http://www.w3.org/ns/hydra/core#member",
                                                  "members",
                                                  False, False, False,
@@ -201,21 +224,23 @@ class HydraCollection():
         if get:
             get_op = HydraCollectionOp("_:%s_collection_retrieve" % (self.class_.title.lower()),
                                        "http://schema.org/FindAction",
-                                       "GET", "Retrieves all %s entities" % (self.class_.title),
+                                       "GET", "Retrieves all %s entities" % (
+                                           self.class_.title),
                                        None, "vocab:%s" % (self.name), [])
             self.supportedOperation.append(get_op)
 
         if post:
             post_op = HydraCollectionOp("_:%s_create" % (self.class_.title.lower()),
                                         "http://schema.org/AddAction",
-                                        "PUT", "Create new %s entitity" % (self.class_.title),
+                                        "PUT", "Create new %s entitity" % (
+                                            self.class_.title),
                                         self.class_.id_, self.class_.id_,
                                         [{"statusCode": 201,
-                                         "description": "If the %s entity was created successfully." % (self.class_.title)}]
+                                          "description": "If the %s entity was created successfully." % (self.class_.title)}]
                                         )
             self.supportedOperation.append(post_op)
 
-    def generate(self):
+    def generate(self) -> Dict[str, Any]:
         """Get as a python dict."""
         collection = {
             "@id": "vocab:%s" % (self.name,),
@@ -232,7 +257,15 @@ class HydraCollection():
 class HydraCollectionOp():
     """Operation class for Collection operations."""
 
-    def __init__(self, id_, type_, method, desc, expects, returns, status=[]):
+    def __init__(self,
+                 id_: str,
+                 type_: str,
+                 method: str,
+                 desc: str,
+                 expects: Optional[str],
+                 returns: str,
+                 status: List[Dict[str, Any]] =[],
+                 ) -> None:
         """Create method."""
         self.id_ = id_
         self.type_ = type_
@@ -242,7 +275,7 @@ class HydraCollectionOp():
         self.expects = expects
         self.status = status
 
-    def generate(self):
+    def generate(self) -> Dict[str, Any]:
         """Get as a Python dict."""
         object_ = {
             "@id": self.id_,
@@ -259,57 +292,65 @@ class HydraCollectionOp():
 class HydraEntryPoint():
     """Template for a new entrypoint."""
 
-    def __init__(self, base_url, entrypoint):
+    def __init__(self, base_url: str, entrypoint: str) -> None:
         """Initialize the Entrypoint."""
         self.url = base_url
         self.api = entrypoint
-        self.entrypoint = HydraClass("EntryPoint", "EntryPoint", "The main entry point or homepage of the API.")
-        self.entrypoint.add_supported_op(EntryPointOp("_:entry_point", "GET", "The APIs main entry point.", None, None, "vocab:EntryPoint"))
-        self.context = Context(base_url+entrypoint, entrypoint=self)
+        self.entrypoint = HydraClass(
+            "EntryPoint", "EntryPoint", "The main entry point or homepage of the API.")
+        self.entrypoint.add_supported_op(EntryPointOp(
+            "_:entry_point", "GET", "The APIs main entry point.", None, None, "vocab:EntryPoint"))
+        self.context = Context(base_url + entrypoint, entrypoint=self)
 
-    def add_Class(self, class_):
+    def add_Class(self, class_: HydraClass) -> None:
         """Add supportedProperty to the EntryPoint."""
         if not isinstance(class_, HydraClass):
             raise TypeError("Type is not <HydraClass>")
         entrypoint_class = EntryPointClass(class_)
         self.entrypoint.add_supported_prop(entrypoint_class)
-        self.context.add(entrypoint_class.name, {"@id": entrypoint_class.id_, "@type": "@id"})
+        self.context.add(entrypoint_class.name, {
+                         "@id": entrypoint_class.id_, "@type": "@id"})
 
-    def add_Collection(self, collection):
+    def add_Collection(self, collection: HydraCollection) -> None:
         """Add supportedProperty to the EntryPoint."""
         if not isinstance(collection, HydraCollection):
             raise TypeError("Type is not <HydraCollection>")
         entrypoint_collection = EntryPointCollection(collection)
         self.entrypoint.add_supported_prop(entrypoint_collection)
-        self.context.add(entrypoint_collection.name, {"@id": entrypoint_collection.id_, "@type": "@id"})
+        self.context.add(entrypoint_collection.name, {
+                         "@id": entrypoint_collection.id_, "@type": "@id"})
 
-    def generate(self):
+    def generate(self) -> Dict[str, Any]:
         """Get as a Python dict."""
         return self.entrypoint.generate()
 
-    def get(self):
+    def get(self) -> Dict[str, str]:
         """Create the EntryPoint object to be returnd for the get function."""
         object_ = {
-            "@context": "/"+self.api+"/"+"contexts/EntryPoint.jsonld",
-            "@id": "/"+self.api,
+            "@context": "/" + self.api + "/" + "contexts/EntryPoint.jsonld",
+            "@id": "/" + self.api,
             "@type": "EntryPoint",
         }
         for item in self.entrypoint.supportedProperty:
             uri = item.id_
-            object_[item.name] = uri.replace("vocab:EntryPoint", '/'+self.api)
+            object_[item.name] = uri.replace(
+                "vocab:EntryPoint", '/' + self.api)
         return object_
 
 
 class EntryPointCollection():
     """Class for a Collection Entry to the EntryPoint object."""
 
-    def __init__(self, collection):
+    def __init__(self, collection: HydraCollection) -> None:
         """Create method."""
         self.name = collection.name
         self.supportedOperation = collection.supportedOperation
-        self.id_ = "vocab:EntryPoint/" + self.name
+        if collection.path:
+            self.id_ = "vocab:EntryPoint/" + collection.path
+        else:
+            self.id_ = "vocab:EntryPoint/" + self.name
 
-    def generate(self):
+    def generate(self) -> Dict[str, Any]:
         """Get as a python dict."""
         object_ = {
             "property": {
@@ -326,24 +367,29 @@ class EntryPointCollection():
             "required": None,
             "readonly": True,
             "writeonly": False
-        }
+        }  # type: Dict[str, Any]
         for op in self.supportedOperation:
-            operation = EntryPointOp("_:"+op.id_.lower(), op.method, op.desc, op.expects, op.returns, op.status, type_=op.type_)
-            object_["property"]["supportedOperation"].append(operation.generate())
+            operation = EntryPointOp(op.id_.lower(), op.method,
+                                     op.desc, op.expects, op.returns, op.status, type_=op.type_)
+            object_["property"]["supportedOperation"].append(
+                operation.generate())
         return object_
 
 
 class EntryPointClass():
     """Class for a Operation Entry to the EntryPoint object."""
 
-    def __init__(self, class_):
+    def __init__(self, class_: HydraClass) -> None:
         """Create method."""
         self.name = class_.title
         self.desc = class_.desc
         self.supportedOperation = class_.supportedOperation
-        self.id_ = "vocab:EntryPoint/" + self.name
+        if class_.path:
+            self.id_ = "vocab:EntryPoint/" + class_.path
+        else:
+            self.id_ = "vocab:EntryPoint/" + self.name
 
-    def generate(self):
+    def generate(self) -> Dict[str, Any]:
         """Get as Python Dict."""
         object_ = {
             "property": {
@@ -360,17 +406,28 @@ class EntryPointClass():
             "required": None,
             "readonly": True,
             "writeonly": False
-        }
+        }  # type: Dict[str, Any]
         for op in self.supportedOperation:
-            operation = EntryPointOp("_:"+op.title.lower(), op.method, None, op.expects, op.returns, op.status, label=op.title)
-            object_["property"]["supportedOperation"].append(operation.generate())
+            operation = EntryPointOp(op.title.lower(), op.method,
+                                     None, op.expects, op.returns, op.status, label=op.title)
+            object_["property"]["supportedOperation"].append(
+                operation.generate())
         return object_
 
 
 class EntryPointOp():
     """supportedOperation for EntryPoint."""
 
-    def __init__(self, id_, method, desc, expects, returns, statusCodes=[], type_=None, label=""):
+    def __init__(self,
+                 id_: str,
+                 method: str,
+                 desc: str,
+                 expects: Optional[str],
+                 returns: str,
+                 statusCodes: Union[str, List[Dict[str, Any]]]=[],
+                 type_: Optional[str]=None,
+                 label: str="",
+                 ) -> None:
         """Create method."""
         self.id_ = id_
         self.method = method
@@ -381,7 +438,7 @@ class EntryPointOp():
         self.label = label
         self.type_ = type_
 
-    def get_type(self, method):
+    def get_type(self, method: str) -> str:
         """Return @type for op based on method type."""
         if method == "POST":
             return "http://schema.org/UpdateAction"
@@ -392,7 +449,7 @@ class EntryPointOp():
         else:
             return "http://schema.org/FindAction"
 
-    def generate(self):
+    def generate(self) -> Dict[str, Any]:
         """Get as Python Dict."""
         prop = {
             "@id": self.id_,
@@ -413,20 +470,20 @@ class EntryPointOp():
 class HydraStatus():
     """Class for possibleStatus in Hydra Doc."""
 
-    def __init__(self, code, title, desc):
+    def __init__(self, code: str, title: str, desc: str) -> None:
         """Create method."""
         self.code = code
         self.title = title
         self.desc = desc
 
-    def generate(self):
+    def generate(self) -> Dict[str, Any]:
         """Get as Python dict."""
         status = {
-          "@context": "http://www.w3.org/ns/hydra/context.jsonld",
-          "@type": "Status",
-          "statusCode": self.code,
-          "title": self.title,
-          "description": self.desc,
+            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+            "@type": "Status",
+            "statusCode": self.code,
+            "title": self.title,
+            "description": self.desc,
         }
         return status
 
@@ -434,7 +491,13 @@ class HydraStatus():
 class Context():
     """Class for JSON-LD context."""
 
-    def __init__(self, address, adders={}, class_=None, collection=None, entrypoint=None):
+    def __init__(self,
+                 address: str,
+                 adders: Dict={},
+                 class_: Optional[HydraClass]=None,
+                 collection: Optional[HydraCollection]=None,
+                 entrypoint: Optional[HydraEntryPoint]=None,
+                 ) -> None:
         """Initialize context."""
         # NOTE: adders is a dictionary containing additional context elements to the base Hydra context
         if class_ is not None:
@@ -443,7 +506,7 @@ class Context():
                 "hydra": "http://www.w3.org/ns/hydra/core#",
                 "members": "http://www.w3.org/ns/hydra/core#member",
                 "object": "http://schema.org/object",
-            }
+            }  # type: Dict[str, Any]
             self.context[class_.title] = class_.id_
             for prop in class_.supportedProperty:
                 self.context[prop.title] = prop.prop
@@ -454,7 +517,7 @@ class Context():
                 "hydra": "http://www.w3.org/ns/hydra/core#",
                 "members": "http://www.w3.org/ns/hydra/core#member",
             }
-            self.context[collection.name] = "vocab:"+collection.name
+            self.context[collection.name] = "vocab:" + collection.name
             self.context[collection.class_.title] = collection.class_.id_
 
         elif entrypoint is not None:
@@ -510,20 +573,20 @@ class Context():
                 }
             }
 
-    def createContext(self, object_):
+    def createContext(self, object_: Dict[str, Any]) -> None:
         """Create the context for the given object."""
         if isinstance(object_, HydraClass):
             self.add(object_.title, object_.id)
             for prop in object_.supportedProperty:
                 self.add(prop.title, self.prop)
         if isinstance(object_, HydraCollection):
-            self.add(object_.name, "vocab:"+object_.name)
+            self.add(object_.name, "vocab:" + object_.name)
             self.add(object_.class_.title, object_.class_.id)
 
-    def generate(self):
+    def generate(self) -> Dict[str, Any]:
         """Get as a python dict."""
         return self.context
 
-    def add(self, key, value):
+    def add(self, key: str, value: Union[Dict[str, str], str]) -> None:
         """Add entry to context."""
         self.context[key] = value
