@@ -8,7 +8,7 @@ from hydrus.data import doc_parse
 from hydrus.hydraspec import doc_maker
 from hydrus.data.db_models import Base
 from hydrus.data.user import add_user
-from gevent.wsgi import WSGIServer
+from gevent.pywsgi import WSGIServer
 from typing import Tuple
 import json
 import click
