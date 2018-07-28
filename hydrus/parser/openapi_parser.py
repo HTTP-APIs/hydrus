@@ -239,6 +239,9 @@ def get_class_details(global_: Dict[str,
                     print("error")
                     errFlag = True
                     pass
+                except AttributeError:
+                    # ERROR thow
+                    pass
             flag = False
             if prop in required and len(required) > 0:
                 flag = True
