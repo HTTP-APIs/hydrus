@@ -12,6 +12,7 @@ from gevent.pywsgi import WSGIServer
 from typing import Tuple
 import json
 import click
+import yaml
 
 
 @click.command()
@@ -38,7 +39,7 @@ import click
 @click.argument("serve", required=True)
 def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
                 hydradoc: str, port: int, serverurl: str, token: bool,
-                serve: None) -> None:
+                serve: None,openapi:str) -> None:
     """
     Python Hydrus CLI
 
