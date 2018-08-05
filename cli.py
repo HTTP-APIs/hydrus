@@ -69,6 +69,7 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
             except yaml.YAMLError as exc:
                 print(exc)
         api_doc = parse(openapi_doc)
+
         f = open("./hydrus/samples/hydra_doc_sample.py", "w")
         f.write(api_doc)
         f.close()
