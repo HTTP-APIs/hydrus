@@ -8,15 +8,10 @@ from hydrus.data import doc_parse
 from hydrus.hydraspec import doc_maker
 from hydrus.data.db_models import Base
 from hydrus.data.user import add_user
-from hydrus.parser.openapi_parser import parse
-from hydrus.samples.hydra_doc_sample import doc as api_document
-
 from gevent.pywsgi import WSGIServer
 from typing import Tuple
 import json
 import click
-import yaml
-
 
 
 @click.command()
@@ -37,11 +32,13 @@ import yaml
               help="Toggle token based user authentication.")
 @click.option("--serverurl", default="http://localhost",
               help="Set server url", type=str)
+
 @click.option("--openapi","-o" ,default="doc.jsonld",type=click.File('r'),help="Location to Open API doc")
+
 @click.argument("serve", required=True)
 def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
                 hydradoc: str, port: int, serverurl: str, token: bool,
-                serve: None,openapi: str) -> None:
+                serve: None) -> None:
     """
     Python Hydrus CLI
 
@@ -73,7 +70,6 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
         f = open("./hydrus/samples/hydra_doc_sample.py", "w")
         f.write(api_doc)
         f.close()
-
     # Define the server URL, this is what will be displayed on the Doc
     HYDRUS_SERVER_URL = "{}:{}/".format(serverurl, str(port))
 
