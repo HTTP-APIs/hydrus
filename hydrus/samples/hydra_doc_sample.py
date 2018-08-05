@@ -52,152 +52,6 @@ doc = {
     "possibleStatus": [],
     "supportedClass": [
         {
-            "@id": "vocab:Pet",
-            "@type": "hydra:Class",
-            "description": "Pet",
-            "supportedOperation": [
-                {
-                    "@type": "http://schema.org/UpdateAction",
-                    "expects": "vocab:Pet",
-                    "method": "POST",
-                    "possibleStatus": [
-                        {
-                            "description": "Invalid input",
-                            "statusCode": 405
-                        }
-                    ],
-                    "returns": "null",
-                    "title": "Add a new pet to the store"
-                }
-            ],
-            "supportedProperty": [
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:id",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "id",
-                    "writeonly": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:category",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "category",
-                    "writeonly": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:name",
-                    "readonly": "true",
-                    "required": "true",
-                    "title": "name",
-                    "writeonly": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:photoUrls",
-                    "readonly": "true",
-                    "required": "true",
-                    "title": "photoUrls",
-                    "writeonly": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:tags",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "tags",
-                    "writeonly": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:status",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "status",
-                    "writeonly": "true"
-                }
-            ],
-            "title": "Pet"
-        },
-        {
-            "@id": "vocab:Order",
-            "@type": "hydra:Class",
-            "description": "this is def",
-            "supportedOperation": [
-                {
-                    "@type": "http://schema.org/UpdateAction",
-                    "expects": "vocab:Order",
-                    "method": "POST",
-                    "possibleStatus": [
-                        {
-                            "description": "successful operation",
-                            "statusCode": 200
-                        },
-                        {
-                            "description": "Invalid Order",
-                            "statusCode": 400
-                        }
-                    ],
-                    "returns": "vocab:Order",
-                    "title": "Place an order for a pet"
-                }
-            ],
-            "supportedProperty": [
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:id",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "id",
-                    "writeonly": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:petId",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "petId",
-                    "writeonly": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:quantity",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "quantity",
-                    "writeonly": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:shipDate",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "shipDate",
-                    "writeonly": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:status",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "status",
-                    "writeonly": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "vocab:complete",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "complete",
-                    "writeonly": "true"
-                }
-            ],
-            "title": "Order"
-        },
-        {
             "@id": "vocab:User",
             "@type": "hydra:Class",
             "description": "User",
@@ -285,6 +139,152 @@ doc = {
             "title": "User"
         },
         {
+            "@id": "vocab:Order",
+            "@type": "hydra:Class",
+            "description": "this is def",
+            "supportedOperation": [
+                {
+                    "@type": "http://schema.org/UpdateAction",
+                    "expects": "vocab:Order",
+                    "method": "POST",
+                    "possibleStatus": [
+                        {
+                            "description": "successful operation",
+                            "statusCode": 200
+                        },
+                        {
+                            "description": "Invalid Order",
+                            "statusCode": 400
+                        }
+                    ],
+                    "returns": "vocab:Order",
+                    "title": "Place an order for a pet"
+                }
+            ],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "vocab:id",
+                    "readonly": "true",
+                    "required": "false",
+                    "title": "id",
+                    "writeonly": "true"
+                },
+                {
+                    "@type": "SupportedProperty",
+                    "property": "vocab:petId",
+                    "readonly": "true",
+                    "required": "false",
+                    "title": "petId",
+                    "writeonly": "true"
+                },
+                {
+                    "@type": "SupportedProperty",
+                    "property": "vocab:quantity",
+                    "readonly": "true",
+                    "required": "false",
+                    "title": "quantity",
+                    "writeonly": "true"
+                },
+                {
+                    "@type": "SupportedProperty",
+                    "property": "vocab:shipDate",
+                    "readonly": "true",
+                    "required": "false",
+                    "title": "shipDate",
+                    "writeonly": "true"
+                },
+                {
+                    "@type": "SupportedProperty",
+                    "property": "vocab:status",
+                    "readonly": "true",
+                    "required": "false",
+                    "title": "status",
+                    "writeonly": "true"
+                },
+                {
+                    "@type": "SupportedProperty",
+                    "property": "vocab:complete",
+                    "readonly": "true",
+                    "required": "false",
+                    "title": "complete",
+                    "writeonly": "true"
+                }
+            ],
+            "title": "Order"
+        },
+        {
+            "@id": "vocab:Pet",
+            "@type": "hydra:Class",
+            "description": "Pet",
+            "supportedOperation": [
+                {
+                    "@type": "http://schema.org/UpdateAction",
+                    "expects": "vocab:Pet",
+                    "method": "POST",
+                    "possibleStatus": [
+                        {
+                            "description": "Invalid input",
+                            "statusCode": 405
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "Add a new pet to the store"
+                }
+            ],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "vocab:id",
+                    "readonly": "true",
+                    "required": "false",
+                    "title": "id",
+                    "writeonly": "true"
+                },
+                {
+                    "@type": "SupportedProperty",
+                    "property": "vocab:category",
+                    "readonly": "true",
+                    "required": "false",
+                    "title": "category",
+                    "writeonly": "true"
+                },
+                {
+                    "@type": "SupportedProperty",
+                    "property": "vocab:name",
+                    "readonly": "true",
+                    "required": "true",
+                    "title": "name",
+                    "writeonly": "true"
+                },
+                {
+                    "@type": "SupportedProperty",
+                    "property": "vocab:photoUrls",
+                    "readonly": "true",
+                    "required": "true",
+                    "title": "photoUrls",
+                    "writeonly": "true"
+                },
+                {
+                    "@type": "SupportedProperty",
+                    "property": "vocab:tags",
+                    "readonly": "true",
+                    "required": "false",
+                    "title": "tags",
+                    "writeonly": "true"
+                },
+                {
+                    "@type": "SupportedProperty",
+                    "property": "vocab:status",
+                    "readonly": "true",
+                    "required": "false",
+                    "title": "status",
+                    "writeonly": "true"
+                }
+            ],
+            "title": "Pet"
+        },
+        {
             "@id": "http://www.w3.org/ns/hydra/core#Collection",
             "@type": "hydra:Class",
             "description": "null",
@@ -308,92 +308,6 @@ doc = {
             "supportedOperation": [],
             "supportedProperty": [],
             "title": "Resource"
-        },
-        {
-            "@id": "vocab:PetCollection",
-            "@type": "hydra:Class",
-            "description": "A collection of pet",
-            "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
-            "supportedOperation": [
-                {
-                    "@id": "_:pet_collection_retrieve",
-                    "@type": "http://schema.org/FindAction",
-                    "description": "Retrieves all Pet entities",
-                    "expects": "null",
-                    "method": "GET",
-                    "returns": "vocab:PetCollection",
-                    "statusCodes": []
-                },
-                {
-                    "@id": "_:pet_create",
-                    "@type": "http://schema.org/AddAction",
-                    "description": "Create new Pet entitity",
-                    "expects": "vocab:Pet",
-                    "method": "PUT",
-                    "returns": "vocab:Pet",
-                    "statusCodes": [
-                        {
-                            "description": "If the Pet entity was created successfully.",
-                            "statusCode": 201
-                        }
-                    ]
-                }
-            ],
-            "supportedProperty": [
-                {
-                    "@type": "SupportedProperty",
-                    "description": "The pet",
-                    "property": "http://www.w3.org/ns/hydra/core#member",
-                    "readonly": "false",
-                    "required": "false",
-                    "title": "members",
-                    "writeonly": "false"
-                }
-            ],
-            "title": "PetCollection"
-        },
-        {
-            "@id": "vocab:OrderCollection",
-            "@type": "hydra:Class",
-            "description": "A collection of order",
-            "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
-            "supportedOperation": [
-                {
-                    "@id": "_:order_collection_retrieve",
-                    "@type": "http://schema.org/FindAction",
-                    "description": "Retrieves all Order entities",
-                    "expects": "null",
-                    "method": "GET",
-                    "returns": "vocab:OrderCollection",
-                    "statusCodes": []
-                },
-                {
-                    "@id": "_:order_create",
-                    "@type": "http://schema.org/AddAction",
-                    "description": "Create new Order entitity",
-                    "expects": "vocab:Order",
-                    "method": "PUT",
-                    "returns": "vocab:Order",
-                    "statusCodes": [
-                        {
-                            "description": "If the Order entity was created successfully.",
-                            "statusCode": 201
-                        }
-                    ]
-                }
-            ],
-            "supportedProperty": [
-                {
-                    "@type": "SupportedProperty",
-                    "description": "The order",
-                    "property": "http://www.w3.org/ns/hydra/core#member",
-                    "readonly": "false",
-                    "required": "false",
-                    "title": "members",
-                    "writeonly": "false"
-                }
-            ],
-            "title": "OrderCollection"
         },
         {
             "@id": "vocab:UserCollection",
@@ -439,6 +353,92 @@ doc = {
             "title": "UserCollection"
         },
         {
+            "@id": "vocab:OrderCollection",
+            "@type": "hydra:Class",
+            "description": "A collection of order",
+            "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
+            "supportedOperation": [
+                {
+                    "@id": "_:order_collection_retrieve",
+                    "@type": "http://schema.org/FindAction",
+                    "description": "Retrieves all Order entities",
+                    "expects": "null",
+                    "method": "GET",
+                    "returns": "vocab:OrderCollection",
+                    "statusCodes": []
+                },
+                {
+                    "@id": "_:order_create",
+                    "@type": "http://schema.org/AddAction",
+                    "description": "Create new Order entitity",
+                    "expects": "vocab:Order",
+                    "method": "PUT",
+                    "returns": "vocab:Order",
+                    "statusCodes": [
+                        {
+                            "description": "If the Order entity was created successfully.",
+                            "statusCode": 201
+                        }
+                    ]
+                }
+            ],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "description": "The order",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "false",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "OrderCollection"
+        },
+        {
+            "@id": "vocab:PetCollection",
+            "@type": "hydra:Class",
+            "description": "A collection of pet",
+            "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
+            "supportedOperation": [
+                {
+                    "@id": "_:pet_collection_retrieve",
+                    "@type": "http://schema.org/FindAction",
+                    "description": "Retrieves all Pet entities",
+                    "expects": "null",
+                    "method": "GET",
+                    "returns": "vocab:PetCollection",
+                    "statusCodes": []
+                },
+                {
+                    "@id": "_:pet_create",
+                    "@type": "http://schema.org/AddAction",
+                    "description": "Create new Pet entitity",
+                    "expects": "vocab:Pet",
+                    "method": "PUT",
+                    "returns": "vocab:Pet",
+                    "statusCodes": [
+                        {
+                            "description": "If the Pet entity was created successfully.",
+                            "statusCode": 201
+                        }
+                    ]
+                }
+            ],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "description": "The pet",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "false",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "PetCollection"
+        },
+        {
             "@id": "vocab:EntryPoint",
             "@type": "hydra:Class",
             "description": "The main entry point or homepage of the API.",
@@ -455,35 +455,35 @@ doc = {
             ],
             "supportedProperty": [
                 {
-                    "hydra:description": "The PetCollection collection",
-                    "hydra:title": "petcollection",
+                    "hydra:description": "The UserCollection collection",
+                    "hydra:title": "usercollection",
                     "property": {
-                        "@id": "vocab:EntryPoint/pet",
+                        "@id": "vocab:EntryPoint/user",
                         "@type": "hydra:Link",
-                        "description": "The PetCollection collection",
+                        "description": "The UserCollection collection",
                         "domain": "vocab:EntryPoint",
-                        "label": "PetCollection",
-                        "range": "vocab:PetCollection",
+                        "label": "UserCollection",
+                        "range": "vocab:UserCollection",
                         "supportedOperation": [
                             {
-                                "@id": "_:_:pet_collection_retrieve",
+                                "@id": "_:user_collection_retrieve",
                                 "@type": "http://schema.org/FindAction",
-                                "description": "Retrieves all Pet entities",
+                                "description": "Retrieves all User entities",
                                 "expects": "null",
                                 "method": "GET",
-                                "returns": "vocab:PetCollection",
+                                "returns": "vocab:UserCollection",
                                 "statusCodes": []
                             },
                             {
-                                "@id": "_:_:pet_create",
+                                "@id": "_:user_create",
                                 "@type": "http://schema.org/AddAction",
-                                "description": "Create new Pet entitity",
-                                "expects": "vocab:Pet",
+                                "description": "Create new User entitity",
+                                "expects": "vocab:User",
                                 "method": "PUT",
-                                "returns": "vocab:Pet",
+                                "returns": "vocab:User",
                                 "statusCodes": [
                                     {
-                                        "description": "If the Pet entity was created successfully.",
+                                        "description": "If the User entity was created successfully.",
                                         "statusCode": 201
                                     }
                                 ]
@@ -506,7 +506,7 @@ doc = {
                         "range": "vocab:OrderCollection",
                         "supportedOperation": [
                             {
-                                "@id": "_:_:order_collection_retrieve",
+                                "@id": "_:order_collection_retrieve",
                                 "@type": "http://schema.org/FindAction",
                                 "description": "Retrieves all Order entities",
                                 "expects": "null",
@@ -515,7 +515,7 @@ doc = {
                                 "statusCodes": []
                             },
                             {
-                                "@id": "_:_:order_create",
+                                "@id": "_:order_create",
                                 "@type": "http://schema.org/AddAction",
                                 "description": "Create new Order entitity",
                                 "expects": "vocab:Order",
@@ -535,35 +535,35 @@ doc = {
                     "writeonly": "false"
                 },
                 {
-                    "hydra:description": "The UserCollection collection",
-                    "hydra:title": "usercollection",
+                    "hydra:description": "The PetCollection collection",
+                    "hydra:title": "petcollection",
                     "property": {
-                        "@id": "vocab:EntryPoint/user",
+                        "@id": "vocab:EntryPoint/pet",
                         "@type": "hydra:Link",
-                        "description": "The UserCollection collection",
+                        "description": "The PetCollection collection",
                         "domain": "vocab:EntryPoint",
-                        "label": "UserCollection",
-                        "range": "vocab:UserCollection",
+                        "label": "PetCollection",
+                        "range": "vocab:PetCollection",
                         "supportedOperation": [
                             {
-                                "@id": "_:_:user_collection_retrieve",
+                                "@id": "_:pet_collection_retrieve",
                                 "@type": "http://schema.org/FindAction",
-                                "description": "Retrieves all User entities",
+                                "description": "Retrieves all Pet entities",
                                 "expects": "null",
                                 "method": "GET",
-                                "returns": "vocab:UserCollection",
+                                "returns": "vocab:PetCollection",
                                 "statusCodes": []
                             },
                             {
-                                "@id": "_:_:user_create",
+                                "@id": "_:pet_create",
                                 "@type": "http://schema.org/AddAction",
-                                "description": "Create new User entitity",
-                                "expects": "vocab:User",
+                                "description": "Create new Pet entitity",
+                                "expects": "vocab:Pet",
                                 "method": "PUT",
-                                "returns": "vocab:User",
+                                "returns": "vocab:Pet",
                                 "statusCodes": [
                                     {
-                                        "description": "If the User entity was created successfully.",
+                                        "description": "If the Pet entity was created successfully.",
                                         "statusCode": 201
                                     }
                                 ]
