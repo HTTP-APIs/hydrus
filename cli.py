@@ -45,6 +45,7 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
     """
     Python Hydrus CLI
 
+    :param openapi:                     : Sets the link to the Open Api Doc file.
     :param adduser <tuple>  : Contains the user credentials.
     :param api <str>                    : Sets the API name for the server.
     :param auth <bool>                  : Toggles the authentication.
@@ -63,7 +64,6 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
     DB_URL = dburl
 
     if openapi.name != './petstore_openapi.yaml':
-        print("inside if")
         with open(openapi.name, 'r') as stream:
             try:
                 openapi_doc = yaml.load(stream)
