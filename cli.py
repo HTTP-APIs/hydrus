@@ -9,6 +9,8 @@ from hydrus.hydraspec import doc_maker
 from hydrus.data.db_models import Base
 from hydrus.data.user import add_user
 from gevent.pywsgi import WSGIServer
+from hydrus.parser.openapi_parser import parse
+from hydrus.samples.hydra_doc_sample import doc as api_document
 from typing import Tuple
 import json
 import click
@@ -34,12 +36,12 @@ import yaml
 @click.option("--serverurl", default="http://localhost",
               help="Set server url", type=str)
 
-@click.option("--openapi","-o" ,default="doc.jsonld",type=click.File('r'),help="Location to Open API doc")
+@click.option("--openapi","-o" ,default="./petstore_openapi.yaml",type=click.File('r'),help="Location to Open API doc")
 
 @click.argument("serve", required=True)
 def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
                 hydradoc: str, port: int, serverurl: str, token: bool,
-                serve: None,openapi:str) -> None:
+                serve: None,openapi: str) -> None:
     """
     Python Hydrus CLI
 
@@ -60,7 +62,8 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
     # DB_URL = 'sqlite:///database.db'
     DB_URL = dburl
 
-    if openapi.name != "doc.jsonld":
+    if openapi.name != './petstore_openapi.yaml':
+        print("inside if")
         with open(openapi.name, 'r') as stream:
             try:
                 openapi_doc = yaml.load(stream)
@@ -89,7 +92,7 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
     # NOTE: You can use your own API Documentation and create a HydraDoc object using doc_maker
     #       Or you may create your own HydraDoc Documentation using doc_writer [see hydrus/hydraspec/doc_writer_sample]
     click.echo("Creating the API Documentation")
-    if openapi.name != "doc.jsonld":
+    if openapi.name != './petstore_openapi.yaml':
         apidoc = doc_maker.create_doc(api_document, HYDRUS_SERVER_URL, API_NAME)
     else:
         apidoc = doc_maker.create_doc(json.loads(hydradoc.read()),
