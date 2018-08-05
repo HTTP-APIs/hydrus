@@ -37,7 +37,7 @@ import yaml
               help="Toggle token based user authentication.")
 @click.option("--serverurl", default="http://localhost",
               help="Set server url", type=str)
-@click.option("--openapi","-o" ,default="./hydrus/samples/petstore_openapi.yaml",type=click.File('r'),help="Location to Open API doc")
+@click.option("--openapi","-o" ,default="doc.jsonld",type=click.File('r'),help="Location to Open API doc")
 @click.argument("serve", required=True)
 def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
                 hydradoc: str, port: int, serverurl: str, token: bool,
@@ -62,15 +62,16 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
     # DB_URL = 'sqlite:///database.db'
     DB_URL = dburl
 
-    with open(openapi.name, 'r') as stream:
-        try:
-            openapi_doc = yaml.load(stream)
-        except yaml.YAMLError as exc:
-            print(exc)
-    api_doc = parse(openapi_doc)
-    f = open("./hydrus/samples/hydra_doc_sample.py", "w")
-    f.write(api_doc)
-    f.close()
+    if openapi.name != "doc.jsonld":
+        with open(openapi.name, 'r') as stream:
+            try:
+                openapi_doc = yaml.load(stream)
+            except yaml.YAMLError as exc:
+                print(exc)
+        api_doc = parse(openapi_doc)
+        f = open("./hydrus/samples/hydra_doc_sample.py", "w")
+        f.write(api_doc)
+        f.close()
 
     # Define the server URL, this is what will be displayed on the Doc
     HYDRUS_SERVER_URL = "{}:{}/".format(serverurl, str(port))
@@ -90,7 +91,11 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
     # NOTE: You can use your own API Documentation and create a HydraDoc object using doc_maker
     #       Or you may create your own HydraDoc Documentation using doc_writer [see hydrus/hydraspec/doc_writer_sample]
     click.echo("Creating the API Documentation")
-    apidoc = doc_maker.create_doc(api_document, HYDRUS_SERVER_URL, API_NAME)
+    if openapi.name != "doc.jsonld":
+        apidoc = doc_maker.create_doc(api_document, HYDRUS_SERVER_URL, API_NAME)
+    else:
+        apidoc = doc_maker.create_doc(json.loads(hydradoc.read()),
+                                      HYDRUS_SERVER_URL, API_NAME)
 
 
     # Start a session with the DB and create all classes needed by the APIDoc
