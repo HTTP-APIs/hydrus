@@ -88,7 +88,7 @@ def check_collection(class_name: str,
             # if the class has already been parsed we will update the
             # collection var
             if not global_[class_name]["collection"]:
-                global_[class_name]["collection"] = True
+                global_[class_name]["collection"] = collection
         except KeyError:
             # if the class has not been parsed we will insert the object
             object_["class_name"] = class_name
