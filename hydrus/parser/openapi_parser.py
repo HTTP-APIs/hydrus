@@ -153,7 +153,7 @@ def sanitise_path(path: str)->str:
             pass
         else:
             new_path.append(subPath)
-    result = '/'.join(new_path)[0:]
+    result = '/'.join(new_path)[1:]
 
     return result
 
