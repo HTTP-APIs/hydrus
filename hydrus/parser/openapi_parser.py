@@ -8,6 +8,7 @@ from typing import Any, Dict, Match, Optional, Tuple, Union, List, Set
 from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp
 import sys
 
+
 def try_catch_replacement(block: Any, get_this: str, default: Any) -> str:
     """
     Replacement for the try catch blocks. HELPER FUNCTION
@@ -20,7 +21,6 @@ def try_catch_replacement(block: Any, get_this: str, default: Any) -> str:
         return block[get_this]
     except KeyError:
         return default
-
 
 
 def generateEntrypoint(api_doc: HydraDoc) -> None:
@@ -45,7 +45,7 @@ def generate_empty_object() -> Dict[str, Any]:
         "op_definition": list(),
         "collection": False,
         "path": "",
-        "methods":set()
+        "methods": set()
     }
     return object
 
@@ -79,7 +79,6 @@ def check_collection(class_name: str,
     if valid_endpoint(method) == "collection" and collection == False:
         collection = True
     return collection
-
 
 
 def check_array_param(paths_: Dict[str, Any]) -> bool:
@@ -179,7 +178,7 @@ def get_class_details(global_: Dict[str,
     class_name = class_name
     # we simply check if the class has been defined or not
 
-    if not hasattr(global_[class_name]["class_definition"],'endpoint'):
+    if not hasattr(global_[class_name]["class_definition"], 'endpoint'):
         desc = data
         try:
             classDefinition = HydraClass(
@@ -192,7 +191,7 @@ def get_class_details(global_: Dict[str,
             classDefinition = HydraClass(
                 class_name, class_name, class_name, endpoint=True, path=path)
         # we need to add object to global before we can attach props
-        added = generateOrUpdateClass(class_name,False,global_,"")
+        added = generateOrUpdateClass(class_name, False, global_, "")
         if added:
             global_[class_name]["class_definition"] = classDefinition
 
@@ -203,16 +202,22 @@ def get_class_details(global_: Dict[str,
             required = set()
 
         for prop in properties:
-            vocabFlag=True
+            vocabFlag = True
             errFlag = False
             if prop not in global_["class_names"]:
                 try:
                     ref = properties[prop]["$ref"].split('/')
 
-                    if ref[0]=="#":
-                        get_class_details(global_,get_data_at_location(ref,global_["doc"]),get_class_name(ref),get_class_name(ref))
+                    if ref[0] == "#":
+                        get_class_details(
+                            global_,
+                            get_data_at_location(
+                                ref,
+                                global_["doc"]),
+                            get_class_name(ref),
+                            get_class_name(ref))
                     else:
-                        vocabFlag=False
+                        vocabFlag = False
                 except KeyError:
                     # throw exception
                     # ERROR
@@ -239,7 +244,7 @@ def get_class_details(global_: Dict[str,
         global_["class_names"].add(class_name)
 
 
-def generateOrUpdateClass(name, collection,global_,path)->bool:
+def generateOrUpdateClass(name, collection, global_, path)->bool:
     if valid_endpoint(path):
         if name in global_["class_names"] and collection is True:
             global_[name]["collection"] = True
@@ -257,11 +262,9 @@ def generateOrUpdateClass(name, collection,global_,path)->bool:
         return False
 
 
-
-
 def check_for_ref(global_: Dict[str, Any],
                   path: str,
-                  block: Dict[str,Any])->str:
+                  block: Dict[str, Any])->str:
     """
     Checks for references in responses and parameters key , and adds classes to state
     :param global_: global state
@@ -285,7 +288,8 @@ def check_for_ref(global_: Dict[str, Any],
                 global_=global_,
                 schema_obj=block["responses"][obj]["schema"],
                 method=path)
-            success = generateOrUpdateClass(get_class_name(class_location),collection,global_,path)
+            success = generateOrUpdateClass(
+                get_class_name(class_location), collection, global_, path)
             if not success:
                 return ""
 
@@ -302,8 +306,8 @@ def check_for_ref(global_: Dict[str, Any],
 
     # when we would be able to take arrays as parameters we will use
     # check_if_collection here as well
-    flag = try_catch_replacement(block,"parameters","False")
-    if flag!="False":
+    flag = try_catch_replacement(block, "parameters", "False")
+    if flag != "False":
         for obj in block["parameters"]:
             try:
                 try:
@@ -312,7 +316,8 @@ def check_for_ref(global_: Dict[str, Any],
                     class_location = obj["schema"]["items"]["$ref"].split('/')
                 collection_ = check_collection(
                     get_class_name(class_location), global_, obj["schema"], path)
-                success = generateOrUpdateClass(get_class_name(class_location), collection_, global_, path)
+                success = generateOrUpdateClass(
+                    get_class_name(class_location), collection_, global_, path)
                 if not success:
                     return ""
                 get_class_details(
@@ -327,7 +332,7 @@ def check_for_ref(global_: Dict[str, Any],
                 pass
     # cannot parse because no external ref
 
-    print("Cannot parse path"+path+" because no ref to local class provided")
+    print("Cannot parse path" + path + " because no ref to local class provided")
     return ""
 
 
@@ -345,8 +350,6 @@ def allow_parameter(parameter: Dict[str, Any])->bool:
     if parameter["in"] not in params_location:
         return False
     return True
-
-
 
 
 def get_parameters(global_: Dict[str, Any],
@@ -435,7 +438,7 @@ def get_ops(global_: Dict[str, Any], path: str,
         global_[class_name]["op_definition"].append(HydraClassOp(
             op_name, op_method.upper(), op_expects, op_returns, op_status))
     else:
-        print("Method on path" + path +" already present !")
+        print("Method on path" + path + " already present !")
 
 
 def get_paths(global_: Dict[str, Any]) -> None:
@@ -482,7 +485,7 @@ def parse(doc: Dict[str, Any]) -> str:
             global_[name]["class_definition"].add_supported_prop(prop)
         for op in global_[name]["op_definition"]:
             global_[name]["class_definition"].add_supported_op(op)
-        if global_[name]["collection"] is True :
+        if global_[name]["collection"] is True:
             if global_[name]["class_definition"].endpoint is True:
                 global_[name]["class_definition"].endpoint = False
 
