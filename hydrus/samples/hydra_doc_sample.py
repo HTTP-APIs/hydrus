@@ -52,47 +52,22 @@ doc = {
     "possibleStatus": [],
     "supportedClass": [
         {
-            "@id": "vocab:Order",
+            "@id": "vocab:ApiResponse",
             "@type": "hydra:Class",
-            "description": "this is def",
+            "description": "ApiResponse",
             "supportedOperation": [
                 {
                     "@type": "http://schema.org/UpdateAction",
-                    "expects": "vocab:Order",
+                    "expects": "",
                     "method": "POST",
                     "possibleStatus": [
                         {
                             "description": "successful operation",
                             "statusCode": 200
-                        },
-                        {
-                            "description": "Invalid Order",
-                            "statusCode": 400
                         }
                     ],
-                    "returns": "vocab:Order",
-                    "title": "Place an order for a pet"
-                },
-                {
-                    "@type": "http://schema.org/FindAction",
-                    "expects": "",
-                    "method": "GET",
-                    "possibleStatus": [
-                        {
-                            "description": "successful operation",
-                            "statusCode": 200
-                        },
-                        {
-                            "description": "Invalid ID supplied",
-                            "statusCode": 400
-                        },
-                        {
-                            "description": "Order not found",
-                            "statusCode": 404
-                        }
-                    ],
-                    "returns": "vocab:Order",
-                    "title": "Find purchase order by ID"
+                    "returns": "vocab:ApiResponse",
+                    "title": "uploads an image"
                 }
             ],
             "supportedProperty": [
@@ -101,7 +76,7 @@ doc = {
                     "property": "",
                     "readonly": "true",
                     "required": "false",
-                    "title": "id",
+                    "title": "code",
                     "writeonly": "true"
                 },
                 {
@@ -109,7 +84,7 @@ doc = {
                     "property": "",
                     "readonly": "true",
                     "required": "false",
-                    "title": "petId",
+                    "title": "type",
                     "writeonly": "true"
                 },
                 {
@@ -117,35 +92,11 @@ doc = {
                     "property": "",
                     "readonly": "true",
                     "required": "false",
-                    "title": "quantity",
-                    "writeonly": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "shipDate",
-                    "writeonly": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "status",
-                    "writeonly": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "complete",
+                    "title": "message",
                     "writeonly": "true"
                 }
             ],
-            "title": "Order"
+            "title": "ApiResponse"
         },
         {
             "@id": "vocab:User",
@@ -269,6 +220,102 @@ doc = {
             "title": "User"
         },
         {
+            "@id": "vocab:Order",
+            "@type": "hydra:Class",
+            "description": "this is def",
+            "supportedOperation": [
+                {
+                    "@type": "http://schema.org/UpdateAction",
+                    "expects": "vocab:Order",
+                    "method": "POST",
+                    "possibleStatus": [
+                        {
+                            "description": "successful operation",
+                            "statusCode": 200
+                        },
+                        {
+                            "description": "Invalid Order",
+                            "statusCode": 400
+                        }
+                    ],
+                    "returns": "vocab:Order",
+                    "title": "Place an order for a pet"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "",
+                    "method": "GET",
+                    "possibleStatus": [
+                        {
+                            "description": "successful operation",
+                            "statusCode": 200
+                        },
+                        {
+                            "description": "Invalid ID supplied",
+                            "statusCode": 400
+                        },
+                        {
+                            "description": "Order not found",
+                            "statusCode": 404
+                        }
+                    ],
+                    "returns": "vocab:Order",
+                    "title": "Find purchase order by ID"
+                }
+            ],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "",
+                    "readonly": "true",
+                    "required": "false",
+                    "title": "id",
+                    "writeonly": "true"
+                },
+                {
+                    "@type": "SupportedProperty",
+                    "property": "",
+                    "readonly": "true",
+                    "required": "false",
+                    "title": "petId",
+                    "writeonly": "true"
+                },
+                {
+                    "@type": "SupportedProperty",
+                    "property": "",
+                    "readonly": "true",
+                    "required": "false",
+                    "title": "quantity",
+                    "writeonly": "true"
+                },
+                {
+                    "@type": "SupportedProperty",
+                    "property": "",
+                    "readonly": "true",
+                    "required": "false",
+                    "title": "shipDate",
+                    "writeonly": "true"
+                },
+                {
+                    "@type": "SupportedProperty",
+                    "property": "",
+                    "readonly": "true",
+                    "required": "false",
+                    "title": "status",
+                    "writeonly": "true"
+                },
+                {
+                    "@type": "SupportedProperty",
+                    "property": "",
+                    "readonly": "true",
+                    "required": "false",
+                    "title": "complete",
+                    "writeonly": "true"
+                }
+            ],
+            "title": "Order"
+        },
+        {
             "@id": "vocab:Pet",
             "@type": "hydra:Class",
             "description": "Pet",
@@ -364,53 +411,6 @@ doc = {
                 }
             ],
             "title": "Pet"
-        },
-        {
-            "@id": "vocab:ApiResponse",
-            "@type": "hydra:Class",
-            "description": "ApiResponse",
-            "supportedOperation": [
-                {
-                    "@type": "http://schema.org/UpdateAction",
-                    "expects": "",
-                    "method": "POST",
-                    "possibleStatus": [
-                        {
-                            "description": "successful operation",
-                            "statusCode": 200
-                        }
-                    ],
-                    "returns": "vocab:ApiResponse",
-                    "title": "uploads an image"
-                }
-            ],
-            "supportedProperty": [
-                {
-                    "@type": "SupportedProperty",
-                    "property": "",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "code",
-                    "writeonly": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "type",
-                    "writeonly": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "",
-                    "readonly": "true",
-                    "required": "false",
-                    "title": "message",
-                    "writeonly": "true"
-                }
-            ],
-            "title": "ApiResponse"
         },
         {
             "@id": "http://www.w3.org/ns/hydra/core#Collection",
@@ -540,6 +540,38 @@ doc = {
             ],
             "supportedProperty": [
                 {
+                    "hydra:description": "The ApiResponse Class",
+                    "hydra:title": "apiresponse",
+                    "property": {
+                        "@id": "vocab:EntryPoint//pet/uploadImage",
+                        "@type": "hydra:Link",
+                        "description": "ApiResponse",
+                        "domain": "vocab:EntryPoint",
+                        "label": "ApiResponse",
+                        "range": "vocab:ApiResponse",
+                        "supportedOperation": [
+                            {
+                                "@id": "uploads an image",
+                                "@type": "http://schema.org/UpdateAction",
+                                "description": "null",
+                                "expects": "",
+                                "label": "uploads an image",
+                                "method": "POST",
+                                "returns": "vocab:ApiResponse",
+                                "statusCodes": [
+                                    {
+                                        "description": "successful operation",
+                                        "statusCode": 200
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "readonly": "true",
+                    "required": "null",
+                    "writeonly": "false"
+                },
+                {
                     "hydra:description": "The Order Class",
                     "hydra:title": "order",
                     "property": {
@@ -589,38 +621,6 @@ doc = {
                                     {
                                         "description": "Order not found",
                                         "statusCode": 404
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    "readonly": "true",
-                    "required": "null",
-                    "writeonly": "false"
-                },
-                {
-                    "hydra:description": "The ApiResponse Class",
-                    "hydra:title": "apiresponse",
-                    "property": {
-                        "@id": "vocab:EntryPoint//pet/uploadImage",
-                        "@type": "hydra:Link",
-                        "description": "ApiResponse",
-                        "domain": "vocab:EntryPoint",
-                        "label": "ApiResponse",
-                        "range": "vocab:ApiResponse",
-                        "supportedOperation": [
-                            {
-                                "@id": "uploads an image",
-                                "@type": "http://schema.org/UpdateAction",
-                                "description": "null",
-                                "expects": "",
-                                "label": "uploads an image",
-                                "method": "POST",
-                                "returns": "vocab:ApiResponse",
-                                "statusCodes": [
-                                    {
-                                        "description": "successful operation",
-                                        "statusCode": 200
                                     }
                                 ]
                             }
