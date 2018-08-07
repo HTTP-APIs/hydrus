@@ -245,6 +245,14 @@ def get_class_details(global_: Dict[str,
 
 
 def generateOrUpdateClass(name, collection, global_, path)->bool:
+    """
+    Generates or Updates the class if it already exists
+    :param name: class name
+    :param collection: if the class is collection or not
+    :param global_: global state
+    :param path: path
+    :return: bool showing if the operation was successful 
+    """
     if valid_endpoint(path):
         if name in global_["class_names"] and collection is True:
             global_[name]["collection"] = True
