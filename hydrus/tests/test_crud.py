@@ -169,7 +169,7 @@ class TestCRUD(unittest.TestCase):
     def test_insert_type(self):
         """Test CRUD insert when wrong/undefined class is given."""
         object_ = gen_dummy_object("dummyClass", self.doc)
-        id_ = 7
+        id_ = "7"
         object_["@type"] = "otherClass"
         response_code = None
         try:
