@@ -44,7 +44,6 @@ from hydrus.utils import get_session, get_doc, get_api_name, get_hydrus_server_u
 from flask.wrappers import Response
 from typing import Dict, List, Any, Union, Optional
 
-
 def validObject(object_: Dict[str, Any]) -> bool:
     """
         Check if the Dict passed in POST is of valid format or not.
@@ -243,6 +242,7 @@ class Item(Resource):
         :param id : Item ID
         :param path : Path for Item ( Specified in APIDoc @id)
         """
+        id_ = str(id_)
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):
             return auth_response
@@ -274,6 +274,7 @@ class Item(Resource):
         :param id_ - ID of Item to be updated
         :param path - Path for Item type( Specified in APIDoc @id)
         """
+        id_ = str(id_)
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):
             return auth_response
@@ -320,6 +321,7 @@ class Item(Resource):
         :param id_ - ID of Item to be updated
         :param path - Path for Item type( Specified in APIDoc @id) to be updated
         """
+        id_ = str(id_)
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):
             return auth_response
@@ -355,6 +357,7 @@ class Item(Resource):
 
     def delete(self, id_: str, path: str) -> Response:
         """Delete object with id=id_ from database."""
+        id_ = str(id_)
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):
             return auth_response
