@@ -44,7 +44,6 @@ from hydrus.utils import get_session, get_doc, get_api_name, get_hydrus_server_u
 from flask.wrappers import Response
 from typing import Dict, List, Any, Union, Optional
 
-
 def validObject(object_: Dict[str, Any]) -> bool:
     """
         Check if the Dict passed in POST is of valid format or not.
@@ -243,6 +242,7 @@ class Item(Resource):
         :param id : Item ID
         :param path : Path for Item ( Specified in APIDoc @id)
         """
+        id_ = str(id_)
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):
             return auth_response
@@ -274,12 +274,11 @@ class Item(Resource):
         :param id_ - ID of Item to be updated
         :param path - Path for Item type( Specified in APIDoc @id)
         """
+        id_ = str(id_)
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):
             return auth_response
-        print("Class type is ")
-        print(path)
-        print(get_doc().collections)
+
         class_type = get_doc().collections[path]["collection"].class_.title
 
         if checkClassOp(class_type, "POST"):
@@ -322,6 +321,7 @@ class Item(Resource):
         :param id_ - ID of Item to be updated
         :param path - Path for Item type( Specified in APIDoc @id) to be updated
         """
+        id_ = str(id_)
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):
             return auth_response
@@ -357,6 +357,7 @@ class Item(Resource):
 
     def delete(self, id_: str, path: str) -> Response:
         """Delete object with id=id_ from database."""
+        id_ = str(id_)
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):
             return auth_response
@@ -697,7 +698,7 @@ def app_factory(API_NAME: str="api") -> Flask:
     api.add_resource(ItemCollection, "/" + API_NAME +
                      "/<string:path>", endpoint="item_collection")
     api.add_resource(Item, "/" + API_NAME +
-                     "/<string:path>/<string:id_>", endpoint="item")
+                     "/<string:path>/<uuid:id_>", endpoint="item")
     api.add_resource(Items, "/" + API_NAME +
                      "/<string:path>/add/<int_list>", "/" + API_NAME +
                      "/<string:path>/add", "/" + API_NAME +
