@@ -277,7 +277,9 @@ class Item(Resource):
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):
             return auth_response
-
+        print("Class type is ")
+        print(path)
+        print(get_doc().collections)
         class_type = get_doc().collections[path]["collection"].class_.title
 
         if checkClassOp(class_type, "POST"):
