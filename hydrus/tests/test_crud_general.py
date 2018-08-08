@@ -12,6 +12,7 @@ from hydrus.samples.hydra_doc_sample import doc as api
 import random
 from typing import List
 import string
+import sys
 
 
 def gen_dummy_object(class_, doc):
@@ -29,7 +30,14 @@ def gen_dummy_object(class_, doc):
                     string.ascii_uppercase + string.digits) for _ in range(6))
         return object_
 
-
+def give_non_collection(parsed_classes)->str:
+    for class_ in parsed_classes:
+        if not parsed_classes[class_]["collection"]:
+            print(class_)
+            return "ApiResponse"
+            #return "/pet/uploadImage"
+    print("No collection present exiting ...")
+    sys.exit()
 class TestCRUD(unittest.TestCase):
     """Test class for CRUD Tests."""
 
@@ -50,7 +58,8 @@ class TestCRUD(unittest.TestCase):
         self.doc = doc_maker.create_doc(
             api, self.HYDRUS_SERVER_URL, self.API_NAME)
         test_classes = doc_parse.get_classes(api)
-        self.test_class = test_classes[0]["title"]
+        #self.test_class = test_classes[0]["title"]
+        self.test_class = give_non_collection(self.doc.parsed_classes)
         test_properties = doc_parse.get_all_properties(test_classes)
         doc_parse.insert_classes(test_classes, self.session)
         doc_parse.insert_properties(test_properties, self.session)
