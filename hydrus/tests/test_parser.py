@@ -47,7 +47,6 @@ class TestParser(unittest.TestCase):
         assert result is "True"
         assert isinstance(result, str)
 
-
     def test_get_class_name(self):
         """Test if the class name is being extracted properly from the path """
         path = "A/B/C/Pet"
@@ -88,11 +87,13 @@ class TestParser(unittest.TestCase):
 
     def test_check_collection(self):
         """Test if collections are being identified properly"""
-        schema_block = {'type': 'array', 'items': {'$ref': '#/definitions/Pet'}}
+        schema_block = {
+            'type': 'array', 'items': {
+                '$ref': '#/definitions/Pet'}}
         method = "/Pet"
-        result = openapi_parser.check_collection(schema_block,method)
+        result = openapi_parser.check_collection(schema_block, method)
         assert isinstance(result, bool)
-        assert result == True
+        assert result
 
     def test_check_collection_false(self):
         "Test if non collections are identified"
@@ -101,6 +102,7 @@ class TestParser(unittest.TestCase):
         result = openapi_parser.check_collection(schema, method)
         assert isinstance(result, bool)
         assert result == False
+
 
 if __name__ == '__main__':
     print("Starting tests ..")
