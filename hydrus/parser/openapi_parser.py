@@ -50,11 +50,7 @@ def generate_empty_object() -> Dict[str, Any]:
     return object
 
 
-def check_collection(class_name: str,
-                     global_: Dict[str,
-                                   Any],
-                     schema_obj: Dict[str, Any],
-                     method: str)->bool:
+def check_collection(schema_obj: Dict[str, Any],method: str)->bool:
     """
     Checks if the method is collection or not , checks if the method is valid
     :param class_name: name of class being parsed
@@ -280,6 +276,7 @@ def check_for_ref(global_: Dict[str, Any],
     :param block: block containing specific part of doc
     :return: class name
     """
+
     # will check if there is an external ref , go to that location , add the class in globals , will also verify
     # if we can parse this method or not , if all good will return class name
     for obj in block["responses"]:
@@ -292,8 +289,6 @@ def check_for_ref(global_: Dict[str, Any],
                 class_location = block["responses"][obj]["schema"]["items"]["$ref"].split(
                     '/')
             collection = check_collection(
-                class_name=get_class_name(class_location),
-                global_=global_,
                 schema_obj=block["responses"][obj]["schema"],
                 method=path)
             success = generateOrUpdateClass(
@@ -322,8 +317,7 @@ def check_for_ref(global_: Dict[str, Any],
                     class_location = obj["schema"]["$ref"].split('/')
                 except KeyError:
                     class_location = obj["schema"]["items"]["$ref"].split('/')
-                collection_ = check_collection(
-                    get_class_name(class_location), global_, obj["schema"], path)
+                collection_ = check_collection(obj["schema"], path)
                 success = generateOrUpdateClass(
                     get_class_name(class_location), collection_, global_, path)
                 if not success:
