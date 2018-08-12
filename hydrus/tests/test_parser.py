@@ -85,6 +85,24 @@ class TestParser(unittest.TestCase):
         result = openapi_parser.parse(self.doc)
         assert isinstance(result, str)
 
+    def test_check_collection(self):
+        """Test if collections are being identified properly"""
+        schema_block = {
+            'type': 'array', 'items': {
+                '$ref': '#/definitions/Pet'}}
+        method = "/Pet"
+        result = openapi_parser.check_collection(schema_block, method)
+        assert isinstance(result, bool)
+        assert result
+
+    def test_check_collection_false(self):
+        "Test if non collections are identified"
+        schema = {'$ref': '#/definitions/User'}
+        method = "/Pet"
+        result = openapi_parser.check_collection(schema, method)
+        assert isinstance(result, bool)
+        assert result == False
+
 
 if __name__ == '__main__':
     print("Starting tests ..")
