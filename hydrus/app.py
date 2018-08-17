@@ -44,7 +44,6 @@ from hydrus.utils import get_session, get_doc, get_api_name, get_hydrus_server_u
 from flask.wrappers import Response
 from typing import Dict, List, Any, Union, Optional
 
-
 def validObject(object_: Dict[str, Any]) -> bool:
     """
         Check if the Dict passed in POST is of valid format or not.
@@ -236,13 +235,14 @@ class Entrypoint(Resource):
 class Item(Resource):
     """Handles all operations(GET, POST, PATCH, DELETE) on Items (item can be anything depending upon the vocabulary)."""
 
-    def get(self, id_: int, path: str) -> Response:
+    def get(self, id_: str, path: str) -> Response:
         """
         GET object with id = id_ from the database.
 
         :param id : Item ID
         :param path : Path for Item ( Specified in APIDoc @id)
         """
+        id_ = str(id_)
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):
             return auth_response
@@ -268,12 +268,13 @@ class Item(Resource):
                     jsonify(message), status_code=status_code)
         abort(405)
 
-    def post(self, id_: int, path: str) -> Response:
+    def post(self, id_: str, path: str) -> Response:
         """Update object of type<path> at ID<id_> with new object_ using HTTP POST.
 
         :param id_ - ID of Item to be updated
         :param path - Path for Item type( Specified in APIDoc @id)
         """
+        id_ = str(id_)
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):
             return auth_response
@@ -314,12 +315,13 @@ class Item(Resource):
 
         abort(405)
 
-    def put(self, id_: int, path: str) -> Response:
+    def put(self, id_: str, path: str) -> Response:
         """Add new object_ optional <id_> parameter using HTTP PUT.
 
         :param id_ - ID of Item to be updated
         :param path - Path for Item type( Specified in APIDoc @id) to be updated
         """
+        id_ = str(id_)
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):
             return auth_response
@@ -353,8 +355,9 @@ class Item(Resource):
 
         abort(405)
 
-    def delete(self, id_: int, path: str) -> Response:
+    def delete(self, id_: str, path: str) -> Response:
         """Delete object with id=id_ from database."""
+        id_ = str(id_)
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):
             return auth_response
@@ -678,6 +681,8 @@ class Contexts(Resource):
 
 def app_factory(API_NAME: str="api") -> Flask:
     """Create an app object."""
+
+
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'secret key'
     CORS(app)
@@ -693,7 +698,7 @@ def app_factory(API_NAME: str="api") -> Flask:
     api.add_resource(ItemCollection, "/" + API_NAME +
                      "/<string:path>", endpoint="item_collection")
     api.add_resource(Item, "/" + API_NAME +
-                     "/<string:path>/<int:id_>", endpoint="item")
+                     "/<string:path>/<uuid:id_>", endpoint="item")
     api.add_resource(Items, "/" + API_NAME +
                      "/<string:path>/add/<int_list>", "/" + API_NAME +
                      "/<string:path>/add", "/" + API_NAME +

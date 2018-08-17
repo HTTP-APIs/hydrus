@@ -8,10 +8,13 @@ from hydrus.data import doc_parse
 from hydrus.hydraspec import doc_maker
 from hydrus.data.db_models import Base
 from hydrus.data.user import add_user
-from gevent.wsgi import WSGIServer
+from gevent.pywsgi import WSGIServer
+from hydrus.parser.openapi_parser import parse
+from hydrus.samples.hydra_doc_sample import doc as api_document
 from typing import Tuple
 import json
 import click
+import yaml
 
 
 @click.command()
@@ -32,13 +35,17 @@ import click
               help="Toggle token based user authentication.")
 @click.option("--serverurl", default="http://localhost",
               help="Set server url", type=str)
+
+@click.option("--openapi","-o" ,default="./petstore_openapi.yaml",type=click.File('r'),help="Location to Open API doc")
+
 @click.argument("serve", required=True)
 def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
                 hydradoc: str, port: int, serverurl: str, token: bool,
-                serve: None) -> None:
+                serve: None,openapi: str) -> None:
     """
     Python Hydrus CLI
 
+    :param openapi:                     : Sets the link to the Open Api Doc file.
     :param adduser <tuple>  : Contains the user credentials.
     :param api <str>                    : Sets the API name for the server.
     :param auth <bool>                  : Toggles the authentication.
@@ -56,6 +63,17 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
     # DB_URL = 'sqlite:///database.db'
     DB_URL = dburl
 
+    if openapi.name != './petstore_openapi.yaml':
+        with open(openapi.name, 'r') as stream:
+            try:
+                openapi_doc = yaml.load(stream)
+            except yaml.YAMLError as exc:
+                print(exc)
+        api_doc = parse(openapi_doc)
+
+        f = open("./hydrus/samples/hydra_doc_sample.py", "w")
+        f.write(api_doc)
+        f.close()
     # Define the server URL, this is what will be displayed on the Doc
     HYDRUS_SERVER_URL = "{}:{}/".format(serverurl, str(port))
 
@@ -74,8 +92,12 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
     # NOTE: You can use your own API Documentation and create a HydraDoc object using doc_maker
     #       Or you may create your own HydraDoc Documentation using doc_writer [see hydrus/hydraspec/doc_writer_sample]
     click.echo("Creating the API Documentation")
-    apidoc = doc_maker.create_doc(json.loads(hydradoc.read()),
-                                  HYDRUS_SERVER_URL, API_NAME)
+    if openapi.name != './petstore_openapi.yaml':
+        apidoc = doc_maker.create_doc(api_document, HYDRUS_SERVER_URL, API_NAME)
+    else:
+        apidoc = doc_maker.create_doc(json.loads(hydradoc.read()),
+                                      HYDRUS_SERVER_URL, API_NAME)
+
 
     # Start a session with the DB and create all classes needed by the APIDoc
     session = scoped_session(sessionmaker(bind=engine))
