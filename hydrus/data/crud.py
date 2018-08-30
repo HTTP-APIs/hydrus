@@ -52,7 +52,7 @@ triples = with_polymorphic(Graph, '*')
 properties = with_polymorphic(BaseProperty, "*")
 
 
-def get(id_: int, type_: str, api_name: str, session: scoped_session,
+def get(id_: str, type_: str, api_name: str, session: scoped_session,
         recursive: bool = False, path: str=None) -> Dict[str, str]:
     """Retrieve an Instance with given ID from the database [GET].
     :param id_: id of object to be fetched
@@ -130,7 +130,7 @@ def get(id_: int, type_: str, api_name: str, session: scoped_session,
 
 
 def insert(object_: Dict[str, Any], session: scoped_session,
-           id_: Optional[int] =None) -> int:
+           id_: Optional[str] =None) -> str:
     """Insert an object to database [POST] and returns the inserted object.
     :param object_: object to be inserted
     :param session: sqlalchemy scoped session
@@ -344,7 +344,7 @@ def insert_multiple(objects_: List[Dict[str,
 
 
 
-def delete(id_: int, type_: str, session: scoped_session) -> None:
+def delete(id_: str, type_: str, session: scoped_session) -> None:
     """Delete an Instance and all its relations from DB given id [DELETE].
     :param id_: id of object to be deleted
     :param type_: type of object to be deleted
@@ -446,13 +446,13 @@ def delete_multiple(
     session.commit()
 
 
-def update(id_: int,
+def update(id_: str,
            type_: str,
            object_: Dict[str,
                          str],
            session: scoped_session,
            api_name: str,
-           path: str=None) -> int:
+           path: str=None) -> str:
     """Update an object properties based on the given object [PUT].
     :param id_: if of object to be updated
     :param type_: type of object to be updated
