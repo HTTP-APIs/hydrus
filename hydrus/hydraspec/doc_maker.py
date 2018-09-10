@@ -1,4 +1,4 @@
-'''Contsructor to take a Python dict containing an API Documentation and
+'''Contsructor to take a Python dict or JSON containing an API Documentation and
 create a HydraDoc object for it'''
 import re
 import json
