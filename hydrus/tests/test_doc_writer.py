@@ -1,19 +1,15 @@
 import unittest
 from hydrus.hydraspec import doc_writer
-import unittest.mock as mock
+from unittest.mock import MagicMock, patch
 
 
 class TestDocWriter(unittest.TestCase):
-    hydra_entry_point_mock = mock.Mock(spec_set=doc_writer.HydraEntryPoint)
-    hydra_class_mock = mock.Mock(spec=doc_writer.HydraClass)
-    hydra_prop1 = mock.Mock(spec=doc_writer.HydraClassProp)
 
     # test context class methods
     def test_context_with_nothing(self):
         """
+        Test method to test if correct context is generated when no arguments are passed
 
-
-        :return:
         """
         context = doc_writer.Context('https://hydrus.com/api')
         expected_context = {
@@ -63,13 +59,19 @@ class TestDocWriter(unittest.TestCase):
         }
         self.assertEqual(expected_context, context.generate())
 
-    def test_context_with_entrypoint(self):
+    @patch('hydrus.hydraspec.doc_writer.HydraEntryPoint', spec=doc_writer.HydraEntryPoint)
+    def test_context_with_entrypoint(self, mock_entry):
+        """
+        Test method to test if correct context is generated when HydraEntryPoint is passed
+
         """
 
-        :return:
-        """
+        hydra_entry_point_mock = mock_entry()
+        hydra_entry_point_mock.base_url = "https://hydrus.com/api"
+        hydra_entry_point_mock.entrypoint = "EntryPoint"
+
         context = doc_writer.Context('https://hydrus.com/api',
-                                     entrypoint=self.hydra_entry_point_mock("https://hydrus.com/api", "EntryPoint"))
+                                     entrypoint=hydra_entry_point_mock)
 
         expected_context = {
             "EntryPoint": "vocab:EntryPoint",
@@ -78,28 +80,39 @@ class TestDocWriter(unittest.TestCase):
         self.assertEqual(expected_context, context.generate())
 
     def test_context_with_class(self):
-        self.hydra_class_mock.id_ = "vocab:Pet"
-        self.hydra_class_mock.title = "Pet"
-        self.hydra_class_mock.desc = "Pet"
-        self.hydra_prop1.prop = ""
-        self.hydra_prop1.readonly = "true"
-        self.hydra_prop1.required = "false"
-        self.hydra_prop1.title = "id"
-        self.hydra_prop1.writeonly = "true"
-        self.hydra_class_mock.supportedProperty = [self.hydra_prop1]
+        """
+        Test method to test if correct context is generated when HydraClass is passed
 
-        context = doc_writer.Context('https://hydrus.com/api', class_=self.hydra_class_mock)
+        """
 
-        expected_context = {
-            "vocab": "https://hydrus.com/api/vocab#",
-            "hydra": "http://www.w3.org/ns/hydra/core#",
-            "members": "http://www.w3.org/ns/hydra/core#member",
-            "object": "http://schema.org/object",
-            "Pet": "vocab:Pet",
-            "id": ""
-        }
+        mocked_hydra_class = MagicMock()
+        with patch('hydrus.hydraspec.doc_writer.HydraClass', mocked_hydra_class, spec_set=doc_writer.HydraClass):
+            mocked_hydra_property = MagicMock()
+            mocked_hydra_class.id_ = "vocab:Pet"
+            mocked_hydra_class.title = "Pet"
+            mocked_hydra_class.desc = "Pet"
+            with patch('hydrus.hydraspec.doc_writer.HydraClassProp', mocked_hydra_property,
+                       spec_set=doc_writer.HydraClassProp):
+                mocked_hydra_property.prop = ""
+                mocked_hydra_property.readonly = "true"
+                mocked_hydra_property.required = "false"
+                mocked_hydra_property.title = "id"
+                mocked_hydra_property.writeonly = "true"
 
-        self.assertEqual(expected_context, context.generate())
+                mocked_hydra_class.supportedProperty = [mocked_hydra_property]
 
-        if __name__ == '__main__':
-            unittest.main()
+                context = doc_writer.Context('https://hydrus.com/api', class_=mocked_hydra_class)
+
+                expected_context = {
+                    "vocab": "https://hydrus.com/api/vocab#",
+                    "hydra": "http://www.w3.org/ns/hydra/core#",
+                    "members": "http://www.w3.org/ns/hydra/core#member",
+                    "object": "http://schema.org/object",
+                    "Pet": "vocab:Pet",
+                    "id": ""
+                }
+
+                self.assertEqual(expected_context, context.generate())
+
+    if __name__ == '__main__':
+        unittest.main()
