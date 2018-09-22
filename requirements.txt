@@ -22,3 +22,4 @@ six==1.11.0
 SQLAlchemy==1.2.10
 thespian==3.9.2
 Werkzeug==0.14.1
+PyYAML==3.13
