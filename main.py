@@ -21,9 +21,9 @@ import json
 
 HYDRUS_SERVER_URL = "http://localhost:8080/"
 API_NAME = "serverapi"
-PORT = 8085
+PORT = 8080
 
-engine = create_engine('sqlite:///database12212.db')
+engine = create_engine('sqlite:///database.db')
 
 Base.metadata.create_all(engine)
 session = sessionmaker(bind=engine)()
@@ -42,10 +42,11 @@ doc_parse.insert_properties(properties, session)
 AUTH = True
 TOKEN = True
 
-try:
-    add_user(id_=1, paraphrase="test", session=session)
-except UserExists:
-    pass
+if AUTH:
+    try:
+        add_user(id_=1, paraphrase="test", session=session)
+    except UserExists:
+        pass
 # Insert them into the database
 doc_parse.insert_classes(classes, session)
 doc_parse.insert_properties(properties, session)
