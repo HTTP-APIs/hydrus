@@ -247,7 +247,7 @@ def generateOrUpdateClass(name, collection, global_, path)->bool:
     :param collection: if the class is collection or not
     :param global_: global state
     :param path: path
-    :return: bool showing if the operation was successful 
+    :return: bool showing if the operation was successful
     """
     if valid_endpoint(path):
         if name in global_["class_names"] and collection is True:
@@ -457,7 +457,7 @@ def get_paths(global_: Dict[str, Any]) -> None:
                 get_ops(global_, path, method, class_name)
 
 
-def parse(doc: Dict[str, Any]) -> str:
+def parse(doc: Dict[str, Any]) -> Dict[str, Any]:
     """
     To parse the "info" block and create Hydra Doc
     :param doc: the open api documentation
@@ -498,6 +498,16 @@ def parse(doc: Dict[str, Any]) -> str:
 
     generateEntrypoint(api_doc)
     hydra_doc = api_doc.generate()
+
+    return hydra_doc
+
+
+def dump_documentation(hydra_doc: Dict[str, Any]) -> str:
+    """
+    Helper function to dump generated hydradoc > py file.
+    :param doc: generated hydra doc
+    :return:  hydra doc created
+    """
     dump = json.dumps(hydra_doc, indent=4, sort_keys=True)
     hydra_doc = '''"""\nGenerated API Documentation for Server API using server_doc_gen.py."""\n\ndoc = %s''' % dump
     hydra_doc = hydra_doc + '\n'
@@ -514,8 +524,8 @@ if __name__ == "__main__":
             doc = yaml.load(stream)
         except yaml.YAMLError as exc:
             print(exc)
-    documentation = parse(doc)
+    hydra_doc = parse(doc)
 
     f = open("../samples/hydra_doc_sample.py", "w")
-    f.write(documentation)
+    f.write(dump_documentation(hydra_doc))
     f.close()
