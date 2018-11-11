@@ -11,6 +11,7 @@ from hydrus.data.user import add_user
 from gevent.pywsgi import WSGIServer
 from hydrus.parser.openapi_parser import parse
 from hydrus.samples.hydra_doc_sample import doc as api_document
+from importlib.machinery import SourceFileLoader
 from typing import Tuple
 import json
 import click
@@ -26,16 +27,15 @@ import yaml
               help="Set authentication to True or False.")
 @click.option("--dburl", default="sqlite:///:memory:",
               help="Set database url", type=str)
-@click.option("--hydradoc", "-d", default="doc.jsonld",
+@click.option("--hydradoc", "-d", default=None,
               help="Location to HydraDocumentation (JSON-LD) of server.",
-              type=click.File('r'))
+              type=str)
 @click.option("--port", "-p", default=8080,
               help="The port the app is hosted at.", type=int)
 @click.option("--token/--no-token", default=True,
               help="Toggle token based user authentication.")
 @click.option("--serverurl", default="http://localhost",
               help="Set server url", type=str)
-
 @click.argument("serve", required=True)
 def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
                 hydradoc: str, port: int, serverurl: str, token: bool,
@@ -43,28 +43,30 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
     """
     Python Hydrus CLI
 
-    :param openapi:                     : Sets the link to the Open Api Doc file.
+    :param openapi:         : Sets the link to the Open Api Doc file.
     :param adduser <tuple>  : Contains the user credentials.
-    :param api <str>                    : Sets the API name for the server.
-    :param auth <bool>                  : Toggles the authentication.
-    :param dburl <str>                  : Sets the database URL.
-    :param hydradoc <str>               : Sets the link to the HydraDoc file.
-    :param port <int>                   : Sets the API server port.
-    :param serverurl <str>              : Sets the API server url.
-    :param token <bool>                 : Toggle token based user auth.
-    :param serve                        : Starts up the server.
+    :param api <str>        : Sets the API name for the server.
+    :param auth <bool>      : Toggles the authentication.
+    :param dburl <str>      : Sets the database URL.
+    :param hydradoc <str>   : Sets the link to the HydraDoc file
+                            (Supported formats - [.py, .jsonld, .yaml])
+    :param port <int>       : Sets the API server port.
+    :param serverurl <str>  : Sets the API server url.
+    :param token <bool>     : Toggle token based user auth.
+    :param serve            : Starts up the server.
 
-    :return                             : None.
+    :return                 : None.
     """
     # The database connection URL
-    # See http://docs.sqlalchemy.org/en/rel_1_0/core/engines.html#sqlalchemy.create_engine for more info
+    # See http://docs.sqlalchemy.org/en/rel_1_0/core/engines.html for more info
     # DB_URL = 'sqlite:///database.db'
     DB_URL = dburl
 
     # Define the server URL, this is what will be displayed on the Doc
     HYDRUS_SERVER_URL = "{}:{}/".format(serverurl, str(port))
 
-    # The name of the API or the EntryPoint, the api will be at http://localhost/<API_NAME>
+    # The name of the API or the EntryPoint, the api will be at
+    # http://localhost/<API_NAME>
     API_NAME = api
 
     click.echo("Setting up the database")
@@ -76,20 +78,50 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
     Base.metadata.create_all(engine)
 
     # Define the Hydra API Documentation
-    # NOTE: You can use your own API Documentation and create a HydraDoc object using doc_maker
-    #       Or you may create your own HydraDoc Documentation using doc_writer [see hydrus/hydraspec/doc_writer_sample]
+    # NOTE: You can use your own API Documentation and create a HydraDoc object
+    # using doc_maker or you may create your own HydraDoc Documentation using
+    # doc_writer [see hydrus/hydraspec/doc_writer_sample]
     click.echo("Creating the API Documentation")
 
-    apidoc = doc_maker.create_doc(json.loads(hydradoc.read()),
-                                      HYDRUS_SERVER_URL, API_NAME)
+    if hydradoc:
+        # Getting hydradoc format
+        # Currently supported formats [.jsonld, .py, .yaml]
+        try:
+            hydradoc_format = hydradoc.split(".")[-1]
+            if hydradoc_format == 'jsonld':
+                with open(hydradoc, 'r') as f:
+                    doc = json.load(f)
+            elif hydradoc_format == 'py':
+                doc = SourceFileLoader("doc",
+                                       "./examples/drones/doc.py")\
+                    .load_module().doc
+            elif hydradoc_format == 'yaml':
+                with open(hydradoc, 'r') as stream:
+                    doc = parse(yaml.load(stream))
+            else:
+                raise("Error - hydradoc format not supported.")
 
+            click.echo("Using %s as hydradoc" % hydradoc)
+            apidoc = doc_maker.create_doc(doc,
+                                          HYDRUS_SERVER_URL, API_NAME)
+
+        except:
+            click.echo("Problem parsing specified hydradoc file, "
+                       "using sample hydradoc as default.")
+            apidoc = doc_maker.create_doc(api_document,
+                                          HYDRUS_SERVER_URL, API_NAME)
+    else:
+        click.echo("No hydradoc specified, using sample hydradoc as default.")
+        apidoc = doc_maker.create_doc(api_document,
+                                      HYDRUS_SERVER_URL, API_NAME)
 
     # Start a session with the DB and create all classes needed by the APIDoc
     session = scoped_session(sessionmaker(bind=engine))
 
     click.echo("Adding Classes and Properties")
     # Get all the classes from the doc
-    # You can also pass dictionary defined in hydrus/hydraspec/doc_writer_sample_output.py
+    # You can also pass dictionary defined in
+    # hydrus/hydraspec/doc_writer_sample_output.py
     classes = doc_parse.get_classes(apidoc.generate())
 
     # Get all the properties from the classes
