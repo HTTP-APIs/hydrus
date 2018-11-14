@@ -20,7 +20,7 @@ def get_classes(apidoc: Dict[str, Any]) -> List[Dict[str, Any]]:
 
 
 def get_all_properties(classes: List[Dict[str, Any]]) -> Set[str]:
-    """Get all the classes in the APIDocumentation."""
+    """Get all the properties in the APIDocumentation."""
     # properties = list()
     prop_names = set()  # type: Set[str]
     for class_ in classes:
