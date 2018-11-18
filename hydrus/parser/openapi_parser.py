@@ -294,7 +294,7 @@ def check_for_ref(global_: Dict[str, Any],
                     split('/')
             except KeyError:
                 class_location = block["responses"][obj]["schema"]["items"]\
-                ["$ref"].split('/')
+                  ["$ref"].split('/')
             collection = check_collection(
                 schema_obj=block["responses"][obj]["schema"],
                 method=path)
