@@ -1,4 +1,6 @@
 import unittest
+import os
+import hydrus
 
 from hydrus.hydraspec.doc_writer import HydraClass
 from hydrus.parser import openapi_parser
@@ -7,7 +9,8 @@ import yaml
 
 def import_doc():
     print("Importing Open Api Documentation ..")
-    with open("../samples/petstore_openapi.yaml", 'r') as stream:
+    abs_path = os.path.abspath(os.path.dirname(hydrus.__file__) + "/samples/petstore_openapi.yaml")
+    with open(abs_path, 'r') as stream:
         try:
             return yaml.load(stream)
         except yaml.YAMLError as exc:
@@ -83,7 +86,7 @@ class TestParser(unittest.TestCase):
     def test_parse(self):
         """Test the hydra documentation """
         result = openapi_parser.parse(self.doc)
-        assert isinstance(result, str)
+        assert isinstance(result, dict)
 
     def test_check_collection(self):
         """Test if collections are being identified properly"""
