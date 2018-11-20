@@ -67,4 +67,4 @@ The demo should be up and running on `http://localhost:8080/serverapi/`.
 <a name="usage"></a>
 Usage
 -------------
-For more info, head to the [Usage](https://github.com/HTTP-APIs/hydrus/wiki/Usage) section of the [wiki](https://github.com/HTTP-APIs/hydrus/wiki/).
+For more info, head to the [Usage](http://www.hydraecosystem.org/01-Usage.html) section of the [wiki](http://www.hydraecosystem.org/).
