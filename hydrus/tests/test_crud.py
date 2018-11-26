@@ -79,8 +79,9 @@ class TestCRUD(unittest.TestCase):
 
     def test_update(self):
         """Test CRUD update."""
-        object_ = gen_dummy_object(random.choice(self.doc_collection_classes), self.doc)
-        new_object = gen_dummy_object(random.choice(self.doc_collection_classes), self.doc)
+        random_class = random.choice(self.doc_collection_classes)
+        object_ = gen_dummy_object(random_class, self.doc)
+        new_object = gen_dummy_object(random_class, self.doc)
         id_ = "30"
         insert_response = crud.insert(
             object_=object_, id_=id_, session=self.session)
