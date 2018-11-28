@@ -44,6 +44,7 @@ from hydrus.utils import get_session, get_doc, get_api_name, get_hydrus_server_u
 from flask.wrappers import Response
 from typing import Dict, List, Any, Union, Optional
 
+
 def validObject(object_: Dict[str, Any]) -> bool:
     """
         Check if the Dict passed in POST is of valid format or not.
@@ -105,22 +106,22 @@ def failed_authentication(incorrect: bool) -> Response:
         realm = 'Basic realm="Incorrect credentials"'
     nonce = create_nonce(get_session())
     response = set_response_headers(jsonify(message), status_code=401, headers=[
-                                    {'WWW-Authenticate': realm}, {'X-Authentication': nonce}])
+        {'WWW-Authenticate': realm}, {'X-Authentication': nonce}])
     return response
 
 
 def set_response_headers(resp: Response,
-                         ct: str="application/ld+json",
+                         ct: str = "application/ld+json",
                          headers: List[Dict[str,
-                                            Any]]=[],
-                         status_code: int=200) -> Response:
+                                            Any]] = [],
+                         status_code: int = 200) -> Response:
     """Set the response headers."""
     resp.status_code = status_code
     for header in headers:
         resp.headers[list(header.keys())[0]] = header[list(header.keys())[0]]
     resp.headers['Content-type'] = ct
     resp.headers['Link'] = '<' + get_hydrus_server_url() + \
-        get_api_name() + '/vocab>; rel="http://www.w3.org/ns/hydra/core#apiDocumentation"'
+                           get_api_name() + '/vocab>; rel="http://www.w3.org/ns/hydra/core#apiDocumentation"'
     return resp
 
 
@@ -128,10 +129,10 @@ def hydrafy(object_: Dict[str, Any], path: Optional[str]) -> Dict[str, Any]:
     """Add hydra context to objects."""
     if path == object_["@type"]:
         object_["@context"] = "/" + get_api_name() + "/contexts/" + \
-            object_["@type"] + ".jsonld"
+                              object_["@type"] + ".jsonld"
     else:
         object_["@context"] = "/" + get_api_name() + "/contexts/" + \
-            path + ".jsonld"
+                              path + ".jsonld"
     return object_
 
 
@@ -157,8 +158,8 @@ def getType(class_path: str, method: str) -> Any:
     ).parsed_classes[class_path]["class"].supportedOperation:
         if supportedOp.method == method:
             return supportedOp.expects.replace("vocab:", "")
-    # NOTE: Don't use split, if there are more than one substrings with
-    # 'vocab:' not everything will be returned.
+            # NOTE: Don't use split, if there are more than one substrings with
+            # 'vocab:' not everything will be returned.
 
 
 def checkClassOp(class_type: str, method: str) -> bool:
@@ -168,7 +169,6 @@ def checkClassOp(class_type: str, method: str) -> bool:
         if supportedOp.method == method:
             return True
     return False
-
 
 def verify_user() -> Union[Response, None]:
     """
@@ -301,7 +301,7 @@ class Item(Resource):
                         ) + get_api_name() + "/" + path + "/" + str(object_id)}]
                         response = {
                             "message": "Object with ID %s successfully updated" %
-                            (object_id)}
+                                       (object_id)}
                         return set_response_headers(
                             jsonify(response), headers=headers_)
 
@@ -342,7 +342,7 @@ class Item(Resource):
                         ) + get_api_name() + "/" + path + "/" + str(object_id)}]
                         response = {
                             "message": "Object with ID %s successfully added" %
-                            (object_id)}
+                                       (object_id)}
                         return set_response_headers(
                             jsonify(response), headers=headers_, status_code=201)
                     except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
@@ -371,7 +371,7 @@ class Item(Resource):
                 crud.delete(id_, class_type, session=get_session())
                 response = {
                     "message": "Object with ID %s successfully deleted" %
-                    (id_)}
+                               (id_)}
                 return set_response_headers(jsonify(response))
 
             except (ClassNotFound, InstanceNotFound) as e:
@@ -466,7 +466,7 @@ class ItemCollection(Resource):
                             ) + get_api_name() + "/" + path + "/" + str(object_id)}]
                             response = {
                                 "message": "Object with ID %s successfully added" %
-                                (object_id)}
+                                           (object_id)}
                             return set_response_headers(
                                 jsonify(response), headers=headers_, status_code=201)
                         except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
@@ -570,7 +570,6 @@ class ItemCollection(Resource):
 
 
 class Items(Resource):
-
     def put(self, path, int_list="") -> Response:
         """
         To insert multiple objects into the database
@@ -607,7 +606,7 @@ class Items(Resource):
                             ) + get_api_name() + "/" + path + "/" + str(object_id)}]
                             response = {
                                 "message": "Object with ID %s successfully added" %
-                                (object_id)}
+                                           (object_id)}
                             return set_response_headers(
                                 jsonify(response), headers=headers_, status_code=201)
                         except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
@@ -618,7 +617,6 @@ class Items(Resource):
                 return set_response_headers(
                     jsonify({400: "Data is not valid"}), status_code=400)
 
-            
         abort(endpoint_['status'])
 
     def delete(self, path, int_list):
@@ -641,7 +639,7 @@ class Items(Resource):
                     int_list, class_type, session=get_session())
                 response = {
                     "message": "Object with ID %s successfully deleted" %
-                    (int_list.split(','))}
+                               (int_list.split(','))}
                 return set_response_headers(jsonify(response))
 
             except (ClassNotFound, InstanceNotFound) as e:
@@ -679,9 +677,43 @@ class Contexts(Resource):
                 return set_response_headers(jsonify(response), status_code=404)
 
 
-def app_factory(API_NAME: str="api") -> Flask:
-    """Create an app object."""
+class NestedItem(Resource):
+    def get(self, id_: str, path: str, prop_name: str) -> Response:
+        """
+        GET nested property prop_name of object with id = id_ from the database.
 
+        :param id : Item ID
+        :param path : Path for Item ( Specified in APIDoc @id)
+        :param prop_name : Name of sub Item ( Specified in APIDoc as @type)
+        """
+        id_ = str(id_)
+        auth_response = check_authentication_response()
+        if isinstance(auth_response, Response):
+            return auth_response
+
+        class_type = get_doc().collections[path]["collection"].class_.title
+        # Check if class_type supports GET operation
+        if checkClassOp(class_type, "GET"):
+            try:
+                # Try getting the Item based on ID and Class type and Property name
+                response = crud.getIII(
+                    id_,
+                    class_type, prop_name,
+                    api_name=get_api_name(),
+                    session=get_session())
+
+                return set_response_headers(
+                    jsonify(hydrafy(response, path=path)))
+
+            except (ClassNotFound, InstanceNotFound, PropertyNotFound) as e:
+                status_code, message = e.get_HTTP()
+                return set_response_headers(
+                    jsonify(message), status_code=status_code)
+        abort(405)
+
+
+def app_factory(API_NAME: str = "api") -> Flask:
+    """Create an app object."""
 
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'secret key'
@@ -699,6 +731,8 @@ def app_factory(API_NAME: str="api") -> Flask:
                      "/<string:path>", endpoint="item_collection")
     api.add_resource(Item, "/" + API_NAME +
                      "/<string:path>/<uuid:id_>", endpoint="item")
+    api.add_resource(NestedItem, "/" + API_NAME +
+                     "/<string:path>/<uuid:id_>/<string:prop_name>", endpoint="nested_item")
     api.add_resource(Items, "/" + API_NAME +
                      "/<string:path>/add/<int_list>", "/" + API_NAME +
                      "/<string:path>/add", "/" + API_NAME +
@@ -708,6 +742,5 @@ def app_factory(API_NAME: str="api") -> Flask:
 
 
 if __name__ == "__main__":
-
     app = app_factory("api")
     app.run(host='127.0.0.1', debug=True, port=8080)

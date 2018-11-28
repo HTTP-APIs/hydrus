@@ -53,7 +53,7 @@ properties = with_polymorphic(BaseProperty, "*")
 
 
 def get(id_: str, type_: str, api_name: str, session: scoped_session,
-        recursive: bool = False, path: str=None) -> Dict[str, str]:
+        recursive: bool = False, path: str = None) -> Dict[str, str]:
     """Retrieve an Instance with given ID from the database [GET].
     :param id_: id of object to be fetched
     :param type_: type of object
@@ -102,10 +102,19 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
         # Get class name for instance object
         inst_class_name = session.query(RDFClass).filter(
             RDFClass.id == instance.type_).one().name
-        # Recursive call should get the instance needed
-        object_ = get(id_=instance.id, type_=inst_class_name,
-                      session=session, recursive=True, api_name=api_name)
-        object_template[prop_name] = object_
+        if recursive:
+            #Recursive call should get the instance needed
+            object_ = get(id_=instance.id, type_=inst_class_name,
+                          session=session, recursive=True, api_name=api_name)
+            object_template[prop_name] = object_
+        else:
+            #Provide link to the nested object
+            if path is None:
+                object_template[prop_name] = "/" + api_name + \
+                                             "/" + type_ + "Collection/" + str(id_) + "/" + inst_class_name
+            else:
+                object_template[prop_name] = "/" + api_name + \
+                                             "/" + path + "Collection/" + str(id_) + "/" + inst_class_name
 
     for data in data_IIT:
         prop_name = session.query(properties).filter(
@@ -129,8 +138,59 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
     return object_template
 
 
+def getIII(id_: str, type_: str, prop_type: str, api_name: str, session: scoped_session,
+            path: str = None) -> Dict[str, str]:
+    """Retrieve an Instance with given ID from the database [GET].
+    :param id_: id of object to be fetched
+    :param type_: type of object
+    :param api_name: name of api specified while starting server
+    :param session: sqlalchemy scoped session
+    :param recursive: flag used to form value for key "@id"
+    :param path: endpoint
+    :return: response to the request
+    """
+    object_ = {
+        "@type": "",
+    }  # type: Dict[str, Any]
+    try:
+        rdf_class = session.query(RDFClass).filter(
+            RDFClass.name == type_).one()
+    except NoResultFound:
+        raise ClassNotFound(type_=type_)
+
+    try:
+        instance = session.query(Instance).filter(
+            Instance.id == id_, Instance.type_ == rdf_class.id).one()
+    except NoResultFound:
+        raise InstanceNotFound(type_=rdf_class.name, id_=id_)
+    property_found = False # to check if the property is defined for this class
+    data_III = session.query(triples).filter(
+        triples.GraphIII.subject == id_).all()
+    for data in data_III:
+        instance = session.query(Instance).filter(
+            Instance.id == data.object_).one()
+        inst_class_name = session.query(RDFClass).filter(
+            RDFClass.id == instance.type_).one().name
+        if inst_class_name == prop_type:
+            property_found = True
+            object_ = get(id_=instance.id, type_=prop_type,
+                        session=session, recursive=True, api_name=api_name)
+    if not property_found:
+        raise PropertyNotFound(type_=prop_type)
+    object_["@type"] = prop_type
+
+    if path is not None:
+        object_["@id"] = "/" + api_name + \
+                         "/" + path + "Collection/" + str(id_) + prop_type
+    else:
+        object_["@id"] = "/" + api_name + \
+                        "/" + type_ + "Collection/" + str(id_) + prop_type
+
+    return object_
+
+
 def insert(object_: Dict[str, Any], session: scoped_session,
-           id_: Optional[str] =None) -> str:
+           id_: Optional[str] = None) -> str:
     """Insert an object to database [POST] and returns the inserted object.
     :param object_: object to be inserted
     :param session: sqlalchemy scoped session
@@ -203,7 +263,7 @@ def insert(object_: Dict[str, Any], session: scoped_session,
             else:
                 terminal = Terminal(value=object_[prop_name])
                 session.add(terminal)
-                session.flush()     # Assigns ID without committing
+                session.flush()  # Assigns ID without committing
 
                 if property_.type_ == "PROPERTY" or property_.type_ == "INSTANCE":
                     property_.type_ = "INSTANCE"
@@ -251,11 +311,11 @@ def insert_multiple(objects_: List[Dict[str,
             raise ClassNotFound(type_=objects_[index]["@type"])
         if index in range(len(id_list)) and id_list[index] != "":
             if session.query(
-                exists().where(
-                    Instance.id == id_list[index])).scalar():
+                    exists().where(
+                                Instance.id == id_list[index])).scalar():
                 print(session.query(
-                exists().where(
-                    Instance.id == id_list[index])))
+                    exists().where(
+                        Instance.id == id_list[index])))
                 # TODO handle where intance already exists , if instance is
                 # fetched later anyways remove this
                 raise InstanceExists(type_=rdf_class.name, id_=id_list[index])
@@ -322,7 +382,7 @@ def insert_multiple(objects_: List[Dict[str,
                 else:
                     terminal = Terminal(value=objects_[index][prop_name])
                     session.add(terminal)
-                    session.flush()     # Assigns ID without committing
+                    session.flush()  # Assigns ID without committing
 
                     if property_.type_ == "PROPERTY" or property_.type_ == "INSTANCE":
                         property_.type_ = "INSTANCE"
@@ -341,7 +401,6 @@ def insert_multiple(objects_: List[Dict[str,
     session.bulk_save_objects(triples_list)
     session.commit()
     return instance_id_list
-
 
 
 def delete(id_: str, type_: str, session: scoped_session) -> None:
@@ -452,7 +511,7 @@ def update(id_: str,
                          str],
            session: scoped_session,
            api_name: str,
-           path: str=None) -> str:
+           path: str = None) -> str:
     """Update an object properties based on the given object [PUT].
     :param id_: if of object to be updated
     :param type_: type of object to be updated
@@ -482,8 +541,8 @@ def update(id_: str,
 def get_collection(API_NAME: str,
                    type_: str,
                    session: scoped_session,
-                   path: str=None) -> Dict[str,
-                                           Any]:
+                   path: str = None) -> Dict[str,
+                                             Any]:
     """Retrieve a type of collection from the database.
     :param API_NAME: api name specified while starting server
     :param type_: type of object to be updated
@@ -525,17 +584,17 @@ def get_collection(API_NAME: str,
             }
         else:
             object_template = {"@id": "/" +
-                               API_NAME +
-                               "/" +
-                               type_ +
-                               "Collection/" +
-                               str(instance_.id), "@type": type_}
+                                      API_NAME +
+                                      "/" +
+                                      type_ +
+                                      "Collection/" +
+                                      str(instance_.id), "@type": type_}
         collection_template["members"].append(object_template)
     return collection_template
 
 
 def get_single(type_: str, api_name: str, session: scoped_session,
-               path: str=None) -> Dict[str, Any]:
+               path: str = None) -> Dict[str, Any]:
     """Get instance of classes with single objects.
     :param type_: type of object to be updated
     :param api_name: api name specified while starting server
@@ -588,7 +647,7 @@ def update_single(object_: Dict[str,
                                 Any],
                   session: scoped_session,
                   api_name: str,
-                  path: str=None) -> int:
+                  path: str = None) -> int:
     """Update instance of classes with single objects.
     :param object_: new object
     :param session: sqlalchemy scoped session
