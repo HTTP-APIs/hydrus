@@ -170,6 +170,7 @@ def checkClassOp(class_type: str, method: str) -> bool:
             return True
     return False
 
+
 def verify_user() -> Union[Response, None]:
     """
     Verify the credentials of the user and assign token.
@@ -676,12 +677,10 @@ class Contexts(Resource):
                 response = {404: "NOT FOUND"}
                 return set_response_headers(jsonify(response), status_code=404)
 
-
 class NestedItem(Resource):
     def get(self, id_: str, path: str, prop_name: str) -> Response:
         """
         GET nested property prop_name of object with id = id_ from the database.
-
         :param id : Item ID
         :param path : Path for Item ( Specified in APIDoc @id)
         :param prop_name : Name of sub Item ( Specified in APIDoc as @type)
@@ -710,6 +709,7 @@ class NestedItem(Resource):
                 return set_response_headers(
                     jsonify(message), status_code=status_code)
         abort(405)
+
 
 
 def app_factory(API_NAME: str = "api") -> Flask:
