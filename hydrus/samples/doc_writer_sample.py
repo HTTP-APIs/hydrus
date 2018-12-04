@@ -8,6 +8,7 @@ API_NAME = "api"                # Name of the API, will serve as EntryPoint
 BASE_URL = "https://hydrus.com/"    # The base url at which the API is hosted
 # NOTE: The API will be accessible at BASE_URL + ENTRY_POINT (http://hydrus.com/api/)
 
+"""Create ApiDoc Object"""
 api_doc = HydraDoc(API_NAME,
                    "Title for the API Documentation",
                    "Description for the API Documentation",
@@ -19,8 +20,20 @@ api_doc = HydraDoc(API_NAME,
 class_uri = "dummyClass"      # URI of class for the HydraClass
 class_title = "dummyClass"                      # Title of the Class
 class_description = "A dummyClass for demo"     # Description of the class
-
 class_ = HydraClass(class_uri, class_title, class_description, endpoint=False)
+
+"""Class with single instance"""
+class_2_uri = "singleClass"
+class_2_title = "singleClass"
+class_2_description = "A non collection class"
+class_2 = HydraClass(class_2_uri, class_2_title, class_2_description, endpoint=True)
+
+"""Class not having any methods except put and get"""
+class_3_uri = "extraClass"
+class_3_title = "extraClass"
+class_3_description = "Class without any explicit methods"
+class_3 = HydraClass(class_3_uri, class_3_title, class_3_description, endpoint=False)
+
 # NOTE: Setting endpoint=True creates an endpoint for the class itself, this is usually for classes that have single instances.
 #       These classes should not ideally have a Collection, although Hydrus will allow creation of Collections for them
 
@@ -58,17 +71,46 @@ op1 = HydraClassOp(op_name,
                    op_returns,
                    op_status)
 
+"""Same way add DELETE, PUT and GET operations"""
+op2_status = [{"statusCode": 200, "description": "dummyClass deleted"}]
+op2 = HydraClassOp("DeleteClass", "DELETE", None, None, op2_status)
+op3_status = [{"statusCode": 201, "description": "dummyClass successfully added"}]
+op3 = HydraClassOp("AddClass", "PUT", "vocab:dummyClass", None, op3_status)
+op4_status = [{"statusCode": 200, "description": "dummyClass returned"}]
+op4 = HydraClassOp("GetClass", "GET", None, "vocab:dummyClass", op4_status)
 
-"""Add the operation to the Class"""
+"""Operations for non collection class"""
+class_2_op1_status = [{"statusCode": 200, "description": "singleClass changed"}]
+class_2_op1 = HydraClassOp("UpdateClass", "POST", "vocab:singleClass", None, class_2_op1_status)
+class_2_op2_status = [{"statusCode": 200, "description": "singleClass deleted"}]
+class_2_op2 = HydraClassOp("DeleteClass", "DELETE", None, None, class_2_op2_status)
+class_2_op3_status = [{"statusCode": 201, "description": "singleClass successfully added"}]
+class_2_op3 = HydraClassOp("AddClass", "PUT", "vocab:singleClass", None, op3_status)
+class_2_op4_status = [{"statusCode": 200, "description": "singleClass returned"}]
+class_2_op4 = HydraClassOp("GetClass", "GET", None, "vocab:singleClass", op4_status)
+
+"""Add the properties to the classes"""
 class_.add_supported_prop(dummyProp1)
 class_.add_supported_prop(dummyProp2)
+class_2.add_supported_prop(dummyProp1)
+class_2.add_supported_prop(dummyProp2)
 
-"""Add the properties to the Class"""
+"""Add the operations to the classes"""
 class_.add_supported_op(op1)
+class_.add_supported_op(op2)
+class_.add_supported_op(op3)
+class_.add_supported_op(op4)
+class_2.add_supported_op(class_2_op1)
+class_2.add_supported_op(class_2_op2)
+class_2.add_supported_op(class_2_op3)
+class_2.add_supported_op(class_2_op4)
+
 
 
 """Add the classes to the HydraDoc"""
 api_doc.add_supported_class(class_, collection=True, collection_path="DcTest")
+api_doc.add_supported_class(class_3, collection=True, collection_path="EcTest")
+api_doc.add_supported_class(class_2, collection=False)
 # NOTE: Using collection=True creates a HydraCollection for the class.
 #       The name of the Collection is class_.title+"Collection"
 #       The collection inherently supports GET and PUT operations
