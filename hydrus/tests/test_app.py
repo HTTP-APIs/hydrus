@@ -9,7 +9,7 @@ import re
 import uuid
 from hydrus.app import app_factory
 from hydrus.utils import set_session, set_doc, set_api_name
-from hydrus.data import doc_parse
+from hydrus.data import doc_parse, crud
 from hydrus.hydraspec import doc_maker
 from hydrus.samples import doc_writer_sample
 from sqlalchemy import create_engine
@@ -84,6 +84,12 @@ class ViewsTestCase(unittest.TestCase):
         self.session_util.__exit__(None, None, None)
         self.api_name_util.__exit__(None, None, None)
         self.session.close()
+
+    def setUp(self):
+        for class_ in self.doc.parsed_classes:
+            if class_ not in self.doc.collections:
+                dummy_obj = gen_dummy_object(class_, self.doc)
+                crud.insert(dummy_obj, id_=str(uuid.uuid4()), session=self.session)
 
     def test_Index(self):
         """Test for the index."""
@@ -316,13 +322,8 @@ class ViewsTestCase(unittest.TestCase):
                         x.method for x in class_.supportedOperation]
                     if "POST" in class_methods:
                         dummy_object = gen_dummy_object(class_.title, self.doc)
-                        put_response = self.client.put(
-                            endpoints[class_name], data=json.dumps(dummy_object)
-                        )
-                        assert put_response.status_code == 201
                         post_response = self.client.post(
                             endpoints[class_name], data=json.dumps(dummy_object))
-                        assert put_response.status_code == 201
                         assert post_response.status_code == 200
 
     def test_endpointClass_DELETE(self):
@@ -339,11 +340,6 @@ class ViewsTestCase(unittest.TestCase):
                     class_methods = [
                         x.method for x in class_.supportedOperation]
                     if "DELETE" in class_methods:
-                        dummy_object = gen_dummy_object(class_.title, self.doc)
-                        put_response = self.client.put(
-                            endpoints[class_name], data=json.dumps(dummy_object)
-                        )
-                        assert put_response.status_code == 201
                         delete_response = self.client.delete(
                             endpoints[class_name])
                         assert delete_response.status_code == 200
@@ -363,20 +359,12 @@ class ViewsTestCase(unittest.TestCase):
                         x.method for x in class_.supportedOperation]
                     if "GET" in class_methods:
                         response_get = self.client.get(endpoints[class_name])
-                        assert response_get.status_code == 404
-                        dummy_object = gen_dummy_object(class_.title, self.doc)
-                        put_response = self.client.put(
-                            endpoints[class_name], data=json.dumps(dummy_object)
-                        )
-                        assert put_response.status_code == 201
-                        response_get = self.client.get(endpoints[class_name])
                         assert response_get.status_code == 200
-                        if response_get.status_code == 200:
-                            response_get_data = json.loads(
-                                response_get.data.decode('utf-8'))
-                            assert "@context" in response_get_data
-                            assert "@id" in response_get_data
-                            assert "@type" in response_get_data
+                        response_get_data = json.loads(
+                            response_get.data.decode('utf-8'))
+                        assert "@context" in response_get_data
+                        assert "@id" in response_get_data
+                        assert "@type" in response_get_data
 
     def test_bad_objects(self):
         """Checks if bad objects are added or not."""
