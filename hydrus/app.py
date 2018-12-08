@@ -657,26 +657,20 @@ class Contexts(Resource):
 
     def get(self, category: str) -> Response:
         """Return the context for the specified class."""
-        if "Collection" in category:
-            if category in get_doc().collections:
-                # type: Union[Dict[str,Any],Dict[int,str]]
-                response = {
-                    "@context": get_doc().collections[category]["context"].generate()}
-                return set_response_headers(jsonify(response))
-
-            else:
-                response = {404: "NOT FOUND"}
-                return set_response_headers(jsonify(response), status_code=404)
-
+        # Check for collection
+        if category in get_doc().collections:
+            # type: Union[Dict[str,Any],Dict[int,str]]
+            response = {
+                "@context": get_doc().collections[category]["context"].generate()}
+            return set_response_headers(jsonify(response))
+        # Check for non collection class
+        elif category in get_doc().parsed_classes:
+            response = {
+                         "@context": get_doc().parsed_classes[category]["context"].generate()}
+            return set_response_headers(jsonify(response))
         else:
-            if category in get_doc().parsed_classes:
-                response = {
-                    "@context": get_doc().parsed_classes[category]["context"].generate()}
-                return set_response_headers(jsonify(response))
-
-            else:
-                response = {404: "NOT FOUND"}
-                return set_response_headers(jsonify(response), status_code=404)
+            response = {404: "NOT FOUND"}
+            return set_response_headers(jsonify(response), status_code=404)
 
 
 def app_factory(API_NAME: str="api") -> Flask:
