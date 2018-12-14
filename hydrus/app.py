@@ -677,40 +677,6 @@ class Contexts(Resource):
                 response = {404: "NOT FOUND"}
                 return set_response_headers(jsonify(response), status_code=404)
 
-class NestedItem(Resource):
-    def get(self, id_: str, path: str, prop_name: str) -> Response:
-        """
-        GET nested property prop_name of object with id = id_ from the database.
-        :param id : Item ID
-        :param path : Path for Item ( Specified in APIDoc @id)
-        :param prop_name : Name of sub Item ( Specified in APIDoc as @type)
-        """
-        id_ = str(id_)
-        auth_response = check_authentication_response()
-        if isinstance(auth_response, Response):
-            return auth_response
-
-        class_type = get_doc().collections[path]["collection"].class_.title
-        # Check if class_type supports GET operation
-        if checkClassOp(class_type, "GET"):
-            try:
-                # Try getting the Item based on ID and Class type and Property name
-                response = crud.getIII(
-                    id_,
-                    class_type, prop_name,
-                    api_name=get_api_name(),
-                    session=get_session())
-
-                return set_response_headers(
-                    jsonify(hydrafy(response, path=path)))
-
-            except (ClassNotFound, InstanceNotFound, PropertyNotFound) as e:
-                status_code, message = e.get_HTTP()
-                return set_response_headers(
-                    jsonify(message), status_code=status_code)
-        abort(405)
-
-
 
 def app_factory(API_NAME: str = "api") -> Flask:
     """Create an app object."""
@@ -731,8 +697,6 @@ def app_factory(API_NAME: str = "api") -> Flask:
                      "/<string:path>", endpoint="item_collection")
     api.add_resource(Item, "/" + API_NAME +
                      "/<string:path>/<uuid:id_>", endpoint="item")
-    api.add_resource(NestedItem, "/" + API_NAME +
-                     "/<string:path>/<uuid:id_>/<string:prop_name>", endpoint="nested_item")
     api.add_resource(Items, "/" + API_NAME +
                      "/<string:path>/add/<int_list>", "/" + API_NAME +
                      "/<string:path>/add", "/" + API_NAME +
