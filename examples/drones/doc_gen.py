@@ -28,6 +28,13 @@ def doc_gen(API: str, BASE_URL: str) -> HydraDoc:
         "https://schema.org/status", "SensorStatus", False, False, True))
     state.add_supported_prop(HydraClassProp(
         "http://schema.org/identifier", "DroneID", False, False, True))
+    # Operations
+    state.add_supported_op(HydraClassOp("GetState",
+                                        "GET",
+                                        None,
+                                        "vocab:State",
+                                        [{"statusCode": 404, "description": "State not found"},
+                                         {"statusCode": 200, "description": "State Returned"}]))
 
     # Drone Class
     drone = HydraClass("Drone", "Drone", "Class for a drone")
@@ -184,7 +191,7 @@ def doc_gen(API: str, BASE_URL: str) -> HydraDoc:
                                           [{"statusCode": 200, "description": "Message deleted"}]))
 
     api_doc.add_supported_class(drone, collection=True)
-    api_doc.add_supported_class(state, collection=False)
+    api_doc.add_supported_class(state, collection=True)
     api_doc.add_supported_class(datastream, collection=True)
     api_doc.add_supported_class(log, collection=True)
     api_doc.add_supported_class(area, collection=False)
