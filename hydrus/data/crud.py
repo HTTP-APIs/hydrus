@@ -53,13 +53,12 @@ properties = with_polymorphic(BaseProperty, "*")
 
 
 def get(id_: str, type_: str, api_name: str, session: scoped_session,
-        recursive: bool = False, path: str = None) -> Dict[str, str]:
+         path: str = None) -> Dict[str, str]:
     """Retrieve an Instance with given ID from the database [GET].
     :param id_: id of object to be fetched
     :param type_: type of object
     :param api_name: name of api specified while starting server
     :param session: sqlalchemy scoped session
-    :param recursive: flag used to form value for key "@id"
     :param path: endpoint
     :return: response to the request
     """
@@ -102,19 +101,8 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
         # Get class name for instance object
         inst_class_name = session.query(RDFClass).filter(
             RDFClass.id == instance.type_).one().name
-        if recursive:
-            #Recursive call should get the instance needed
-            object_ = get(id_=instance.id, type_=inst_class_name,
-                          session=session, recursive=True, api_name=api_name)
-            object_template[prop_name] = object_
-        else:
-            #Provide link to the nested object
-            if path is None:
-                object_template[prop_name] = "/" + api_name + \
-                                             "/" + type_ + "Collection/" + str(id_) + "/" + inst_class_name
-            else:
-                object_template[prop_name] = "/" + api_name + \
-                                             "/" + path + "Collection/" + str(id_) + "/" + inst_class_name
+        object_template[prop_name] = "/" + api_name + \
+                                    "/" + inst_class_name + "Collection/" + str(instance.id)
 
     for data in data_IIT:
         prop_name = session.query(properties).filter(
@@ -127,66 +115,15 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
             # If terminal is none
             object_template[prop_name] = ""
     object_template["@type"] = rdf_class.name
-    if not recursive:
-        if path is not None:
-            object_template["@id"] = "/" + api_name + \
-                                     "/" + path + "Collection/" + str(id_)
-        else:
-            object_template["@id"] = "/" + api_name + \
-                                     "/" + type_ + "Collection/" + str(id_)
-
-    return object_template
-
-
-def getIII(id_: str, type_: str, prop_type: str, api_name: str, session: scoped_session,
-            path: str = None) -> Dict[str, str]:
-    """Retrieve an Instance with given ID from the database [GET].
-    :param id_: id of object to be fetched
-    :param type_: type of object
-    :param api_name: name of api specified while starting server
-    :param session: sqlalchemy scoped session
-    :param recursive: flag used to form value for key "@id"
-    :param path: endpoint
-    :return: response to the request
-    """
-    object_ = {
-        "@type": "",
-    }  # type: Dict[str, Any]
-    try:
-        rdf_class = session.query(RDFClass).filter(
-            RDFClass.name == type_).one()
-    except NoResultFound:
-        raise ClassNotFound(type_=type_)
-
-    try:
-        instance = session.query(Instance).filter(
-            Instance.id == id_, Instance.type_ == rdf_class.id).one()
-    except NoResultFound:
-        raise InstanceNotFound(type_=rdf_class.name, id_=id_)
-    property_found = False # to check if the property is defined for this class
-    data_III = session.query(triples).filter(
-        triples.GraphIII.subject == id_).all()
-    for data in data_III:
-        instance = session.query(Instance).filter(
-            Instance.id == data.object_).one()
-        inst_class_name = session.query(RDFClass).filter(
-            RDFClass.id == instance.type_).one().name
-        if inst_class_name == prop_type:
-            property_found = True
-            object_ = get(id_=instance.id, type_=prop_type,
-                        session=session, recursive=True, api_name=api_name)
-    if not property_found:
-        raise PropertyNotFound(type_=prop_type)
-    object_["@type"] = prop_type
 
     if path is not None:
-        object_["@id"] = "/" + api_name + \
-                         "/" + path + "Collection/" + str(id_) + prop_type
+        object_template["@id"] = "/" + api_name + \
+                                 "/" + path + "Collection/" + str(id_)
     else:
-        object_["@id"] = "/" + api_name + \
-                        "/" + type_ + "Collection/" + str(id_) + prop_type
+        object_template["@id"] = "/" + api_name + \
+                                 "/" + type_ + "Collection/" + str(id_)
 
-    return object_
+    return object_template
 
 
 def insert(object_: Dict[str, Any], session: scoped_session,
