@@ -3,12 +3,12 @@
 from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp
 from typing import Any, Dict, Union
 
-"""Creating the HydraDoc object, this is the primary class for the Doc"""
+# Creating the HydraDoc object, this is the primary class for the Doc
 API_NAME = "api"                # Name of the API, will serve as EntryPoint
 BASE_URL = "https://hydrus.com/"    # The base url at which the API is hosted
 # NOTE: The API will be accessible at BASE_URL + ENTRY_POINT (http://hydrus.com/api/)
 
-"""Create ApiDoc Object"""
+# Create ApiDoc Object
 api_doc = HydraDoc(API_NAME,
                    "Title for the API Documentation",
                    "Description for the API Documentation",
@@ -16,29 +16,30 @@ api_doc = HydraDoc(API_NAME,
                    BASE_URL)
 
 
-"""Creating classes for the API"""
+# Creating classes for the API
 class_uri = "dummyClass"      # URI of class for the HydraClass
 class_title = "dummyClass"                      # Title of the Class
 class_description = "A dummyClass for demo"     # Description of the class
 class_ = HydraClass(class_uri, class_title, class_description, endpoint=False)
 
-"""Class with single instance"""
+# Class with single instance
 class_2_uri = "singleClass"
 class_2_title = "singleClass"
 class_2_description = "A non collection class"
 class_2 = HydraClass(class_2_uri, class_2_title, class_2_description, endpoint=True)
 
-"""Class not having any methods except put and get"""
+# Class not having any methods except put and get
 class_3_uri = "extraClass"
 class_3_title = "extraClass"
 class_3_description = "Class without any explicit methods"
 class_3 = HydraClass(class_3_uri, class_3_title, class_3_description, endpoint=False)
 
-# NOTE: Setting endpoint=True creates an endpoint for the class itself, this is usually for classes that have single instances.
+# NOTE: Setting endpoint=True creates an endpoint for the class itself, this is usually for classes
+#       that have single instances.
 #       These classes should not ideally have a Collection, although Hydrus will allow creation of Collections for them
 
 
-"""Create new properties for the class"""
+# Create new properties for the class
 prop1_uri = "http://props.hydrus.com/prop1"   # The URI of the class of the property
 prop1_title = "Prop1"                   # Title of the property
 
@@ -56,7 +57,7 @@ dummyProp2 = HydraClassProp(prop1_uri, prop2_title,
 #       Properties that are write=True are writable
 
 
-"""Create operations for the class"""
+# Create operations for the class
 op_name = "UpdateClass"  # The name of the operation
 op_method = "POST"  # The method of the Operation [GET, POST, PUT, DELETE]
 # URI of the object that is expected for the operation
@@ -71,7 +72,7 @@ op1 = HydraClassOp(op_name,
                    op_returns,
                    op_status)
 
-"""Same way add DELETE, PUT and GET operations"""
+# Same way add DELETE, PUT and GET operations
 op2_status = [{"statusCode": 200, "description": "dummyClass deleted"}]
 op2 = HydraClassOp("DeleteClass", "DELETE", None, None, op2_status)
 op3_status = [{"statusCode": 201, "description": "dummyClass successfully added"}]
@@ -79,7 +80,7 @@ op3 = HydraClassOp("AddClass", "PUT", "vocab:dummyClass", None, op3_status)
 op4_status = [{"statusCode": 200, "description": "dummyClass returned"}]
 op4 = HydraClassOp("GetClass", "GET", None, "vocab:dummyClass", op4_status)
 
-"""Operations for non collection class"""
+# Operations for non collection class
 class_2_op1_status = [{"statusCode": 200, "description": "singleClass changed"}]
 class_2_op1 = HydraClassOp("UpdateClass", "POST", "vocab:singleClass", None, class_2_op1_status)
 class_2_op2_status = [{"statusCode": 200, "description": "singleClass deleted"}]
@@ -89,13 +90,13 @@ class_2_op3 = HydraClassOp("AddClass", "PUT", "vocab:singleClass", None, op3_sta
 class_2_op4_status = [{"statusCode": 200, "description": "singleClass returned"}]
 class_2_op4 = HydraClassOp("GetClass", "GET", None, "vocab:singleClass", op4_status)
 
-"""Add the properties to the classes"""
+# Add the properties to the classes
 class_.add_supported_prop(dummyProp1)
 class_.add_supported_prop(dummyProp2)
 class_2.add_supported_prop(dummyProp1)
 class_2.add_supported_prop(dummyProp2)
 
-"""Add the operations to the classes"""
+# Add the operations to the classes
 class_.add_supported_op(op1)
 class_.add_supported_op(op2)
 class_.add_supported_op(op3)
@@ -105,9 +106,7 @@ class_2.add_supported_op(class_2_op2)
 class_2.add_supported_op(class_2_op3)
 class_2.add_supported_op(class_2_op4)
 
-
-
-"""Add the classes to the HydraDoc"""
+# Add the classes to the HydraDoc
 api_doc.add_supported_class(class_, collection=True, collection_path="DcTest")
 api_doc.add_supported_class(class_3, collection=True, collection_path="EcTest")
 api_doc.add_supported_class(class_2, collection=False)
@@ -115,7 +114,7 @@ api_doc.add_supported_class(class_2, collection=False)
 #       The name of the Collection is class_.title+"Collection"
 #       The collection inherently supports GET and PUT operations
 
-"""Other operations needed for the Doc"""
+# Other operations needed for the Doc
 api_doc.add_baseResource(
 )      # Creates the base Resource Class and adds it to the API Documentation
 # Creates the base Collection Class and adds it to the API Documentation
@@ -124,7 +123,7 @@ api_doc.add_baseCollection()
 api_doc.gen_EntryPoint()
 
 
-"""Generate the complete API Documentation"""
+# Generate the complete API Documentation
 doc = api_doc.generate(
 )  # type: Union[Dict[str, Any], str]       # Returns the entire API Documentation as a Python dict
 
