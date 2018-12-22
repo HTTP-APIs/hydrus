@@ -6,9 +6,10 @@ import random
 import string
 import json
 import re
+import uuid
 from hydrus.app import app_factory
 from hydrus.utils import set_session, set_doc, set_api_name
-from hydrus.data import doc_parse
+from hydrus.data import doc_parse, crud
 from hydrus.hydraspec import doc_maker
 from hydrus.samples import doc_writer_sample
 from sqlalchemy import create_engine
@@ -84,6 +85,12 @@ class ViewsTestCase(unittest.TestCase):
         self.api_name_util.__exit__(None, None, None)
         self.session.close()
 
+    def setUp(self):
+        for class_ in self.doc.parsed_classes:
+            if class_ not in self.doc.collections:
+                dummy_obj = gen_dummy_object(class_, self.doc)
+                crud.insert(dummy_obj, id_=str(uuid.uuid4()), session=self.session)
+
     def test_Index(self):
         """Test for the index."""
         response_get = self.client.get("/" + self.API_NAME)
@@ -143,7 +150,9 @@ class ViewsTestCase(unittest.TestCase):
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
         for endpoint in endpoints:
-            if endpoint in self.doc.collections:
+            collection_name = "/".join(endpoints[endpoint].split(
+                "/" + self.API_NAME + "/")[1:])
+            if collection_name in self.doc.collections:
                 response_get = self.client.get(endpoints[endpoint])
                 # pdb.set_trace()
                 assert response_get.status_code == 200
@@ -159,13 +168,15 @@ class ViewsTestCase(unittest.TestCase):
         index = self.client.get("/" + self.API_NAME)
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
-        for collection_name in endpoints:
+        for endpoint in endpoints:
+            collection_name = "/".join(endpoints[endpoint].split(
+                "/" + self.API_NAME + "/")[1:])
             if collection_name in self.doc.collections:
                 collection = self.doc.collections[collection_name]["collection"]
                 dummy_object = gen_dummy_object(
                     collection.class_.title, self.doc)
                 good_response_put = self.client.put(
-                    endpoints[collection_name], data=json.dumps(dummy_object))
+                    endpoints[endpoint], data=json.dumps(dummy_object))
                 assert good_response_put.status_code == 201
 
     def test_object_POST(self):
@@ -173,7 +184,9 @@ class ViewsTestCase(unittest.TestCase):
         index = self.client.get("/" + self.API_NAME)
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
-        for collection_name in endpoints:
+        for endpoint in endpoints:
+            collection_name = "/".join(endpoints[endpoint].split(
+                "/" + self.API_NAME + "/")[1:])
             if collection_name in self.doc.collections:
                 collection = self.doc.collections[collection_name]["collection"]
                 class_ = self.doc.parsed_classes[collection.class_.title]["class"]
@@ -181,11 +194,11 @@ class ViewsTestCase(unittest.TestCase):
                 dummy_object = gen_dummy_object(
                     collection.class_.title, self.doc)
                 initial_put_response = self.client.put(
-                    endpoints[collection_name], data=json.dumps(dummy_object))
+                    endpoints[endpoint], data=json.dumps(dummy_object))
                 assert initial_put_response.status_code == 201
                 response = json.loads(
                     initial_put_response.data.decode('utf-8'))
-                regex = r'(.*)ID (\d)* (.*)'
+                regex = r'(.*)ID (.{36})* (.*)'
                 matchObj = re.match(regex, response["message"])
                 assert matchObj is not None
                 id_ = matchObj.group(2)
@@ -193,7 +206,7 @@ class ViewsTestCase(unittest.TestCase):
                     dummy_object = gen_dummy_object(
                         collection.class_.title, self.doc)
                     post_replace_response = self.client.post(
-                        endpoints[collection_name] + '/' + id_, data=json.dumps(dummy_object))
+                        endpoints[endpoint] + '/' + id_, data=json.dumps(dummy_object))
                     assert post_replace_response.status_code == 200
 
     def test_object_DELETE(self):
@@ -201,7 +214,9 @@ class ViewsTestCase(unittest.TestCase):
         index = self.client.get("/" + self.API_NAME)
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
-        for collection_name in endpoints:
+        for endpoint in endpoints:
+            collection_name = "/".join(endpoints[endpoint].split(
+                "/" + self.API_NAME + "/")[1:])
             if collection_name in self.doc.collections:
                 collection = self.doc.collections[collection_name]["collection"]
                 class_ = self.doc.parsed_classes[collection.class_.title]["class"]
@@ -209,17 +224,17 @@ class ViewsTestCase(unittest.TestCase):
                 dummy_object = gen_dummy_object(
                     collection.class_.title, self.doc)
                 initial_put_response = self.client.put(
-                    endpoints[collection_name], data=json.dumps(dummy_object))
+                    endpoints[endpoint], data=json.dumps(dummy_object))
                 assert initial_put_response.status_code == 201
                 response = json.loads(
                     initial_put_response.data.decode('utf-8'))
-                regex = r'(.*)ID (\d)* (.*)'
+                regex = r'(.*)ID (.{36})* (.*)'
                 matchObj = re.match(regex, response["message"])
                 assert matchObj is not None
                 id_ = matchObj.group(2)
                 if "DELETE" in class_methods:
                     delete_response = self.client.delete(
-                        endpoints[collection_name] + '/' + id_)
+                        endpoints[endpoint] + '/' + id_)
                     assert delete_response.status_code == 200
 
     def test_object_PUT_at_id(self):
@@ -227,7 +242,9 @@ class ViewsTestCase(unittest.TestCase):
         index = self.client.get("/" + self.API_NAME)
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
-        for collection_name in endpoints:
+        for endpoint in endpoints:
+            collection_name = "/".join(endpoints[endpoint].split(
+                "/" + self.API_NAME + "/")[1:])
             if collection_name in self.doc.collections:
                 collection = self.doc.collections[collection_name]["collection"]
                 class_ = self.doc.parsed_classes[collection.class_.title]["class"]
@@ -238,16 +255,17 @@ class ViewsTestCase(unittest.TestCase):
                     dummy_object = gen_dummy_object(
                         collection.class_.title, self.doc)
                     put_response = self.client.put(
-                        endpoints[collection_name] + '/' + str(
-                            random.randint(
-                                100, 1000)), data=json.dumps(dummy_object))
+                        endpoints[endpoint] + '/' + str(
+                            uuid.uuid4()), data=json.dumps(dummy_object))
                     assert put_response.status_code == 201
 
     def test_object_PUT_at_ids(self):
         index = self.client.get("/" + self.API_NAME)
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
-        for collection_name in endpoints:
+        for endpoint in endpoints:
+            collection_name = "/".join(endpoints[endpoint].split(
+                "/" + self.API_NAME + "/")[1:])
             if collection_name in self.doc.collections:
                 collection = self.doc.collections[collection_name]["collection"]
                 class_ = self.doc.parsed_classes[collection.class_.title]["class"]
@@ -260,15 +278,15 @@ class ViewsTestCase(unittest.TestCase):
                 for index in range(3):
                     objects.append(gen_dummy_object(
                         collection.class_.title, self.doc))
-                    ids += str(random.randint(100, 1000))
+                    ids += str(uuid.uuid4())
                     ids += ','
                 data_["data"] = objects
                 if "PUT" in class_methods:
                     put_response = self.client.put(
-                        endpoints[collection_name] + '/' + ids,
+                        endpoints[endpoint] + '/add/' + ids,
                         data=json.dumps(
-                            data_["data"]))
-                assert put_response.status_code == 201
+                            data_))
+                    assert put_response.status_code == 201
 
     def test_endpointClass_PUT(self):
         """Check non collection Class PUT."""
@@ -304,9 +322,9 @@ class ViewsTestCase(unittest.TestCase):
                         x.method for x in class_.supportedOperation]
                     if "POST" in class_methods:
                         dummy_object = gen_dummy_object(class_.title, self.doc)
-                        put_response = self.client.post(
+                        post_response = self.client.post(
                             endpoints[class_name], data=json.dumps(dummy_object))
-                        assert put_response.status_code == 201
+                        assert post_response.status_code == 200
 
     def test_endpointClass_DELETE(self):
         """Check non collection Class DELETE."""
@@ -322,9 +340,9 @@ class ViewsTestCase(unittest.TestCase):
                     class_methods = [
                         x.method for x in class_.supportedOperation]
                     if "DELETE" in class_methods:
-                        put_response = self.client.delete(
+                        delete_response = self.client.delete(
                             endpoints[class_name])
-                        assert put_response.status_code == 200
+                        assert delete_response.status_code == 200
 
     def test_endpointClass_GET(self):
         """Check non collection Class GET."""
@@ -341,23 +359,24 @@ class ViewsTestCase(unittest.TestCase):
                         x.method for x in class_.supportedOperation]
                     if "GET" in class_methods:
                         response_get = self.client.get(endpoints[class_name])
-                        assert response_get.status_code in [200, 404]
-                        if response_get.status_code == 200:
-                            response_get_data = json.loads(
-                                response_get.data.decode('utf-8'))
-                            assert "@context" in response_get_data
-                            assert "@id" in response_get_data
-                            assert "@type" in response_get_data
+                        assert response_get.status_code == 200
+                        response_get_data = json.loads(
+                            response_get.data.decode('utf-8'))
+                        assert "@context" in response_get_data
+                        assert "@id" in response_get_data
+                        assert "@type" in response_get_data
 
     def test_bad_objects(self):
         """Checks if bad objects are added or not."""
         index = self.client.get("/" + self.API_NAME)
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
-        for collection_name in endpoints:
+        for endpoint in endpoints:
+            collection_name = "/".join(endpoints[endpoint].split(
+                "/" + self.API_NAME + "/")[1:])
             if collection_name in self.doc.collections:
                 bad_response_put = self.client.put(
-                    endpoints[collection_name],
+                    endpoints[endpoint],
                     data=json.dumps(
                         dict(
                             foo='bar')))
@@ -368,7 +387,9 @@ class ViewsTestCase(unittest.TestCase):
         index = self.client.get("/" + self.API_NAME)
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
-        for collection_name in endpoints:
+        for endpoint in endpoints:
+            collection_name = "/".join(endpoints[endpoint].split(
+                "/" + self.API_NAME + "/")[1:])
             if collection_name in self.doc.collections:
                 collection = self.doc.collections[collection_name]["collection"]
                 class_ = self.doc.parsed_classes[collection.class_.title]["class"]
@@ -376,11 +397,11 @@ class ViewsTestCase(unittest.TestCase):
                 dummy_object = gen_dummy_object(
                     collection.class_.title, self.doc)
                 initial_put_response = self.client.put(
-                    endpoints[collection_name], data=json.dumps(dummy_object))
+                    endpoints[endpoint], data=json.dumps(dummy_object))
                 assert initial_put_response.status_code == 201
                 response = json.loads(
                     initial_put_response.data.decode('utf-8'))
-                regex = r'(.*)ID (\d)* (.*)'
+                regex = r'(.*)ID (.{36})* (.*)'
                 matchObj = re.match(regex, response["message"])
                 assert matchObj is not None
                 id_ = matchObj.group(2)
@@ -388,11 +409,11 @@ class ViewsTestCase(unittest.TestCase):
                     dummy_object = gen_dummy_object(
                         collection.class_.title, self.doc)
                     post_replace_response = self.client.post(
-                        endpoints[collection_name] + '/' + id_, data=json.dumps(dummy_object))
+                        endpoints[endpoint] + '/' + id_, data=json.dumps(dummy_object))
                     assert post_replace_response.status_code == 405
                 if "DELETE" not in class_methods:
                     delete_response = self.client.delete(
-                        endpoints[collection_name] + '/' + id_)
+                        endpoints[endpoint] + '/' + id_)
                     assert delete_response.status_code == 405
 
     def test_Endpoints_Contexts(self):
@@ -400,9 +421,11 @@ class ViewsTestCase(unittest.TestCase):
         index = self.client.get("/" + self.API_NAME)
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
-        for collection_name in endpoints:
+        for endpoint in endpoints:
+            collection_name = "/".join(endpoints[endpoint].split(
+                "/" + self.API_NAME + "/")[1:])
             if collection_name in self.doc.collections:
-                response_get = self.client.get(endpoints[collection_name])
+                response_get = self.client.get(endpoints[endpoint])
                 assert response_get.status_code == 200
                 context = json.loads(
                     response_get.data.decode('utf-8'))["@context"]
