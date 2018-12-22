@@ -63,17 +63,14 @@ def add_token(request: LocalProxy, session: Session) -> str:
     id_ = int(request.authorization['username'])
     try:
         token = session.query(Token).filter(Token.user_id == id_).one()
-        present = datetime.now()
-        present = present - token.timestamp
-        if present > timedelta(0, 0, 0, 0, 45, 0, 0):
+        if not token.is_valid():
             update_token = '%030x' % randrange(16**30)
             token.id = update_token
             token.timestamp = datetime.now()
             session.commit()
     except NoResultFound:
         token = '%030x' % randrange(16**30)
-        time = datetime.now()
-        new_token = Token(user_id=id_, id=token, timestamp=time)
+        new_token = Token(user_id=id_, id=token)
         session.add(new_token)
         session.commit()
         return token
@@ -88,9 +85,8 @@ def check_token(request: LocalProxy, session: Session) -> bool:
     try:
         id_ = request.headers['X-Authorization']
         token = session.query(Token).filter(Token.id == id_).one()
-        present = datetime.now()
-        present = present - token.timestamp
-        if present > timedelta(0, 0, 0, 0, 45, 0, 0):
+        if not token.is_valid():
+            token.delete()
             return False
     except:
         return False
