@@ -51,6 +51,92 @@ doc = {
     "possibleStatus": [],
     "supportedClass": [
         {
+            "@id": "vocab:extraClass",
+            "@type": "hydra:Class",
+            "description": "Class without any explicit methods",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "extraClass"
+        },
+        {
+            "@id": "vocab:singleClass",
+            "@type": "hydra:Class",
+            "description": "A non collection class",
+            "supportedOperation": [
+                {
+                    "@type": "http://schema.org/DeleteAction",
+                    "expects": "vocab:singleClass",
+                    "method": "DELETE",
+                    "possibleStatus": [
+                        {
+                            "description": "singleClass changed",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "UpdateClass"
+                },
+                {
+                    "@type": "http://schema.org/DeleteAction",
+                    "expects": "null",
+                    "method": "DELETE",
+                    "possibleStatus": [
+                        {
+                            "description": "singleClass deleted",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "DeleteClass"
+                },
+                {
+                    "@type": "http://schema.org/AddAction",
+                    "expects": "vocab:singleClass",
+                    "method": "PUT",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass successfully added",
+                            "statusCode": 201
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "AddClass"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "null",
+                    "method": "GET",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass returned",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "vocab:singleClass",
+                    "title": "GetClass"
+                }
+            ],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://props.hydrus.com/prop1",
+                    "readonly": "false",
+                    "required": "false",
+                    "title": "Prop1",
+                    "writeonly": "true"
+                },
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://props.hydrus.com/prop1",
+                    "readonly": "false",
+                    "required": "false",
+                    "title": "Prop2",
+                    "writeonly": "true"
+                }
+            ],
+            "title": "singleClass"
+        },
+        {
             "@id": "vocab:dummyClass",
             "@type": "hydra:Class",
             "description": "A dummyClass for demo",
@@ -67,6 +153,45 @@ doc = {
                     ],
                     "returns": "null",
                     "title": "UpdateClass"
+                },
+                {
+                    "@type": "http://schema.org/DeleteAction",
+                    "expects": "null",
+                    "method": "DELETE",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass deleted",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "DeleteClass"
+                },
+                {
+                    "@type": "http://schema.org/AddAction",
+                    "expects": "vocab:dummyClass",
+                    "method": "PUT",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass successfully added",
+                            "statusCode": 201
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "AddClass"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "null",
+                    "method": "GET",
+                    "possibleStatus": [
+                        {
+                            "description": "dummyClass returned",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "vocab:dummyClass",
+                    "title": "GetClass"
                 }
             ],
             "supportedProperty": [
@@ -158,6 +283,49 @@ doc = {
             "title": "dummyClassCollection"
         },
         {
+            "@id": "vocab:extraClassCollection",
+            "@type": "hydra:Class",
+            "description": "A collection of extraclass",
+            "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
+            "supportedOperation": [
+                {
+                    "@id": "_:extraclass_collection_retrieve",
+                    "@type": "http://schema.org/FindAction",
+                    "description": "Retrieves all extraClass entities",
+                    "expects": "null",
+                    "method": "GET",
+                    "returns": "vocab:extraClassCollection",
+                    "statusCodes": []
+                },
+                {
+                    "@id": "_:extraclass_create",
+                    "@type": "http://schema.org/AddAction",
+                    "description": "Create new extraClass entitity",
+                    "expects": "vocab:extraClass",
+                    "method": "PUT",
+                    "returns": "vocab:extraClass",
+                    "statusCodes": [
+                        {
+                            "description": "If the extraClass entity was created successfully.",
+                            "statusCode": 201
+                        }
+                    ]
+                }
+            ],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "description": "The extraclass",
+                    "property": "http://www.w3.org/ns/hydra/core#member",
+                    "readonly": "false",
+                    "required": "false",
+                    "title": "members",
+                    "writeonly": "false"
+                }
+            ],
+            "title": "extraClassCollection"
+        },
+        {
             "@id": "vocab:EntryPoint",
             "@type": "hydra:Class",
             "description": "The main entry point or homepage of the API.",
@@ -173,6 +341,83 @@ doc = {
                 }
             ],
             "supportedProperty": [
+                {
+                    "hydra:description": "The singleClass Class",
+                    "hydra:title": "singleclass",
+                    "property": {
+                        "@id": "vocab:EntryPoint/singleClass",
+                        "@type": "hydra:Link",
+                        "description": "A non collection class",
+                        "domain": "vocab:EntryPoint",
+                        "label": "singleClass",
+                        "range": "vocab:singleClass",
+                        "supportedOperation": [
+                            {
+                                "@id": "updateclass",
+                                "@type": "http://schema.org/DeleteAction",
+                                "description": "null",
+                                "expects": "vocab:singleClass",
+                                "label": "UpdateClass",
+                                "method": "DELETE",
+                                "returns": "null",
+                                "statusCodes": [
+                                    {
+                                        "description": "singleClass changed",
+                                        "statusCode": 200
+                                    }
+                                ]
+                            },
+                            {
+                                "@id": "deleteclass",
+                                "@type": "http://schema.org/DeleteAction",
+                                "description": "null",
+                                "expects": "null",
+                                "label": "DeleteClass",
+                                "method": "DELETE",
+                                "returns": "null",
+                                "statusCodes": [
+                                    {
+                                        "description": "singleClass deleted",
+                                        "statusCode": 200
+                                    }
+                                ]
+                            },
+                            {
+                                "@id": "addclass",
+                                "@type": "http://schema.org/AddAction",
+                                "description": "null",
+                                "expects": "vocab:singleClass",
+                                "label": "AddClass",
+                                "method": "PUT",
+                                "returns": "null",
+                                "statusCodes": [
+                                    {
+                                        "description": "dummyClass successfully added",
+                                        "statusCode": 201
+                                    }
+                                ]
+                            },
+                            {
+                                "@id": "getclass",
+                                "@type": "http://schema.org/FindAction",
+                                "description": "null",
+                                "expects": "null",
+                                "label": "GetClass",
+                                "method": "GET",
+                                "returns": "vocab:singleClass",
+                                "statusCodes": [
+                                    {
+                                        "description": "dummyClass returned",
+                                        "statusCode": 200
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "readonly": "true",
+                    "required": "null",
+                    "writeonly": "false"
+                },
                 {
                     "hydra:description": "The dummyClassCollection collection",
                     "hydra:title": "dummyclasscollection",
@@ -203,6 +448,46 @@ doc = {
                                 "statusCodes": [
                                     {
                                         "description": "If the dummyClass entity was created successfully.",
+                                        "statusCode": 201
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "readonly": "true",
+                    "required": "null",
+                    "writeonly": "false"
+                },
+                {
+                    "hydra:description": "The extraClassCollection collection",
+                    "hydra:title": "extraclasscollection",
+                    "property": {
+                        "@id": "vocab:EntryPoint/EcTest",
+                        "@type": "hydra:Link",
+                        "description": "The extraClassCollection collection",
+                        "domain": "vocab:EntryPoint",
+                        "label": "extraClassCollection",
+                        "range": "vocab:extraClassCollection",
+                        "supportedOperation": [
+                            {
+                                "@id": "_:extraclass_collection_retrieve",
+                                "@type": "http://schema.org/FindAction",
+                                "description": "Retrieves all extraClass entities",
+                                "expects": "null",
+                                "method": "GET",
+                                "returns": "vocab:extraClassCollection",
+                                "statusCodes": []
+                            },
+                            {
+                                "@id": "_:extraclass_create",
+                                "@type": "http://schema.org/AddAction",
+                                "description": "Create new extraClass entitity",
+                                "expects": "vocab:extraClass",
+                                "method": "PUT",
+                                "returns": "vocab:extraClass",
+                                "statusCodes": [
+                                    {
+                                        "description": "If the extraClass entity was created successfully.",
                                         "statusCode": 201
                                     }
                                 ]
