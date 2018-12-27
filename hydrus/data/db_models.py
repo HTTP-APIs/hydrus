@@ -1,6 +1,7 @@
 """Models for Hydra Classes."""
 
 from sqlalchemy import create_engine, ForeignKey
+from sqlalchemy.sql import func
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, DateTime
 from typing import Any
@@ -46,6 +47,8 @@ class Instance(Base):
         unique=True,
         primary_key=True)
     type_ = Column(String, ForeignKey("classes.id"), nullable=True)
+    created = Column('created', DateTime, default=func.now())
+    last_modified = Column('last_modified', DateTime, onupdate=func.now())
 
 
 class BaseProperty(Base):
