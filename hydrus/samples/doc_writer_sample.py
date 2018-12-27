@@ -28,6 +28,13 @@ class_2_title = "singleClass"
 class_2_description = "A non collection class"
 class_2 = HydraClass(class_2_uri, class_2_title, class_2_description, endpoint=True)
 
+# Another class with single instance, will be used as nested class
+
+class_1_uri = "anotherSingleClass"
+class_1_title = "anotherSingleClass"
+class_1_description = "An another non collection class"
+class_1 = HydraClass(class_1_uri, class_1_title, class_1_description, endpoint=True)
+
 # Class not having any methods except put and get
 class_3_uri = "extraClass"
 class_3_title = "extraClass"
@@ -86,16 +93,20 @@ class_2_op1 = HydraClassOp("UpdateClass", "POST", "vocab:singleClass", None, cla
 class_2_op2_status = [{"statusCode": 200, "description": "singleClass deleted"}]
 class_2_op2 = HydraClassOp("DeleteClass", "DELETE", None, None, class_2_op2_status)
 class_2_op3_status = [{"statusCode": 201, "description": "singleClass successfully added"}]
-class_2_op3 = HydraClassOp("AddClass", "PUT", "vocab:singleClass", None, op3_status)
+class_2_op3 = HydraClassOp("AddClass", "PUT", "vocab:singleClass", None, class_2_op3_status)
 class_2_op4_status = [{"statusCode": 200, "description": "singleClass returned"}]
-class_2_op4 = HydraClassOp("GetClass", "GET", None, "vocab:singleClass", op4_status)
+class_2_op4 = HydraClassOp("GetClass", "GET", None, "vocab:singleClass", class_2_op4_status)
 
+class_1_op1_status = [{"statusCode": 200, "description": "anotherSingleClass returned"}]
+class_1_op1 = HydraClassOp("GetClass", "GET", None, "vocab:anotherSingleClass", class_1_op1_status)
 # Add the properties to the classes
 class_.add_supported_prop(dummyProp1)
 class_.add_supported_prop(dummyProp2)
 class_2.add_supported_prop(dummyProp1)
 class_2.add_supported_prop(dummyProp2)
-
+class_2.add_supported_prop(HydraClassProp("vocab:dummyClass", "dummyProp", required=False, read=False, write=True))
+class_2.add_supported_prop(HydraClassProp("vocab:anotherSingleClass", "singleClassProp", required=False, read=False, write=True))
+class_1.add_supported_prop(dummyProp1)
 # Add the operations to the classes
 class_.add_supported_op(op1)
 class_.add_supported_op(op2)
@@ -105,11 +116,13 @@ class_2.add_supported_op(class_2_op1)
 class_2.add_supported_op(class_2_op2)
 class_2.add_supported_op(class_2_op3)
 class_2.add_supported_op(class_2_op4)
+class_1.add_supported_op(class_1_op1)
 
 # Add the classes to the HydraDoc
 api_doc.add_supported_class(class_, collection=True, collection_path="DcTest")
 api_doc.add_supported_class(class_3, collection=True, collection_path="EcTest")
 api_doc.add_supported_class(class_2, collection=False)
+api_doc.add_supported_class(class_1, collection=False)
 # NOTE: Using collection=True creates a HydraCollection for the class.
 #       The name of the Collection is class_.title+"Collection"
 #       The collection inherently supports GET and PUT operations

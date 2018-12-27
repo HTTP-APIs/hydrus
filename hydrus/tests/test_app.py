@@ -366,6 +366,40 @@ class ViewsTestCase(unittest.TestCase):
                         assert "@id" in response_get_data
                         assert "@type" in response_get_data
 
+    def test_GET_for_nested_class(self):
+        index = self.client.get("/" + self.API_NAME)
+        assert index.status_code == 200
+        endpoints = json.loads(index.data.decode('utf-8'))
+        for endpoint in endpoints:
+            if endpoint not in ["@context", "@id", "@type"]:
+                class_name = "/".join(endpoints[endpoint].split(
+                    "/" + self.API_NAME + "/")[1:])
+                if class_name not in self.doc.collections:
+                    class_ = self.doc.parsed_classes[class_name]["class"]
+                    class_methods = [
+                        x.method for x in class_.supportedOperation]
+                    if "GET" in class_methods:
+                        response_get = self.client.get(endpoints[class_name])
+                        assert response_get.status_code == 200
+                        response_get_data = json.loads(
+                            response_get.data.decode('utf-8'))
+                        assert "@context" in response_get_data
+                        assert "@id" in response_get_data
+                        assert "@type" in response_get_data
+                        # server should not return nested objects in the same response
+                        for prop in response_get_data:
+                            assert "@type" not in response_get_data[prop]
+                        class_props = [x for x in class_.supportedProperty]
+                        print(endpoints[class_name])
+                        print(response_get_data)
+                        for prop_name in class_props:
+                            if "vocab:" in prop_name.prop:
+                                nested_obj_resp = self.client.get(response_get_data[prop_name.title])
+                                assert nested_obj_resp.status_code == 200
+                                nested_obj = json.loads(nested_obj_resp.data.decode('utf-8'))
+                                assert "@type" in nested_obj
+
+
     def test_bad_objects(self):
         """Checks if bad objects are added or not."""
         index = self.client.get("/" + self.API_NAME)

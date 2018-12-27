@@ -36,6 +36,7 @@ from sqlalchemy import exists
 from sqlalchemy.orm.exc import NoResultFound
 from hydrus.data.db_models import (Graph, BaseProperty, RDFClass, Instance,
                                    Terminal, GraphIAC, GraphIIT, GraphIII)
+from hydrus.utils import get_doc
 
 from hydrus.data.exceptions import (
     ClassNotFound,
@@ -53,13 +54,12 @@ properties = with_polymorphic(BaseProperty, "*")
 
 
 def get(id_: str, type_: str, api_name: str, session: scoped_session,
-        recursive: bool = False, path: str=None) -> Dict[str, str]:
+         path: str = None) -> Dict[str, str]:
     """Retrieve an Instance with given ID from the database [GET].
     :param id_: id of object to be fetched
     :param type_: type of object
     :param api_name: name of api specified while starting server
     :param session: sqlalchemy scoped session
-    :param recursive: flag used to form value for key "@id"
     :param path: endpoint
     :return: response to the request
     """
@@ -102,10 +102,18 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
         # Get class name for instance object
         inst_class_name = session.query(RDFClass).filter(
             RDFClass.id == instance.type_).one().name
-        # Recursive call should get the instance needed
-        object_ = get(id_=instance.id, type_=inst_class_name,
-                      session=session, recursive=True, api_name=api_name)
-        object_template[prop_name] = object_
+        doc = get_doc()
+        nested_class_path = ""
+        for collection in doc.collections:
+            if doc.collections[collection]["collection"].class_.path == inst_class_name:
+                nested_class_path = doc.collections[collection]["collection"].path
+                object_template[prop_name] = "/" + api_name + \
+                                             "/" + nested_class_path + "/" + str(instance.id)
+                break
+
+        if nested_class_path == "":
+            object_template[prop_name] = "/" + api_name + \
+                                         "/" + inst_class_name + "/"
 
     for data in data_IIT:
         prop_name = session.query(properties).filter(
@@ -118,19 +126,19 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
             # If terminal is none
             object_template[prop_name] = ""
     object_template["@type"] = rdf_class.name
-    if not recursive:
-        if path is not None:
-            object_template["@id"] = "/" + api_name + \
-                                     "/" + path + "Collection/" + str(id_)
-        else:
-            object_template["@id"] = "/" + api_name + \
-                                     "/" + type_ + "Collection/" + str(id_)
+
+    if path is not None:
+        object_template["@id"] = "/" + api_name + \
+                                 "/" + path + "Collection/" + str(id_)
+    else:
+        object_template["@id"] = "/" + api_name + \
+                                 "/" + type_ + "Collection/" + str(id_)
 
     return object_template
 
 
 def insert(object_: Dict[str, Any], session: scoped_session,
-           id_: Optional[str] =None) -> str:
+           id_: Optional[str] = None) -> str:
     """Insert an object to database [POST] and returns the inserted object.
     :param object_: object to be inserted
     :param session: sqlalchemy scoped session
@@ -203,7 +211,7 @@ def insert(object_: Dict[str, Any], session: scoped_session,
             else:
                 terminal = Terminal(value=object_[prop_name])
                 session.add(terminal)
-                session.flush()     # Assigns ID without committing
+                session.flush()  # Assigns ID without committing
 
                 if property_.type_ == "PROPERTY" or property_.type_ == "INSTANCE":
                     property_.type_ = "INSTANCE"
@@ -251,11 +259,11 @@ def insert_multiple(objects_: List[Dict[str,
             raise ClassNotFound(type_=objects_[index]["@type"])
         if index in range(len(id_list)) and id_list[index] != "":
             if session.query(
-                exists().where(
-                    Instance.id == id_list[index])).scalar():
+                    exists().where(
+                                Instance.id == id_list[index])).scalar():
                 print(session.query(
-                exists().where(
-                    Instance.id == id_list[index])))
+                    exists().where(
+                        Instance.id == id_list[index])))
                 # TODO handle where intance already exists , if instance is
                 # fetched later anyways remove this
                 raise InstanceExists(type_=rdf_class.name, id_=id_list[index])
@@ -322,7 +330,7 @@ def insert_multiple(objects_: List[Dict[str,
                 else:
                     terminal = Terminal(value=objects_[index][prop_name])
                     session.add(terminal)
-                    session.flush()     # Assigns ID without committing
+                    session.flush()  # Assigns ID without committing
 
                     if property_.type_ == "PROPERTY" or property_.type_ == "INSTANCE":
                         property_.type_ = "INSTANCE"
@@ -341,7 +349,6 @@ def insert_multiple(objects_: List[Dict[str,
     session.bulk_save_objects(triples_list)
     session.commit()
     return instance_id_list
-
 
 
 def delete(id_: str, type_: str, session: scoped_session) -> None:
@@ -452,7 +459,7 @@ def update(id_: str,
                          str],
            session: scoped_session,
            api_name: str,
-           path: str=None) -> str:
+           path: str = None) -> str:
     """Update an object properties based on the given object [PUT].
     :param id_: if of object to be updated
     :param type_: type of object to be updated
@@ -482,8 +489,8 @@ def update(id_: str,
 def get_collection(API_NAME: str,
                    type_: str,
                    session: scoped_session,
-                   path: str=None) -> Dict[str,
-                                           Any]:
+                   path: str = None) -> Dict[str,
+                                             Any]:
     """Retrieve a type of collection from the database.
     :param API_NAME: api name specified while starting server
     :param type_: type of object to be updated
@@ -525,17 +532,17 @@ def get_collection(API_NAME: str,
             }
         else:
             object_template = {"@id": "/" +
-                               API_NAME +
-                               "/" +
-                               type_ +
-                               "Collection/" +
-                               str(instance_.id), "@type": type_}
+                                      API_NAME +
+                                      "/" +
+                                      type_ +
+                                      "Collection/" +
+                                      str(instance_.id), "@type": type_}
         collection_template["members"].append(object_template)
     return collection_template
 
 
 def get_single(type_: str, api_name: str, session: scoped_session,
-               path: str=None) -> Dict[str, Any]:
+               path: str = None) -> Dict[str, Any]:
     """Get instance of classes with single objects.
     :param type_: type of object to be updated
     :param api_name: api name specified while starting server
@@ -588,7 +595,7 @@ def update_single(object_: Dict[str,
                                 Any],
                   session: scoped_session,
                   api_name: str,
-                  path: str=None) -> int:
+                  path: str = None) -> int:
     """Update instance of classes with single objects.
     :param object_: new object
     :param session: sqlalchemy scoped session
