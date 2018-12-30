@@ -29,7 +29,7 @@ def gen_dummy_object(class_, doc):
                 object_[prop.title] = gen_dummy_object(prop_class, doc)
             else:
                 object_[prop.title] = ''.join(random.choice(
-                    string.ascii_uppercase  string.digits) for _ in range(6))
+                    string.ascii_uppercase + string.digits) for _ in range(6))
         return object_
 
 
