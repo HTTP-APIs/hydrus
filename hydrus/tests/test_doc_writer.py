@@ -101,7 +101,8 @@ class TestDocWriter(unittest.TestCase):
 
                 mocked_hydra_class.supportedProperty = [mocked_hydra_property]
 
-                context = doc_writer.Context('http://petstore.swagger.io/v2', class_=mocked_hydra_class)
+                context = doc_writer.Context(
+                    'http://petstore.swagger.io/v2', class_=mocked_hydra_class)
 
                 expected_context = {
                     "vocab": "http://petstore.swagger.io/v2/vocab#",
@@ -128,9 +129,10 @@ class TestDocWriter(unittest.TestCase):
 
         mocked_hydra_collection = hydra_collection()
         mocked_hydra_collection.class_ = mocked_hydra_class
-        mocked_hydra_collection.name = mocked_hydra_class.title + "Collection"
+        mocked_hydra_collection.name = f"{mocked_hydra_class.title}Collection"
 
-        context = doc_writer.Context('http://petstore.swagger.io/v2', collection=mocked_hydra_collection)
+        context = doc_writer.Context(
+            'http://petstore.swagger.io/v2', collection=mocked_hydra_collection)
         expected_context = {
             "vocab": "http://petstore.swagger.io/v2/vocab#",
             "hydra": "http://www.w3.org/ns/hydra/core#",

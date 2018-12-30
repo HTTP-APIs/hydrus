@@ -10,10 +10,12 @@
     Ref : http://docs.sqlalchemy.org/en/latest/orm/query.html
 
     sqlalchemy.orm.exc.NoResultFound : A database result was required but none was found.
-    Ref : http://docs.sqlalchemy.org/en/latest/orm/exceptions.html?highlight=result%20found#sqlalchemy.orm.exc.NoResultFound
+    #sqlalchemy.orm.exc.NoResultFound
+    Ref : http://docs.sqlalchemy.org/en/latest/orm/exceptions.html?highlight=result%20found
 
     sqlalchemy.orm.session.Session : Manages persistence operations for ORM-mapped objects.
-    Ref : http://docs.sqlalchemy.org/en/latest/orm/session_api.html?highlight=session#module-sqlalchemy.orm.session
+    #module-sqlalchemy.orm.session
+    Ref : http://docs.sqlalchemy.org/en/latest/orm/session_api.html?highlight=session
 
     hydrus.data.db_models.Graph : Model for a graph that store triples of instance from the other models to map relationships.
     hydrus.data.db_models.BaseProperty : Model for Basic Property.
@@ -107,32 +109,28 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
         for collection in doc.collections:
             if doc.collections[collection]["collection"].class_.path == inst_class_name:
                 nested_class_path = doc.collections[collection]["collection"].path
-                object_template[prop_name] = "/" + api_name + \
-                                             "/" + nested_class_path + "/" + str(instance.id)
+                object_template[prop_name] = f"/{api_name}/{nested_class_path}/{instance.id}"
                 break
 
         if nested_class_path == "":
-            object_template[prop_name] = "/" + api_name + \
-                                         "/" + inst_class_name + "/"
+            object_template[prop_name]=f"/{api_name}/{inst_class_name}/"
 
     for data in data_IIT:
-        prop_name = session.query(properties).filter(
+        prop_name=session.query(properties).filter(
             properties.id == data.predicate).one().name
-        terminal = session.query(Terminal).filter(
+        terminal=session.query(Terminal).filter(
             Terminal.id == data.object_).one()
         try:
-            object_template[prop_name] = terminal.value
+            object_template[prop_name]=terminal.value
         except BaseException:
             # If terminal is none
-            object_template[prop_name] = ""
-    object_template["@type"] = rdf_class.name
+            object_template[prop_name]=""
+    object_template["@type"]=rdf_class.name
 
     if path is not None:
-        object_template["@id"] = "/" + api_name + \
-                                 "/" + path + "Collection/" + str(id_)
+        object_template["@id"]=f"/{api_name}/{path}Collection/{id_}"
     else:
-        object_template["@id"] = "/" + api_name + \
-                                 "/" + type_ + "Collection/" + str(id_)
+        object_template["@id"]=f"/{api_name}/{type_}Collection/{id_}"
 
     return object_template
 
@@ -500,16 +498,16 @@ def get_collection(API_NAME: str,
     """
     if path is not None:
         collection_template = {
-            "@id": "/" + API_NAME + "/" + path + "/",
+            "@id": f"/{API_NAME}/{path}/",
             "@context": None,
-            "@type": type_ + "Collection",
+            "@type": f"{type_}Collection",
             "members": list()
         }  # type: Dict[str, Any]
     else:
         collection_template = {
-            "@id": "/" + API_NAME + "/" + type_ + "Collection/",
+            "@id": f"/{API_NAME}/{type_}Collection/",
             "@context": None,
-            "@type": type_ + "Collection",
+            "@type": f"{type_}Collection",
             "members": list()
         }  # type: Dict[str, Any]
     try:
@@ -527,16 +525,12 @@ def get_collection(API_NAME: str,
     for instance_ in instances:
         if path is not None:
             object_template = {
-                "@id": "/" + API_NAME + "/" + path + "/" + str(instance_.id),
+                "@id": f"/{API_NAME}/{path}/{instance_.id}",
                 "@type": type_
             }
         else:
-            object_template = {"@id": "/" +
-                                      API_NAME +
-                                      "/" +
-                                      type_ +
-                                      "Collection/" +
-                                      str(instance_.id), "@type": type_}
+            object_template = {
+                "@id": f"/{API_NAME}/{type_}Collection/{instance_.id}", "@type": type_}
         collection_template["members"].append(object_template)
     return collection_template
 
@@ -564,9 +558,9 @@ def get_single(type_: str, api_name: str, session: scoped_session,
     object_ = get(instance.id, rdf_class.name,
                   session=session, api_name=api_name, path=path)
     if path is not None:
-        object_["@id"] = "/" + api_name + "/" + path
+        object_["@id"] = f"/{API_NAME}/{path}"
     else:
-        object_["@id"] = "/" + api_name + "/" + type_
+        object_["@id"] = f"/{API_NAME}/{type_}"
     return object_
 
 
