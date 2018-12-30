@@ -116,21 +116,21 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
             object_template[prop_name]=f"/{api_name}/{inst_class_name}/"
 
     for data in data_IIT:
-        prop_name=session.query(properties).filter(
+        prop_name = session.query(properties).filter(
             properties.id == data.predicate).one().name
-        terminal=session.query(Terminal).filter(
+        terminal = session.query(Terminal).filter(
             Terminal.id == data.object_).one()
         try:
-            object_template[prop_name]=terminal.value
+            object_template[prop_name] = terminal.value
         except BaseException:
             # If terminal is none
-            object_template[prop_name]=""
-    object_template["@type"]=rdf_class.name
+            object_template[prop_name] = ""
+    object_template["@type"] = rdf_class.name
 
     if path is not None:
-        object_template["@id"]=f"/{api_name}/{path}Collection/{id_}"
+        object_template["@id"] = f"/{api_name}/{path}Collection/{id_}"
     else:
-        object_template["@id"]=f"/{api_name}/{type_}Collection/{id_}"
+        object_template["@id"] = f"/{api_name}/{type_}Collection/{id_}"
 
     return object_template
 
