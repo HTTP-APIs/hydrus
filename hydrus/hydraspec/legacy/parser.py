@@ -124,7 +124,7 @@ def hydrafy_property(prop, semantic_ref_name=None):
     }
     # If there is a semantic reference name give in the vocabulary then use that else use full links.
     if semantic_ref_name is not None:
-        hydra_prop["property"] = f"{semantic_ref_name}:{prop["@id"].rsplit('/', 1)[-1]}"
+        hydra_prop["property"] = "{}:{}".format(semantic_ref_name,prop["@id"].rsplit('/', 1)[-1])
     else:
         hydra_prop["property"] = fix_keyword(prop["@id"])
 

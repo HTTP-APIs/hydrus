@@ -133,7 +133,7 @@ class Item(Resource):
                             session=get_session(),
                             api_name=get_api_name())
                         headers_ = [
-                            {"Location": f"{get_hydrus_server_url()}{get_api_name()}/{path}/{object_id}"}]
+                            {"Location": "{}{}/{}/{}".format(get_hydrus_server_url(),get_api_name(),path,object_id)}]
                         response = {
                             "message": "Object with ID %s successfully updated" %
                                        (object_id)}
@@ -174,7 +174,7 @@ class Item(Resource):
                         object_id = crud.insert(
                             object_=object_, id_=id_, session=get_session())
                         headers_ = [
-                            {"Location": f"{get_hydrus_server_url()}{get_api_name()}/{path}/{object_id}"}]
+                            {"Location": "{}{}/{}/{}".format(get_hydrus_server_url(),get_api_name(),path,object_id)}]
                         response = {
                             "message": "Object with ID %s successfully added" %
                                        (object_id)}
@@ -246,7 +246,7 @@ class ItemCollection(Resource):
                         jsonify(message), status_code=status_code)
 
             # If class is supported
-            elif path in get_doc().parsed_classes and f"{path}Collection" not in get_doc().collections:
+            elif path in get_doc().parsed_classes and "{}Collection".format(path) not in get_doc().collections:
                 try:
                     class_type = get_doc().parsed_classes[path]['class'].title
                     response = crud.get_single(
@@ -298,7 +298,7 @@ class ItemCollection(Resource):
                             object_id = crud.insert(
                                 object_=object_, session=get_session())
                             headers_ = [
-                                {"Location": f"{get_hydrus_server_url()}{get_api_name()}/{path}/{object_id}"}]
+                                {"Location": "{}{}/{}/{}".format(get_hydrus_server_url(),get_api_name(),path,object_id)}]
                             response = {
                                 "message": "Object with ID %s successfully added" %
                                            (object_id)}
@@ -312,7 +312,7 @@ class ItemCollection(Resource):
                 return set_response_headers(
                     jsonify({400: "Data is not valid"}), status_code=400)
 
-            elif path in get_doc().parsed_classes and f"{path}Collection" not in get_doc().collections:
+            elif path in get_doc().parsed_classes and "{}Collection".format(path) not in get_doc().collections:
                 # If path is in parsed_classes but is not a collection
                 obj_type = getType(path, "PUT")
                 if object_["@type"] == obj_type:
@@ -320,7 +320,7 @@ class ItemCollection(Resource):
                         try:
                             object_id = crud.insert(
                                 object_=object_, session=get_session())
-                            headers_ = [{"Location": f"{get_hydrus_server_url()}{get_api_name()}/{path}/"}]
+                            headers_ = [{"Location": "{}{}/{}/".format(get_hydrus_server_url(),get_api_name(),path)}]
                             response = {"message": "Object successfully added"}
                             return set_response_headers(
                                 jsonify(response), headers=headers_, status_code=201)
@@ -348,7 +348,7 @@ class ItemCollection(Resource):
         endpoint_ = checkEndpoint("POST", path)
         if endpoint_['method']:
             object_ = json.loads(request.data.decode('utf-8'))
-            if path in get_doc().parsed_classes and f"{path}Collection" not in get_doc().collections:
+            if path in get_doc().parsed_classes and "{}Collection".format(path) not in get_doc().collections:
                 obj_type = getType(path, "POST")
                 if validObject(object_):
                     if object_["@type"] == obj_type:
@@ -358,7 +358,7 @@ class ItemCollection(Resource):
                                 session=get_session(),
                                 api_name=get_api_name(),
                                 path=path)
-                            headers_ = [{"Location": f"{get_hydrus_server_url()}{get_api_name()}/{path}/"}]
+                            headers_ = [{"Location": "{}{}/{}/".format(get_hydrus_server_url(),get_api_name(),path)}]
                             response = {
                                 "message": "Object successfully updated"}
                             return set_response_headers(
@@ -387,7 +387,7 @@ class ItemCollection(Resource):
         endpoint_ = checkEndpoint("DELETE", path)
         if endpoint_['method']:
             # No Delete Operation for collections
-            if path in get_doc().parsed_classes and f"{path}Collection" not in get_doc().collections:
+            if path in get_doc().parsed_classes and "{}Collection".format(path) not in get_doc().collections:
                 try:
                     class_type = get_doc().parsed_classes[path]['class'].title
                     crud.delete_single(class_type, session=get_session())
@@ -435,7 +435,7 @@ class Items(Resource):
                             object_id = crud.insert_multiple(
                                 objects_=object_, session=get_session(), id_=int_list)
                             headers_ = [
-                                {"Location": f"{get_hydrus_server_url()}{get_api_name()}/{path}/{object_id}"}]
+                                {"Location": "{}{}/{}/{}".format(get_hydrus_server_url(),get_api_name(),path,object_id)}]
                             response = {
                                 "message": "Object with ID %s successfully added" %
                                            (object_id)}

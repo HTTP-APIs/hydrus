@@ -109,11 +109,11 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
         for collection in doc.collections:
             if doc.collections[collection]["collection"].class_.path == inst_class_name:
                 nested_class_path = doc.collections[collection]["collection"].path
-                object_template[prop_name] = f"/{api_name}/{nested_class_path}/{instance.id}"
+                object_template[prop_name] = "/{}/{}/{}".format(api_name,nested_class_path,instance.id)
                 break
 
         if nested_class_path == "":
-            object_template[prop_name]=f"/{api_name}/{inst_class_name}/"
+            object_template[prop_name] = "/{}/{}/".format(api_name,inst_class_name)
 
     for data in data_IIT:
         prop_name = session.query(properties).filter(
@@ -128,9 +128,9 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
     object_template["@type"] = rdf_class.name
 
     if path is not None:
-        object_template["@id"] = f"/{api_name}/{path}Collection/{id_}"
+        object_template["@id"] = "/{}/{}Collection/{}".format(api_name,path,id_)
     else:
-        object_template["@id"] = f"/{api_name}/{type_}Collection/{id_}"
+        object_template["@id"] = "/{}/{}Collection/{}".format(api_name,type_,id_)
 
     return object_template
 
@@ -498,16 +498,16 @@ def get_collection(API_NAME: str,
     """
     if path is not None:
         collection_template = {
-            "@id": f"/{API_NAME}/{path}/",
+            "@id": "/{}/{}/".format(API_NAME,path),
             "@context": None,
-            "@type": f"{type_}Collection",
+            "@type": "{}Collection".format(type_),
             "members": list()
         }  # type: Dict[str, Any]
     else:
         collection_template = {
-            "@id": f"/{API_NAME}/{type_}Collection/",
+            "@id": "/{}/{}Collection/".format(API_NAME,type_),
             "@context": None,
-            "@type": f"{type_}Collection",
+            "@type": "{}Collection".format(type_),
             "members": list()
         }  # type: Dict[str, Any]
     try:
@@ -525,12 +525,12 @@ def get_collection(API_NAME: str,
     for instance_ in instances:
         if path is not None:
             object_template = {
-                "@id": f"/{API_NAME}/{path}/{instance_.id}",
+                "@id": "/{}/{}/{}".format(API_NAME,path,instance_.id),
                 "@type": type_
             }
         else:
             object_template = {
-                "@id": f"/{API_NAME}/{type_}Collection/{instance_.id}", "@type": type_}
+                "@id": "/{}/{}Collection/{}".format(API_NAME,type_,instance_.id), "@type": type_}
         collection_template["members"].append(object_template)
     return collection_template
 
@@ -558,9 +558,9 @@ def get_single(type_: str, api_name: str, session: scoped_session,
     object_ = get(instance.id, rdf_class.name,
                   session=session, api_name=api_name, path=path)
     if path is not None:
-        object_["@id"] = f"/{api_name}/{path}"
+        object_["@id"] = "/{}/{}".format(api_name,path)
     else:
-        object_["@id"] = f"/{api_name}/{type_}"
+        object_["@id"] = "/{}/{}".format(api_name,type_)
     return object_
 
 

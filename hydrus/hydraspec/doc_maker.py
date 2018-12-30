@@ -264,7 +264,7 @@ def collection_in_endpoint(class_: Dict[str, Any], entrypoint: Dict[str, Any]) -
         except KeyError:
             raise SyntaxError("property must have [label]")
         # Match the title with regular expression
-        if label == f'{class_["title"]}Collection':
+        if label == '{}Collection'.format(class_["title"]):
             path = "/".join(property_['@id'].split("/")[1:])
             return True, path
     return False, None
