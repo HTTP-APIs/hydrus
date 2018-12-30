@@ -474,4 +474,3 @@ if __name__ == '__main__':
     Running tests for the app. Checking if all responses are in proper order.
     """
     print(message)
-    print(response_get.status_code)

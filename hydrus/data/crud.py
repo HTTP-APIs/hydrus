@@ -10,12 +10,10 @@
     Ref : http://docs.sqlalchemy.org/en/latest/orm/query.html
 
     sqlalchemy.orm.exc.NoResultFound : A database result was required but none was found.
-    #sqlalchemy.orm.exc.NoResultFound
-    Ref : http://docs.sqlalchemy.org/en/latest/orm/exceptions.html?highlight=result%20found
+    Ref : http://docs.sqlalchemy.org/en/latest/orm/exceptions.html?highlight=result%20found#sqlalchemy.orm.exc.NoResultFound
 
     sqlalchemy.orm.session.Session : Manages persistence operations for ORM-mapped objects.
-    #module-sqlalchemy.orm.session
-    Ref : http://docs.sqlalchemy.org/en/latest/orm/session_api.html?highlight=session
+    Ref : http://docs.sqlalchemy.org/en/latest/orm/session_api.html?highlight=session#module-sqlalchemy.orm.session
 
     hydrus.data.db_models.Graph : Model for a graph that store triples of instance from the other models to map relationships.
     hydrus.data.db_models.BaseProperty : Model for Basic Property.
@@ -530,7 +528,9 @@ def get_collection(API_NAME: str,
             }
         else:
             object_template = {
-                "@id": "/{}/{}Collection/{}".format(API_NAME,type_,instance_.id), "@type": type_}
+                "@id": "/{}/{}Collection/{}".format(API_NAME,type_,instance_.id), 
+                "@type": type_
+            }
         collection_template["members"].append(object_template)
     return collection_template
 
