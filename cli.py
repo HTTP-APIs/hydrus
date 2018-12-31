@@ -156,7 +156,7 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
                             # Start the Hydrus app
                             http_server = WSGIServer(('', port), app)
                             click.echo("Server running at:")
-                            click.echo(HYDRUS_SERVER_URL + API_NAME)
+                            click.echo("{}{}".format(HYDRUS_SERVER_URL,API_NAME))
                             try:
                                 http_server.serve_forever()
                             except KeyboardInterrupt:

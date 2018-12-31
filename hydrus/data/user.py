@@ -96,7 +96,7 @@ def check_token(request: LocalProxy, session: Session) -> bool:
 def generate_basic_digest(id_: int, paraphrase: str) -> str:
     """Create the digest to be added to the HTTP Authorization header."""
     paraphrase_digest = sha224(paraphrase.encode('utf-8')).hexdigest()
-    credentials = str(id_) + ':' + paraphrase_digest
+    credentials = '{}:{}'.format(id_,paraphrase_digest)
     digest = base64.b64encode(credentials.encode('utf-8')).decode('utf-8')
     return digest
 

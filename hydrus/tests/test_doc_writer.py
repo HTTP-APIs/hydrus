@@ -128,8 +128,7 @@ class TestDocWriter(unittest.TestCase):
 
         mocked_hydra_collection = hydra_collection()
         mocked_hydra_collection.class_ = mocked_hydra_class
-        mocked_hydra_collection.name = mocked_hydra_class.title + "Collection"
-
+        mocked_hydra_collection.name = "{}Collection".format(mocked_hydra_class.title)
         context = doc_writer.Context('http://petstore.swagger.io/v2', collection=mocked_hydra_collection)
         expected_context = {
             "vocab": "http://petstore.swagger.io/v2/vocab#",
