@@ -14,7 +14,8 @@ from hydrus.data.user import add_user
 from base64 import b64encode
 
 
-# response = requests.get("http://127.0.0.1:8080/serverapi/CommandCollection", headers={'Authorization':'Basic QWxhZGRpbjpPcGVuU2VzYW1l'})
+# response = requests.get("http://127.0.0.1:8080/serverapi/CommandCollection",
+#  headers={'Authorization':'Basic QWxhZGRpbjpPcGVuU2VzYW1l'})
 
 
 class AuthTestCase(unittest.TestCase):
