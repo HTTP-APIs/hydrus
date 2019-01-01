@@ -10,25 +10,25 @@ Fixes #
 ### Description
 <!-- Describe about what this PR does, previous state and new state of the output -->
 
-### Test Logs
-<!-- Please submit test logs to confirm everything is working. -->
+### Change logs
 
-### Changes log
-
-#### Added
+<!-- #### Added -->
 <!-- Edit these points below to describe the new features added with this PR -->
-- Feature 1
-- Feature 2
+<!-- - Feature 1 -->
+<!-- - Feature 2 -->
 
-#### Changed
+
+<!-- #### Changed -->
 <!-- Edit these points below to describe the changes made in existing functionality with this PR -->
-- Change 1
-- Change 2
+<!-- - Change 1 -->
+<!-- - Change 1 -->
 
-#### Fixed
+
+<!-- #### Fixed -->
 <!-- Edit these points below to describe the bug fixes made with this PR -->
-- Bug 1
+<!-- - Bug 1 -->
 
-#### Removed
+
+<!-- #### Removed -->
 <!-- Edit these points below to describe the removed features with this PR -->
-- Deprecated feature 1
+<!-- - Deprecated feature 1 -->
