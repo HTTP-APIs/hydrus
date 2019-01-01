@@ -394,11 +394,11 @@ class ViewsTestCase(unittest.TestCase):
                         print(response_get_data)
                         for prop_name in class_props:
                             if "vocab:" in prop_name.prop:
-                                nested_obj_resp = self.client.get(response_get_data[prop_name.title])
+                                nested_obj_resp = self.client.get(
+                                    response_get_data[prop_name.title])
                                 assert nested_obj_resp.status_code == 200
                                 nested_obj = json.loads(nested_obj_resp.data.decode('utf-8'))
                                 assert "@type" in nested_obj
-
 
     def test_bad_objects(self):
         """Checks if bad objects are added or not."""

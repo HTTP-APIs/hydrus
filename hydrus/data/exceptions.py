@@ -17,7 +17,7 @@ class ClassNotFound(Exception):
 class InstanceNotFound(Exception):
     """Error when the Instance is not found."""
 
-    def __init__(self, type_: str, id_: Union[str, None] =None) -> None:
+    def __init__(self, type_: str, id_: Union[str, None]=None) -> None:
         """Constructor."""
         self.type_ = type_
         self.id_ = id_
@@ -27,7 +27,9 @@ class InstanceNotFound(Exception):
         if str(self.id_) is None:
             return 404, {"message": "Instance of type %s not found" % (self.type_)}
         else:
-            return 404, {"message": "Instance of type %s with ID %s not found" % (self.type_, str(self.id_))}
+            return 404, {"message":
+                         "Instance of type %s with ID %s not found" % (self.type_,
+                                                                       str(self.id_))}
 
 
 class PropertyNotFound(Exception):
@@ -55,7 +57,8 @@ class InstanceExists(Exception):
         if str(self.id_) is None:
             return 400, {"message": "Instance of type %salready exists" % (self.type_)}
         else:
-            return 400, {"message": "Instance of type %s with ID %salready exists" % (self.type_, str(self.id_))}
+            return 400, {"message": "Instance of type %s with ID %salready exists" %
+                         (self.type_, str(self.id_))}
 
 
 class NotInstanceProperty(Exception):
