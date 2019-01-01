@@ -19,8 +19,9 @@ class HydraDoc():
         self.entrypoint = HydraEntryPoint(base_url, entrypoint)
         self.desc = desc
 
-    def add_supported_class(self, class_: 'HydraClass', collection: Union[bool, 'HydraCollection'] = False,
-                            collection_path: str = None, collectionGet: bool = True, collectionPost: bool = True) -> None:
+    def add_supported_class(
+            self, class_: 'HydraClass', collection: Union[bool, 'HydraCollection']=False,
+            collection_path: str=None, collectionGet: bool=True, collectionPost: bool=True) -> None:
         """Add a new supportedClass."""
         # self.doc["supportedClass"].append(class_.get())
         if not isinstance(class_, HydraClass):
@@ -86,7 +87,9 @@ class HydraDoc():
             "@type": "ApiDocumentation",
             "title": self.title,
             "description": self.desc,
-            "supportedClass": [x.generate() for x in parsed_classes + self.other_classes + collections + [self.entrypoint]],
+            "supportedClass": [
+                x.generate() for x in parsed_classes +
+                self.other_classes + collections + [self.entrypoint]],
             "possibleStatus": [x.generate() for x in self.status]
         }
         return doc
@@ -95,8 +98,9 @@ class HydraDoc():
 class HydraClass():
     """Template for a new class."""
 
-    def __init__(self, id_: str, title: str, desc: str, path: str = None,
-                 endpoint: bool = False, sub_classof: None = None) -> None:
+    def __init__(
+            self, id_: str, title: str, desc: str, path: str=None,
+            endpoint: bool=False, sub_classof: None=None) -> None:
         """Initialize the Hydra_Class."""
         self.id_ = id_ if "http" in id_ else "vocab:{}".format(id_)
         self.title = title
@@ -217,8 +221,9 @@ class HydraClassOp():
 class HydraCollection():
     """Class for Hydra Collection."""
 
-    def __init__(self, class_: HydraClass, collection_path: str = None,
-                 get: bool = True, post: bool = True) -> None:
+    def __init__(
+            self, class_: HydraClass,
+            collection_path: str=None, get: bool=True, post: bool=True) -> None:
         """Generate Collection for a given class."""
         self.class_ = class_
         self.name = "{}Collection".format(class_.title)
@@ -244,7 +249,8 @@ class HydraCollection():
                                             self.class_.title),
                                         self.class_.id_, self.class_.id_,
                                         [{"statusCode": 201,
-                                          "description": "If the {} entity was created successfully.".format(self.class_.title)}]
+                                          "description": "If the {} entity was created"
+                                          "successfully.".format(self.class_.title)}]
                                         )
             self.supportedOperation.append(post_op)
 
@@ -272,7 +278,7 @@ class HydraCollectionOp():
                  desc: str,
                  expects: Optional[str],
                  returns: str,
-                 status: List[Dict[str, Any]] = [],
+                 status: List[Dict[str, Any]]=[],
                  ) -> None:
         """Create method."""
         self.id_ = id_
@@ -437,7 +443,7 @@ class EntryPointOp():
                  desc: str,
                  expects: Optional[str],
                  returns: str,
-                 statusCodes: Union[str, List[Dict[str, Any]]] = [],
+                 statusCodes: Union[str, List[Dict[str, Any]]]=[],
                  type_: Optional[str] = None,
                  label: str = "",
                  ) -> None:
@@ -512,8 +518,8 @@ class Context():
                  entrypoint: Optional[HydraEntryPoint] = None,
                  ) -> None:
         """Initialize context."""
-        # NOTE: adders is a dictionary containing additional context elements
-        # to the base Hydra context
+        # NOTE: adders is a dictionary containing additional
+        # context elements to the base Hydra context
         if class_ is not None:
             self.context = {
                 "vocab": "{}/vocab#".format(address),

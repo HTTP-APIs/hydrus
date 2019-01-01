@@ -3,7 +3,8 @@ from typing import Union
 from flask import jsonify, Response, request
 from hydrus.utils import get_session, get_token, get_authentication
 
-from hydrus.data.user import create_nonce, check_authorization, add_token, check_token
+from hydrus.data.user import (create_nonce, check_authorization,
+                              add_token, check_token)
 
 from hydrus.helpers import set_response_headers
 
@@ -29,8 +30,9 @@ def failed_authentication(incorrect: bool) -> Response:
         message = {401: "Incorrect credentials"}
         realm = 'Basic realm="Incorrect credentials"'
     nonce = create_nonce(get_session())
-    response = set_response_headers(jsonify(message), status_code=401, headers=[
-                                    {'WWW-Authenticate': realm}, {'X-Authentication': nonce}])
+    response = set_response_headers(jsonify(message), status_code=401,
+                                    headers=[{'WWW-Authenticate': realm},
+                                             {'X-Authentication': nonce}])
     return response
 
 

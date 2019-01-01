@@ -9,8 +9,8 @@ import yaml
 
 def import_doc():
     print("Importing Open Api Documentation ..")
-    abs_path = os.path.abspath(
-        "{}/samples/petstore_openapi.yaml".format(os.path.dirname(hydrus.__file__)))
+    abs_path = os.path.abspath("{}/samples/petstore_openapi.yaml".format(os.path.dirname(
+        hydrus.__file__)))
     with open(abs_path, 'r') as stream:
         try:
             return yaml.load(stream)
@@ -105,7 +105,7 @@ class TestParser(unittest.TestCase):
         method = "/Pet"
         result = openapi_parser.check_collection(schema, method)
         assert isinstance(result, bool)
-        assert result == False
+        assert not result
 
 
 if __name__ == '__main__':

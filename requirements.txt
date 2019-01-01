@@ -13,6 +13,7 @@ Jinja2==2.10
 lifter==0.4.1
 MarkupSafe==1.0
 packaging==17.1
+pep8==1.7.1
 persisting-theory==0.2.1
 psycopg2==2.7.5
 pyparsing==2.2.0

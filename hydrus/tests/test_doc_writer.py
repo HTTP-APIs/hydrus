@@ -87,7 +87,9 @@ class TestDocWriter(unittest.TestCase):
         """
 
         mocked_hydra_class = MagicMock()
-        with patch('hydrus.hydraspec.doc_writer.HydraClass', mocked_hydra_class, spec_set=doc_writer.HydraClass):
+        with patch(
+                'hydrus.hydraspec.doc_writer.HydraClass',
+                mocked_hydra_class, spec_set=doc_writer.HydraClass):
             mocked_hydra_property = MagicMock()
             mocked_hydra_class.id_ = "vocab:Pet"
             mocked_hydra_class.title = "Pet"
@@ -132,8 +134,7 @@ class TestDocWriter(unittest.TestCase):
 
         mocked_hydra_collection = hydra_collection()
         mocked_hydra_collection.class_ = mocked_hydra_class
-        mocked_hydra_collection.name = "{}Collection".format(
-            mocked_hydra_class.title)
+        mocked_hydra_collection.name = "{}Collection".format(mocked_hydra_class.title)
         context = doc_writer.Context(
             'http://petstore.swagger.io/v2',
             collection=mocked_hydra_collection)

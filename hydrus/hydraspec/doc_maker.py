@@ -23,8 +23,9 @@ def error_mapping(body: str = None) -> str:
     return error_map[body]
 
 
-def input_key_check(body: Dict[str, Any], key: str = None,
-                    body_type: str = None, literal: bool = False) -> dict:
+def input_key_check(
+        body: Dict[str, Any], key: str=None,
+        body_type: str=None, literal: bool=False) -> dict:
     """Function to validate key inside the dictonary payload
     :param body: JSON body in which we have to check the key
     :param key: To check if its value exit in the body
@@ -58,7 +59,8 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
     # Syntax checks
     else:
         raise SyntaxError(
-            "The '@id' of the Documentation must be of the form:\n'[protocol] :// [base url] / [entrypoint] / vocab'")
+            "The '@id' of the Documentation must be of the form:\n"
+            "'[protocol] :// [base url] / [entrypoint] / vocab'")
     doc_keys = {
         "description": False,
         "title": False,
@@ -106,7 +108,8 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
 
 
 def create_class(
-        entrypoint: Dict[str, Any], class_dict: Dict[str, Any]) -> Tuple[HydraClass, bool, str]:
+        entrypoint: Dict[str, Any],
+        class_dict: Dict[str, Any]) -> Tuple[HydraClass, bool, str]:
     """Create HydraClass objects for classes in the API Documentation."""
     # Base classes not used
     exclude_list = ['http://www.w3.org/ns/hydra/core#Resource',

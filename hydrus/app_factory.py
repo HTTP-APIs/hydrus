@@ -2,7 +2,8 @@ from flask import Flask
 from flask_cors import CORS
 from flask_restful import Api
 
-from hydrus.resources import Index, Vocab, Contexts, Entrypoint, ItemCollection, Item, Items
+from hydrus.resources import (Index, Vocab, Contexts, Entrypoint,
+                              ItemCollection, Item, Items)
 
 
 def app_factory(API_NAME: str = "api") -> Flask:

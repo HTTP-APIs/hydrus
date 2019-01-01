@@ -6,7 +6,8 @@
     sqlalchemy.orm.with_polymorphic : Load columns for inheriting classes.
     Ref : http://docs.sqlalchemy.org/en/latest/orm/query.html
 
-    sqlalchemy.exists : A convenience method that turns a query into an EXISTS subquery of the form EXISTS (SELECT 1 FROM … WHERE …).
+    sqlalchemy.exists : A convenience method that turns a query into an EXISTS subquery
+    of the form EXISTS (SELECT 1 FROM … WHERE …).
     Ref : http://docs.sqlalchemy.org/en/latest/orm/query.html
 
     sqlalchemy.orm.exc.NoResultFound : A database result was required but none was found.
@@ -29,7 +30,7 @@
     hydrus.data.exceptions : Contains all exceptions .
     typing : Module which provides support for type hints .
 
-"""
+"""  # nopep8
 
 from sqlalchemy.orm import with_polymorphic
 from sqlalchemy import exists
@@ -310,7 +311,8 @@ def insert_multiple(objects_: List[Dict[str,
                         raise NotInstanceProperty(type_=prop_name)
 
                 # For insertion in IAC
-                elif session.query(exists().where(RDFClass.name == str(objects_[index][prop_name]))).scalar():
+                elif session.query(
+                        exists().where(RDFClass.name == str(objects_[index][prop_name]))).scalar():
                     if property_.type_ == "PROPERTY" or property_.type_ == "ABSTRACT":
                         property_.type_ = "ABSTRACT"
                         properties_list.append(property_)

@@ -1,27 +1,30 @@
 """Imports :
 
-    flask.json.jsonify : Turns the JSON output into a Response object with the application/json mimetype
-    Ref- http://flask.pocoo.org/docs/0.12/api
+    flask.json.jsonify : Turns the JSON output into a Response object with the
+    application/json mimetype Ref- http://flask.pocoo.org/docs/0.12/api
 
-    flask.request : The request object used by default in Flask. Remembers the matched endpoint and view arguments.
+    flask.request : The request object used by default in Flask.
+    Remembers the matched endpoint and view arguments.
     Ref - http://flask.pocoo.org/docs/0.12/api
 
-    flask.abort : Raises an HTTPException for the given status code or WSGI application:
-    Ref - http://flask.pocoo.org/docs/0.12/api
+    flask.abort : Raises an HTTPException for the given status code or WSGI
+    application: Ref - http://flask.pocoo.org/docs/0.12/api
 
     flask_restful.Resource : Represents an abstract RESTful resource.
     Ref - http://flask-restful.readthedocs.io/en/latest/api.html
 
 
     hydrus.data.crud : Function/Class to perform basic CRUD operations for the server
-    hydrus.data.user.check_authorization : Funcion checks if the request object has the correct authorization
+    hydrus.data.user.check_authorization : Funcion checks if the request object has the
+    correct authorization
     hydrus.utils.get_session : Gets the database session for the server
     hydrus.utils.get_doc : Function which gets the server API documentation
     hydrus.utils.get_api_name : Function which gets the server API name
     hydrus.utils.get_hydrus_server_url : Function the gets the server URL
-    hydrus.utils.get_authentication : Function that checks whether API needs to be authenticated or not
+    hydrus.utils.get_authentication : Function that checks whether API needs to be
+    authenticated or not
 
-"""
+"""  # nopep8
 
 import json
 from typing import Dict, Any, Union
@@ -37,8 +40,15 @@ from hydrus.data.exceptions import (
     InstanceExists,
     PropertyNotFound,
     InstanceNotFound)
-from hydrus.helpers import set_response_headers, checkClassOp, getType, validObject, checkEndpoint, validObjectList, \
-    type_match, hydrafy
+from hydrus.helpers import (
+    set_response_headers,
+    checkClassOp,
+    getType,
+    validObject,
+    checkEndpoint,
+    validObjectList,
+    type_match,
+    hydrafy)
 from hydrus.utils import get_session, get_doc, get_api_name, get_hydrus_server_url
 
 
@@ -68,7 +78,8 @@ class Entrypoint(Resource):
 
 
 class Item(Resource):
-    """Handles all operations(GET, POST, PATCH, DELETE) on Items (item can be anything depending upon the vocabulary)."""
+    """Handles all operations(GET, POST, PATCH, DELETE) on Items
+    (item can be anything depending upon the vocabulary)."""
 
     def get(self, id_: str, path: str) -> Response:
         """
@@ -133,7 +144,8 @@ class Item(Resource):
                             session=get_session(),
                             api_name=get_api_name())
                         headers_ = [
-                            {"Location": "{}/{}/{}".format(get_hydrus_server_url(), get_api_name(), path, object_id)}]
+                            {"Location": "{}/{}/{}".format(
+                                get_hydrus_server_url(), get_api_name(), path, object_id)}]
                         response = {
                             "message": "Object with ID {} successfully updated".format(object_id)}
                         return set_response_headers(
@@ -173,7 +185,8 @@ class Item(Resource):
                         object_id = crud.insert(
                             object_=object_, id_=id_, session=get_session())
                         headers_ = [
-                            {"Location": "{}/{}/{}".format(get_hydrus_server_url(), get_api_name(), path, object_id)}]
+                            {"Location": "{}/{}/{}".format(
+                                get_hydrus_server_url(), get_api_name(), path, object_id)}]
                         response = {
                             "message": "Object with ID {} successfully added".format(object_id)}
                         return set_response_headers(
@@ -243,7 +256,8 @@ class ItemCollection(Resource):
                         jsonify(message), status_code=status_code)
 
             # If class is supported
-            elif path in get_doc().parsed_classes and "{}Collection".format(path) not in get_doc().collections:
+            elif path in get_doc().parsed_classes and "{}Collection".format(path) not in get_doc(
+            ).collections:
                 try:
                     class_type = get_doc().parsed_classes[path]['class'].title
                     response = crud.get_single(
@@ -295,7 +309,8 @@ class ItemCollection(Resource):
                             object_id = crud.insert(
                                 object_=object_, session=get_session())
                             headers_ = [
-                                {"Location": "{}/{}/{}".format(get_hydrus_server_url(), get_api_name(), path, object_id)}]
+                                {"Location": "{}/{}/{}".format(
+                                    get_hydrus_server_url(), get_api_name(), path, object_id)}]
                             response = {
                                 "message": "Object with ID {} successfully added".format(object_id)}
                             return set_response_headers(
@@ -308,7 +323,8 @@ class ItemCollection(Resource):
                 return set_response_headers(
                     jsonify({400: "Data is not valid"}), status_code=400)
 
-            elif path in get_doc().parsed_classes and "{}Collection".format(path) not in get_doc().collections:
+            elif path in get_doc().parsed_classes and "{}Collection".format(path) not in get_doc(
+            ).collections:
                 # If path is in parsed_classes but is not a collection
                 obj_type = getType(path, "PUT")
                 if object_["@type"] == obj_type:
@@ -317,7 +333,8 @@ class ItemCollection(Resource):
                             object_id = crud.insert(
                                 object_=object_, session=get_session())
                             headers_ = [
-                                {"Location": "{}/{}/".format(get_hydrus_server_url(), get_api_name(), path)}]
+                                {"Location": "{}/{}/".format(
+                                    get_hydrus_server_url(), get_api_name(), path)}]
                             response = {"message": "Object successfully added"}
                             return set_response_headers(
                                 jsonify(response), headers=headers_, status_code=201)
@@ -357,12 +374,14 @@ class ItemCollection(Resource):
                                 api_name=get_api_name(),
                                 path=path)
                             headers_ = [
-                                {"Location": "{}/{}/".format(get_hydrus_server_url(), get_api_name(), path)}]
+                                {"Location": "{}/{}/".format(
+                                    get_hydrus_server_url(), get_api_name(), path)}]
                             response = {
                                 "message": "Object successfully updated"}
                             return set_response_headers(
                                 jsonify(response), headers=headers_)
-                        except (ClassNotFound, InstanceNotFound, InstanceExists, PropertyNotFound) as e:
+                        except (ClassNotFound, InstanceNotFound,
+                                InstanceExists, PropertyNotFound) as e:
                             status_code, message = e.get_HTTP()
                             return set_response_headers(
                                 jsonify(message), status_code=status_code)
@@ -435,7 +454,8 @@ class Items(Resource):
                             object_id = crud.insert_multiple(
                                 objects_=object_, session=get_session(), id_=int_list)
                             headers_ = [
-                                {"Location": "{}/{}/{}".format(get_hydrus_server_url(), get_api_name(), path, object_id)}]
+                                {"Location": "{}/{}/{}".format(
+                                    get_hydrus_server_url(), get_api_name(), path, object_id)}]
                             response = {
                                 "message": "Object with ID {} successfully added".format(object_id)}
                             return set_response_headers(

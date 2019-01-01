@@ -17,7 +17,7 @@ sqlalchemy.orm.sessionmaker : Used to create a SQLalchemy Session
 sqlalchemy.orm.session.Session : SQLalchemy Session class
 Ref- http://docs.sqlalchemy.org/en/latest/orm/session_basics.html
 hydrus.hydraspec.doc_writer.HydraDoc : Class for Hydra Documentation
-"""
+"""  # nopep8
 
 from contextlib import contextmanager
 from flask import appcontext_pushed
@@ -198,7 +198,8 @@ def set_session(application: Flask, DB_SESSION: scoped_session) -> Iterator:
     if not isinstance(DB_SESSION, scoped_session) and not isinstance(
             DB_SESSION, Session):
         raise TypeError(
-            "The API Doc is not of type <sqlalchemy.orm.session.Session> or <sqlalchemy.orm.scoping.scoped_session>")
+            "The API Doc is not of type <sqlalchemy.orm.session.Session> or"
+            " <sqlalchemy.orm.scoping.scoped_session>")
 
     def handler(sender: Flask, **kwargs: Any) -> None:
         g.dbsession = DB_SESSION
