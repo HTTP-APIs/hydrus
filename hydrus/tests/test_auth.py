@@ -41,11 +41,13 @@ class AuthTestCase(unittest.TestCase):
         doc_parse.insert_properties(test_properties, self.session)
         add_user(1, "test", self.session)
         self.auth_header = {"X-Authentication": "",
-                            "Authorization": "Basic {}".format(b64encode(b"1:test").decode("ascii"))}
+                            "Authorization": "Basic {}".format(
+                                b64encode(b"1:test").decode("ascii"))}
         self.wrong_id = {"X-Authentication": "",
                          "Authorization": "Basic {}".format(b64encode(b"2:test").decode("ascii"))}
         self.wrong_pass = {"X-Authentication": "",
-                           "Authorization": "Basic {}".format(b64encode(b"1:test2").decode("ascii"))}
+                           "Authorization": "Basic {}".format(
+                               b64encode(b"1:test2").decode("ascii"))}
         print("Classes, Properties and Users added successfully.")
 
         print("Setting up Hydrus utilities... ")

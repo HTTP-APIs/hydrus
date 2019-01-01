@@ -260,7 +260,8 @@ class ViewsTestCase(unittest.TestCase):
                     dummy_object = gen_dummy_object(
                         collection.class_.title, self.doc)
                     put_response = self.client.put(
-                        '{}/{}'.format(endpoints[endpoint], uuid.uuid4()), data=json.dumps(dummy_object))
+                        '{}/{}'.format(
+                            endpoints[endpoint], uuid.uuid4()), data=json.dumps(dummy_object))
                     assert put_response.status_code == 201
 
     def test_object_PUT_at_ids(self):
