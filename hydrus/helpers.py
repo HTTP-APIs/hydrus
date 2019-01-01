@@ -45,17 +45,18 @@ def type_match(object_: List[Dict[str, Any]], obj_type: str) -> bool:
 
 
 def set_response_headers(resp: Response,
-                         ct: str="application/ld+json",
+                         ct: str = "application/ld+json",
                          headers: List[Dict[str,
                                             Any]]=[],
-                         status_code: int=200) -> Response:
+                         status_code: int = 200) -> Response:
     """Set the response headers."""
     resp.status_code = status_code
     for header in headers:
         resp.headers[list(header.keys())[0]] = header[list(header.keys())[0]]
     resp.headers['Content-type'] = ct
     resp.headers['Link'] = '<' + get_hydrus_server_url() + \
-        get_api_name() + '/vocab>; rel="http://www.w3.org/ns/hydra/core#apiDocumentation"'
+        get_api_name() + '/vocab>; '\
+        'rel="http://www.w3.org/ns/hydra/core#apiDocumentation"'
     return resp
 
 

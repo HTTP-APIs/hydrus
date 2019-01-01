@@ -1,5 +1,5 @@
 # Byte-compiled / optimized / DLL files
-
+.vscode/**
 .idea/**
 
 __pycache__/

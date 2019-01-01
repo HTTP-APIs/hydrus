@@ -26,28 +26,33 @@ class_ = HydraClass(class_uri, class_title, class_description, endpoint=False)
 class_2_uri = "singleClass"
 class_2_title = "singleClass"
 class_2_description = "A non collection class"
-class_2 = HydraClass(class_2_uri, class_2_title, class_2_description, endpoint=True)
+class_2 = HydraClass(class_2_uri, class_2_title,
+                     class_2_description, endpoint=True)
 
 # Another class with single instance, will be used as nested class
 
 class_1_uri = "anotherSingleClass"
 class_1_title = "anotherSingleClass"
 class_1_description = "An another non collection class"
-class_1 = HydraClass(class_1_uri, class_1_title, class_1_description, endpoint=True)
+class_1 = HydraClass(class_1_uri, class_1_title,
+                     class_1_description, endpoint=True)
 
 # Class not having any methods except put and get
 class_3_uri = "extraClass"
 class_3_title = "extraClass"
 class_3_description = "Class without any explicit methods"
-class_3 = HydraClass(class_3_uri, class_3_title, class_3_description, endpoint=False)
+class_3 = HydraClass(class_3_uri, class_3_title,
+                     class_3_description, endpoint=False)
 
 # NOTE: Setting endpoint=True creates an endpoint for the class itself, this is usually for classes
 #       that have single instances.
-#       These classes should not ideally have a Collection, although Hydrus will allow creation of Collections for them
+#       These classes should not ideally have a Collection, although
+#       Hydrus will allow creation of Collections for them
 
 
 # Create new properties for the class
-prop1_uri = "http://props.hydrus.com/prop1"   # The URI of the class of the property
+# The URI of the class of the property
+prop1_uri = "http://props.hydrus.com/prop1"
 prop1_title = "Prop1"                   # Title of the property
 
 dummyProp1 = HydraClassProp(prop1_uri, prop1_title,
@@ -82,30 +87,43 @@ op1 = HydraClassOp(op_name,
 # Same way add DELETE, PUT and GET operations
 op2_status = [{"statusCode": 200, "description": "dummyClass deleted"}]
 op2 = HydraClassOp("DeleteClass", "DELETE", None, None, op2_status)
-op3_status = [{"statusCode": 201, "description": "dummyClass successfully added"}]
+op3_status = [
+    {"statusCode": 201, "description": "dummyClass successfully added"}]
 op3 = HydraClassOp("AddClass", "PUT", "vocab:dummyClass", None, op3_status)
 op4_status = [{"statusCode": 200, "description": "dummyClass returned"}]
 op4 = HydraClassOp("GetClass", "GET", None, "vocab:dummyClass", op4_status)
 
 # Operations for non collection class
-class_2_op1_status = [{"statusCode": 200, "description": "singleClass changed"}]
-class_2_op1 = HydraClassOp("UpdateClass", "POST", "vocab:singleClass", None, class_2_op1_status)
-class_2_op2_status = [{"statusCode": 200, "description": "singleClass deleted"}]
-class_2_op2 = HydraClassOp("DeleteClass", "DELETE", None, None, class_2_op2_status)
-class_2_op3_status = [{"statusCode": 201, "description": "singleClass successfully added"}]
-class_2_op3 = HydraClassOp("AddClass", "PUT", "vocab:singleClass", None, class_2_op3_status)
-class_2_op4_status = [{"statusCode": 200, "description": "singleClass returned"}]
-class_2_op4 = HydraClassOp("GetClass", "GET", None, "vocab:singleClass", class_2_op4_status)
+class_2_op1_status = [
+    {"statusCode": 200, "description": "singleClass changed"}]
+class_2_op1 = HydraClassOp("UpdateClass", "POST",
+                           "vocab:singleClass", None, class_2_op1_status)
+class_2_op2_status = [
+    {"statusCode": 200, "description": "singleClass deleted"}]
+class_2_op2 = HydraClassOp("DeleteClass", "DELETE",
+                           None, None, class_2_op2_status)
+class_2_op3_status = [
+    {"statusCode": 201, "description": "singleClass successfully added"}]
+class_2_op3 = HydraClassOp(
+    "AddClass", "PUT", "vocab:singleClass", None, class_2_op3_status)
+class_2_op4_status = [
+    {"statusCode": 200, "description": "singleClass returned"}]
+class_2_op4 = HydraClassOp("GetClass", "GET", None,
+                           "vocab:singleClass", class_2_op4_status)
 
-class_1_op1_status = [{"statusCode": 200, "description": "anotherSingleClass returned"}]
-class_1_op1 = HydraClassOp("GetClass", "GET", None, "vocab:anotherSingleClass", class_1_op1_status)
+class_1_op1_status = [
+    {"statusCode": 200, "description": "anotherSingleClass returned"}]
+class_1_op1 = HydraClassOp("GetClass", "GET", None,
+                           "vocab:anotherSingleClass", class_1_op1_status)
 # Add the properties to the classes
 class_.add_supported_prop(dummyProp1)
 class_.add_supported_prop(dummyProp2)
 class_2.add_supported_prop(dummyProp1)
 class_2.add_supported_prop(dummyProp2)
-class_2.add_supported_prop(HydraClassProp("vocab:dummyClass", "dummyProp", required=False, read=False, write=True))
-class_2.add_supported_prop(HydraClassProp("vocab:anotherSingleClass", "singleClassProp", required=False, read=False, write=True))
+class_2.add_supported_prop(HydraClassProp(
+    "vocab:dummyClass", "dummyProp", required=False, read=False, write=True))
+class_2.add_supported_prop(HydraClassProp(
+    "vocab:anotherSingleClass", "singleClassProp", required=False, read=False, write=True))
 class_1.add_supported_prop(dummyProp1)
 # Add the operations to the classes
 class_.add_supported_op(op1)
@@ -145,7 +163,8 @@ if __name__ == "__main__":
     import json
 
     dump = json.dumps(doc, indent=4, sort_keys=True)
-    doc = '''"""Generated API Documentation sample using doc_writer_sample.py."""\n\ndoc = %s\n''' % dump
+    doc = '''"""Generated API Documentation sample using
+         doc_writer_sample.py."""\n\ndoc = %s\n # nopep8''' % dump
     # Python does not recognise null, true and false in JSON format, convert them to string
     doc = doc.replace('true', '"true"')
     doc = doc.replace('false', '"false"')

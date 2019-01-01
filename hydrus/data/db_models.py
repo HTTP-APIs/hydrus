@@ -137,7 +137,8 @@ class Terminal(Base):
 
 
 class Graph(Base):
-    """Model for a graph that store triples of instance from the other models to map relationships."""
+    """Model for a graph that store triples of instance from the other models
+         to map relationships."""
 
     __tablename__ = "graph"
 
