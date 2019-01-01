@@ -1,3 +1,5 @@
+import json
+from typing import Tuple
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 
@@ -16,8 +18,6 @@ from importlib.machinery import SourceFileLoader
 
 
 doc = SourceFileLoader("doc", "./examples/drones/doc.py").load_module().doc
-from typing import Tuple
-import json
 
 HYDRUS_SERVER_URL = "http://localhost:8080/"
 API_NAME = "serverapi"
@@ -71,4 +71,3 @@ with set_authentication(app, AUTH):
                             http_server.serve_forever()
                         except KeyboardInterrupt:
                             pass
-

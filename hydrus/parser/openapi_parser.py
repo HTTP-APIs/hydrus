@@ -235,7 +235,7 @@ def get_class_details(global_: Dict[str,
                                        write=True))
                 else:
                     global_[class_name]["prop_definition"].append(
-                        HydraClassProp("vocab:" + prop, prop, required=flag,
+                        HydraClassProp("vocab:".format(prop), prop, required=flag,
                                        read=True, write=True))
             else:
                 global_[class_name]["prop_definition"].append(HydraClassProp(
@@ -294,8 +294,8 @@ def check_for_ref(global_: Dict[str, Any],
                     split('/')
             except KeyError:
                 class_location = \
-                  block["responses"][obj]["schema"]["items"]["$ref"].\
-                  split('/')
+                    block["responses"][obj]["schema"]["items"]["$ref"].\
+                    split('/')
             collection = check_collection(
                 schema_obj=block["responses"][obj]["schema"],
                 method=path)
@@ -342,8 +342,7 @@ def check_for_ref(global_: Dict[str, Any],
                 pass
     # cannot parse because no external ref
 
-    print("Cannot parse path" + path +
-          " because no ref to local class provided")
+    print("Cannot parse path {} because no ref to local class provided".format(path))
     return ""
 
 
@@ -383,8 +382,8 @@ def get_parameters(global_: Dict[str, Any],
                 # check if class has been pared
                 if parameter["schema"]["$ref"].split(
                         '/')[2] in global_["class_names"]:
-                    param = "vocab:" + \
-                        parameter["schema"]["$ref"].split('/')[2]
+                    param = "vocab:{}".format(
+                        parameter["schema"]["$ref"].split('/')[2])
 
                 else:
                     # if not go to that location and parse and add
@@ -394,8 +393,8 @@ def get_parameters(global_: Dict[str, Any],
                             parameter["schema"]["$ref"]),
                         parameter["schema"]["$ref"].split('/')[2],
                         path=path)
-                    param = "vocab:" + \
-                            parameter["schema"]["$ref"].split('/')[2]
+                    param = "vocab:{}".format(
+                        parameter["schema"]["$ref"].split('/')[2])
             except KeyError:
                 param = ""
 
@@ -430,15 +429,14 @@ def get_ops(global_: Dict[str, Any], path: str,
                         response),
                         "description": responses[response]["description"]})
                 try:
-                    op_returns = "vocab:" + \
-                        responses[response]["schema"]["$ref"].split('/')[2]
+                    op_returns = "vocab:{}".format(
+                        responses[response]["schema"]["$ref"].split('/')[2])
                 except KeyError:
                     pass
                 if op_returns is None:
                     try:
-                        op_returns = "vocab:" + \
-                            responses[response]["schema"]["items"]["$ref"].\
-                            split('/')[2]
+                        op_returns = "vocab:{}".format(
+                            responses[response]["schema"]["items"]["$ref"].split('/')[2])
                     except KeyError:
                         op_returns = try_catch_replacement(
                             responses[response]["schema"], "type", None)
@@ -451,7 +449,7 @@ def get_ops(global_: Dict[str, Any], path: str,
         global_[class_name]["op_definition"].append(HydraClassOp(
             op_name, op_method.upper(), op_expects, op_returns, op_status))
     else:
-        print("Method on path" + path + " already present !")
+        print("Method on path {} already present !".format(path))
 
 
 def get_paths(global_: Dict[str, Any]) -> None:
@@ -491,7 +489,8 @@ def parse(doc: Dict[str, Any]) -> Dict[str, Any]:
     baseURL = try_catch_replacement(doc, "host", "localhost")
     name = try_catch_replacement(doc, "basePath", "api")
     schemes = try_catch_replacement(doc, "schemes", "http")
-    api_doc = HydraDoc(name, title, desc, name, schemes[0] + "://" + baseURL)
+    api_doc = HydraDoc(name, title, desc, name,
+                       "{}://{}".format(schemes[0], baseURL))
     get_paths(global_)
     for name in global_["class_names"]:
         for prop in global_[name]["prop_definition"]:
@@ -521,8 +520,8 @@ def dump_documentation(hydra_doc: Dict[str, Any]) -> str:
     """
     dump = json.dumps(hydra_doc, indent=4, sort_keys=True)
     hydra_doc = '''"""\nGenerated API Documentation for Server API using
-                server_doc_gen.py."""\n\ndoc = %s''' % dump
-    hydra_doc = hydra_doc + '\n'
+                server_doc_gen.py."""\n\ndoc = {}'''.format(dump)
+    hydra_doc = '{}\n'.format(hydra_doc)
     hydra_doc = hydra_doc.replace('true', '"true"')
     hydra_doc = hydra_doc.replace('false', '"false"')
     hydra_doc = hydra_doc.replace('null', '"null"')

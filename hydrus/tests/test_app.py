@@ -89,19 +89,23 @@ class ViewsTestCase(unittest.TestCase):
         for class_ in self.doc.parsed_classes:
             if class_ not in self.doc.collections:
                 dummy_obj = gen_dummy_object(class_, self.doc)
-                crud.insert(dummy_obj, id_=str(uuid.uuid4()), session=self.session)
+                crud.insert(
+                    dummy_obj,
+                    id_=str(
+                        uuid.uuid4()),
+                    session=self.session)
 
     def test_Index(self):
         """Test for the index."""
-        response_get = self.client.get("/" + self.API_NAME)
+        response_get = self.client.get("/{}".format(self.API_NAME))
         endpoints = json.loads(response_get.data.decode('utf-8'))
         response_post = self.client.post(
-            "/" + self.API_NAME, data=dict(foo="bar"))
+            "/{}".format(self.API_NAME), data=dict(foo="bar"))
         response_put = self.client.put(
-            "/" + self.API_NAME, data=dict(foo="bar"))
-        response_delete = self.client.delete("/" + self.API_NAME)
+            "/{}".format(self.API_NAME), data=dict(foo="bar"))
+        response_delete = self.client.delete("/{}".format(self.API_NAME))
         assert "@context" in endpoints
-        assert endpoints["@id"] == "/" + self.API_NAME
+        assert endpoints["@id"] == "/{}".format(self.API_NAME)
         assert endpoints["@type"] == "EntryPoint"
         assert response_get.status_code == 200
         assert response_post.status_code == 405
@@ -111,12 +115,12 @@ class ViewsTestCase(unittest.TestCase):
     def test_EntryPoint_context(self):
         """Test for the EntryPoint context."""
         response_get = self.client.get(
-            "/" + self.API_NAME + "/contexts/EntryPoint.jsonld")
+            "/{}/contexts/EntryPoint.jsonld".format(self.API_NAME))
         response_get_data = json.loads(response_get.data.decode('utf-8'))
         response_post = self.client.post(
-            "/" + self.API_NAME + "/contexts/EntryPoint.jsonld", data={})
+            "/{}/contexts/EntryPoint.jsonld".format(self.API_NAME), data={})
         response_delete = self.client.delete(
-            "/" + self.API_NAME + "/contexts/EntryPoint.jsonld")
+            "/{}/contexts/EntryPoint.jsonld".format(self.API_NAME))
         assert response_get.status_code == 200
         assert "@context" in response_get_data
         assert response_post.status_code == 405
@@ -124,34 +128,35 @@ class ViewsTestCase(unittest.TestCase):
 
     def test_Vocab(self):
         """Test the vocab."""
-        response_get = self.client.get("/" + self.API_NAME + "/vocab#")
+        response_get = self.client.get("/{}/vocab#".format(self.API_NAME))
         response_get_data = json.loads(response_get.data.decode('utf-8'))
 
         assert "@context" in response_get_data
         assert response_get_data["@type"] == "ApiDocumentation"
-        assert response_get_data["@id"] == self.HYDRUS_SERVER_URL + \
-            self.API_NAME + "/vocab"
+        assert response_get_data["@id"] == "{}{}/vocab".format(
+            self.HYDRUS_SERVER_URL, self.API_NAME)
         assert response_get.status_code == 200
 
-        response_delete = self.client.delete("/" + self.API_NAME + "/vocab#")
+        response_delete = self.client.delete(
+            "/{}/vocab#".format(self.API_NAME))
         assert response_delete.status_code == 405
 
         response_put = self.client.put(
-            "/" + self.API_NAME + "/vocab#", data=json.dumps(dict(foo='bar')))
+            "/{}/vocab#".format(self.API_NAME), data=json.dumps(dict(foo='bar')))
         assert response_put.status_code == 405
 
         response_post = self.client.post(
-            "/" + self.API_NAME + "/vocab#", data=json.dumps(dict(foo='bar')))
+            "/{}/vocab#".format(self.API_NAME), data=json.dumps(dict(foo='bar')))
         assert response_post.status_code == 405
 
     def test_Collections_GET(self):
         """Test GET on collection endpoints."""
-        index = self.client.get("/" + self.API_NAME)
+        index = self.client.get("/{}".format(self.API_NAME))
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
         for endpoint in endpoints:
             collection_name = "/".join(endpoints[endpoint].split(
-                "/" + self.API_NAME + "/")[1:])
+                "/{}/".format(self.API_NAME))[1:])
             if collection_name in self.doc.collections:
                 response_get = self.client.get(endpoints[endpoint])
                 # pdb.set_trace()
@@ -165,12 +170,12 @@ class ViewsTestCase(unittest.TestCase):
 
     def test_Collections_PUT(self):
         """Test insert data to the collection."""
-        index = self.client.get("/" + self.API_NAME)
+        index = self.client.get("/{}".format(self.API_NAME))
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
         for endpoint in endpoints:
             collection_name = "/".join(endpoints[endpoint].split(
-                "/" + self.API_NAME + "/")[1:])
+                "/{}/".format(self.API_NAME))[1:])
             if collection_name in self.doc.collections:
                 collection = self.doc.collections[collection_name]["collection"]
                 dummy_object = gen_dummy_object(
@@ -181,12 +186,12 @@ class ViewsTestCase(unittest.TestCase):
 
     def test_object_POST(self):
         """Test replace of a given object using ID."""
-        index = self.client.get("/" + self.API_NAME)
+        index = self.client.get("/{}".format(self.API_NAME))
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
         for endpoint in endpoints:
             collection_name = "/".join(endpoints[endpoint].split(
-                "/" + self.API_NAME + "/")[1:])
+                "/{}/".format(self.API_NAME))[1:])
             if collection_name in self.doc.collections:
                 collection = self.doc.collections[collection_name]["collection"]
                 class_ = self.doc.parsed_classes[collection.class_.title]["class"]
@@ -206,17 +211,17 @@ class ViewsTestCase(unittest.TestCase):
                     dummy_object = gen_dummy_object(
                         collection.class_.title, self.doc)
                     post_replace_response = self.client.post(
-                        endpoints[endpoint] + '/' + id_, data=json.dumps(dummy_object))
+                        '{}/{}'.format(endpoints[endpoint], id_), data=json.dumps(dummy_object))
                     assert post_replace_response.status_code == 200
 
     def test_object_DELETE(self):
         """Test DELETE of a given object using ID."""
-        index = self.client.get("/" + self.API_NAME)
+        index = self.client.get("/{}".format(self.API_NAME))
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
         for endpoint in endpoints:
             collection_name = "/".join(endpoints[endpoint].split(
-                "/" + self.API_NAME + "/")[1:])
+                "/{}/".format(self.API_NAME))[1:])
             if collection_name in self.doc.collections:
                 collection = self.doc.collections[collection_name]["collection"]
                 class_ = self.doc.parsed_classes[collection.class_.title]["class"]
@@ -234,17 +239,17 @@ class ViewsTestCase(unittest.TestCase):
                 id_ = matchObj.group(2)
                 if "DELETE" in class_methods:
                     delete_response = self.client.delete(
-                        endpoints[endpoint] + '/' + id_)
+                        '{}/{}'.format(endpoints[endpoint], id_))
                     assert delete_response.status_code == 200
 
     def test_object_PUT_at_id(self):
         """Create object in collection using PUT at specific ID."""
-        index = self.client.get("/" + self.API_NAME)
+        index = self.client.get("/{}".format(self.API_NAME))
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
         for endpoint in endpoints:
             collection_name = "/".join(endpoints[endpoint].split(
-                "/" + self.API_NAME + "/")[1:])
+                "/{}/".format(self.API_NAME))[1:])
             if collection_name in self.doc.collections:
                 collection = self.doc.collections[collection_name]["collection"]
                 class_ = self.doc.parsed_classes[collection.class_.title]["class"]
@@ -255,17 +260,17 @@ class ViewsTestCase(unittest.TestCase):
                     dummy_object = gen_dummy_object(
                         collection.class_.title, self.doc)
                     put_response = self.client.put(
-                        endpoints[endpoint] + '/' + str(
-                            uuid.uuid4()), data=json.dumps(dummy_object))
+                        '{}/{}'.format(
+                            endpoints[endpoint], uuid.uuid4()), data=json.dumps(dummy_object))
                     assert put_response.status_code == 201
 
     def test_object_PUT_at_ids(self):
-        index = self.client.get("/" + self.API_NAME)
+        index = self.client.get("/{}".format(self.API_NAME))
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
         for endpoint in endpoints:
             collection_name = "/".join(endpoints[endpoint].split(
-                "/" + self.API_NAME + "/")[1:])
+                "/{}/".format(self.API_NAME))[1:])
             if collection_name in self.doc.collections:
                 collection = self.doc.collections[collection_name]["collection"]
                 class_ = self.doc.parsed_classes[collection.class_.title]["class"]
@@ -278,25 +283,24 @@ class ViewsTestCase(unittest.TestCase):
                 for index in range(3):
                     objects.append(gen_dummy_object(
                         collection.class_.title, self.doc))
-                    ids += str(uuid.uuid4())
-                    ids += ','
+                    ids = "{},".format(uuid.uuid4())
                 data_["data"] = objects
                 if "PUT" in class_methods:
                     put_response = self.client.put(
-                        endpoints[endpoint] + '/add/' + ids,
+                        '{}/add/{}'.format(endpoints[endpoint], ids),
                         data=json.dumps(
                             data_))
                     assert put_response.status_code == 201
 
     def test_endpointClass_PUT(self):
         """Check non collection Class PUT."""
-        index = self.client.get("/" + self.API_NAME)
+        index = self.client.get("/{}".format(self.API_NAME))
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
         for endpoint in endpoints:
             if endpoint not in ["@context", "@id", "@type"]:
                 class_name = "/".join(endpoints[endpoint].split(
-                    "/" + self.API_NAME + "/")[1:])
+                    "/{}/".format(self.API_NAME))[1:])
                 if class_name not in self.doc.collections:
                     class_ = self.doc.parsed_classes[class_name]["class"]
                     class_methods = [
@@ -309,13 +313,13 @@ class ViewsTestCase(unittest.TestCase):
 
     def test_endpointClass_POST(self):
         """Check non collection Class POST."""
-        index = self.client.get("/" + self.API_NAME)
+        index = self.client.get("/{}".format(self.API_NAME))
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
         for endpoint in endpoints:
             if endpoint not in ["@context", "@id", "@type"]:
                 class_name = "/".join(endpoints[endpoint].split(
-                    "/" + self.API_NAME + "/")[1:])
+                    "/{}/".format(self.API_NAME))[1:])
                 if class_name not in self.doc.collections:
                     class_ = self.doc.parsed_classes[class_name]["class"]
                     class_methods = [
@@ -328,13 +332,13 @@ class ViewsTestCase(unittest.TestCase):
 
     def test_endpointClass_DELETE(self):
         """Check non collection Class DELETE."""
-        index = self.client.get("/" + self.API_NAME)
+        index = self.client.get("/{}".format(self.API_NAME))
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
         for endpoint in endpoints:
             if endpoint not in ["@context", "@id", "@type"]:
                 class_name = "/".join(endpoints[endpoint].split(
-                    "/" + self.API_NAME + "/")[1:])
+                    "/{}/".format(self.API_NAME))[1:])
                 if class_name not in self.doc.collections:
                     class_ = self.doc.parsed_classes[class_name]["class"]
                     class_methods = [
@@ -346,13 +350,13 @@ class ViewsTestCase(unittest.TestCase):
 
     def test_endpointClass_GET(self):
         """Check non collection Class GET."""
-        index = self.client.get("/" + self.API_NAME)
+        index = self.client.get("/{}".format(self.API_NAME))
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
         for endpoint in endpoints:
             if endpoint not in ["@context", "@id", "@type"]:
                 class_name = "/".join(endpoints[endpoint].split(
-                    "/" + self.API_NAME + "/")[1:])
+                    "/{}/".format(self.API_NAME))[1:])
                 if class_name not in self.doc.collections:
                     class_ = self.doc.parsed_classes[class_name]["class"]
                     class_methods = [
@@ -367,13 +371,13 @@ class ViewsTestCase(unittest.TestCase):
                         assert "@type" in response_get_data
 
     def test_GET_for_nested_class(self):
-        index = self.client.get("/" + self.API_NAME)
+        index = self.client.get("/{}".format(self.API_NAME))
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
         for endpoint in endpoints:
             if endpoint not in ["@context", "@id", "@type"]:
                 class_name = "/".join(endpoints[endpoint].split(
-                    "/" + self.API_NAME + "/")[1:])
+                    "/{}/".format(self.API_NAME))[1:])
                 if class_name not in self.doc.collections:
                     class_ = self.doc.parsed_classes[class_name]["class"]
                     class_methods = [
@@ -386,7 +390,8 @@ class ViewsTestCase(unittest.TestCase):
                         assert "@context" in response_get_data
                         assert "@id" in response_get_data
                         assert "@type" in response_get_data
-                        # server should not return nested objects in the same response
+                        # server should not return nested objects in the same
+                        # response
                         for prop in response_get_data:
                             assert "@type" not in response_get_data[prop]
                         class_props = [x for x in class_.supportedProperty]
@@ -397,17 +402,18 @@ class ViewsTestCase(unittest.TestCase):
                                 nested_obj_resp = self.client.get(
                                     response_get_data[prop_name.title])
                                 assert nested_obj_resp.status_code == 200
-                                nested_obj = json.loads(nested_obj_resp.data.decode('utf-8'))
+                                nested_obj = json.loads(
+                                    nested_obj_resp.data.decode('utf-8'))
                                 assert "@type" in nested_obj
 
     def test_bad_objects(self):
         """Checks if bad objects are added or not."""
-        index = self.client.get("/" + self.API_NAME)
+        index = self.client.get("/{}".format(self.API_NAME))
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
         for endpoint in endpoints:
             collection_name = "/".join(endpoints[endpoint].split(
-                "/" + self.API_NAME + "/")[1:])
+                "/{}/".format(self.API_NAME))[1:])
             if collection_name in self.doc.collections:
                 bad_response_put = self.client.put(
                     endpoints[endpoint],
@@ -418,12 +424,12 @@ class ViewsTestCase(unittest.TestCase):
 
     def test_bad_requests(self):
         """Checks if bad requests are handled or not."""
-        index = self.client.get("/" + self.API_NAME)
+        index = self.client.get("/{}".format(self.API_NAME))
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
         for endpoint in endpoints:
             collection_name = "/".join(endpoints[endpoint].split(
-                "/" + self.API_NAME + "/")[1:])
+                "/{}/".format(self.API_NAME))[1:])
             if collection_name in self.doc.collections:
                 collection = self.doc.collections[collection_name]["collection"]
                 class_ = self.doc.parsed_classes[collection.class_.title]["class"]
@@ -443,21 +449,21 @@ class ViewsTestCase(unittest.TestCase):
                     dummy_object = gen_dummy_object(
                         collection.class_.title, self.doc)
                     post_replace_response = self.client.post(
-                        endpoints[endpoint] + '/' + id_, data=json.dumps(dummy_object))
+                        '{}/{}'.format(endpoints[endpoint], id_), data=json.dumps(dummy_object))
                     assert post_replace_response.status_code == 405
                 if "DELETE" not in class_methods:
                     delete_response = self.client.delete(
-                        endpoints[endpoint] + '/' + id_)
+                        '{}/{}'.format(endpoints[endpoint], id_))
                     assert delete_response.status_code == 405
 
     def test_Endpoints_Contexts(self):
         """Test all endpoints contexts are generated properly."""
-        index = self.client.get("/" + self.API_NAME)
+        index = self.client.get("/{}".format(self.API_NAME))
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
         for endpoint in endpoints:
             collection_name = "/".join(endpoints[endpoint].split(
-                "/" + self.API_NAME + "/")[1:])
+                "/{}/".format(self.API_NAME))[1:])
             if collection_name in self.doc.collections:
                 response_get = self.client.get(endpoints[endpoint])
                 assert response_get.status_code == 200

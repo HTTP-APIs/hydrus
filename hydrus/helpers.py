@@ -46,28 +46,27 @@ def type_match(object_: List[Dict[str, Any]], obj_type: str) -> bool:
 
 def set_response_headers(resp: Response,
                          ct: str = "application/ld+json",
-                         headers: List[Dict[str,
-                                            Any]]=[],
+                         headers: List[Dict[str, Any]]=[],
                          status_code: int = 200) -> Response:
     """Set the response headers."""
     resp.status_code = status_code
     for header in headers:
         resp.headers[list(header.keys())[0]] = header[list(header.keys())[0]]
     resp.headers['Content-type'] = ct
-    resp.headers['Link'] = '<' + get_hydrus_server_url() + \
-        get_api_name() + '/vocab>; '\
-        'rel="http://www.w3.org/ns/hydra/core#apiDocumentation"'
+    resp.headers['Link'] = '<{}{}/vocab>; rel='
+    '"http://www.w3.org/ns/hydra/core#apiDocumentation"'.format(
+            get_hydrus_server_url(), get_api_name())
     return resp
 
 
 def hydrafy(object_: Dict[str, Any], path: Optional[str]) -> Dict[str, Any]:
     """Add hydra context to objects."""
     if path == object_["@type"]:
-        object_["@context"] = "/" + get_api_name() + "/contexts/" + \
-            object_["@type"] + ".jsonld"
+        object_[
+            "@context"] = "/{}/contexts/{}.jsonld".format(get_api_name(), object_["@type"])
     else:
-        object_["@context"] = "/" + get_api_name() + "/contexts/" + \
-            path + ".jsonld"
+        object_[
+            "@context"] = "/{}/contexts/{}.jsonld".format(get_api_name(), path)
     return object_
 
 
