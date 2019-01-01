@@ -35,9 +35,8 @@ class HydraDoc():
             collection = HydraCollection(
                 class_, collection_path, collectionGet, collectionPost)
             self.collections[collection.path] = {
-                "context": Context(address="{}{}".format(self.base_url, self.API), collection=collection),
-                "collection": collection
-            }
+                "context": Context(address="{}{}".format(self.base_url, self.API),
+                                   collection=collection), "collection": collection}
 
     def add_possible_status(self, status: 'HydraStatus') -> None:
         """Add a new possibleStatus."""
