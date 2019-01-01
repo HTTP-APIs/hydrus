@@ -38,7 +38,8 @@ def hydrafy_class(class_, supported_props, semantic_ref_name=None):
         "supportedProperty": [],
         "supportedOperation": []
     }
-    # If there is a semantic reference name give in the vocabulary then use that else use full links.
+    # If there is a semantic reference name give in the vocabulary then use
+    # that else use full links.
 
     hydra_class["@id"] = fix_keyword(class_["@id"])
 
@@ -50,7 +51,7 @@ def hydrafy_class(class_, supported_props, semantic_ref_name=None):
         try:
             operation["@id"] = operation["@id"] % (hydra_class["title"])
             operation["label"] = operation["label"] % (hydra_class["title"])
-        except:
+        except BaseException:
             print("Unexpected error:", sys.exc_info()[0])
 
         if operation["method"] in ["POST", "PUT"]:
@@ -102,15 +103,17 @@ def get_all_properties(owl_data):
     properties = list()
     for obj in owl_data["defines"]:
         obj_type = obj["@type"]
-        if type(obj_type) == list:
+        if isinstance(obj_type, list):
             for prop in obj_type:
                 if prop["@id"] == "http://www.w3.org/2002/07/owl#ObjectProperty":
                     properties.append(obj)
-        elif type(obj_type) == dict:
+        elif isinstance(obj_type, dict):
             if obj_type["@id"] == "http://www.w3.org/2002/07/owl#ObjectProperty":
                 properties.append(obj)
 
     return properties
+
+
 def hydrafy_property(prop, semantic_ref_name=None):
     """Create Hydra specific Property from owl:ObjectProperty JSON-LD."""
     hydra_prop = {
@@ -120,9 +123,11 @@ def hydrafy_property(prop, semantic_ref_name=None):
         "readonly": False,
         "writeonly": False
     }
-    # If there is a semantic reference name give in the vocabulary then use that else use full links.
+    # If there is a semantic reference name give in the vocabulary then use
+    # that else use full links.
     if semantic_ref_name is not None:
-        hydra_prop["property"] = "{}:{}".format(semantic_ref_name,prop["@id"].rsplit('/', 1)[-1])
+        hydra_prop["property"] = "{}:{}".format(
+            semantic_ref_name, prop["@id"].rsplit('/', 1)[-1])
     else:
         hydra_prop["property"] = fix_keyword(prop["@id"])
 
@@ -142,12 +147,14 @@ def hydrafy_properties(properties, semantic_ref_name=None):
     for prop in properties:
         domains = [None]
         ranges = [None]
-        # NOTE: No domain or range implies the property is applicable to every class.
+        # NOTE: No domain or range implies the property is applicable to every
+        # class.
         if "rdf:domain" in prop:
             domains = [fix_keyword(x["@id"]) for x in prop["rdf:domain"]]
         if "rdf:range" in prop:
             ranges = [fix_keyword(x["@id"]) for x in prop["rdf:range"]]
-        ops = [[fix_keyword(d), fix_keyword(r)] for d in domains for r in ranges]
+        ops = [[fix_keyword(d), fix_keyword(r)]
+               for d in domains for r in ranges]
         hydra_props.append({
             "property": hydrafy_property(prop, semantic_ref_name),
             "classes": ops,
@@ -186,13 +193,15 @@ if __name__ == "__main__":
     # Get all the owl:ObjectProperty objects from the vocab
     owl_props = get_all_properties(data)
 
-    # Convert each owl:ObjectProperty into a Hydra:SupportedProperty, also get classes that support it based on domain and range.
+    # Convert each owl:ObjectProperty into a Hydra:SupportedProperty, also get
+    # classes that support it based on domain and range.
     hydra_props = hydrafy_properties(owl_props, SEMANTIC_REF_NAME)
 
     # Get all the owl:Class objects from the vocab
     owl_classes = get_all_classes(subsystem_data)
 
-    # Convert each owl:Class into a Hydra:Class, also get supportedProperty for each
+    # Convert each owl:Class into a Hydra:Class, also get supportedProperty
+    # for each
     hydra_classes = hydrafy_classes(
         owl_classes, hydra_props, SEMANTIC_REF_NAME)
 

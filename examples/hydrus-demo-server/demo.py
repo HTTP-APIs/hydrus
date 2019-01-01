@@ -22,7 +22,8 @@ if __name__ == "__main__":
     # Define the server URL, this is what will be displayed on the Doc
     HYDRUS_SERVER_URL = "http://localhost:8080/"
 
-    # The name of the API or the EntryPoint, the api will be at http://localhost/<API_NAME>
+    # The name of the API or the EntryPoint, the api will be at
+    # http://localhost/<API_NAME>
     API_NAME = "serverapi"
 
     print("Setting up the database")
@@ -35,7 +36,8 @@ if __name__ == "__main__":
 
     # Define the Hydra API Documentation
     # NOTE: You can use your own API Documentation and create a HydraDoc object using doc_maker
-    #       Or you may create your own HydraDoc Documentation using doc_writer [see hydrus/hydraspec/doc_writer_sample]
+    # Or you may create your own HydraDoc Documentation using doc_writer [see
+    # hydrus/hydraspec/doc_writer_sample]
     print("Creating the API Documentation")
     apidoc = doc_maker.create_doc(doc, HYDRUS_SERVER_URL, API_NAME)
 
@@ -44,7 +46,8 @@ if __name__ == "__main__":
 
     print("Adding Classes and Properties")
     # Get all the classes from the doc
-    # You can also pass dictionary defined in hydrus/hydraspec/doc_writer_sample_output.py
+    # You can also pass dictionary defined in
+    # hydrus/hydraspec/doc_writer_sample_output.py
     classes = doc_parse.get_classes(apidoc.generate())
 
     # Get all the properties from the classes
@@ -75,7 +78,7 @@ if __name__ == "__main__":
                             # Start the Hydrus app
                             http_server = WSGIServer(('', 8080), app)
                             print("Server running at:")
-                            print("{}{}".format(HYDRUS_SERVER_URL,API_NAME))
+                            print("{}{}".format(HYDRUS_SERVER_URL, API_NAME))
                             try:
                                 http_server.serve_forever()
                             except KeyboardInterrupt:

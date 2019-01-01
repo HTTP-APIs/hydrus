@@ -105,7 +105,7 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
             apidoc = doc_maker.create_doc(doc,
                                           HYDRUS_SERVER_URL, API_NAME)
 
-        except:
+        except BaseException:
             click.echo("Problem parsing specified hydradoc file, "
                        "using sample hydradoc as default.")
             apidoc = doc_maker.create_doc(api_document,
@@ -156,7 +156,10 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
                             # Start the Hydrus app
                             http_server = WSGIServer(('', port), app)
                             click.echo("Server running at:")
-                            click.echo("{}{}".format(HYDRUS_SERVER_URL,API_NAME))
+                            click.echo(
+                                "{}{}".format(
+                                    HYDRUS_SERVER_URL,
+                                    API_NAME))
                             try:
                                 http_server.serve_forever()
                             except KeyboardInterrupt:

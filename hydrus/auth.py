@@ -33,6 +33,7 @@ def failed_authentication(incorrect: bool) -> Response:
                                     {'WWW-Authenticate': realm}, {'X-Authentication': nonce}])
     return response
 
+
 def verify_user() -> Union[Response, None]:
     """
     Verify the credentials of the user and assign token.

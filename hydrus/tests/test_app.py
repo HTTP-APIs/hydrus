@@ -89,7 +89,11 @@ class ViewsTestCase(unittest.TestCase):
         for class_ in self.doc.parsed_classes:
             if class_ not in self.doc.collections:
                 dummy_obj = gen_dummy_object(class_, self.doc)
-                crud.insert(dummy_obj, id_=str(uuid.uuid4()), session=self.session)
+                crud.insert(
+                    dummy_obj,
+                    id_=str(
+                        uuid.uuid4()),
+                    session=self.session)
 
     def test_Index(self):
         """Test for the index."""
@@ -110,10 +114,13 @@ class ViewsTestCase(unittest.TestCase):
 
     def test_EntryPoint_context(self):
         """Test for the EntryPoint context."""
-        response_get = self.client.get("/{}/contexts/EntryPoint.jsonld".format(self.API_NAME))
+        response_get = self.client.get(
+            "/{}/contexts/EntryPoint.jsonld".format(self.API_NAME))
         response_get_data = json.loads(response_get.data.decode('utf-8'))
-        response_post = self.client.post("/{}/contexts/EntryPoint.jsonld".format(self.API_NAME), data={})
-        response_delete = self.client.delete("/{}/contexts/EntryPoint.jsonld".format(self.API_NAME))
+        response_post = self.client.post(
+            "/{}/contexts/EntryPoint.jsonld".format(self.API_NAME), data={})
+        response_delete = self.client.delete(
+            "/{}/contexts/EntryPoint.jsonld".format(self.API_NAME))
         assert response_get.status_code == 200
         assert "@context" in response_get_data
         assert response_post.status_code == 405
@@ -126,10 +133,12 @@ class ViewsTestCase(unittest.TestCase):
 
         assert "@context" in response_get_data
         assert response_get_data["@type"] == "ApiDocumentation"
-        assert response_get_data["@id"] == "{}{}/vocab".format(self.HYDRUS_SERVER_URL,self.API_NAME)
+        assert response_get_data["@id"] == "{}{}/vocab".format(
+            self.HYDRUS_SERVER_URL, self.API_NAME)
         assert response_get.status_code == 200
 
-        response_delete = self.client.delete("/{}/vocab#".format(self.API_NAME))
+        response_delete = self.client.delete(
+            "/{}/vocab#".format(self.API_NAME))
         assert response_delete.status_code == 405
 
         response_put = self.client.put(
@@ -202,7 +211,7 @@ class ViewsTestCase(unittest.TestCase):
                     dummy_object = gen_dummy_object(
                         collection.class_.title, self.doc)
                     post_replace_response = self.client.post(
-                        '{}/{}'.format(endpoints[endpoint],id_), data=json.dumps(dummy_object))
+                        '{}/{}'.format(endpoints[endpoint], id_), data=json.dumps(dummy_object))
                     assert post_replace_response.status_code == 200
 
     def test_object_DELETE(self):
@@ -230,7 +239,7 @@ class ViewsTestCase(unittest.TestCase):
                 id_ = matchObj.group(2)
                 if "DELETE" in class_methods:
                     delete_response = self.client.delete(
-                        '{}/{}'.format(endpoints[endpoint],id_))
+                        '{}/{}'.format(endpoints[endpoint], id_))
                     assert delete_response.status_code == 200
 
     def test_object_PUT_at_id(self):
@@ -251,7 +260,7 @@ class ViewsTestCase(unittest.TestCase):
                     dummy_object = gen_dummy_object(
                         collection.class_.title, self.doc)
                     put_response = self.client.put(
-                        '{}/{}'.format(endpoints[endpoint],uuid.uuid4()), data=json.dumps(dummy_object))
+                        '{}/{}'.format(endpoints[endpoint], uuid.uuid4()), data=json.dumps(dummy_object))
                     assert put_response.status_code == 201
 
     def test_object_PUT_at_ids(self):
@@ -277,7 +286,7 @@ class ViewsTestCase(unittest.TestCase):
                 data_["data"] = objects
                 if "PUT" in class_methods:
                     put_response = self.client.put(
-                        '{}/add/{}'.format(endpoints[endpoint],ids),
+                        '{}/add/{}'.format(endpoints[endpoint], ids),
                         data=json.dumps(
                             data_))
                     assert put_response.status_code == 201
@@ -380,7 +389,8 @@ class ViewsTestCase(unittest.TestCase):
                         assert "@context" in response_get_data
                         assert "@id" in response_get_data
                         assert "@type" in response_get_data
-                        # server should not return nested objects in the same response
+                        # server should not return nested objects in the same
+                        # response
                         for prop in response_get_data:
                             assert "@type" not in response_get_data[prop]
                         class_props = [x for x in class_.supportedProperty]
@@ -388,11 +398,12 @@ class ViewsTestCase(unittest.TestCase):
                         print(response_get_data)
                         for prop_name in class_props:
                             if "vocab:" in prop_name.prop:
-                                nested_obj_resp = self.client.get(response_get_data[prop_name.title])
+                                nested_obj_resp = self.client.get(
+                                    response_get_data[prop_name.title])
                                 assert nested_obj_resp.status_code == 200
-                                nested_obj = json.loads(nested_obj_resp.data.decode('utf-8'))
+                                nested_obj = json.loads(
+                                    nested_obj_resp.data.decode('utf-8'))
                                 assert "@type" in nested_obj
-
 
     def test_bad_objects(self):
         """Checks if bad objects are added or not."""
@@ -437,11 +448,11 @@ class ViewsTestCase(unittest.TestCase):
                     dummy_object = gen_dummy_object(
                         collection.class_.title, self.doc)
                     post_replace_response = self.client.post(
-                        '{}/{}'.format(endpoints[endpoint],id_), data=json.dumps(dummy_object))
+                        '{}/{}'.format(endpoints[endpoint], id_), data=json.dumps(dummy_object))
                     assert post_replace_response.status_code == 405
                 if "DELETE" not in class_methods:
                     delete_response = self.client.delete(
-                        '{}/{}'.format(endpoints[endpoint],id_))
+                        '{}/{}'.format(endpoints[endpoint], id_))
                     assert delete_response.status_code == 405
 
     def test_Endpoints_Contexts(self):

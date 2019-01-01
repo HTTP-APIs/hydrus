@@ -8,7 +8,7 @@ from hydrus.hydraspec.doc_writer import HydraStatus
 from typing import Any, Dict, Match, Optional, Tuple, Union
 
 
-def error_mapping(body: str=None) -> str:
+def error_mapping(body: str = None) -> str:
     """Function returns starting error message based on its body type.
     :param body: Params type for error message
     :return string: Error message for input key
@@ -23,7 +23,8 @@ def error_mapping(body: str=None) -> str:
     return error_map[body]
 
 
-def input_key_check(body: Dict[str, Any], key: str=None, body_type: str=None, literal: bool=False) -> dict:
+def input_key_check(body: Dict[str, Any], key: str = None,
+                    body_type: str = None, literal: bool = False) -> dict:
     """Function to validate key inside the dictonary payload
     :param body: JSON body in which we have to check the key
     :param key: To check if its value exit in the body
@@ -39,7 +40,8 @@ def input_key_check(body: Dict[str, Any], key: str=None, body_type: str=None, li
         raise SyntaxError("{0} [{1}]".format(error_mapping(body_type), key))
 
 
-def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str=None, API_NAME: str=None) -> HydraDoc:
+def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
+               API_NAME: str = None) -> HydraDoc:
     """Create the HydraDoc object from the API Documentation."""
     # Check @id
     try:
@@ -103,7 +105,8 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str=None, API_NAME: str=N
     return apidoc
 
 
-def create_class(entrypoint: Dict[str, Any], class_dict: Dict[str, Any]) -> Tuple[HydraClass, bool, str]:
+def create_class(
+        entrypoint: Dict[str, Any], class_dict: Dict[str, Any]) -> Tuple[HydraClass, bool, str]:
     """Create HydraClass objects for classes in the API Documentation."""
     # Base classes not used
     exclude_list = ['http://www.w3.org/ns/hydra/core#Resource',
@@ -184,7 +187,7 @@ def convert_literal(literal: Any) -> Optional[Union[bool, str]]:
         "null": None
     }
     # Check if literal is in string format
-    if type(literal) == str:
+    if isinstance(literal, str):
         # Check if the literal is valid
         if literal in map_:
             return map_[literal]
@@ -217,7 +220,8 @@ def create_property(supported_prop: Dict[str, Any]) -> HydraClassProp:
     return prop
 
 
-def class_in_endpoint(class_: Dict[str, Any], entrypoint: Dict[str, Any]) -> Tuple[bool, bool]:
+def class_in_endpoint(
+        class_: Dict[str, Any], entrypoint: Dict[str, Any]) -> Tuple[bool, bool]:
     """Check if a given class is in the EntryPoint object as a class."""
     # Check supportedProperty for the EntryPoint
     try:
@@ -244,7 +248,8 @@ def class_in_endpoint(class_: Dict[str, Any], entrypoint: Dict[str, Any]) -> Tup
     return False, None
 
 
-def collection_in_endpoint(class_: Dict[str, Any], entrypoint: Dict[str, Any]) -> Tuple[bool, bool]:
+def collection_in_endpoint(
+        class_: Dict[str, Any], entrypoint: Dict[str, Any]) -> Tuple[bool, bool]:
     """Check if a given class is in the EntryPoint object as a collection."""
     # Check supportedProperty for the EntryPoint
     try:

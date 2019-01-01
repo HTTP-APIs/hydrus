@@ -13,7 +13,8 @@ def get_classes(apidoc: Dict[str, Any]) -> List[Dict[str, Any]]:
     """Get all the classes in the APIDocumentation."""
     classes = list()
     for class_ in apidoc["supportedClass"]:
-        if class_["@id"] not in ["http://www.w3.org/ns/hydra/core#Collection", "http://www.w3.org/ns/hydra/core#Resource", "vocab:EntryPoint"]:
+        if class_["@id"] not in ["http://www.w3.org/ns/hydra/core#Collection",
+                                 "http://www.w3.org/ns/hydra/core#Resource", "vocab:EntryPoint"]:
             classes.append(class_)
     # print(classes)
     return classes
@@ -31,10 +32,12 @@ def get_all_properties(classes: List[Dict[str, Any]]) -> Set[str]:
     return set(prop_names)
 
 
-def insert_classes(classes: List[Dict[str, Any]], session: scoped_session) -> Optional[Any]:
+def insert_classes(classes: List[Dict[str, Any]],
+                   session: scoped_session) -> Optional[Any]:
     """Insert all the classes as defined in the APIDocumentation into DB."""
     # print(session.query(exists().where(RDFClass.name == "Datastream")).scalar())
-    if not isinstance(session, scoped_session) and not isinstance(session, Session):
+    if not isinstance(session, scoped_session) and not isinstance(
+            session, Session):
         raise TypeError(
             "session is not of type <sqlalchemy.orm.scoping.scoped_session> or <sqlalchemy.orm.session.Session>"
         )
@@ -51,7 +54,8 @@ def insert_classes(classes: List[Dict[str, Any]], session: scoped_session) -> Op
     return None
 
 
-def insert_properties(properties: Set[str], session: scoped_session) -> Optional[Any]:
+def insert_properties(properties: Set[str],
+                      session: scoped_session) -> Optional[Any]:
     """Insert all the properties as defined in the APIDocumentation into DB."""
     prop_list = [BaseProperty(name=prop) for prop in properties
                  if not session.query(exists().where(BaseProperty.name == prop)).scalar()]

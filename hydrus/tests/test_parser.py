@@ -9,7 +9,8 @@ import yaml
 
 def import_doc():
     print("Importing Open Api Documentation ..")
-    abs_path = os.path.abspath("{}/samples/petstore_openapi.yaml".format(os.path.dirname(hydrus.__file__)))
+    abs_path = os.path.abspath(
+        "{}/samples/petstore_openapi.yaml".format(os.path.dirname(hydrus.__file__)))
     with open(abs_path, 'r') as stream:
         try:
             return yaml.load(stream)

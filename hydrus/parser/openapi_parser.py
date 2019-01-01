@@ -294,8 +294,8 @@ def check_for_ref(global_: Dict[str, Any],
                     split('/')
             except KeyError:
                 class_location = \
-                  block["responses"][obj]["schema"]["items"]["$ref"].\
-                  split('/')
+                    block["responses"][obj]["schema"]["items"]["$ref"].\
+                    split('/')
             collection = check_collection(
                 schema_obj=block["responses"][obj]["schema"],
                 method=path)
@@ -382,7 +382,8 @@ def get_parameters(global_: Dict[str, Any],
                 # check if class has been pared
                 if parameter["schema"]["$ref"].split(
                         '/')[2] in global_["class_names"]:
-                    param = "vocab:{}".format(parameter["schema"]["$ref"].split('/')[2])
+                    param = "vocab:{}".format(
+                        parameter["schema"]["$ref"].split('/')[2])
 
                 else:
                     # if not go to that location and parse and add
@@ -392,7 +393,8 @@ def get_parameters(global_: Dict[str, Any],
                             parameter["schema"]["$ref"]),
                         parameter["schema"]["$ref"].split('/')[2],
                         path=path)
-                    param = "vocab:{}".format(parameter["schema"]["$ref"].split('/')[2])
+                    param = "vocab:{}".format(
+                        parameter["schema"]["$ref"].split('/')[2])
             except KeyError:
                 param = ""
 
@@ -487,7 +489,8 @@ def parse(doc: Dict[str, Any]) -> Dict[str, Any]:
     baseURL = try_catch_replacement(doc, "host", "localhost")
     name = try_catch_replacement(doc, "basePath", "api")
     schemes = try_catch_replacement(doc, "schemes", "http")
-    api_doc = HydraDoc(name, title, desc, name, "{}://{}".format(schemes[0],baseURL))
+    api_doc = HydraDoc(name, title, desc, name,
+                       "{}://{}".format(schemes[0], baseURL))
     get_paths(global_)
     for name in global_["class_names"]:
         for prop in global_[name]["prop_definition"]:
