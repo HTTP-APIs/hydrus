@@ -1,4 +1,4 @@
-hydrus
+hydrus [![Build Status](https://travis-ci.org/HTTP-APIs/hydrus.svg?branch=master)](https://travis-ci.org/HTTP-APIs/hydrus)
 ===================
 hydrus is a set of **Python** based tools for easier and efficient creation of Hypermedia driven REST-APIs. hydrus utilises the power of [Linked Data](https://en.wikipedia.org/wiki/Linked_data) to create a powerful REST APIs to serve data.
 hydrus uses the [Hydra(W3C)](http://www.hydra-cg.com/) standard for creation and documentation of it's APIs.
