@@ -38,7 +38,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from hydrus.data.db_models import (Graph, BaseProperty, RDFClass, Instance,
                                    Terminal, GraphIAC, GraphIIT, GraphIII)
 from hydrus.utils import get_doc
-
+from hydrus.helpers import check_write_only_props
 from hydrus.data.exceptions import (
     ClassNotFound,
     InstanceExists,
@@ -97,6 +97,8 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
     for data in data_IAC:
         prop_name = session.query(properties).filter(
             properties.id == data.predicate).one().name
+        if check_write_only_props(type_, prop_name):
+            continue
         class_name = session.query(RDFClass).filter(
             RDFClass.id == data.object_).one().name
         object_template[prop_name] = class_name
@@ -104,6 +106,8 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
     for data in data_III:
         prop_name = session.query(properties).filter(
             properties.id == data.predicate).one().name
+        if check_write_only_props(type_, prop_name):
+            continue
         instance = session.query(Instance).filter(
             Instance.id == data.object_).one()
         # Get class name for instance object
@@ -125,6 +129,8 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
     for data in data_IIT:
         prop_name = session.query(properties).filter(
             properties.id == data.predicate).one().name
+        if check_write_only_props(type_, prop_name):
+            continue
         terminal = session.query(Terminal).filter(
             Terminal.id == data.object_).one()
         try:
