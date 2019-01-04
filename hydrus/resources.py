@@ -48,7 +48,9 @@ from hydrus.helpers import (
     checkEndpoint,
     validObjectList,
     type_match,
-    hydrafy)
+    hydrafy,
+    check_read_only_props,
+    check_required_props)
 from hydrus.utils import get_session, get_doc, get_api_name, get_hydrus_server_url
 
 
@@ -126,13 +128,12 @@ class Item(Resource):
             return auth_response
 
         class_type = get_doc().collections[path]["collection"].class_.title
-
-        if checkClassOp(class_type, "POST"):
+        object_ = json.loads(request.data.decode('utf-8'))
+        if checkClassOp(class_type, "POST") and check_read_only_props(class_type, object_):
             # Check if class_type supports POST operation
-            object_ = json.loads(request.data.decode('utf-8'))
             obj_type = getType(class_type, "POST")
             # Load new object and type
-            if validObject(object_):
+            if validObject(object_) and check_required_props(class_type, object_):
                 if object_["@type"] == obj_type:
                     try:
                         # Update the right ID if the object is valid and matches
@@ -178,7 +179,7 @@ class Item(Resource):
             object_ = json.loads(request.data.decode('utf-8'))
             obj_type = getType(class_type, "PUT")
             # Load new object and type
-            if validObject(object_):
+            if validObject(object_) and check_required_props(class_type, object_):
                 if object_["@type"] == obj_type:
                     try:
                         # Add the object with given ID
@@ -298,7 +299,7 @@ class ItemCollection(Resource):
                 # title of HydraClass object corresponding to collection
                 obj_type = collection.class_.title
 
-                if validObject(object_):
+                if validObject(object_) and check_required_props(obj_type, object_):
                     # If Item in request's JSON is a valid object
                     # ie. @type is one of the keys in object_
                     if object_["@type"] == obj_type:
@@ -327,7 +328,7 @@ class ItemCollection(Resource):
             ).collections:
                 # If path is in parsed_classes but is not a collection
                 obj_type = getType(path, "PUT")
-                if object_["@type"] == obj_type:
+                if object_["@type"] == obj_type and check_required_props(obj_type, object_):
                     if validObject(object_):
                         try:
                             object_id = crud.insert(
@@ -365,29 +366,33 @@ class ItemCollection(Resource):
             if path in get_doc().parsed_classes and "{}Collection".format(
                     path) not in get_doc().collections:
                 obj_type = getType(path, "POST")
-                if validObject(object_):
-                    if object_["@type"] == obj_type:
-                        try:
-                            crud.update_single(
-                                object_=object_,
-                                session=get_session(),
-                                api_name=get_api_name(),
-                                path=path)
-                            headers_ = [
-                                {"Location": "{}/{}/".format(
-                                    get_hydrus_server_url(), get_api_name(), path)}]
-                            response = {
-                                "message": "Object successfully updated"}
-                            return set_response_headers(
-                                jsonify(response), headers=headers_)
-                        except (ClassNotFound, InstanceNotFound,
-                                InstanceExists, PropertyNotFound) as e:
-                            status_code, message = e.get_HTTP()
-                            return set_response_headers(
-                                jsonify(message), status_code=status_code)
 
-                return set_response_headers(
-                    jsonify({400: "Data is not valid"}), status_code=400)
+                if check_read_only_props(obj_type, object_):
+                    if validObject(object_) and check_required_props(obj_type, object_):
+                        if object_["@type"] == obj_type:
+                            try:
+                                crud.update_single(
+                                    object_=object_,
+                                    session=get_session(),
+                                    api_name=get_api_name(),
+                                    path=path)
+                                headers_ = [
+                                    {"Location": "{}/{}/".format(
+                                        get_hydrus_server_url(), get_api_name(), path)}]
+                                response = {
+                                    "message": "Object successfully updated"}
+                                return set_response_headers(
+                                    jsonify(response), headers=headers_)
+                            except (ClassNotFound, InstanceNotFound,
+                                    InstanceExists, PropertyNotFound) as e:
+                                status_code, message = e.get_HTTP()
+                                return set_response_headers(
+                                    jsonify(message), status_code=status_code)
+
+                    return set_response_headers(
+                        jsonify({400: "Data is not valid"}), status_code=400)
+                else:
+                    abort(405)
 
         abort(endpoint_['status'])
 
@@ -442,6 +447,11 @@ class Items(Resource):
                 collection = get_doc().collections[path]["collection"]
                 # title of HydraClass object corresponding to collection
                 obj_type = collection.class_.title
+                incomplete_objects = list()
+                for obj in object_:
+                    if not check_required_props(obj_type, obj):
+                        incomplete_objects.append(obj)
+                        object_.remove(obj)
                 if validObjectList(object_):
                     type_result = type_match(object_, obj_type)
                     # If Item in request's JSON is a valid object
@@ -458,8 +468,14 @@ class Items(Resource):
                                     get_hydrus_server_url(), get_api_name(), path, object_id)}]
                             response = {
                                 "message": "Object with ID {} successfully added".format(object_id)}
-                            return set_response_headers(
-                                jsonify(response), headers=headers_, status_code=201)
+                            if len(incomplete_objects):
+                                response = {"message": "Object(s) missing required property",
+                                            "objects": incomplete_objects}
+                                return set_response_headers(
+                                    jsonify(response), headers=headers_, status_code=202)
+                            else:
+                                return set_response_headers(
+                                    jsonify(response), headers=headers_, status_code=201)
                         except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
                             status_code, message = e.get_HTTP()
                             return set_response_headers(

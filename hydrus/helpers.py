@@ -103,3 +103,19 @@ def checkClassOp(class_type: str, method: str) -> bool:
         if supportedOp.method == method:
             return True
     return False
+
+
+def check_required_props(class_type: str, obj: Dict[str, Any]) -> bool:
+    for prop in get_doc().parsed_classes[class_type]["class"].supportedProperty:
+        if prop.required:
+            if prop.title not in obj:
+                return False
+    return True
+
+
+def check_read_only_props(class_type: str, obj: Dict[str, Any]) -> bool:
+    for prop in get_doc().parsed_classes[class_type]["class"].supportedProperty:
+        if prop.read:
+            if prop.title in obj:
+                return False
+    return True
