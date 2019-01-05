@@ -105,7 +105,7 @@ class Item(Resource):
                     id_,
                     class_type,
                     api_name=get_api_name(),
-                    session=get_session())
+                    session=get_session(), doc=get_doc())
 
                 return set_response_headers(
                     jsonify(hydrafy(response, path=path)))
@@ -143,7 +143,8 @@ class Item(Resource):
                             id_=id_,
                             type_=object_["@type"],
                             session=get_session(),
-                            api_name=get_api_name())
+                            api_name=get_api_name(),
+                            doc=get_doc())
                         headers_ = [
                             {"Location": "{}/{}/{}".format(
                                 get_hydrus_server_url(), get_api_name(), path, object_id)}]
@@ -265,7 +266,8 @@ class ItemCollection(Resource):
                         class_type,
                         api_name=get_api_name(),
                         session=get_session(),
-                        path=path)
+                        path=path,
+                        doc=get_doc())
                     return set_response_headers(
                         jsonify(hydrafy(response, path=path)))
 
@@ -375,7 +377,9 @@ class ItemCollection(Resource):
                                     object_=object_,
                                     session=get_session(),
                                     api_name=get_api_name(),
-                                    path=path)
+                                    path=path,
+                                    doc=get_doc())
+
                                 headers_ = [
                                     {"Location": "{}/{}/".format(
                                         get_hydrus_server_url(), get_api_name(), path)}]

@@ -121,8 +121,8 @@ def check_read_only_props(class_type: str, obj: Dict[str, Any]) -> bool:
     return True
 
 
-def check_write_only_props(class_type: str, prop_name: str) -> bool:
-    for prop in get_doc().parsed_classes[class_type]["class"].supportedProperty:
+def check_write_only_props(class_type: str, prop_name: str, doc) -> bool:
+    for prop in doc.parsed_classes[class_type]["class"].supportedProperty:
         if prop.title == prop_name and prop.write:
             return True
     return False

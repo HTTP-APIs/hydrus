@@ -8,7 +8,7 @@ import hydrus.data.crud as crud
 from hydrus.data.db_models import Base
 from hydrus.data import doc_parse
 from hydrus.hydraspec import doc_maker
-from hydrus.samples.hydra_doc_sample import doc
+from hydrus.samples.hydra_doc_sample import doc as api_doc
 
 import random
 from typing import List
@@ -46,7 +46,7 @@ class TestCRUD(unittest.TestCase):
         self.session = session
 
         self.doc = doc_maker.create_doc(
-            doc, self.HYDRUS_SERVER_URL, self.API_NAME)
+            api_doc, self.HYDRUS_SERVER_URL, self.API_NAME)
 
         test_classes = doc_parse.get_classes(self.doc.generate())
 
@@ -75,7 +75,7 @@ class TestCRUD(unittest.TestCase):
         id_ = "2"
         response = crud.insert(object_=object_, id_=id_, session=self.session)
         object_ = crud.get(id_=id_, type_=object_[
-                           "@type"], session=self.session, api_name="api")
+                           "@type"], session=self.session, api_name="api", doc=self.doc)
         assert isinstance(response, str)
         assert object_["@id"].split("/")[-1] == id_
 
@@ -92,9 +92,10 @@ class TestCRUD(unittest.TestCase):
             type_=object_["@type"],
             object_=new_object,
             session=self.session,
-            api_name="api")
+            api_name="api",
+            doc=self.doc)
         test_object = crud.get(id_=id_, type_=object_[
-                               "@type"], session=self.session, api_name="api")
+                               "@type"], session=self.session, api_name="api", doc=self.doc)
         assert isinstance(insert_response, str)
         assert isinstance(update_response, str)
         assert insert_response == update_response
@@ -116,7 +117,8 @@ class TestCRUD(unittest.TestCase):
                 id_=id_,
                 type_=object_["@type"],
                 session=self.session,
-                api_name="api")
+                api_name="api",
+                doc=self.doc)
         except Exception as e:
             response_code, message = e.get_HTTP()
         assert 404 == response_code
@@ -128,7 +130,7 @@ class TestCRUD(unittest.TestCase):
         response_code = None
         try:
             get_response = crud.get(
-                id_=id_, type_=type_, session=self.session, api_name="api")
+                id_=id_, type_=type_, session=self.session, api_name="api", doc=self.doc)
         except Exception as e:
             response_code, message = e.get_HTTP()
         assert 404 == response_code
@@ -140,7 +142,7 @@ class TestCRUD(unittest.TestCase):
         response_code = None
         try:
             get_response = crud.get(
-                id_=id_, type_=type_, session=self.session, api_name="api")
+                id_=id_, type_=type_, session=self.session, api_name="api", doc=self.doc)
         except Exception as e:
             response_code, message = e.get_HTTP()
         assert 400 == response_code
