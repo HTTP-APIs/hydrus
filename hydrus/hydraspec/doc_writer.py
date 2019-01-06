@@ -22,7 +22,12 @@ class HydraDoc():
     def add_supported_class(
             self, class_: 'HydraClass', collection: Union[bool, 'HydraCollection']=False,
             collection_path: str=None, collectionGet: bool=True, collectionPost: bool=True) -> None:
-        """Add a new supportedClass."""
+        """Add a new supportedClass.
+
+        Raises:
+            TypeError: If `class_` is not an instance of `HydraClass`
+
+        """
         # self.doc["supportedClass"].append(class_.get())
         if not isinstance(class_, HydraClass):
             raise TypeError("Type is not <HydraClass>")
@@ -39,7 +44,12 @@ class HydraDoc():
                                    collection=collection), "collection": collection}
 
     def add_possible_status(self, status: 'HydraStatus') -> None:
-        """Add a new possibleStatus."""
+        """Add a new possibleStatus.
+
+        Raises:
+            TypeError: If `status` is not an intance of `HydraStatus`.
+
+        """
         if not isinstance(status, HydraStatus):
             raise TypeError("Type is not <HydraStatus>")
         self.status.append(status)
@@ -114,7 +124,13 @@ class HydraClass():
 
     def add_supported_prop(
             self, prop: Union['HydraClassProp', 'EntryPointClass', 'EntryPointCollection']) -> None:
-        """Add a new supportedProperty."""
+        """Add a new supportedProperty.
+
+        Raises:
+            TypeError: If `prop` is not an instance of `HydraClassProp` or `EntryPointClass`
+                or `EntryPointCollection`
+
+        """
         if not isinstance(
                 prop, (HydraClassProp, EntryPointClass, EntryPointCollection)):
             raise TypeError("Type is not <HydraClassProp>")
@@ -122,7 +138,12 @@ class HydraClass():
 
     def add_supported_op(
             self, op: Union['EntryPointOp', 'HydraClassOp']) -> None:
-        """Add a new supportedOperation."""
+        """Add a new supportedOperation.
+
+        Raises:
+            TypeError: If `op` is not an instance of `HydraClassOp` or `EntryPointOp`
+
+        """
         if not isinstance(op, (HydraClassOp, EntryPointOp)):
             raise TypeError("Type is not <HydraClassOp>")
         self.supportedOperation.append(op)
@@ -320,7 +341,12 @@ class HydraEntryPoint():
             entrypoint=self)
 
     def add_Class(self, class_: HydraClass) -> None:
-        """Add supportedProperty to the EntryPoint."""
+        """Add supportedProperty to the EntryPoint.
+
+        Raises:
+            TypeError: If `class_` is not an instance of `HydraClass`.
+
+        """
         if not isinstance(class_, HydraClass):
             raise TypeError("Type is not <HydraClass>")
         entrypoint_class = EntryPointClass(class_)
@@ -329,7 +355,12 @@ class HydraEntryPoint():
                          "@id": entrypoint_class.id_, "@type": "@id"})
 
     def add_Collection(self, collection: HydraCollection) -> None:
-        """Add supportedProperty to the EntryPoint."""
+        """Add supportedProperty to the EntryPoint.
+
+        Raises:
+            TypeError: If `collection` is not an instance of `HydraCollection`.
+
+        """
         if not isinstance(collection, HydraCollection):
             raise TypeError("Type is not <HydraCollection>")
         entrypoint_collection = EntryPointCollection(collection)

@@ -15,7 +15,12 @@ from uuid import uuid4
 
 
 def add_user(id_: int, paraphrase: str, session: Session) -> None:
-    """Add new users to the database."""
+    """Add new users to the database.
+
+    Raises:
+        UserExits: If a user with `id_` already exists.
+
+    """
     if session.query(exists().where(User.id == id_)).scalar():
         raise UserExists(id_=id_)
     else:
@@ -102,7 +107,12 @@ def generate_basic_digest(id_: int, paraphrase: str) -> str:
 
 
 def authenticate_user(id_: int, paraphrase: str, session: Session) -> bool:
-    """Authenticate a user based on the ID and his paraphrase."""
+    """Authenticate a user based on the ID and his paraphrase.
+
+    Raises:
+        UserNotFound: If a user with `id_` is not a valid/defined User
+
+    """
     user = None
     try:
         user = session.query(User).filter(User.id == id_).one()
