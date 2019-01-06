@@ -108,3 +108,6 @@ ENV/
 
 # Keys
 *.pem
+
+#.DS_Store file
+hydrus/.DS_Store
