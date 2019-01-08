@@ -6,5 +6,6 @@ python:
   - "3.6-dev"  # 3.6 development branch
   - "3.7-dev"
 install:
+  - pip install -e git+git://github.com/HTTP-APIs/hydra-openapi-parser.git#egg=hydra-openapi-parser
   - pip install -e .
 script: python -m unittest discover
