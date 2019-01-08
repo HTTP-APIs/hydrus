@@ -24,4 +24,4 @@ SQLAlchemy==1.2.10
 thespian==3.9.2
 Werkzeug==0.14.1
 PyYAML==4.2b1
--e git+git://github.com/de-sh/OAIParser#egg=OAIParser
+git+git://github.com/de-sh/OAIParser#egg=OAIParser
