@@ -24,6 +24,7 @@ setup(name='hydrus',
       py_modules=['cli'],
       python_requires='>=3',
       install_requires=dependencies,
+      dependency_links=['git+https://github.com/ShravanDoda/openAPIParser#egg=openAPIParser'],
       packages=find_packages(
           exclude=['contrib', 'docs', 'tests*', 'hydrus.egg-info']),
       package_dir={'hydrus':

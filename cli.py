@@ -9,7 +9,7 @@ from hydrus.hydraspec import doc_maker
 from hydrus.data.db_models import Base
 from hydrus.data.user import add_user
 from gevent.pywsgi import WSGIServer
-from hydrus.parser.openapi_parser import parse
+from openAPIParser.openapi_parser import parse
 from hydrus.samples.hydra_doc_sample import doc as api_document
 from importlib.machinery import SourceFileLoader
 from typing import Tuple
