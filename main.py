@@ -16,7 +16,6 @@ from openAPIParser.openapi_parser import parse
 # from hydrus.examples.drones.doc import doc
 from importlib.machinery import SourceFileLoader
 
-
 doc = SourceFileLoader("doc", "./examples/drones/doc.py").load_module().doc
 
 HYDRUS_SERVER_URL = "http://localhost:8080/"
