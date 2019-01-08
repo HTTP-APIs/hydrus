@@ -3,7 +3,7 @@ import os
 import hydrus
 
 from hydrus.hydraspec.doc_writer import HydraClass
-from hydrus.parser import openapi_parser
+import OAIParser as openapi_parser
 import yaml
 
 
