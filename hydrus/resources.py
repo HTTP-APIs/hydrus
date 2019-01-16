@@ -141,7 +141,7 @@ class Item(Resource):
                         session=get_session(),
                         api_name=get_api_name())
                     headers_ = [
-                        {"Location": "{}/{}/{}".format(
+                        {"Location": "{}{}/{}/{}".format(
                             get_hydrus_server_url(), get_api_name(), path, object_id)}]
                     response = {
                         "message": "Object with ID {} successfully updated".format(object_id)}
@@ -177,7 +177,7 @@ class Item(Resource):
                     object_id = crud.insert(
                         object_=object_, id_=id_, session=get_session())
                     headers_ = [
-                        {"Location": "{}/{}/{}".format(
+                        {"Location": "{}{}/{}/{}".format(
                             get_hydrus_server_url(), get_api_name(), path, object_id)}]
                     response = {
                         "message": "Object with ID {} successfully added".format(object_id)}
@@ -292,7 +292,7 @@ class ItemCollection(Resource):
                         object_id = crud.insert(
                             object_=object_, session=get_session())
                         headers_ = [
-                            {"Location": "{}/{}/{}".format(
+                            {"Location": "{}{}/{}/{}".format(
                                 get_hydrus_server_url(), get_api_name(), path, object_id)}]
                         response = {
                             "message": "Object with ID {} successfully added".format(object_id)}
@@ -315,7 +315,7 @@ class ItemCollection(Resource):
                         object_id = crud.insert(
                             object_=object_, session=get_session())
                         headers_ = [
-                            {"Location": "{}/{}/".format(
+                            {"Location": "{}{}/{}/".format(
                                 get_hydrus_server_url(), get_api_name(), path)}]
                         response = {"message": "Object successfully added"}
                         return set_response_headers(
@@ -355,7 +355,7 @@ class ItemCollection(Resource):
                             api_name=get_api_name(),
                             path=path)
                         headers_ = [
-                            {"Location": "{}/{}/".format(
+                            {"Location": "{}{}/{}/".format(
                                 get_hydrus_server_url(), get_api_name(), path)}]
                         response = {
                             "message": "Object successfully updated"}
@@ -436,7 +436,7 @@ class Items(Resource):
                             object_id = crud.insert_multiple(
                                 objects_=object_, session=get_session(), id_=int_list)
                             headers_ = [
-                                {"Location": "{}/{}/{}".format(
+                                {"Location": "{}{}/{}/{}".format(
                                     get_hydrus_server_url(), get_api_name(), path, object_id)}]
                             response = {
                                 "message": "Object with ID {} successfully added".format(object_id)}
