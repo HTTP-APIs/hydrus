@@ -33,7 +33,12 @@ def get_all_properties(classes: List[Dict[str, Any]]) -> Set[str]:
 
 def insert_classes(classes: List[Dict[str, Any]],
                    session: scoped_session) -> Optional[Any]:
-    """Insert all the classes as defined in the APIDocumentation into DB."""
+    """Insert all the classes as defined in the APIDocumentation into DB.
+
+    Raises:
+        TypeError: If `session` is not an instance of `scoped_session` or `Session`.
+
+    """
     # print(session.query(exists().where(RDFClass.name == "Datastream")).scalar())
     if not isinstance(session, scoped_session) and not isinstance(
             session, Session):

@@ -63,6 +63,12 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
     :param session: sqlalchemy scoped session
     :param path: endpoint
     :return: response to the request
+
+
+    Raises:
+        ClassNotFound: If the `type_` is not a valid/defined RDFClass.
+        InstanceNotFound: If no Instance of the 'type_` class if found.
+
     """
     object_template = {
         "@type": "",
@@ -145,6 +151,18 @@ def insert(object_: Dict[str, Any], session: scoped_session,
     :param session: sqlalchemy scoped session
     :param id_: id of the object to be inserted (optional param)
     :return: ID of object inserted
+
+
+    Raises:
+        ClassNotFound: If `object_["@type"] is not a valid/defined RDFClass.
+        InstanceExists: If an Instance `id_` already exists.
+        PropertyNotFound: If any property name of `object_` other than `@type` or `@context`
+            is not a valid/defined property.
+        NotInstanceProperty: If any property of `object_` is a dictionary but
+            not an Instance property
+        NotAbstractProperty: If any property of `object_` is a
+            valid/defined RDFClass but is not a dictionary neither an Abstract Property
+
     """
     rdf_class = None
     instance = None
@@ -242,6 +260,17 @@ def insert_multiple(objects_: List[Dict[str,
     :param session: scoped session from getSession in utils
     :param id_: optional parameter containing the ids of objects that have to be inserted
     :return: Ids that have been inserted
+
+    Raises:
+        ClassNotFound: If any dict of `objects_` is not a valid/defined RDFClass.
+        InstanceExists: If an Instance with same id already exists.
+        PropertyNotFound: If for any dict in 'objects_' if any property is not
+            a valid/defined property.
+        NotAnInstanceProperty: If any property of a dict in `object_` is a dictionary but
+            not an Instance property
+        NotAnAbstractProperty: If any property of a dict in `object_` is a
+            valid/defined RDFClass but is not a dictionary neither an Abstract Property
+
     """
     # instance list to store instances
     instance_list = list()
@@ -358,6 +387,11 @@ def delete(id_: str, type_: str, session: scoped_session) -> None:
     :param id_: id of object to be deleted
     :param type_: type of object to be deleted
     :param session: sqlalchemy scoped session
+
+    Raises:
+        ClassNotFound: If `type_` does not represent a valid/defined RDFClass.
+        InstanceNotFound: If no instace of type `type_` with id `id_` exists.
+
     """
     try:
         rdf_class = session.query(RDFClass).filter(
@@ -407,6 +441,12 @@ def delete_multiple(
     :param id_: list of ids for objects to be deleted\
     :param type_: type of object to be deleted
     :param session: sqlalchemy scoped session
+
+    Raises:
+        ClassNotFound: If `type_` does not represent a valid/defined RDFClass.
+        InstanceNotFound: If any instance with type 'type_' and any id in 'id_' list
+            does not exist.
+
     """
     id_ = id_.split(',')
     try:
@@ -499,6 +539,10 @@ def get_collection(API_NAME: str,
     :param session: sqlalchemy scoped session
     :param path: endpoint
     :return: response containing all the objects of that particular type_
+
+    Raises:
+        ClassNotFound: If `type_` does not represt a valid/defined RDFClass.
+
     """
     if path is not None:
         collection_template = {
@@ -547,6 +591,11 @@ def get_single(type_: str, api_name: str, session: scoped_session,
     :param session: sqlalchemy scoped session
     :param path: endpoint
     :return: response containing information about a single object
+
+    Raises:
+        ClassNotFound: If `type_` does not represt a valid/defined RDFClass.
+        InstanceNotFound: If no Instance with type `type_` exists.
+
     """
     try:
         rdf_class = session.query(RDFClass).filter(
@@ -573,6 +622,11 @@ def insert_single(object_: Dict[str, Any], session: scoped_session) -> Any:
     :param object_: object to be inserted
     :param session: sqlalchemy scoped session
     :return:
+
+    Raises:
+        ClassNotFound: If `type_` does not represt a valid/defined RDFClass.
+        Instance: If an Instance of type `type_` already exists.
+
     """
     try:
         rdf_class = session.query(RDFClass).filter(
@@ -600,6 +654,11 @@ def update_single(object_: Dict[str,
     :param api_name: api name specified while starting server
     :param path: endpoint
     :return: id of the updated object
+
+    Raises:
+        ClassNotFound: If `object['@type']` does not represt a valid/defined RDFClass.
+        InstanceNotFound: If no Instance of the class exists.
+
     """
     try:
         rdf_class = session.query(RDFClass).filter(
@@ -627,6 +686,11 @@ def delete_single(type_: str, session: scoped_session) -> None:
     :param type_: type of object to be deleted
     :param session: sqlalchemy scoped session
     :return: None
+
+    Raises:
+        ClassNotFound: If `type_` does not represt a valid/defined RDFClass.
+        InstanceNotFound: If no Instance of the class exists.
+
     """
     try:
         rdf_class = session.query(RDFClass).filter(

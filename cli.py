@@ -56,6 +56,11 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
     :param serve            : Starts up the server.
 
     :return                 : None.
+
+
+    Raises:
+        Error: If `hydradoc` is not of a supported format[.py, .jsonld, .yaml].
+
     """
     # The database connection URL
     # See http://docs.sqlalchemy.org/en/rel_1_0/core/engines.html for more info
