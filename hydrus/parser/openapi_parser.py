@@ -235,7 +235,7 @@ def get_class_details(global_: Dict[str,
                                        write=True))
                 else:
                     global_[class_name]["prop_definition"].append(
-                        HydraClassProp("vocab:".format(prop), prop, required=flag,
+                        HydraClassProp("vocab:{}".format(prop), prop, required=flag,
                                        read=True, write=True))
             else:
                 global_[class_name]["prop_definition"].append(HydraClassProp(
@@ -390,7 +390,8 @@ def get_parameters(global_: Dict[str, Any],
                     get_class_details(
                         global_,
                         get_data_at_location(
-                            parameter["schema"]["$ref"]),
+                            parameter["schema"]["$ref"],
+                            doc),
                         parameter["schema"]["$ref"].split('/')[2],
                         path=path)
                     param = "vocab:{}".format(
