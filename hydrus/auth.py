@@ -44,10 +44,9 @@ def verify_user() -> Union[Response, None]:
         auth = check_authorization(request, get_session())
         if auth is False:
             return failed_authentication(True)
-        else:
-            if get_token():
-                token = add_token(request, get_session())
-                return token_response(token)
+        elif get_token():
+            token = add_token(request, get_session())
+            return token_response(token)
     except Exception as e:
         status_code, message = e.get_HTTP()  # type: ignore
         return set_response_headers(jsonify(message), status_code=status_code)
@@ -70,4 +69,5 @@ def check_authentication_response() -> Union[Response, None]:
             return failed_authentication(False)
         else:
             return verify_user()
-    return None
+    else:
+        return None

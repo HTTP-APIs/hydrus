@@ -214,11 +214,10 @@ def convert_literal(literal: Any) -> Optional[Union[bool, str]]:
         "false": False,
         "null": None
     }
-    # Check if literal is in string format
-    if isinstance(literal, str):
-        # Check if the literal is valid
-        if literal in map_:
-            return map_[literal]
+    # Check if literal is in string format and the literal is valid
+    if isinstance(literal, str) and literal in map_:
+        return map_[literal]
+    elif isinstance(literal, str):
         return literal
     elif isinstance(literal, (bool,)) or literal is None:
         return literal

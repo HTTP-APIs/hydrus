@@ -259,9 +259,8 @@ class ViewsTestCase(unittest.TestCase):
                 if "PUT" in class_methods:
                     dummy_object = gen_dummy_object(
                         collection.class_.title, self.doc)
-                    put_response = self.client.put(
-                        '{}/{}'.format(
-                            endpoints[endpoint], uuid.uuid4()), data=json.dumps(dummy_object))
+                    put_response = self.client.put('{}/{}'.format(
+                        endpoints[endpoint], uuid.uuid4()), data=json.dumps(dummy_object))
                     assert put_response.status_code == 201
 
     def test_object_PUT_at_ids(self):
@@ -275,9 +274,7 @@ class ViewsTestCase(unittest.TestCase):
                 collection = self.doc.collections[collection_name]["collection"]
                 class_ = self.doc.parsed_classes[collection.class_.title]["class"]
                 class_methods = [x.method for x in class_.supportedOperation]
-                data_ = {
-                    "data": list()
-                }
+                data_ = {"data": list()}
                 objects = list()
                 ids = ""
                 for index in range(3):
@@ -288,8 +285,7 @@ class ViewsTestCase(unittest.TestCase):
                 if "PUT" in class_methods:
                     put_response = self.client.put(
                         '{}/add/{}'.format(endpoints[endpoint], ids),
-                        data=json.dumps(
-                            data_))
+                        data=json.dumps(data_))
                     assert put_response.status_code == 201
 
     def test_endpointClass_PUT(self):
