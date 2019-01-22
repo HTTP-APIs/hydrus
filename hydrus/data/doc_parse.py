@@ -21,14 +21,14 @@ def get_classes(apidoc: Dict[str, Any]) -> List[Dict[str, Any]]:
 
 def get_all_properties(classes: List[Dict[str, Any]]) -> Set[str]:
     """Get all the properties in the APIDocumentation."""
-    # properties = list()
+    properties = list()
     prop_names = set()  # type: Set[str]
     for class_ in classes:
         for prop in class_["supportedProperty"]:
             if prop["title"] not in prop_names:
                 prop_names.add(prop["title"])
-                # properties.append(prop)
-    return set(prop_names)
+                properties.append(prop)
+    return properties
 
 
 def insert_classes(classes: List[Dict[str, Any]],
@@ -64,8 +64,10 @@ def insert_classes(classes: List[Dict[str, Any]],
 def insert_properties(properties: Set[str],
                       session: scoped_session) -> Optional[Any]:
     """Insert all the properties as defined in the APIDocumentation into DB."""
-    prop_list = [BaseProperty(name=prop) for prop in properties
-                 if not session.query(exists().where(BaseProperty.name == prop)).scalar()]
+    prop_list = [BaseProperty(name=prop["title"], readonly=prop["readonly"],
+                              writeonly=prop["writeonly"], required=prop["required"])
+                 for prop in properties
+                 if not session.query(exists().where(BaseProperty.name == prop["title"])).scalar()]
     session.add_all(prop_list)
     session.commit()
     return None
