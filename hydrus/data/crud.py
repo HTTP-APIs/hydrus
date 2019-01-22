@@ -95,15 +95,19 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
         triples.GraphIIT.subject == id_).all()
 
     for data in data_IAC:
-        prop_name = session.query(properties).filter(
-            properties.id == data.predicate).one().name
+        prop = session.query(properties).filter(
+            properties.id == data.predicate).one()
+        if prop.writeonly:
+            continue
         class_name = session.query(RDFClass).filter(
             RDFClass.id == data.object_).one().name
-        object_template[prop_name] = class_name
+        object_template[prop.name] = class_name
 
     for data in data_III:
-        prop_name = session.query(properties).filter(
-            properties.id == data.predicate).one().name
+        prop = session.query(properties).filter(
+            properties.id == data.predicate).one()
+        if prop.writeonly:
+            continue
         instance = session.query(Instance).filter(
             Instance.id == data.object_).one()
         # Get class name for instance object
@@ -114,24 +118,26 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
         for collection in doc.collections:
             if doc.collections[collection]["collection"].class_.path == inst_class_name:
                 nested_class_path = doc.collections[collection]["collection"].path
-                object_template[prop_name] = "/{}/{}/{}".format(
+                object_template[prop.name] = "/{}/{}/{}".format(
                     api_name, nested_class_path, instance.id)
                 break
 
         if nested_class_path == "":
-            object_template[prop_name] = "/{}/{}/".format(
+            object_template[prop.name] = "/{}/{}/".format(
                 api_name, inst_class_name)
 
     for data in data_IIT:
-        prop_name = session.query(properties).filter(
-            properties.id == data.predicate).one().name
+        prop = session.query(properties).filter(
+            properties.id == data.predicate).one()
+        if prop.writeonly:
+            continue
         terminal = session.query(Terminal).filter(
             Terminal.id == data.object_).one()
         try:
-            object_template[prop_name] = terminal.value
+            object_template[prop.name] = terminal.value
         except BaseException:
             # If terminal is none
-            object_template[prop_name] = ""
+            object_template[prop.name] = ""
     object_template["@type"] = rdf_class.name
 
     if path is not None:
