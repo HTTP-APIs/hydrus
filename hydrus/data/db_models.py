@@ -3,7 +3,7 @@
 from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy.sql import func
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, Boolean
 from sqlalchemy.sql import func
 from typing import Any
 import datetime
@@ -68,6 +68,9 @@ class BaseProperty(Base):
         primary_key=True)
     name = Column(String, unique=True, nullable=False)
     type_ = Column(String)
+    readonly = Column(Boolean)
+    writeonly = Column(Boolean)
+    required = Column(Boolean)
 
     __mapper_args__ = {
         'polymorphic_on': type_,
