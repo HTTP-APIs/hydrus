@@ -537,6 +537,5 @@ if __name__ == "__main__":
             print(exc)
     hydra_doc = parse(doc)
 
-    f = open("../samples/hydra_doc_sample.py", "w")
-    f.write(dump_documentation(hydra_doc))
-    f.close()
+    with open("../samples/hydra_doc_sample.py", "w") as f:
+        f.write(dump_documentation(hydra_doc))
