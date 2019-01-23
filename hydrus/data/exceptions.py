@@ -114,3 +114,16 @@ class UserNotFound(Exception):
         """Return the HTTP response for the Exception."""
         return 400, {
             "message": "The User with ID {} is not a valid/defined User".format(self.id_)}
+
+
+class RequiredPropertyNotFound(Exception):
+    """Error when the object inserted does not have a required property"""
+
+    def __init__(self, type_: int) -> None:
+        """Constructor"""
+        self.type_ = type_
+
+    def get_HTTP(self) -> Tuple[int, Dict[str, str]]:
+        """Return the HTTP response for the Exception."""
+        return 400, {
+            "message": "The required property {} not found".format(self.type_)}
