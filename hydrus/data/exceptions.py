@@ -1,5 +1,5 @@
 """Exceptions for the crud operations."""
-from typing import Dict, Tuple, Union
+from typing import List, Dict, Tuple, Union
 
 
 class ClassNotFound(Exception):
@@ -127,3 +127,19 @@ class RequiredPropertyNotFound(Exception):
         """Return the HTTP response for the Exception."""
         return 400, {
             "message": "The required property {} not found".format(self.type_)}
+
+
+class InsertMultipleObjectsError(Exception):
+    """Error when insertion of multiple objects fails"""
+
+    def __init__(self, objects_: List[Dict[str, str]], message: str) -> None:
+        """Constructor"""
+        self.objects_ = objects_
+        self.message = message
+
+    def get_HTTP(self) -> Tuple[int, Dict[str, str]]:
+        """Return the HTTP response for the Exception."""
+        return 400, {
+            "message": self.message,
+            "objects": self.objects_
+        }
