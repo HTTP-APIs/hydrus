@@ -45,7 +45,10 @@ from hydrus.data.exceptions import (
     PropertyNotFound,
     NotInstanceProperty,
     NotAbstractProperty,
-    InstanceNotFound)
+    InstanceNotFound,
+    RequiredPropertyNotFound,
+    InsertMultipleObjectsError)
+
 # from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.scoping import scoped_session
 from typing import Dict, Optional, Any, List
@@ -168,6 +171,7 @@ def insert(object_: Dict[str, Any], session: scoped_session,
             not an Instance property
         NotAbstractProperty: If any property of `object_` is a
             valid/defined RDFClass but is not a dictionary neither an Abstract Property
+        RequiredPropertyNotFound : If any required property of `object_` is missing
 
     """
     rdf_class = None
@@ -187,6 +191,27 @@ def insert(object_: Dict[str, Any], session: scoped_session,
         instance = Instance(type_=rdf_class.id)
     session.add(instance)
     session.flush()
+
+    doc = get_doc()
+
+    # create a dictionary map for all the required properties of the object
+    for collection in doc.collections:
+        if doc.collections[collection]["collection"].class_.path == rdf_class.name:
+            required_props = {
+                prop.title: False
+                for prop in doc.collections[collection]["collection"].class_.supportedProperty
+                if prop.required
+            }
+            break
+
+    # set the given properties to True
+    for prop_name in object_:
+        required_props[prop_name] = True
+
+    # Raise exception if any of the required properties is missing
+    for prop_name, val in required_props.items():
+        if not val:
+            raise RequiredPropertyNotFound(type_=prop_name)
 
     for prop_name in object_:
 
@@ -285,12 +310,16 @@ def insert_multiple(objects_: List[Dict[str,
     instances = list()
     id_list = id_.split(',')
     instance_id_list = list()
+    rdf_class_name_list = list()
+    failed_objects_list = list()
 
     # the number of objects would be the same as number of instances
     for index in range(len(objects_)):
         try:
             rdf_class = session.query(RDFClass).filter(
                 RDFClass.name == objects_[index]["@type"]).one()
+            # add the class name to the list
+            rdf_class_name_list.append(rdf_class.name)
         except NoResultFound:
             raise ClassNotFound(type_=objects_[index]["@type"])
         if index in range(len(id_list)) and id_list[index] != "":
@@ -310,6 +339,33 @@ def insert_multiple(objects_: List[Dict[str,
             instance = Instance(type_=rdf_class.id)
             instances.append(instance)
 
+    doc = get_doc()
+
+    # check for the required properties in each object
+    for index in range(len(objects_)):
+
+        for collection in doc.collections:
+            if doc.collections[collection]["collection"].class_.path == rdf_class_name_list[index]:
+                required_props = {
+                    prop.title: False
+                    for prop in doc.collections[collection]["collection"].class_.supportedProperty
+                    if prop.required
+                }
+                break
+
+        # set the given properties of the object to True
+        for prop_name in objects_[index]:
+            required_props[prop_name] = True
+
+        # If a required property is missing, remove it from the list of objects and add it to the failed object list
+        for prop_name, val in required_props.items():
+            if not val:
+                failed_objects_list.append(objects_[index])
+                objects_.remove(objects_[index])
+                instances.remove(instances[index])
+                break
+
+    # Add the remaining instances to the session
     session.add_all(instances)
     session.flush()
     for i in range(len(instances)):
@@ -382,9 +438,15 @@ def insert_multiple(objects_: List[Dict[str,
                     else:
                         session.close()
                         raise NotInstanceProperty(type_=prop_name)
-    session.bulk_save_objects(properties_list)
-    session.bulk_save_objects(triples_list)
+
+    session.add_all(properties_list)
+    session.add_all(triples_list)
     session.commit()
+
+    if len(failed_objects_list):
+        raise InsertMultipleObjectsError(objects_=failed_objects_list,
+                                         message="Required properties for the objects not found")
+
     return instance_id_list
 
 
