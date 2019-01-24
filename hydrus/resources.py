@@ -39,7 +39,10 @@ from hydrus.data.exceptions import (
     ClassNotFound,
     InstanceExists,
     PropertyNotFound,
-    InstanceNotFound)
+    InstanceNotFound,
+    RequiredPropertyNotFound,
+    InsertMultipleObjectsError)
+
 from hydrus.helpers import (
     set_response_headers,
     checkClassOp,
@@ -191,7 +194,7 @@ class Item(Resource):
                             "message": "Object with ID {} successfully added".format(object_id)}
                         return set_response_headers(
                             jsonify(response), headers=headers_, status_code=201)
-                    except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
+                    except (ClassNotFound, InstanceExists, PropertyNotFound, RequiredPropertyNotFound) as e:
                         status_code, message = e.get_HTTP()
                         return set_response_headers(
                             jsonify(message), status_code=status_code)
@@ -315,7 +318,7 @@ class ItemCollection(Resource):
                                 "message": "Object with ID {} successfully added".format(object_id)}
                             return set_response_headers(
                                 jsonify(response), headers=headers_, status_code=201)
-                        except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
+                        except (ClassNotFound, InstanceExists, PropertyNotFound, RequiredPropertyNotFound) as e:
                             status_code, message = e.get_HTTP()
                             return set_response_headers(
                                 jsonify(message), status_code=status_code)
@@ -338,7 +341,7 @@ class ItemCollection(Resource):
                             response = {"message": "Object successfully added"}
                             return set_response_headers(
                                 jsonify(response), headers=headers_, status_code=201)
-                        except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
+                        except (ClassNotFound, InstanceExists, PropertyNotFound, RequiredPropertyNotFound) as e:
                             status_code, message = e.get_HTTP()
                             return set_response_headers(
                                 jsonify(message), status_code=status_code)
@@ -460,7 +463,7 @@ class Items(Resource):
                                 "message": "Object with ID {} successfully added".format(object_id)}
                             return set_response_headers(
                                 jsonify(response), headers=headers_, status_code=201)
-                        except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
+                        except (ClassNotFound, InstanceExists, PropertyNotFound, InsertMultipleObjectsError) as e:
                             status_code, message = e.get_HTTP()
                             return set_response_headers(
                                 jsonify(message), status_code=status_code)
