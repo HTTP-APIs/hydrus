@@ -47,7 +47,8 @@ from hydrus.data.exceptions import (
     NotAbstractProperty,
     InstanceNotFound,
     RequiredPropertyNotFound,
-    InsertMultipleObjectsError)
+    InsertMultipleObjectsError,
+    ReadOnlyPropertyException)
 
 # from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.scoping import scoped_session
@@ -154,7 +155,7 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
 
 
 def insert(object_: Dict[str, Any], session: scoped_session,
-           id_: Optional[str] = None) -> str:
+           id_: Optional[str] = None, to_update=False) -> str:
     """Insert an object to database [POST] and returns the inserted object.
     :param object_: object to be inserted
     :param session: sqlalchemy scoped session
@@ -223,6 +224,10 @@ def insert(object_: Dict[str, Any], session: scoped_session,
                 # Adds new Property
                 session.close()
                 raise PropertyNotFound(type_=prop_name)
+
+            # If the object is to be updated, check if any property is readonly
+            if to_update and property_.readonly:
+                raise ReadOnlyPropertyException(type_=prop_name)
 
             # For insertion in III
             if isinstance(object_[prop_name], dict):
@@ -586,8 +591,8 @@ def update(id_: str,
     delete(id_=id_, type_=type_, session=session)
     # Try inserting new object
     try:
-        insert(object_=object_, id_=id_, session=session)
-    except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
+        insert(object_=object_, id_=id_, session=session, to_update=True)
+    except (ClassNotFound, InstanceExists, PropertyNotFound, RequiredPropertyNotFound, ReadOnlyPropertyException) as e:
         # Put old object back
         insert(object_=instance, id_=id_, session=session)
         raise e
