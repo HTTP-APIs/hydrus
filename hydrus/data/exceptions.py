@@ -119,7 +119,7 @@ class UserNotFound(Exception):
 class RequiredPropertyNotFound(Exception):
     """Error when the object inserted does not have a required property"""
 
-    def __init__(self, type_: int) -> None:
+    def __init__(self, type_: str) -> None:
         """Constructor"""
         self.type_ = type_
 
@@ -139,7 +139,21 @@ class InsertMultipleObjectsError(Exception):
 
     def get_HTTP(self) -> Tuple[int, Dict[str, str]]:
         """Return the HTTP response for the Exception."""
-        return 400, {
+        return 202, {
             "message": self.message,
             "objects": self.objects_
         }
+
+
+class ReadOnlyPropertyException(Exception):
+    """Error when the object to be updated has a readonly property"""
+
+    def __init__(self, type_: str) -> None:
+        """Constructor"""
+        self.type_ = type_
+
+    def get_HTTP(self) -> Tuple[int, Dict[str, str]]:
+        """Return the HTTP response for the Exception."""
+        return 400, {
+            "message": "The property {} is readonly".format(self.type_)}
+
