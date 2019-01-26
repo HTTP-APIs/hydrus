@@ -41,7 +41,8 @@ from hydrus.data.exceptions import (
     PropertyNotFound,
     InstanceNotFound,
     RequiredPropertyNotFound,
-    InsertMultipleObjectsError)
+    InsertMultipleObjectsError,
+    ReadOnlyPropertyException)
 
 from hydrus.helpers import (
     set_response_headers,
@@ -154,7 +155,8 @@ class Item(Resource):
                         return set_response_headers(
                             jsonify(response), headers=headers_)
 
-                    except (ClassNotFound, InstanceNotFound, InstanceExists, PropertyNotFound) as e:
+                    except (ClassNotFound, InstanceNotFound, InstanceExists, PropertyNotFound,
+                            RequiredPropertyNotFound, ReadOnlyPropertyException) as e:
                         status_code, message = e.get_HTTP()
                         return set_response_headers(
                             jsonify(message), status_code=status_code)
