@@ -59,7 +59,7 @@ properties = with_polymorphic(BaseProperty, "*")
 
 
 def get(id_: str, type_: str, api_name: str, session: scoped_session,
-        path: str = None) -> Dict[str, str]:
+        path: str = None, for_update = False) -> Dict[str, str]:
     """Retrieve an Instance with given ID from the database [GET].
     :param id_: id of object to be fetched
     :param type_: type of object
@@ -101,7 +101,7 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
     for data in data_IAC:
         prop = session.query(properties).filter(
             properties.id == data.predicate).one()
-        if prop.writeonly:
+        if not for_update and prop.writeonly:
             continue
         class_name = session.query(RDFClass).filter(
             RDFClass.id == data.object_).one().name
@@ -110,7 +110,7 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
     for data in data_III:
         prop = session.query(properties).filter(
             properties.id == data.predicate).one()
-        if prop.writeonly:
+        if not for_update and prop.writeonly:
             continue
         instance = session.query(Instance).filter(
             Instance.id == data.object_).one()
@@ -133,7 +133,7 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
     for data in data_IIT:
         prop = session.query(properties).filter(
             properties.id == data.predicate).one()
-        if prop.writeonly:
+        if not for_update and prop.writeonly:
             continue
         terminal = session.query(Terminal).filter(
             Terminal.id == data.object_).one()
@@ -585,7 +585,7 @@ def update(id_: str,
     :return: id of updated object
     """
     # Keep the object as fail safe
-    instance = get(id_=id_, type_=type_, session=session, api_name=api_name)
+    instance = get(id_=id_, type_=type_, session=session, api_name=api_name, for_update=True)
     instance.pop("@id")
     # Delete the old object
     delete(id_=id_, type_=type_, session=session)
