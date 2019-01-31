@@ -108,3 +108,6 @@ ENV/
 
 # Keys
 *.pem
+
+# Pipenv generated
+Pipfile*
