@@ -130,11 +130,7 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
             "The '@id' of the Documentation must be of the form:\n"
             "'[protocol] :// [base url] / [entrypoint] / vocab'")
 
-    # TODO doc_keys
-
-    result = {}
-    for k, literal in doc_keys.items():
-        result[k] = get_transformed_keys(doc, k, "doc", literal)
+    result = get_transformed_keys(doc, "doc")
 
     # EntryPoint object
     # getEntrypoint checks if all classes have @id
@@ -186,11 +182,7 @@ def create_class(
     if match_obj:
         id_ = match_obj.group(1)
 
-    # TODO class_keys
-
-    result = {}
-    for k, literal in doc_keys.items():
-        result[k] = get_transformed_keys(class_dict, k, "class_dict", literal)
+    result = get_transformed_keys(class_dict, "class_dict")
 
     # See if class_dict is a Collection Class
     # type: Union[Match[Any], bool]
@@ -278,13 +270,8 @@ def convert_literal(literal: Any) -> Optional[Union[bool, str]]:
 def create_property(supported_prop: Dict[str, Any]) -> HydraClassProp:
     """Create a HydraClassProp object from the supportedProperty."""
     # Syntax checks
+    result = get_transformed_keys(supported_prop, "supported_prop")
 
-    # TODO prop_keys
-
-    result = {}
-    for k, literal in doc_keys.items():
-        result[k] = get_transformed_keys(
-            supported_prop, k, "supported_prop", literal)
     # Create the HydraClassProp object
     prop = HydraClassProp(result["property"], result["title"], required=result["required"],
                           read=result["readonly"], write=result["writeonly"])
@@ -367,12 +354,7 @@ def collection_in_endpoint(
 def create_operation(supported_op: Dict[str, Any]) -> HydraClassOp:
     """Create a HyraClassOp object from the supportedOperation."""
     # Syntax checks
-
-    # TODO op_keys
-
-    result = {}
-    for k, literal in doc_keys.items():
-        result[k] = get_transformed_keys(supported_op, k, "supported_op", literal)
+    result = get_transformed_keys(supported_op, "supported_op")
 
     # Create the HydraClassOp object
     op_ = HydraClassOp(result["title"], result["method"],
@@ -383,13 +365,8 @@ def create_operation(supported_op: Dict[str, Any]) -> HydraClassOp:
 def create_status(possible_status: Dict[str, Any]) -> HydraStatus:
     """Create a HydraStatus object from the possibleStatus."""
     # Syntax checks
+    result = get_transformed_keys(possible_status, "possible_status")
 
-    # TODO status keys
-
-    result = {}
-    for k, literal in doc_keys.items():
-        result[k] = get_transformed_keys(
-            possible_status, k, "possible_status", literal)
     # Create the HydraStatus object
     status = HydraStatus(result["statusCode"],
                          result["title"], result["description"])
