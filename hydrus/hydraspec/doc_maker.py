@@ -47,7 +47,7 @@ status_keys = {
 }
 
 
-def get_keys(body_type: str) -> Dict[str: bool]:
+def get_keys(body_type: str) -> Dict[str, bool]:
     """Function returns the appropriate dictionary according to body type
     :param body_type: the type of dict we need
     :return: the required dictionary payload
