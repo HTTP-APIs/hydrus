@@ -77,26 +77,29 @@ def error_mapping(body: str = None) -> str:
     return error_map[body]
 
 
-def input_key_check(
-        body: Dict[str, Any], key: str = None,
-        body_type: str = None, literal: bool = False) -> dict:
-    """Function to validate key inside the dictonary payload
+def get_transformed_keys(
+        body: Dict[str, Any],
+        body_type: str = None) -> Dict[str, str]:
+    """Function to validate and get transformed keys for a body type
     :param body: JSON body in which we have to check the key
-    :param key: To check if its value exit in the body
     :param body_type: Name of JSON body
-    :param literal: To check whether we need to convert the value
-    :return string: Value of the body
+    :return dict: the transformed body
 
     Raises:
         SyntaxError: If the `body` does not include any entry for `key`.
 
     """
-    try:
-        if literal:
-            return convert_literal(body[key])
-        return body[key]
-    except KeyError:
-        raise SyntaxError("{0} [{1}]".format(error_mapping(body_type), key))
+    result = {}
+    for key, literal in get_keys(body_type).items():
+        try:
+            if literal:
+                result[key] = convert_literal(body[key])
+            else:
+                result[key] = body[key]
+        except KeyError:
+            raise SyntaxError("{0} [{1}]".format(error_mapping(body_type), key))
+
+    return result
 
 
 def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
@@ -131,7 +134,7 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
 
     result = {}
     for k, literal in doc_keys.items():
-        result[k] = input_key_check(doc, k, "doc", literal)
+        result[k] = get_transformed_keys(doc, k, "doc", literal)
 
     # EntryPoint object
     # getEntrypoint checks if all classes have @id
@@ -187,7 +190,7 @@ def create_class(
 
     result = {}
     for k, literal in doc_keys.items():
-        result[k] = input_key_check(class_dict, k, "class_dict", literal)
+        result[k] = get_transformed_keys(class_dict, k, "class_dict", literal)
 
     # See if class_dict is a Collection Class
     # type: Union[Match[Any], bool]
@@ -280,7 +283,7 @@ def create_property(supported_prop: Dict[str, Any]) -> HydraClassProp:
 
     result = {}
     for k, literal in doc_keys.items():
-        result[k] = input_key_check(
+        result[k] = get_transformed_keys(
             supported_prop, k, "supported_prop", literal)
     # Create the HydraClassProp object
     prop = HydraClassProp(result["property"], result["title"], required=result["required"],
@@ -369,7 +372,7 @@ def create_operation(supported_op: Dict[str, Any]) -> HydraClassOp:
 
     result = {}
     for k, literal in doc_keys.items():
-        result[k] = input_key_check(supported_op, k, "supported_op", literal)
+        result[k] = get_transformed_keys(supported_op, k, "supported_op", literal)
 
     # Create the HydraClassOp object
     op_ = HydraClassOp(result["title"], result["method"],
@@ -385,7 +388,7 @@ def create_status(possible_status: Dict[str, Any]) -> HydraStatus:
 
     result = {}
     for k, literal in doc_keys.items():
-        result[k] = input_key_check(
+        result[k] = get_transformed_keys(
             possible_status, k, "possible_status", literal)
     # Create the HydraStatus object
     status = HydraStatus(result["statusCode"],
