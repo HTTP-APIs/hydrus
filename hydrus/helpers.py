@@ -1,4 +1,4 @@
-from typing import Dict, Any, List, Optional, Union
+from typing import Dict, Any, List, Optional, Union, Tuple
 
 from flask import Response
 
@@ -121,8 +121,24 @@ def check_read_only_props(class_type: str, obj: Dict[str, Any]) -> bool:
     return True
 
 
-def check_write_only_props(class_type: str, prop_name: str, doc) -> bool:
-    for prop in doc.parsed_classes[class_type]["class"].supportedProperty:
-        if prop.title == prop_name and prop.write:
-            return True
-    return False
+def get_nested_class_path(class_type: str) -> Tuple[str, bool]:
+    for collection in get_doc().collections:
+        if get_doc().collections[collection]["collection"].class_.title == class_type:
+            return get_doc().collections[collection]["collection"].path, True
+
+    return get_doc().parsed_classes[class_type]["class"].path, False
+
+
+def finalize_response(class_type: str, obj: Dict[str, Any]) -> Dict[str, Any]:
+    for prop in get_doc().parsed_classes[class_type]["class"].supportedProperty:
+        if prop.write:
+            obj.pop(prop.title, None)
+        elif 'vocab:' in prop.prop:
+            prop_class = prop.prop.replace("vocab:", "")
+            nested_path, is_collection = get_nested_class_path(prop_class)
+            if is_collection:
+                id = obj[prop.title]
+                obj[prop.title] = "/{}/{}/{}".format(get_api_name(), nested_path, id)
+            else:
+                obj[prop.title] = "/{}/{}".format(get_api_name(), nested_path)
+    return obj

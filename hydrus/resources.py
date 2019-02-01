@@ -50,7 +50,8 @@ from hydrus.helpers import (
     type_match,
     hydrafy,
     check_read_only_props,
-    check_required_props)
+    check_required_props,
+    finalize_response)
 from hydrus.utils import get_session, get_doc, get_api_name, get_hydrus_server_url
 
 
@@ -105,7 +106,9 @@ class Item(Resource):
                     id_,
                     class_type,
                     api_name=get_api_name(),
-                    session=get_session(), doc=get_doc())
+                    session=get_session())
+
+                response = finalize_response(class_type, response)
 
                 return set_response_headers(
                     jsonify(hydrafy(response, path=path)))
@@ -143,8 +146,7 @@ class Item(Resource):
                             id_=id_,
                             type_=object_["@type"],
                             session=get_session(),
-                            api_name=get_api_name(),
-                            doc=get_doc())
+                            api_name=get_api_name())
                         headers_ = [
                             {"Location": "{}/{}/{}".format(
                                 get_hydrus_server_url(), get_api_name(), path, object_id)}]
@@ -249,6 +251,7 @@ class ItemCollection(Resource):
                     # Get collection details from the database
                     response = crud.get_collection(
                         get_api_name(), collection.class_.title, session=get_session(), path=path)
+                    response = finalize_response(collection.class_.title, response)
                     return set_response_headers(
                         jsonify(hydrafy(response, path=path)))
 
@@ -266,8 +269,8 @@ class ItemCollection(Resource):
                         class_type,
                         api_name=get_api_name(),
                         session=get_session(),
-                        path=path,
-                        doc=get_doc())
+                        path=path)
+                    response = finalize_response(class_type, response)
                     return set_response_headers(
                         jsonify(hydrafy(response, path=path)))
 
@@ -377,8 +380,7 @@ class ItemCollection(Resource):
                                     object_=object_,
                                     session=get_session(),
                                     api_name=get_api_name(),
-                                    path=path,
-                                    doc=get_doc())
+                                    path=path)
 
                                 headers_ = [
                                     {"Location": "{}/{}/".format(
