@@ -7,6 +7,45 @@ from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, Hy
 from hydrus.hydraspec.doc_writer import HydraStatus
 from typing import Any, Dict, Match, Optional, Tuple, Union
 
+doc_keys = {
+    "description": False,
+    "title": False,
+    "supportedClass": False,
+    "@context": False,
+    "possibleStatus": False
+}
+
+class_keys = {
+    "supportedProperty": False,
+    "title": False,
+    "description": False,
+    "supportedOperation": False
+}
+
+prop_keys = {
+    "property": False,
+    "title": False,
+    "readonly": True,
+    "writeonly": True,
+    "required": True
+}
+
+operation_keys = {
+    "title": False,
+    "method": False,
+    "expects": True,
+    "returns": True,
+    "possibleStatus": False
+}
+
+status_keys = {
+    "title": False,
+    "method": False,
+    "expects": True,
+    "returns": True,
+    "possibleStatus": False
+}
+
 
 def error_mapping(body: str = None) -> str:
     """Function returns starting error message based on its body type.
@@ -72,13 +111,9 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
         raise SyntaxError(
             "The '@id' of the Documentation must be of the form:\n"
             "'[protocol] :// [base url] / [entrypoint] / vocab'")
-    doc_keys = {
-        "description": False,
-        "title": False,
-        "supportedClass": False,
-        "@context": False,
-        "possibleStatus": False
-    }
+
+    # TODO doc_keys
+
     result = {}
     for k, literal in doc_keys.items():
         result[k] = input_key_check(doc, k, "doc", literal)
@@ -133,12 +168,7 @@ def create_class(
     if match_obj:
         id_ = match_obj.group(1)
 
-    doc_keys = {
-        "supportedProperty": False,
-        "title": False,
-        "description": False,
-        "supportedOperation": False
-    }
+    # TODO class_keys
 
     result = {}
     for k, literal in doc_keys.items():
@@ -231,13 +261,8 @@ def create_property(supported_prop: Dict[str, Any]) -> HydraClassProp:
     """Create a HydraClassProp object from the supportedProperty."""
     # Syntax checks
 
-    doc_keys = {
-        "property": False,
-        "title": False,
-        "readonly": True,
-        "writeonly": True,
-        "required": True
-    }
+    # TODO prop_keys
+
     result = {}
     for k, literal in doc_keys.items():
         result[k] = input_key_check(
@@ -324,13 +349,9 @@ def collection_in_endpoint(
 def create_operation(supported_op: Dict[str, Any]) -> HydraClassOp:
     """Create a HyraClassOp object from the supportedOperation."""
     # Syntax checks
-    doc_keys = {
-        "title": False,
-        "method": False,
-        "expects": True,
-        "returns": True,
-        "possibleStatus": False
-    }
+
+    # TODO op_keys
+
     result = {}
     for k, literal in doc_keys.items():
         result[k] = input_key_check(supported_op, k, "supported_op", literal)
@@ -344,11 +365,9 @@ def create_operation(supported_op: Dict[str, Any]) -> HydraClassOp:
 def create_status(possible_status: Dict[str, Any]) -> HydraStatus:
     """Create a HydraStatus object from the possibleStatus."""
     # Syntax checks
-    doc_keys = {
-        "title": False,
-        "statusCode": False,
-        "description": True
-    }
+
+    # TODO status keys
+
     result = {}
     for k, literal in doc_keys.items():
         result[k] = input_key_check(
