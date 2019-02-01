@@ -30,7 +30,7 @@ prop_keys = {
     "required": True
 }
 
-operation_keys = {
+op_keys = {
     "title": False,
     "method": False,
     "expects": True,
@@ -45,6 +45,21 @@ status_keys = {
     "returns": True,
     "possibleStatus": False
 }
+
+
+def get_keys(body_type: str) -> Dict[str: bool]:
+    """Function returns the appropriate dictionary according to body type
+    :param body_type: the type of dict we need
+    :return: the required dictionary payload
+    """
+    key_map = {
+        "doc": doc_keys,
+        "class_dict": class_keys,
+        "supported_prop": prop_keys,
+        "supported_op": op_keys,
+        "possible_status": status_keys
+    }
+    return key_map[body_type]
 
 
 def error_mapping(body: str = None) -> str:
