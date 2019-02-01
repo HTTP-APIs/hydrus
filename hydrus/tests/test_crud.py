@@ -75,7 +75,7 @@ class TestCRUD(unittest.TestCase):
         id_ = "2"
         response = crud.insert(object_=object_, id_=id_, session=self.session)
         object_ = crud.get(id_=id_, type_=object_[
-                           "@type"], session=self.session, api_name="api", doc=self.doc)
+                           "@type"], session=self.session, api_name="api")
         assert isinstance(response, str)
         assert object_["@id"].split("/")[-1] == id_
 
@@ -92,10 +92,9 @@ class TestCRUD(unittest.TestCase):
             type_=object_["@type"],
             object_=new_object,
             session=self.session,
-            api_name="api",
-            doc=self.doc)
+            api_name="api")
         test_object = crud.get(id_=id_, type_=object_[
-                               "@type"], session=self.session, api_name="api", doc=self.doc)
+                               "@type"], session=self.session, api_name="api")
         assert isinstance(insert_response, str)
         assert isinstance(update_response, str)
         assert insert_response == update_response
@@ -117,8 +116,7 @@ class TestCRUD(unittest.TestCase):
                 id_=id_,
                 type_=object_["@type"],
                 session=self.session,
-                api_name="api",
-                doc=self.doc)
+                api_name="api")
         except Exception as e:
             response_code, message = e.get_HTTP()
         assert 404 == response_code
@@ -130,7 +128,7 @@ class TestCRUD(unittest.TestCase):
         response_code = None
         try:
             get_response = crud.get(
-                id_=id_, type_=type_, session=self.session, api_name="api", doc=self.doc)
+                id_=id_, type_=type_, session=self.session, api_name="api")
         except Exception as e:
             response_code, message = e.get_HTTP()
         assert 404 == response_code
@@ -142,7 +140,7 @@ class TestCRUD(unittest.TestCase):
         response_code = None
         try:
             get_response = crud.get(
-                id_=id_, type_=type_, session=self.session, api_name="api", doc=self.doc)
+                id_=id_, type_=type_, session=self.session, api_name="api")
         except Exception as e:
             response_code, message = e.get_HTTP()
         assert 400 == response_code

@@ -44,8 +44,6 @@ from hydrus.data.exceptions import (
     NotInstanceProperty,
     NotAbstractProperty,
     InstanceNotFound)
-from hydrus.hydraspec.doc_writer import HydraDoc
-from hydrus.helpers import check_write_only_props
 # from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.scoping import scoped_session
 from typing import Dict, Optional, Any, List
@@ -55,14 +53,13 @@ properties = with_polymorphic(BaseProperty, "*")
 
 
 def get(id_: str, type_: str, api_name: str, session: scoped_session,
-        path: str = None, doc: HydraDoc = None) -> Dict[str, str]:
+        path: str = None) -> Dict[str, str]:
     """Retrieve an Instance with given ID from the database [GET].
     :param id_: id of object to be fetched
     :param type_: type of object
     :param api_name: name of api specified while starting server
     :param session: sqlalchemy scoped session
     :param path: endpoint
-    :param doc: Hydra APIDoc
     :return: response to the request
 
 
@@ -98,8 +95,6 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
     for data in data_IAC:
         prop_name = session.query(properties).filter(
             properties.id == data.predicate).one().name
-        if check_write_only_props(type_, prop_name, doc):
-            continue
         class_name = session.query(RDFClass).filter(
             RDFClass.id == data.object_).one().name
         object_template[prop_name] = class_name
@@ -107,30 +102,13 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
     for data in data_III:
         prop_name = session.query(properties).filter(
             properties.id == data.predicate).one().name
-        if check_write_only_props(type_, prop_name, doc):
-            continue
         instance = session.query(Instance).filter(
             Instance.id == data.object_).one()
-        # Get class name for instance object
-        inst_class_name = session.query(RDFClass).filter(
-            RDFClass.id == instance.type_).one().name
-        nested_class_path = ""
-        for collection in doc.collections:
-            if doc.collections[collection]["collection"].class_.path == inst_class_name:
-                nested_class_path = doc.collections[collection]["collection"].path
-                object_template[prop_name] = "/{}/{}/{}".format(
-                    api_name, nested_class_path, instance.id)
-                break
-
-        if nested_class_path == "":
-            object_template[prop_name] = "/{}/{}/".format(
-                api_name, inst_class_name)
+        object_template[prop_name] = instance.id
 
     for data in data_IIT:
         prop_name = session.query(properties).filter(
             properties.id == data.predicate).one().name
-        if check_write_only_props(type_, prop_name, doc):
-            continue
         terminal = session.query(Terminal).filter(
             Terminal.id == data.object_).one()
         try:
@@ -507,8 +485,7 @@ def update(id_: str,
                          str],
            session: scoped_session,
            api_name: str,
-           path: str = None,
-           doc: HydraDoc = None) -> str:
+           path: str = None) -> str:
     """Update an object properties based on the given object [PUT].
     :param id_: if of object to be updated
     :param type_: type of object to be updated
@@ -516,11 +493,10 @@ def update(id_: str,
     :param session: sqlalchemy scoped session
     :param api_name: api name specified while starting server
     :param path: endpoint
-    :param doc: Hydra APIDoc
     :return: id of updated object
     """
     # Keep the object as fail safe
-    instance = get(id_=id_, type_=type_, session=session, api_name=api_name, doc=doc)
+    instance = get(id_=id_, type_=type_, session=session, api_name=api_name)
     instance.pop("@id")
     # Delete the old object
     delete(id_=id_, type_=type_, session=session)
@@ -532,7 +508,7 @@ def update(id_: str,
         insert(object_=instance, id_=id_, session=session)
         raise e
 
-    get(id_=id_, type_=type_, session=session, api_name=api_name, path=path, doc=doc)
+    get(id_=id_, type_=type_, session=session, api_name=api_name, path=path)
     return id_
 
 
@@ -592,13 +568,12 @@ def get_collection(API_NAME: str,
 
 
 def get_single(type_: str, api_name: str, session: scoped_session,
-               path: str = None, doc: HydraDoc = None) -> Dict[str, Any]:
+               path: str = None) -> Dict[str, Any]:
     """Get instance of classes with single objects.
     :param type_: type of object to be updated
     :param api_name: api name specified while starting server
     :param session: sqlalchemy scoped session
     :param path: endpoint
-    :param doc: Hydra APIDoc
     :return: response containing information about a single object
 
     Raises:
@@ -618,7 +593,7 @@ def get_single(type_: str, api_name: str, session: scoped_session,
     except (NoResultFound, IndexError, ValueError):
         raise InstanceNotFound(type_=rdf_class.name)
     object_ = get(instance.id, rdf_class.name,
-                  session=session, api_name=api_name, path=path, doc=doc)
+                  session=session, api_name=api_name, path=path)
     if path is not None:
         object_["@id"] = "/{}/".format(api_name, path)
     else:
@@ -656,13 +631,12 @@ def update_single(object_: Dict[str,
                                 Any],
                   session: scoped_session,
                   api_name: str,
-                  path: str = None, doc: HydraDoc = None) -> int:
+                  path: str = None) -> int:
     """Update instance of classes with single objects.
     :param object_: new object
     :param session: sqlalchemy scoped session
     :param api_name: api name specified while starting server
     :param path: endpoint
-    :param doc: Hydra APIDoc
     :return: id of the updated object
 
     Raises:
@@ -688,8 +662,7 @@ def update_single(object_: Dict[str,
         object_=object_,
         session=session,
         api_name=api_name,
-        path=path,
-        doc=doc)
+        path=path)
 
 
 def delete_single(type_: str, session: scoped_session) -> None:
