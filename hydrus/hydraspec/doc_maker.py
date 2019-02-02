@@ -7,7 +7,7 @@ from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, Hy
 from hydrus.hydraspec.doc_writer import HydraStatus
 from typing import Any, Dict, Match, Optional, Tuple, Union
 
-doc_keys = {
+DOC_KEYS = {
     "description": False,
     "title": False,
     "supportedClass": False,
@@ -15,14 +15,14 @@ doc_keys = {
     "possibleStatus": False
 }
 
-class_keys = {
+CLASS_KEYS = {
     "supportedProperty": False,
     "title": False,
     "description": False,
     "supportedOperation": False
 }
 
-prop_keys = {
+PROP_KEYS = {
     "property": False,
     "title": False,
     "readonly": True,
@@ -30,7 +30,7 @@ prop_keys = {
     "required": True
 }
 
-op_keys = {
+OP_KEYS = {
     "title": False,
     "method": False,
     "expects": True,
@@ -38,7 +38,7 @@ op_keys = {
     "possibleStatus": False
 }
 
-status_keys = {
+STATUS_KEYS = {
     "title": False,
     "method": False,
     "expects": True,
@@ -53,11 +53,11 @@ def get_keys(body_type: str) -> Dict[str, bool]:
     :return: the required dictionary payload
     """
     key_map = {
-        "doc": doc_keys,
-        "class_dict": class_keys,
-        "supported_prop": prop_keys,
-        "supported_op": op_keys,
-        "possible_status": status_keys
+        "doc": DOC_KEYS,
+        "class_dict": CLASS_KEYS,
+        "supported_prop": PROP_KEYS,
+        "supported_op": OP_KEYS,
+        "possible_status": STATUS_KEYS
     }
     return key_map[body_type]
 
