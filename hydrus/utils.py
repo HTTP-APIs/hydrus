@@ -40,6 +40,11 @@ def set_authentication(application: Flask, authentication: bool) -> Iterator:
             <flask.app.Flask>
     :param authentication : Bool. API Auth needed or not
             <bool>
+
+
+    Raises:
+        TypeError: If `authentication` is not a boolean value.
+
     """
     if not isinstance(authentication, bool):
         raise TypeError("Authentication flag must be of type <bool>")
@@ -73,6 +78,10 @@ def set_api_name(application: Flask, api_name: str) -> Iterator:
             <flask.app.Flask>
     :param api_name : API/Server name or EntryPoint
             <str>
+
+    Raises:
+        TypeError: If `api_name` is not a string.
+
     """
     if not isinstance(api_name, str):
         raise TypeError("The api_name is not of type <str>")
@@ -106,6 +115,10 @@ def set_doc(application: Flask, APIDOC: HydraDoc) -> Iterator:
             <flask.app.Flask>
     :param APIDOC : Hydra Documentation object
             <hydrus.hydraspec.doc_writer.HydraDoc>
+
+    Raises:
+        TypeError: If `APIDOC` is not an instance of `HydraDoc`.
+
     """
     if not isinstance(APIDOC, HydraDoc):
         raise TypeError(
@@ -119,7 +132,12 @@ def set_doc(application: Flask, APIDOC: HydraDoc) -> Iterator:
 
 @contextmanager
 def set_token(application: Flask, token: bool) -> Iterator:
-    """Set whether API needs to implement token based authentication."""
+    """Set whether API needs to implement token based authentication.
+
+    Raises:
+        TypeError: If `token` is not a boolean value.
+
+    """
     if not isinstance(token, bool):
         raise TypeError("Token flag must be of type <bool>")
 
@@ -161,6 +179,10 @@ def set_hydrus_server_url(application: Flask, server_url: str) -> Iterator:
             <flask.app.Flask>
     :param server_url : Server URL
             <str>
+
+    Raises:
+        TypeError: If the `server_url` is not a string.
+
     """
     if not isinstance(server_url, str):
         raise TypeError("The server_url is not of type <str>")
@@ -194,6 +216,10 @@ def set_session(application: Flask, DB_SESSION: scoped_session) -> Iterator:
             <flask.app.Flask>
     :param DB_SESSION: SQLalchemy Session object
             <sqlalchemy.orm.session.Session>
+
+    Raises:
+        TypeError: If `DB_SESSION` is not an instance of `scoped_session` or `Session`.
+
     """
     if not isinstance(DB_SESSION, scoped_session) and not isinstance(
             DB_SESSION, Session):

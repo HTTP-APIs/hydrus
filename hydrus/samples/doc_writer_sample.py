@@ -171,6 +171,5 @@ if __name__ == "__main__":
     doc = doc.replace('true', '"true"')
     doc = doc.replace('false', '"false"')
     doc = doc.replace('null', '"null"')
-    f = open("doc_writer_sample_output.py", "w")
-    f.write(doc)
-    f.close()
+    with open("doc_writer_sample_output.py", "w") as f:
+        f.write(doc)
