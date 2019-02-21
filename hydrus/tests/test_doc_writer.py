@@ -148,5 +148,5 @@ class TestDocWriter(unittest.TestCase):
 
         self.assertEqual(expected_context, context.generate())
 
-    if __name__ == '__main__':
-        unittest.main()
+if __name__ == '__main__':
+    unittest.main()

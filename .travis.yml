@@ -8,3 +8,5 @@ python:
 install:
   - pip install -e .
 script: python -m unittest discover
+env:
+  - API_NAME=api PORT=8000

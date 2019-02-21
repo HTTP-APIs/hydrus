@@ -25,3 +25,7 @@ class Pep8Test(unittest.TestCase):
 
         self.assertEqual(check.total_errors, 0, 'PEP8 style errors: %d' %
                          check.total_errors)
+
+if __name__ == '__main__':
+    print("Starting tests ..")
+    unittest.main()
