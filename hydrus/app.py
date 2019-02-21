@@ -31,13 +31,13 @@ except Exception:
 
 session = sessionmaker(bind=engine)()
 
+#
+# Load ApiDoc with doc_maker
+#
 apidoc = doc_maker.create_doc(APIDOC_OBJ, HYDRUS_SERVER_URL, API_NAME)
-
 classes = doc_parse.get_classes(apidoc.generate())
-
 # Get all the properties from the classes
 properties = doc_parse.get_all_properties(classes)
-
 # Insert them into the database
 doc_parse.insert_classes(classes, session)
 doc_parse.insert_properties(properties, session)
@@ -50,11 +50,8 @@ if AUTH:
         add_user(id_=1, paraphrase="test", session=session)
     except UserExists:
         pass
-# Insert them into the database
-doc_parse.insert_classes(classes, session)
-doc_parse.insert_properties(properties, session)
 
-# Create a Hydrus app with the API name you want, default will be "api"
+# Create a Hydrus app
 app = app_factory(API_NAME)
 
 with set_authentication(app, AUTH):
@@ -74,7 +71,7 @@ with set_authentication(app, AUTH):
                         else:
                             # Start the Hydrus app
                             http_server = WSGIServer(('', PORT), app)
-                            print("running server at port", PORT)
+                            logger.info('Running server at port {}'.format(PORT))
                             try:
                                 http_server.serve_forever()
                             except KeyboardInterrupt:

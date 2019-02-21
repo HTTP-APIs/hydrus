@@ -19,21 +19,15 @@ logger = logging.getLogger(__file__)
 
 try:
     DEBUG = bool(os.environ['DEBUG'])
-    logger.error('>>>' + str(DEBUG))
 except KeyError:
     DEBUG = False
 
 # load form environment (as many globals as possible shall be in
 # environment configuration)
-try:
-    PORT = int(os.environ['PORT'])
-    logger.error('>>>' + str(PORT))
-    API_NAME = os.environ['API_NAME']
-    DB_URL = os.environ['DB_URL']
-except KeyError as e:
-    logger.critical('PORT API_NAME DB_URL shall be defined'
-                    'as environment variables')
-    raise
+PORT = int(os.environ['PORT']) if 'PORT' in dict(os.environ).keys() else 8080
+API_NAME = os.environ['API_NAME'] if 'API_NAME' in dict(os.environ).keys() else 'api'
+DB_URL = os.environ['DB_URL'] if 'DB_URL' in dict(os.environ).keys() else 'sqlite:///database.db'
+
 
 # source for the Hydra documentation file can be defined as
 # as environment variable, otherwise it falls back to the example
@@ -58,6 +52,3 @@ except FileNotFoundError:
     raise
 
 HYDRUS_SERVER_URL = 'http://localhost:{}/'.format(PORT)
-
-
-
