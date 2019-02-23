@@ -15,7 +15,12 @@ from uuid import uuid4
 
 
 def add_user(id_: int, paraphrase: str, session: Session) -> None:
-    """Add new users to the database."""
+    """Add new users to the database.
+
+    Raises:
+        UserExits: If a user with `id_` already exists.
+
+    """
     if session.query(exists().where(User.id == id_)).scalar():
         raise UserExists(id_=id_)
     else:
@@ -36,7 +41,7 @@ def check_nonce(request: LocalProxy, session: Session) -> bool:
         session.commit()
         if present > timedelta(0, 0, 0, 0, 1, 0, 0):
             return False
-    except:
+    except BaseException:
         return False
     return True
 
@@ -63,17 +68,14 @@ def add_token(request: LocalProxy, session: Session) -> str:
     id_ = int(request.authorization['username'])
     try:
         token = session.query(Token).filter(Token.user_id == id_).one()
-        present = datetime.now()
-        present = present - token.timestamp
-        if present > timedelta(0, 0, 0, 0, 45, 0, 0):
+        if not token.is_valid():
             update_token = '%030x' % randrange(16**30)
             token.id = update_token
             token.timestamp = datetime.now()
             session.commit()
     except NoResultFound:
         token = '%030x' % randrange(16**30)
-        time = datetime.now()
-        new_token = Token(user_id=id_, id=token, timestamp=time)
+        new_token = Token(user_id=id_, id=token)
         session.add(new_token)
         session.commit()
         return token
@@ -88,11 +90,10 @@ def check_token(request: LocalProxy, session: Session) -> bool:
     try:
         id_ = request.headers['X-Authorization']
         token = session.query(Token).filter(Token.id == id_).one()
-        present = datetime.now()
-        present = present - token.timestamp
-        if present > timedelta(0, 0, 0, 0, 45, 0, 0):
+        if not token.is_valid():
+            token.delete()
             return False
-    except:
+    except BaseException:
         return False
     return True
 
@@ -100,13 +101,18 @@ def check_token(request: LocalProxy, session: Session) -> bool:
 def generate_basic_digest(id_: int, paraphrase: str) -> str:
     """Create the digest to be added to the HTTP Authorization header."""
     paraphrase_digest = sha224(paraphrase.encode('utf-8')).hexdigest()
-    credentials = str(id_) + ':' + paraphrase_digest
+    credentials = '{}:{}'.format(id_, paraphrase_digest)
     digest = base64.b64encode(credentials.encode('utf-8')).decode('utf-8')
     return digest
 
 
 def authenticate_user(id_: int, paraphrase: str, session: Session) -> bool:
-    """Authenticate a user based on the ID and his paraphrase."""
+    """Authenticate a user based on the ID and his paraphrase.
+
+    Raises:
+        UserNotFound: If a user with `id_` is not a valid/defined User
+
+    """
     user = None
     try:
         user = session.query(User).filter(User.id == id_).one()

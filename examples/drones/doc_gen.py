@@ -28,6 +28,13 @@ def doc_gen(API: str, BASE_URL: str) -> HydraDoc:
         "https://schema.org/status", "SensorStatus", False, False, True))
     state.add_supported_prop(HydraClassProp(
         "http://schema.org/identifier", "DroneID", False, False, True))
+    # Operations
+    state.add_supported_op(HydraClassOp("GetState",
+                                        "GET",
+                                        None,
+                                        "vocab:State",
+                                        [{"statusCode": 404, "description": "State not found"},
+                                         {"statusCode": 200, "description": "State Returned"}]))
 
     # Drone Class
     drone = HydraClass("Drone", "Drone", "Class for a drone")
@@ -43,7 +50,8 @@ def doc_gen(API: str, BASE_URL: str) -> HydraDoc:
     drone.add_supported_prop(HydraClassProp(
         "http://schema.org/device", "Sensor", False, False, True))
     # Operations
-    # Drones will submit their state to the server at certain intervals or when some event happens
+    # Drones will submit their state to the server at certain intervals or
+    # when some event happens
     drone.add_supported_op(HydraClassOp("SubmitDrone",
                                         "POST",
                                         "vocab:Drone",
@@ -61,7 +69,8 @@ def doc_gen(API: str, BASE_URL: str) -> HydraDoc:
                                         [{"statusCode": 404, "description": "Drone not found"},
                                          {"statusCode": 200, "description": "Drone Returned"}]))
 
-    # NOTE: Commands are stored in a collection. You may GET a command or you may DELETE it, there is not UPDATE.
+    # NOTE: Commands are stored in a collection. You may GET a command or you
+    # may DELETE it, there is not UPDATE.
     command = HydraClass("Command", "Command", "Class for drone commands")
     command.add_supported_prop(HydraClassProp(
         "http://schema.org/identifier", "DroneID", False, False, True))
@@ -87,7 +96,8 @@ def doc_gen(API: str, BASE_URL: str) -> HydraDoc:
                                           None,
                                           [{"statusCode": 201, "description": "Command deleted"}]))
 
-    # Logs to be accessed mostly by the GUI. Mechanics should add logs for every event.
+    # Logs to be accessed mostly by the GUI. Mechanics should add logs for
+    # every event.
     log = HydraClass("LogEntry", "LogEntry", "Class for a log entry")
     # Subject
     log.add_supported_prop(HydraClassProp(
@@ -184,7 +194,7 @@ def doc_gen(API: str, BASE_URL: str) -> HydraDoc:
                                           [{"statusCode": 200, "description": "Message deleted"}]))
 
     api_doc.add_supported_class(drone, collection=True)
-    api_doc.add_supported_class(state, collection=False)
+    api_doc.add_supported_class(state, collection=True)
     api_doc.add_supported_class(datastream, collection=True)
     api_doc.add_supported_class(log, collection=True)
     api_doc.add_supported_class(area, collection=False)

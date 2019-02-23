@@ -1,15 +1,20 @@
 """Models for Hydra Classes."""
 
 from sqlalchemy import create_engine, ForeignKey
+from sqlalchemy.sql import func
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy.sql import func
 from typing import Any
+import datetime
 import uuid
 # from hydrus.settings import DB_URL
 
 engine = create_engine('sqlite:///database.db')
 
 Base = declarative_base()  # type: Any
+
+EXPIRY_TIME = 2700  # unit: seconds
 
 
 class RDFClass(Base):
@@ -46,6 +51,8 @@ class Instance(Base):
         unique=True,
         primary_key=True)
     type_ = Column(String, ForeignKey("classes.id"), nullable=True)
+    created = Column('created', DateTime, default=func.now())
+    last_modified = Column('last_modified', DateTime, onupdate=func.now())
 
 
 class BaseProperty(Base):
@@ -130,7 +137,8 @@ class Terminal(Base):
 
 
 class Graph(Base):
-    """Model for a graph that store triples of instance from the other models to map relationships."""
+    """Model for a graph that store triples of instance from the other models
+         to map relationships."""
 
     __tablename__ = "graph"
 
@@ -171,8 +179,8 @@ class GraphIAC(Graph):
     """Graph model for Instance >> AbstractProperty >> Class."""
 
     __tablename__ = 'graphiac'
-    id = Column(String, ForeignKey('graph.id'), primary_key=True,default=lambda: str(
-            uuid.uuid4()))
+    id = Column(String, ForeignKey('graph.id'), primary_key=True, default=lambda: str(
+        uuid.uuid4()))
     subject = Column(String, ForeignKey("instances.id"))
     predicate = Column(String, ForeignKey("property.id"))
     object_ = Column(String, ForeignKey("classes.id"))
@@ -191,8 +199,8 @@ class GraphIII(Graph):
     """Graph model for Instance >> InstanceProperty >> Instance."""
 
     __tablename__ = 'graphiii'
-    id = Column(String, ForeignKey('graph.id'), primary_key=True,default=lambda: str(
-            uuid.uuid4()))
+    id = Column(String, ForeignKey('graph.id'), primary_key=True, default=lambda: str(
+        uuid.uuid4()))
     subject = Column(String, ForeignKey("instances.id"))
     predicate = Column(String, ForeignKey("property.id"))
     object_ = Column(String, ForeignKey("instances.id"))
@@ -211,8 +219,8 @@ class GraphIIT(Graph):
     """Graph model for Instance >> InstanceProperty >> Terminal."""
 
     __tablename__ = 'graphiit'
-    id = Column(String, ForeignKey('graph.id'), primary_key=True,default=lambda: str(
-            uuid.uuid4()))
+    id = Column(String, ForeignKey('graph.id'), primary_key=True, default=lambda: str(
+        uuid.uuid4()))
     subject = Column(String, ForeignKey("instances.id"))
     predicate = Column(String, ForeignKey("property.id"))
     object_ = Column(String, ForeignKey("terminals.id"))
@@ -240,9 +248,21 @@ class Token(Base):
     """Model for storing tokens for the users."""
 
     __tablename__ = "tokens"
-    id = Column(String, primary_key=True)
+    id = Column(
+        String,
+        default=lambda: str(
+            uuid.uuid4()),
+        unique=True,
+        primary_key=True)
     user_id = Column(Integer, ForeignKey('user.id'))
-    timestamp = Column(DateTime)
+    timestamp = Column(DateTime, default=func.now())
+    expiry = Column('expiry', DateTime, default=datetime.datetime.utcnow() +
+                    datetime.timedelta(seconds=EXPIRY_TIME))
+
+    def is_valid(self):
+        if self.expiry > datetime.datetime.utcnow():
+            return True
+        return False
 
 
 class Nonce(Base):

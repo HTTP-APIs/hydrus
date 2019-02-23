@@ -8,7 +8,7 @@ from hydrus.hydraspec.doc_writer import HydraStatus
 from typing import Any, Dict, Match, Optional, Tuple, Union
 
 
-def error_mapping(body: str=None) -> str:
+def error_mapping(body: str = None) -> str:
     """Function returns starting error message based on its body type.
     :param body: Params type for error message
     :return string: Error message for input key
@@ -23,13 +23,19 @@ def error_mapping(body: str=None) -> str:
     return error_map[body]
 
 
-def input_key_check(body: Dict[str, Any], key: str=None, body_type: str=None, literal: bool=False) -> dict:
+def input_key_check(
+        body: Dict[str, Any], key: str = None,
+        body_type: str = None, literal: bool = False) -> dict:
     """Function to validate key inside the dictonary payload
     :param body: JSON body in which we have to check the key
     :param key: To check if its value exit in the body
     :param body_type: Name of JSON body
     :param literal: To check whether we need to convert the value
     :return string: Value of the body
+
+    Raises:
+        SyntaxError: If the `body` does not include any entry for `key`.
+
     """
     try:
         if literal:
@@ -39,8 +45,16 @@ def input_key_check(body: Dict[str, Any], key: str=None, body_type: str=None, li
         raise SyntaxError("{0} [{1}]".format(error_mapping(body_type), key))
 
 
-def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str=None, API_NAME: str=None) -> HydraDoc:
-    """Create the HydraDoc object from the API Documentation."""
+def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str = None,
+               API_NAME: str = None) -> HydraDoc:
+    """Create the HydraDoc object from the API Documentation.
+
+    Raises:
+        SyntaxError: If the `doc` doesn't have an entry for `@id` key.
+        SyntaxError: If the `@id` key of the `doc` is not of
+            the form : '[protocol] :// [base url] / [entrypoint] / vocab'
+
+    """
     # Check @id
     try:
         id_ = doc["@id"]
@@ -56,7 +70,8 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str=None, API_NAME: str=N
     # Syntax checks
     else:
         raise SyntaxError(
-            "The '@id' of the Documentation must be of the form:\n'[protocol] :// [base url] / [entrypoint] / vocab'")
+            "The '@id' of the Documentation must be of the form:\n"
+            "'[protocol] :// [base url] / [entrypoint] / vocab'")
     doc_keys = {
         "description": False,
         "title": False,
@@ -103,7 +118,9 @@ def create_doc(doc: Dict[str, Any], HYDRUS_SERVER_URL: str=None, API_NAME: str=N
     return apidoc
 
 
-def create_class(entrypoint: Dict[str, Any], class_dict: Dict[str, Any]) -> Tuple[HydraClass, bool, str]:
+def create_class(
+        entrypoint: Dict[str, Any],
+        class_dict: Dict[str, Any]) -> Tuple[HydraClass, bool, str]:
     """Create HydraClass objects for classes in the API Documentation."""
     # Base classes not used
     exclude_list = ['http://www.w3.org/ns/hydra/core#Resource',
@@ -158,7 +175,15 @@ def create_class(entrypoint: Dict[str, Any], class_dict: Dict[str, Any]) -> Tupl
 
 
 def get_entrypoint(doc: Dict[str, Any]) -> Dict[str, Any]:
-    """Find and return the entrypoint object in the doc."""
+    """Find and return the entrypoint object in the doc.
+
+    Raises:
+        SyntaxError: If any supportedClass in the API Documentation does
+            not have an `@id` key.
+        SyntaxError: If no EntryPoint is found when searching in the Api Documentation.
+
+    """
+
     # Search supportedClass
     for class_ in doc["supportedClass"]:
         # Check the @id for each class
@@ -176,7 +201,13 @@ def get_entrypoint(doc: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def convert_literal(literal: Any) -> Optional[Union[bool, str]]:
-    """Convert JSON literals to Python ones."""
+    """Convert JSON literals to Python ones.
+
+    Raises:
+        TypeError: If `literal` is not a boolean value, a string or None.
+
+    """
+
     # Map for the literals
     map_ = {
         "true": True,
@@ -184,7 +215,7 @@ def convert_literal(literal: Any) -> Optional[Union[bool, str]]:
         "null": None
     }
     # Check if literal is in string format
-    if type(literal) == str:
+    if isinstance(literal, str):
         # Check if the literal is valid
         if literal in map_:
             return map_[literal]
@@ -217,8 +248,18 @@ def create_property(supported_prop: Dict[str, Any]) -> HydraClassProp:
     return prop
 
 
-def class_in_endpoint(class_: Dict[str, Any], entrypoint: Dict[str, Any]) -> Tuple[bool, bool]:
-    """Check if a given class is in the EntryPoint object as a class."""
+def class_in_endpoint(
+        class_: Dict[str, Any], entrypoint: Dict[str, Any]) -> Tuple[bool, bool]:
+    """Check if a given class is in the EntryPoint object as a class.
+
+    Raises:
+        SyntaxError: If the `entrypoint` dictionary does not include the key
+            `supportedProperty`.
+        SyntaxError: If any dictionary in `supportedProperty` list does not include
+            the key `property`.
+        SyntaxError: If any property dictionary does not include the key `label`.
+
+    """
     # Check supportedProperty for the EntryPoint
     try:
         supported_property = entrypoint["supportedProperty"]
@@ -244,8 +285,18 @@ def class_in_endpoint(class_: Dict[str, Any], entrypoint: Dict[str, Any]) -> Tup
     return False, None
 
 
-def collection_in_endpoint(class_: Dict[str, Any], entrypoint: Dict[str, Any]) -> Tuple[bool, bool]:
-    """Check if a given class is in the EntryPoint object as a collection."""
+def collection_in_endpoint(
+        class_: Dict[str, Any], entrypoint: Dict[str, Any]) -> Tuple[bool, bool]:
+    """Check if a given class is in the EntryPoint object as a collection.
+
+    Raises:
+        SyntaxError: If the `entrypoint` dictionary does not include the key
+            `supportedProperty`.
+        SyntaxError: If any dictionary in `supportedProperty` list does not include
+            the key `property`.
+        SyntaxError: If any property dictionary does not include the key `label`.
+
+    """
     # Check supportedProperty for the EntryPoint
     try:
         supported_property = entrypoint["supportedProperty"]
@@ -264,7 +315,7 @@ def collection_in_endpoint(class_: Dict[str, Any], entrypoint: Dict[str, Any]) -
         except KeyError:
             raise SyntaxError("property must have [label]")
         # Match the title with regular expression
-        if label == class_["title"] + "Collection":
+        if label == "{}Collection".format(class_["title"]):
             path = "/".join(property_['@id'].split("/")[1:])
             return True, path
     return False, None
