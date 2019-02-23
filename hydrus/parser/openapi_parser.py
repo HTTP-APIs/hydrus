@@ -5,8 +5,10 @@ Module to take in Open Api Specification and convert it to HYDRA Api Doc
 import yaml
 import json
 from typing import Any, Dict, Match, Optional, Tuple, Union, List, Set
-from hydrus.hydraspec.doc_writer import (HydraDoc, HydraClass,
-                                         HydraClassProp, HydraClassOp)
+from hydra_python_core.doc_writer import (
+    HydraDoc, HydraClass,
+    HydraClassProp, HydraClassOp
+    )
 import sys
 
 

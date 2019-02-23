@@ -12,11 +12,11 @@ Ref- http://flask.pocoo.org/docs/0.12/api/#flask.appcontext_pushed
 Ref- https://speakerdeck.com/mitsuhiko/advanced-flask-patterns-1
 flask.g : Used to attach values to global variables
 doc_writer_sample : Sample script used to create Hydra APIDocumentation
-hydrus.hydraspec.engine : An SQLalchemy DB engine
+hydra_python_core.engine : An SQLalchemy DB engine
 sqlalchemy.orm.sessionmaker : Used to create a SQLalchemy Session
 sqlalchemy.orm.session.Session : SQLalchemy Session class
 Ref- http://docs.sqlalchemy.org/en/latest/orm/session_basics.html
-hydrus.hydraspec.doc_writer.HydraDoc : Class for Hydra Documentation
+hydra_python_core.doc_writer.HydraDoc : Class for Hydra Documentation
 """  # nopep8
 
 from contextlib import contextmanager
@@ -26,7 +26,7 @@ from hydrus.samples import doc_writer_sample
 from hydrus.data.db_models import engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.orm.session import Session
-from hydrus.hydraspec.doc_writer import HydraDoc
+from hydra_python_core.doc_writer import HydraDoc
 from flask.app import Flask
 from typing import Any, Iterator
 
@@ -114,7 +114,7 @@ def set_doc(application: Flask, APIDOC: HydraDoc) -> Iterator:
     :param application: Flask app object
             <flask.app.Flask>
     :param APIDOC : Hydra Documentation object
-            <hydrus.hydraspec.doc_writer.HydraDoc>
+            <hydra_python_core.doc_writer.HydraDoc>
 
     Raises:
         TypeError: If `APIDOC` is not an instance of `HydraDoc`.
@@ -122,7 +122,7 @@ def set_doc(application: Flask, APIDOC: HydraDoc) -> Iterator:
     """
     if not isinstance(APIDOC, HydraDoc):
         raise TypeError(
-            "The API Doc is not of type <hydrus.hydraspec.doc_writer.HydraDoc>")
+            "The API Doc is not of type <hydra_python_core.doc_writer.HydraDoc>")
 
     def handler(sender: Flask, **kwargs: Any) -> None:
         g.doc = APIDOC
@@ -152,7 +152,7 @@ def get_doc() -> HydraDoc:
     Get the server API Documentation.
     Returns and sets doc_writer_sample.api_doc if not found.
     :return apidoc : Hydra Documentation object
-            <hydrus.hydraspec.doc_writer.HydraDoc>
+            <hydra_python_core.doc_writer.HydraDoc>
     """
     try:
         apidoc = getattr(g, 'doc')

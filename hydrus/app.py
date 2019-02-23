@@ -14,7 +14,7 @@ from hydrus.data import doc_parse
 from hydrus.data.db_models import Base
 from hydrus.data.exceptions import UserExists
 from hydrus.data.user import add_user
-from hydrus.hydraspec import doc_maker
+from hydra_python_core import doc_maker
 from hydrus.utils import (
     set_session, set_doc, set_hydrus_server_url,
     set_token, set_api_name, set_authentication)

@@ -1,6 +1,6 @@
 """Sample to create Hydra APIDocumentation using doc_writer."""
 
-from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp
+from hydra_python_core.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp
 from typing import Any, Dict, Union
 
 # Creating the HydraDoc object, this is the primary class for the Doc
