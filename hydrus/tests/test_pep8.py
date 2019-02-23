@@ -22,7 +22,6 @@ class Pep8Test(unittest.TestCase):
                     filename = '{0}/{1}'.format(root, file)
                     filenames.append(filename)
         check = style.check_files(filenames)
-
         self.assertEqual(check.total_errors, 0, 'PEP8 style errors: %d' %
                          check.total_errors)
 

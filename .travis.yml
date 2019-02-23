@@ -6,6 +6,7 @@ python:
   - "3.6-dev"  # 3.6 development branch
   - "3.7-dev"
 install:
+  - pip install -e git+https://github.com/HTTP-APIs/hydra-python-core#egg=hydra_python_core
   - pip install -e .
 script: python -m unittest discover
 env:

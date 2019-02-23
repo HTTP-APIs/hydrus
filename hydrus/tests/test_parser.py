@@ -2,7 +2,7 @@ import unittest
 import os
 import hydrus
 
-from hydrus.hydraspec.doc_writer import HydraClass
+from hydra_python_core.doc_writer import HydraClass
 from hydrus.parser import openapi_parser
 import yaml
 
