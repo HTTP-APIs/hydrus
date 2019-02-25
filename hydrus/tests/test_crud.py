@@ -46,7 +46,7 @@ class TestCRUD(unittest.TestCase):
         self.session = session
 
         self.doc = doc_maker.create_doc(
-            api_doc, self.HYDRUS_SERVER_URL, self.API_NAME)
+            doc, self.HYDRUS_SERVER_URL, self.API_NAME)
 
         test_classes = doc_parse.get_classes(self.doc.generate())
 
