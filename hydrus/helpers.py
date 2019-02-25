@@ -106,6 +106,13 @@ def checkClassOp(class_type: str, method: str) -> bool:
 
 
 def check_required_props(class_type: str, obj: Dict[str, Any]) -> bool:
+    """
+    Check if the object contains all required properties.
+    :param class_type: class name of the object
+    :param obj: object under check
+    :return: True if the object contains all required properties
+             False otherwise.
+    """
     for prop in get_doc().parsed_classes[class_type]["class"].supportedProperty:
         if prop.required:
             if prop.title not in obj:
@@ -114,6 +121,13 @@ def check_required_props(class_type: str, obj: Dict[str, Any]) -> bool:
 
 
 def check_read_only_props(class_type: str, obj: Dict[str, Any]) -> bool:
+    """
+    Check that the object does not contain any read-only properties.
+    :param class_type: class name of the object
+    :param obj: object under check
+    :return: True if the object doesn't contain any read-only properties
+             False otherwise.
+    """
     for prop in get_doc().parsed_classes[class_type]["class"].supportedProperty:
         if prop.read:
             if prop.title in obj:
@@ -122,6 +136,13 @@ def check_read_only_props(class_type: str, obj: Dict[str, Any]) -> bool:
 
 
 def get_nested_class_path(class_type: str) -> Tuple[str, bool]:
+    """
+    Get the path of class
+    :param class_type: class name whose path is needed
+    :return: Tuple, where the first element is the path string and
+             the second element is a boolean, True if the class is a collection class
+             False otherwise.
+    """
     for collection in get_doc().collections:
         if get_doc().collections[collection]["collection"].class_.title == class_type:
             return get_doc().collections[collection]["collection"].path, True
@@ -130,6 +151,14 @@ def get_nested_class_path(class_type: str) -> Tuple[str, bool]:
 
 
 def finalize_response(class_type: str, obj: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    finalize response objects by removing write-only properties and correcting path
+    of nested objects.
+    :param class_type: class name of the object
+    :param obj: object being finalized
+    :return: An object not containing any write-only properties and having proper path
+             of any nested object's url.
+    """
     for prop in get_doc().parsed_classes[class_type]["class"].supportedProperty:
         if prop.write:
             obj.pop(prop.title, None)
