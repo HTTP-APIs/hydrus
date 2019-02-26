@@ -131,24 +131,24 @@ class Item(Resource):
             obj_type = getType(class_type, "POST")
             # Load new object and type
             if validObject(object_) and object_["@type"] == obj_type:
-                try:
-                    # Update the right ID if the object is valid and matches
-                    # type of Item
-                    object_id = crud.update(
-                        object_=object_,
-                        id_=id_,
-                        type_=object_["@type"],
-                        session=get_session(),
-                        api_name=get_api_name())
-                    headers_ = [
-                        {"Location": "{}{}/{}/{}".format(
-                            get_hydrus_server_url(), get_api_name(), path, object_id)}]
-                    response = {
-                        "message": "Object with ID {} successfully updated".format(object_id)}
-                    return set_response_headers(jsonify(response), headers=headers_)
-                except (ClassNotFound, InstanceNotFound, InstanceExists, PropertyNotFound) as e:
-                    status_code, message = e.get_HTTP()
-                    return set_response_headers(jsonify(message), status_code=status_code)
+                    try:
+                        # Update the right ID if the object is valid and matches
+                        # type of Item
+                        object_id = crud.update(
+                            object_=object_,
+                            id_=id_,
+                            type_=object_["@type"],
+                            session=get_session(),
+                            api_name=get_api_name())
+                        headers_ = [{"Location": "{}{}/{}/{}".format(
+                                get_hydrus_server_url(), get_api_name(), path, object_id)}]
+                        response = {
+                            "message": "Object with ID {} successfully updated".format(object_id)}
+                        return set_response_headers(jsonify(response), headers=headers_)
+
+                    except (ClassNotFound, InstanceNotFound, InstanceExists, PropertyNotFound) as e:
+                        status_code, message = e.get_HTTP()
+                        return set_response_headers(jsonify(message), status_code=status_code)
             else:
                 return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
         else:
@@ -172,20 +172,18 @@ class Item(Resource):
             obj_type = getType(class_type, "PUT")
             # Load new object and type
             if validObject(object_) and object_["@type"] == obj_type:
-                try:
-                    # Add the object with given ID
-                    object_id = crud.insert(
-                        object_=object_, id_=id_, session=get_session())
-                    headers_ = [
-                        {"Location": "{}{}/{}/{}".format(
-                            get_hydrus_server_url(), get_api_name(), path, object_id)}]
-                    response = {
-                        "message": "Object with ID {} successfully added".format(object_id)}
-                    return set_response_headers(
-                        jsonify(response), headers=headers_, status_code=201)
-                except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
-                    status_code, message = e.get_HTTP()
-                    return set_response_headers(jsonify(message), status_code=status_code)
+                    try:
+                        # Add the object with given ID
+                        object_id = crud.insert(object_=object_, id_=id_, session=get_session())
+                        headers_ = [{"Location": "{}{}/{}/{}".format(
+                                get_hydrus_server_url(), get_api_name(), path, object_id)}]
+                        response = {
+                            "message": "Object with ID {} successfully added".format(object_id)}
+                        return set_response_headers(
+                            jsonify(response), headers=headers_, status_code=201)
+                    except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
+                        status_code, message = e.get_HTTP()
+                        return set_response_headers(jsonify(message), status_code=status_code)
             else:
                 return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
         else:
@@ -205,8 +203,7 @@ class Item(Resource):
             try:
                 # Delete the Item with ID == id_
                 crud.delete(id_, class_type, session=get_session())
-                response = {
-                    "message": "Object with ID {} successfully deleted".format(id_)}
+                response = {"message": "Object with ID {} successfully deleted".format(id_)}
                 return set_response_headers(jsonify(response))
 
             except (ClassNotFound, InstanceNotFound) as e:
@@ -254,8 +251,7 @@ class ItemCollection(Resource):
                     api_name=get_api_name(),
                     session=get_session(),
                     path=path)
-                return set_response_headers(
-                    jsonify(hydrafy(response, path=path)))
+                return set_response_headers(jsonify(hydrafy(response, path=path)))
 
             except (ClassNotFound, InstanceNotFound) as e:
                 status_code, message = e.get_HTTP()
@@ -289,8 +285,7 @@ class ItemCollection(Resource):
                     # and the right Item type is being added to the collection
                     try:
                         # Insert object and return location in Header
-                        object_id = crud.insert(
-                            object_=object_, session=get_session())
+                        object_id = crud.insert(object_=object_, session=get_session())
                         headers_ = [
                             {"Location": "{}{}/{}/{}".format(
                                 get_hydrus_server_url(), get_api_name(), path, object_id)}]
@@ -312,10 +307,8 @@ class ItemCollection(Resource):
                 obj_type = getType(path, "PUT")
                 if object_["@type"] == obj_type and validObject(object_):
                     try:
-                        object_id = crud.insert(
-                            object_=object_, session=get_session())
-                        headers_ = [
-                            {"Location": "{}{}/{}/".format(
+                        object_id = crud.insert(object_=object_, session=get_session())
+                        headers_ = [{"Location": "{}{}/{}/".format(
                                 get_hydrus_server_url(), get_api_name(), path)}]
                         response = {"message": "Object successfully added"}
                         return set_response_headers(
@@ -354,13 +347,10 @@ class ItemCollection(Resource):
                             session=get_session(),
                             api_name=get_api_name(),
                             path=path)
-                        headers_ = [
-                            {"Location": "{}{}/{}/".format(
+                        headers_ = [{"Location": "{}{}/{}/".format(
                                 get_hydrus_server_url(), get_api_name(), path)}]
-                        response = {
-                            "message": "Object successfully updated"}
-                        return set_response_headers(
-                            jsonify(response), headers=headers_)
+                        response = {"message": "Object successfully updated"}
+                        return set_response_headers(jsonify(response), headers=headers_)
                     except (ClassNotFound, InstanceNotFound,
                             InstanceExists, PropertyNotFound) as e:
                         status_code, message = e.get_HTTP()
@@ -435,8 +425,7 @@ class Items(Resource):
                             # Insert object and return location in Header
                             object_id = crud.insert_multiple(
                                 objects_=object_, session=get_session(), id_=int_list)
-                            headers_ = [
-                                {"Location": "{}{}/{}/{}".format(
+                            headers_ = [{"Location": "{}{}/{}/{}".format(
                                     get_hydrus_server_url(), get_api_name(), path, object_id)}]
                             response = {
                                 "message": "Object with ID {} successfully added".format(object_id)}
@@ -444,11 +433,9 @@ class Items(Resource):
                                 jsonify(response), headers=headers_, status_code=201)
                         except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
                             status_code, message = e.get_HTTP()
-                            return set_response_headers(
-                                jsonify(message), status_code=status_code)
+                            return set_response_headers(jsonify(message), status_code=status_code)
 
-                return set_response_headers(
-                    jsonify({400: "Data is not valid"}), status_code=400)
+                return set_response_headers(jsonify({400: "Data is not valid"}), status_code=400)
 
         abort(endpoint_['status'])
 
@@ -468,16 +455,14 @@ class Items(Resource):
             # Check if class_type supports PUT operation
             try:
                 # Delete the Item with ID == id_
-                crud.delete_multiple(
-                    int_list, class_type, session=get_session())
+                crud.delete_multiple(int_list, class_type, session=get_session())
                 response = {
                     "message": "Object with ID {} successfully deleted".format(int_list.split(','))}
                 return set_response_headers(jsonify(response))
 
             except (ClassNotFound, InstanceNotFound) as e:
                 status_code, message = e.get_HTTP()
-                return set_response_headers(
-                    jsonify(message), status_code=status_code)
+                return set_response_headers(jsonify(message), status_code=status_code)
 
         abort(405)
 
@@ -490,13 +475,11 @@ class Contexts(Resource):
         # Check for collection
         if category in get_doc().collections:
             # type: Union[Dict[str,Any],Dict[int,str]]
-            response = {
-                "@context": get_doc().collections[category]["context"].generate()}
+            response = {"@context": get_doc().collections[category]["context"].generate()}
             return set_response_headers(jsonify(response))
         # Check for non collection class
         elif category in get_doc().parsed_classes:
-            response = {
-                "@context": get_doc().parsed_classes[category]["context"].generate()}
+            response = {"@context": get_doc().parsed_classes[category]["context"].generate()}
             return set_response_headers(jsonify(response))
         else:
             response = {404: "NOT FOUND"}

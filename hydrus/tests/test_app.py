@@ -1,16 +1,14 @@
 """Test for checking if the response format is proper. Run test_crud before running this."""
-# -*- coding: utf-8 -*-
-
 import unittest
 import random
 import string
 import json
 import re
 import uuid
-from hydrus.app import app_factory
+from hydrus.app_factory import app_factory
 from hydrus.utils import set_session, set_doc, set_api_name
 from hydrus.data import doc_parse, crud
-from hydrus.hydraspec import doc_maker
+from hydra_python_core import doc_maker
 from hydrus.samples import doc_writer_sample
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
@@ -476,4 +474,4 @@ if __name__ == '__main__':
     message = """
     Running tests for the app. Checking if all responses are in proper order.
     """
-    print(message)
+    unittest.main()

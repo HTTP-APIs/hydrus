@@ -610,9 +610,9 @@ def get_single(type_: str, api_name: str, session: scoped_session,
     object_ = get(instance.id, rdf_class.name,
                   session=session, api_name=api_name, path=path)
     if path is not None:
-        object_["@id"] = "/{}/".format(api_name, path)
+        object_["@id"] = "/{}/{}".format(api_name, path)
     else:
-        object_["@id"] = "/{}/".format(api_name, type_)
+        object_["@id"] = "/{}/{}".format(api_name, type_)
     return object_
 
 

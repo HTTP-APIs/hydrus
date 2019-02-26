@@ -1,6 +1,7 @@
 # Byte-compiled / optimized / DLL files
 .vscode/**
 .idea/**
+.DS_Store
 
 __pycache__/
 *.py[cod]
@@ -108,3 +109,6 @@ ENV/
 
 # Keys
 *.pem
+
+# Pipenv generated files
+Pipfile*
