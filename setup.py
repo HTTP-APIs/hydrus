@@ -16,7 +16,7 @@ dependencies = [str(package.req) for package in install_requires]
 
 setup(name='hydrus',
       include_package_data=True,
-      version='0.0.1',
+      version='0.1',
       description='A space-based application for W3C HYDRA Draft',
       author='W3C HYDRA development group',
       author_email='public-hydra@w3.org',

@@ -7,7 +7,7 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 import hydrus.data.crud as crud
 from hydrus.data.db_models import Base
 from hydrus.data import doc_parse
-from hydrus.hydraspec import doc_maker
+from hydra_python_core import doc_maker
 from hydrus.samples.hydra_doc_sample import doc
 
 import random
