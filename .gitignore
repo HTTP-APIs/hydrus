@@ -110,5 +110,5 @@ ENV/
 # Keys
 *.pem
 
-# Pipenv generated files
+# Pipenv generated
 Pipfile*
