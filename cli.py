@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 
-from hydrus.app import app_factory
+from hydrus.app_factory import app_factory
 from hydrus.utils import (set_session, set_doc, set_hydrus_server_url,
                           set_token, set_api_name, set_authentication)
 from hydrus.data import doc_parse
@@ -9,7 +9,7 @@ from hydra_python_core import doc_maker
 from hydrus.data.db_models import Base
 from hydrus.data.user import add_user
 from gevent.pywsgi import WSGIServer
-from hydrus_openapi_parser.openapi_parser import parse
+from hydra_openapi_parser.openapi_parser import parse
 from hydrus.samples.hydra_doc_sample import doc as api_document
 from importlib.machinery import SourceFileLoader
 from typing import Tuple
