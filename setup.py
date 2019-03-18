@@ -16,10 +16,10 @@ dependencies = [str(package.req) for package in install_requires]
 
 setup(name='hydrus',
       include_package_data=True,
-      version='0.2',
+      version='0.2.1',
       description='Hydra Ecosystem Flagship Server',
       author='Hydra Ecosystem',
-      author_email='hydraecosystem@@googlegroups.com',
+      author_email='hydraecosystem@googlegroups.com',
       url='https://github.com/HTTP-APIs/hydrus',
       py_modules=['cli'],
       python_requires='>=3',

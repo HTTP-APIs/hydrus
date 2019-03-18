@@ -5,7 +5,8 @@ FROM tiangolo/uwsgi-nginx-flask:flask-python3.5-index-upload
 MAINTAINER Akshay Dahiya <xadahiya@gmail.com>
 
 COPY ./requirements.txt requirements.txt
-RUN pip install -U pip && pip install -r requirements.txt && rm -rf *
+RUN pip install -U pip && pip install --upgrade pip setuptools \ 
+      && pip install -r requirements.txt && rm -rf *
 
 COPY  . /app
 
