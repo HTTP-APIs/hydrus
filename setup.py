@@ -22,7 +22,7 @@ setup(name='hydrus',
       author_email='hydraecosystem@googlegroups.com',
       url='https://github.com/HTTP-APIs/hydrus',
       py_modules=['cli'],
-      python_requires='>=3',
+      python_requires='>=3.5.2',
       install_requires=dependencies,
       packages=find_packages(
           exclude=['contrib', 'docs', 'tests*', 'hydrus.egg-info']),
