@@ -16,13 +16,13 @@ dependencies = [str(package.req) for package in install_requires]
 
 setup(name='hydrus',
       include_package_data=True,
-      version='0.0.1',
-      description='A space-based application for W3C HYDRA Draft',
-      author='W3C HYDRA development group',
-      author_email='public-hydra@w3.org',
+      version='0.2.1',
+      description='Hydra Ecosystem Flagship Server. Deploy REST data for Web 3.0',
+      author='Hydra Ecosystem',
+      author_email='hydraecosystem@googlegroups.com',
       url='https://github.com/HTTP-APIs/hydrus',
       py_modules=['cli'],
-      python_requires='>=3',
+      python_requires='>=3.5.2',
       install_requires=dependencies,
       packages=find_packages(
           exclude=['contrib', 'docs', 'tests*', 'hydrus.egg-info']),

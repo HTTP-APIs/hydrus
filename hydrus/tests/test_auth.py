@@ -2,10 +2,10 @@
 
 import json
 import unittest
-from hydrus.app import app_factory
+from hydrus.app_factory import app_factory
 from hydrus.utils import set_session, set_doc, set_api_name, set_authentication, set_token
 from hydrus.data import doc_parse
-from hydrus.hydraspec import doc_maker
+from hydra_python_core import doc_maker
 from hydrus.samples import doc_writer_sample
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session

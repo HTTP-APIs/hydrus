@@ -1,6 +1,6 @@
 """Sample to create Hydra APIDocumentation using doc_writer."""
 
-from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp
+from hydra_python_core.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp
 from typing import Any, Dict, Union
 
 # Creating the HydraDoc object, this is the primary class for the Doc
@@ -171,6 +171,5 @@ if __name__ == "__main__":
     doc = doc.replace('true', '"true"')
     doc = doc.replace('false', '"false"')
     doc = doc.replace('null', '"null"')
-    f = open("doc_writer_sample_output.py", "w")
-    f.write(doc)
-    f.close()
+    with open("doc_writer_sample_output.py", "w") as f:
+        f.write(doc)

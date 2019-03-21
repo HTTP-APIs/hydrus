@@ -156,11 +156,10 @@ def insert(object_: Dict[str, Any], session: scoped_session,
             RDFClass.name == object_["@type"]).one()
     except NoResultFound:
         raise ClassNotFound(type_=object_["@type"])
-    if id_ is not None:
-        if session.query(exists().where(Instance.id == id_)).scalar():
-            raise InstanceExists(type_=rdf_class.name, id_=id_)
-        else:
-            instance = Instance(id=id_, type_=rdf_class.id)
+    if id_ is not None and session.query(exists().where(Instance.id == id_)).scalar():
+        raise InstanceExists(type_=rdf_class.name, id_=id_)
+    elif id_ is not None:
+        instance = Instance(id=id_, type_=rdf_class.id)
     else:
         instance = Instance(type_=rdf_class.id)
     session.add(instance)
@@ -195,20 +194,20 @@ def insert(object_: Dict[str, Any], session: scoped_session,
                     raise NotInstanceProperty(type_=prop_name)
 
             # For insertion in IAC
+            elif session.query(exists().where(RDFClass.name == str(object_[prop_name]))).scalar() \
+                    and property_.type_ == "PROPERTY" or property_.type_ == "ABSTRACT":
+                property_.type_ = "ABSTRACT"
+                session.add(property_)
+                class_ = session.query(RDFClass).filter(
+                    RDFClass.name == object_[prop_name]).one()
+                triple = GraphIAC(
+                    subject=instance.id,
+                    predicate=property_.id,
+                    object_=class_.id)
+                session.add(triple)
             elif session.query(exists().where(RDFClass.name == str(object_[prop_name]))).scalar():
-                if property_.type_ == "PROPERTY" or property_.type_ == "ABSTRACT":
-                    property_.type_ = "ABSTRACT"
-                    session.add(property_)
-                    class_ = session.query(RDFClass).filter(
-                        RDFClass.name == object_[prop_name]).one()
-                    triple = GraphIAC(
-                        subject=instance.id,
-                        predicate=property_.id,
-                        object_=class_.id)
-                    session.add(triple)
-                else:
-                    session.close()
-                    raise NotAbstractProperty(type_=prop_name)
+                session.close()
+                raise NotAbstractProperty(type_=prop_name)
 
             # For insertion in IIT
             else:
@@ -595,9 +594,9 @@ def get_single(type_: str, api_name: str, session: scoped_session,
     object_ = get(instance.id, rdf_class.name,
                   session=session, api_name=api_name, path=path)
     if path is not None:
-        object_["@id"] = "/{}/".format(api_name, path)
+        object_["@id"] = "/{}/{}".format(api_name, path)
     else:
-        object_["@id"] = "/{}/".format(api_name, type_)
+        object_["@id"] = "/{}/{}".format(api_name, type_)
     return object_
 
 
