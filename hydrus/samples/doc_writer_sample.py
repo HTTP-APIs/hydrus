@@ -57,7 +57,7 @@ prop1_uri = "http://props.hydrus.com/prop1"
 prop1_title = "Prop1"                   # Title of the property
 
 dummyProp1 = HydraClassProp(prop1_uri, prop1_title,
-                            required=False, read=False, write=True)
+                            required=True, read=False, write=True)
 
 
 prop2_uri = "http://props.hydrus.com/prop2"
@@ -122,9 +122,9 @@ class_.add_supported_prop(dummyProp2)
 class_2.add_supported_prop(dummyProp1)
 class_2.add_supported_prop(dummyProp2)
 class_2.add_supported_prop(HydraClassProp(
-    "vocab:dummyClass", "dummyProp", required=False, read=False, write=True))
+    "vocab:dummyClass", "dummyProp", required=False, read=False, write=False))
 class_2.add_supported_prop(HydraClassProp(
-    "vocab:anotherSingleClass", "singleClassProp", required=False, read=False, write=True))
+    "vocab:anotherSingleClass", "singleClassProp", required=False, read=False, write=False))
 class_1.add_supported_prop(dummyProp1)
 # Add the operations to the classes
 class_.add_supported_op(op1)
