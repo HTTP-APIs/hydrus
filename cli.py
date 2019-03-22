@@ -1,15 +1,15 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 
-from hydrus.app import app_factory
+from hydrus.app_factory import app_factory
 from hydrus.utils import (set_session, set_doc, set_hydrus_server_url,
                           set_token, set_api_name, set_authentication)
 from hydrus.data import doc_parse
-from hydrus.hydraspec import doc_maker
+from hydra_python_core import doc_maker
 from hydrus.data.db_models import Base
 from hydrus.data.user import add_user
 from gevent.pywsgi import WSGIServer
-from hydrus.parser.openapi_parser import parse
+from hydra_openapi_parser.openapi_parser import parse
 from hydrus.samples.hydra_doc_sample import doc as api_document
 from importlib.machinery import SourceFileLoader
 from typing import Tuple
@@ -56,6 +56,11 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
     :param serve            : Starts up the server.
 
     :return                 : None.
+
+
+    Raises:
+        Error: If `hydradoc` is not of a supported format[.py, .jsonld, .yaml].
+
     """
     # The database connection URL
     # See http://docs.sqlalchemy.org/en/rel_1_0/core/engines.html for more info
@@ -80,7 +85,7 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
     # Define the Hydra API Documentation
     # NOTE: You can use your own API Documentation and create a HydraDoc object
     # using doc_maker or you may create your own HydraDoc Documentation using
-    # doc_writer [see hydrus/hydraspec/doc_writer_sample]
+    # doc_writer [see hydra_python_core/doc_writer_sample]
     click.echo("Creating the API Documentation")
 
     if hydradoc:
@@ -105,7 +110,7 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
             apidoc = doc_maker.create_doc(doc,
                                           HYDRUS_SERVER_URL, API_NAME)
 
-        except:
+        except BaseException:
             click.echo("Problem parsing specified hydradoc file, "
                        "using sample hydradoc as default.")
             apidoc = doc_maker.create_doc(api_document,
@@ -121,7 +126,7 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
     click.echo("Adding Classes and Properties")
     # Get all the classes from the doc
     # You can also pass dictionary defined in
-    # hydrus/hydraspec/doc_writer_sample_output.py
+    # hydra_python_core/doc_writer_sample_output.py
     classes = doc_parse.get_classes(apidoc.generate())
 
     # Get all the properties from the classes
@@ -156,7 +161,10 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
                             # Start the Hydrus app
                             http_server = WSGIServer(('', port), app)
                             click.echo("Server running at:")
-                            click.echo(HYDRUS_SERVER_URL + API_NAME)
+                            click.echo(
+                                "{}{}".format(
+                                    HYDRUS_SERVER_URL,
+                                    API_NAME))
                             try:
                                 http_server.serve_forever()
                             except KeyboardInterrupt:

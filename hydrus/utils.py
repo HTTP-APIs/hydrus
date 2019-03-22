@@ -12,12 +12,12 @@ Ref- http://flask.pocoo.org/docs/0.12/api/#flask.appcontext_pushed
 Ref- https://speakerdeck.com/mitsuhiko/advanced-flask-patterns-1
 flask.g : Used to attach values to global variables
 doc_writer_sample : Sample script used to create Hydra APIDocumentation
-hydrus.hydraspec.engine : An SQLalchemy DB engine
+hydra_python_core.engine : An SQLalchemy DB engine
 sqlalchemy.orm.sessionmaker : Used to create a SQLalchemy Session
 sqlalchemy.orm.session.Session : SQLalchemy Session class
 Ref- http://docs.sqlalchemy.org/en/latest/orm/session_basics.html
-hydrus.hydraspec.doc_writer.HydraDoc : Class for Hydra Documentation
-"""
+hydra_python_core.doc_writer.HydraDoc : Class for Hydra Documentation
+"""  # nopep8
 
 from contextlib import contextmanager
 from flask import appcontext_pushed
@@ -26,7 +26,7 @@ from hydrus.samples import doc_writer_sample
 from hydrus.data.db_models import engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.orm.session import Session
-from hydrus.hydraspec.doc_writer import HydraDoc
+from hydra_python_core.doc_writer import HydraDoc
 from flask.app import Flask
 from typing import Any, Iterator
 
@@ -40,6 +40,11 @@ def set_authentication(application: Flask, authentication: bool) -> Iterator:
             <flask.app.Flask>
     :param authentication : Bool. API Auth needed or not
             <bool>
+
+
+    Raises:
+        TypeError: If `authentication` is not a boolean value.
+
     """
     if not isinstance(authentication, bool):
         raise TypeError("Authentication flag must be of type <bool>")
@@ -73,6 +78,10 @@ def set_api_name(application: Flask, api_name: str) -> Iterator:
             <flask.app.Flask>
     :param api_name : API/Server name or EntryPoint
             <str>
+
+    Raises:
+        TypeError: If `api_name` is not a string.
+
     """
     if not isinstance(api_name, str):
         raise TypeError("The api_name is not of type <str>")
@@ -105,11 +114,15 @@ def set_doc(application: Flask, APIDOC: HydraDoc) -> Iterator:
     :param application: Flask app object
             <flask.app.Flask>
     :param APIDOC : Hydra Documentation object
-            <hydrus.hydraspec.doc_writer.HydraDoc>
+            <hydra_python_core.doc_writer.HydraDoc>
+
+    Raises:
+        TypeError: If `APIDOC` is not an instance of `HydraDoc`.
+
     """
     if not isinstance(APIDOC, HydraDoc):
         raise TypeError(
-            "The API Doc is not of type <hydrus.hydraspec.doc_writer.HydraDoc>")
+            "The API Doc is not of type <hydra_python_core.doc_writer.HydraDoc>")
 
     def handler(sender: Flask, **kwargs: Any) -> None:
         g.doc = APIDOC
@@ -119,7 +132,12 @@ def set_doc(application: Flask, APIDOC: HydraDoc) -> Iterator:
 
 @contextmanager
 def set_token(application: Flask, token: bool) -> Iterator:
-    """Set whether API needs to implement token based authentication."""
+    """Set whether API needs to implement token based authentication.
+
+    Raises:
+        TypeError: If `token` is not a boolean value.
+
+    """
     if not isinstance(token, bool):
         raise TypeError("Token flag must be of type <bool>")
 
@@ -134,7 +152,7 @@ def get_doc() -> HydraDoc:
     Get the server API Documentation.
     Returns and sets doc_writer_sample.api_doc if not found.
     :return apidoc : Hydra Documentation object
-            <hydrus.hydraspec.doc_writer.HydraDoc>
+            <hydra_python_core.doc_writer.HydraDoc>
     """
     try:
         apidoc = getattr(g, 'doc')
@@ -161,6 +179,10 @@ def set_hydrus_server_url(application: Flask, server_url: str) -> Iterator:
             <flask.app.Flask>
     :param server_url : Server URL
             <str>
+
+    Raises:
+        TypeError: If the `server_url` is not a string.
+
     """
     if not isinstance(server_url, str):
         raise TypeError("The server_url is not of type <str>")
@@ -194,10 +216,16 @@ def set_session(application: Flask, DB_SESSION: scoped_session) -> Iterator:
             <flask.app.Flask>
     :param DB_SESSION: SQLalchemy Session object
             <sqlalchemy.orm.session.Session>
+
+    Raises:
+        TypeError: If `DB_SESSION` is not an instance of `scoped_session` or `Session`.
+
     """
-    if not isinstance(DB_SESSION, scoped_session) and not isinstance(DB_SESSION, Session):
+    if not isinstance(DB_SESSION, scoped_session) and not isinstance(
+            DB_SESSION, Session):
         raise TypeError(
-            "The API Doc is not of type <sqlalchemy.orm.session.Session> or <sqlalchemy.orm.scoping.scoped_session>")
+            "The API Doc is not of type <sqlalchemy.orm.session.Session> or"
+            " <sqlalchemy.orm.scoping.scoped_session>")
 
     def handler(sender: Flask, **kwargs: Any) -> None:
         g.dbsession = DB_SESSION

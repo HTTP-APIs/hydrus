@@ -6,7 +6,8 @@
     sqlalchemy.orm.with_polymorphic : Load columns for inheriting classes.
     Ref : http://docs.sqlalchemy.org/en/latest/orm/query.html
 
-    sqlalchemy.exists : A convenience method that turns a query into an EXISTS subquery of the form EXISTS (SELECT 1 FROM … WHERE …).
+    sqlalchemy.exists : A convenience method that turns a query into an EXISTS subquery
+    of the form EXISTS (SELECT 1 FROM … WHERE …).
     Ref : http://docs.sqlalchemy.org/en/latest/orm/query.html
 
     sqlalchemy.orm.exc.NoResultFound : A database result was required but none was found.
@@ -29,13 +30,14 @@
     hydrus.data.exceptions : Contains all exceptions .
     typing : Module which provides support for type hints .
 
-"""
+"""  # nopep8
 
 from sqlalchemy.orm import with_polymorphic
 from sqlalchemy import exists
 from sqlalchemy.orm.exc import NoResultFound
 from hydrus.data.db_models import (Graph, BaseProperty, RDFClass, Instance,
                                    Terminal, GraphIAC, GraphIIT, GraphIII)
+from hydrus.utils import get_doc
 
 from hydrus.data.exceptions import (
     ClassNotFound,
@@ -53,15 +55,20 @@ properties = with_polymorphic(BaseProperty, "*")
 
 
 def get(id_: str, type_: str, api_name: str, session: scoped_session,
-        recursive: bool = False, path: str=None) -> Dict[str, str]:
+        path: str = None) -> Dict[str, str]:
     """Retrieve an Instance with given ID from the database [GET].
     :param id_: id of object to be fetched
     :param type_: type of object
     :param api_name: name of api specified while starting server
     :param session: sqlalchemy scoped session
-    :param recursive: flag used to form value for key "@id"
     :param path: endpoint
     :return: response to the request
+
+
+    Raises:
+        ClassNotFound: If the `type_` is not a valid/defined RDFClass.
+        InstanceNotFound: If no Instance of the 'type_` class if found.
+
     """
     object_template = {
         "@type": "",
@@ -102,10 +109,18 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
         # Get class name for instance object
         inst_class_name = session.query(RDFClass).filter(
             RDFClass.id == instance.type_).one().name
-        # Recursive call should get the instance needed
-        object_ = get(id_=instance.id, type_=inst_class_name,
-                      session=session, recursive=True, api_name=api_name)
-        object_template[prop_name] = object_
+        doc = get_doc()
+        nested_class_path = ""
+        for collection in doc.collections:
+            if doc.collections[collection]["collection"].class_.path == inst_class_name:
+                nested_class_path = doc.collections[collection]["collection"].path
+                object_template[prop_name] = "/{}/{}/{}".format(
+                    api_name, nested_class_path, instance.id)
+                break
+
+        if nested_class_path == "":
+            object_template[prop_name] = "/{}/{}/".format(
+                api_name, inst_class_name)
 
     for data in data_IIT:
         prop_name = session.query(properties).filter(
@@ -118,24 +133,36 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
             # If terminal is none
             object_template[prop_name] = ""
     object_template["@type"] = rdf_class.name
-    if not recursive:
-        if path is not None:
-            object_template["@id"] = "/" + api_name + \
-                                     "/" + path + "Collection/" + str(id_)
-        else:
-            object_template["@id"] = "/" + api_name + \
-                                     "/" + type_ + "Collection/" + str(id_)
+
+    if path is not None:
+        object_template["@id"] = "/{}/{}Collection/{}".format(
+            api_name, path, id_)
+    else:
+        object_template["@id"] = "/{}/{}Collection/{}".format(
+            api_name, type_, id_)
 
     return object_template
 
 
 def insert(object_: Dict[str, Any], session: scoped_session,
-           id_: Optional[str] =None) -> str:
+           id_: Optional[str] = None) -> str:
     """Insert an object to database [POST] and returns the inserted object.
     :param object_: object to be inserted
     :param session: sqlalchemy scoped session
     :param id_: id of the object to be inserted (optional param)
     :return: ID of object inserted
+
+
+    Raises:
+        ClassNotFound: If `object_["@type"] is not a valid/defined RDFClass.
+        InstanceExists: If an Instance `id_` already exists.
+        PropertyNotFound: If any property name of `object_` other than `@type` or `@context`
+            is not a valid/defined property.
+        NotInstanceProperty: If any property of `object_` is a dictionary but
+            not an Instance property
+        NotAbstractProperty: If any property of `object_` is a
+            valid/defined RDFClass but is not a dictionary neither an Abstract Property
+
     """
     rdf_class = None
     instance = None
@@ -145,11 +172,10 @@ def insert(object_: Dict[str, Any], session: scoped_session,
             RDFClass.name == object_["@type"]).one()
     except NoResultFound:
         raise ClassNotFound(type_=object_["@type"])
-    if id_ is not None:
-        if session.query(exists().where(Instance.id == id_)).scalar():
-            raise InstanceExists(type_=rdf_class.name, id_=id_)
-        else:
-            instance = Instance(id=id_, type_=rdf_class.id)
+    if id_ is not None and session.query(exists().where(Instance.id == id_)).scalar():
+        raise InstanceExists(type_=rdf_class.name, id_=id_)
+    elif id_ is not None:
+        instance = Instance(id=id_, type_=rdf_class.id)
     else:
         instance = Instance(type_=rdf_class.id)
     session.add(instance)
@@ -184,26 +210,26 @@ def insert(object_: Dict[str, Any], session: scoped_session,
                     raise NotInstanceProperty(type_=prop_name)
 
             # For insertion in IAC
+            elif session.query(exists().where(RDFClass.name == str(object_[prop_name]))).scalar() \
+                    and property_.type_ == "PROPERTY" or property_.type_ == "ABSTRACT":
+                property_.type_ = "ABSTRACT"
+                session.add(property_)
+                class_ = session.query(RDFClass).filter(
+                    RDFClass.name == object_[prop_name]).one()
+                triple = GraphIAC(
+                    subject=instance.id,
+                    predicate=property_.id,
+                    object_=class_.id)
+                session.add(triple)
             elif session.query(exists().where(RDFClass.name == str(object_[prop_name]))).scalar():
-                if property_.type_ == "PROPERTY" or property_.type_ == "ABSTRACT":
-                    property_.type_ = "ABSTRACT"
-                    session.add(property_)
-                    class_ = session.query(RDFClass).filter(
-                        RDFClass.name == object_[prop_name]).one()
-                    triple = GraphIAC(
-                        subject=instance.id,
-                        predicate=property_.id,
-                        object_=class_.id)
-                    session.add(triple)
-                else:
-                    session.close()
-                    raise NotAbstractProperty(type_=prop_name)
+                session.close()
+                raise NotAbstractProperty(type_=prop_name)
 
             # For insertion in IIT
             else:
                 terminal = Terminal(value=object_[prop_name])
                 session.add(terminal)
-                session.flush()     # Assigns ID without committing
+                session.flush()  # Assigns ID without committing
 
                 if property_.type_ == "PROPERTY" or property_.type_ == "INSTANCE":
                     property_.type_ = "INSTANCE"
@@ -233,6 +259,17 @@ def insert_multiple(objects_: List[Dict[str,
     :param session: scoped session from getSession in utils
     :param id_: optional parameter containing the ids of objects that have to be inserted
     :return: Ids that have been inserted
+
+    Raises:
+        ClassNotFound: If any dict of `objects_` is not a valid/defined RDFClass.
+        InstanceExists: If an Instance with same id already exists.
+        PropertyNotFound: If for any dict in 'objects_' if any property is not
+            a valid/defined property.
+        NotAnInstanceProperty: If any property of a dict in `object_` is a dictionary but
+            not an Instance property
+        NotAnAbstractProperty: If any property of a dict in `object_` is a
+            valid/defined RDFClass but is not a dictionary neither an Abstract Property
+
     """
     # instance list to store instances
     instance_list = list()
@@ -251,11 +288,11 @@ def insert_multiple(objects_: List[Dict[str,
             raise ClassNotFound(type_=objects_[index]["@type"])
         if index in range(len(id_list)) and id_list[index] != "":
             if session.query(
-                exists().where(
-                    Instance.id == id_list[index])).scalar():
+                    exists().where(
+                        Instance.id == id_list[index])).scalar():
                 print(session.query(
-                exists().where(
-                    Instance.id == id_list[index])))
+                    exists().where(
+                        Instance.id == id_list[index])))
                 # TODO handle where intance already exists , if instance is
                 # fetched later anyways remove this
                 raise InstanceExists(type_=rdf_class.name, id_=id_list[index])
@@ -302,7 +339,8 @@ def insert_multiple(objects_: List[Dict[str,
                         raise NotInstanceProperty(type_=prop_name)
 
                 # For insertion in IAC
-                elif session.query(exists().where(RDFClass.name == str(objects_[index][prop_name]))).scalar():
+                elif session.query(
+                        exists().where(RDFClass.name == str(objects_[index][prop_name]))).scalar():
                     if property_.type_ == "PROPERTY" or property_.type_ == "ABSTRACT":
                         property_.type_ = "ABSTRACT"
                         properties_list.append(property_)
@@ -322,7 +360,7 @@ def insert_multiple(objects_: List[Dict[str,
                 else:
                     terminal = Terminal(value=objects_[index][prop_name])
                     session.add(terminal)
-                    session.flush()     # Assigns ID without committing
+                    session.flush()  # Assigns ID without committing
 
                     if property_.type_ == "PROPERTY" or property_.type_ == "INSTANCE":
                         property_.type_ = "INSTANCE"
@@ -343,12 +381,16 @@ def insert_multiple(objects_: List[Dict[str,
     return instance_id_list
 
 
-
 def delete(id_: str, type_: str, session: scoped_session) -> None:
     """Delete an Instance and all its relations from DB given id [DELETE].
     :param id_: id of object to be deleted
     :param type_: type of object to be deleted
     :param session: sqlalchemy scoped session
+
+    Raises:
+        ClassNotFound: If `type_` does not represent a valid/defined RDFClass.
+        InstanceNotFound: If no instace of type `type_` with id `id_` exists.
+
     """
     try:
         rdf_class = session.query(RDFClass).filter(
@@ -398,6 +440,12 @@ def delete_multiple(
     :param id_: list of ids for objects to be deleted\
     :param type_: type of object to be deleted
     :param session: sqlalchemy scoped session
+
+    Raises:
+        ClassNotFound: If `type_` does not represent a valid/defined RDFClass.
+        InstanceNotFound: If any instance with type 'type_' and any id in 'id_' list
+            does not exist.
+
     """
     id_ = id_.split(',')
     try:
@@ -452,7 +500,7 @@ def update(id_: str,
                          str],
            session: scoped_session,
            api_name: str,
-           path: str=None) -> str:
+           path: str = None) -> str:
     """Update an object properties based on the given object [PUT].
     :param id_: if of object to be updated
     :param type_: type of object to be updated
@@ -482,27 +530,31 @@ def update(id_: str,
 def get_collection(API_NAME: str,
                    type_: str,
                    session: scoped_session,
-                   path: str=None) -> Dict[str,
-                                           Any]:
+                   path: str = None) -> Dict[str,
+                                             Any]:
     """Retrieve a type of collection from the database.
     :param API_NAME: api name specified while starting server
     :param type_: type of object to be updated
     :param session: sqlalchemy scoped session
     :param path: endpoint
     :return: response containing all the objects of that particular type_
+
+    Raises:
+        ClassNotFound: If `type_` does not represt a valid/defined RDFClass.
+
     """
     if path is not None:
         collection_template = {
-            "@id": "/" + API_NAME + "/" + path + "/",
+            "@id": "/{}/{}/".format(API_NAME, path),
             "@context": None,
-            "@type": type_ + "Collection",
+            "@type": "{}Collection".format(type_),
             "members": list()
         }  # type: Dict[str, Any]
     else:
         collection_template = {
-            "@id": "/" + API_NAME + "/" + type_ + "Collection/",
+            "@id": "/{}/{}Collection/".format(API_NAME, type_),
             "@context": None,
-            "@type": type_ + "Collection",
+            "@type": "{}Collection".format(type_),
             "members": list()
         }  # type: Dict[str, Any]
     try:
@@ -520,28 +572,29 @@ def get_collection(API_NAME: str,
     for instance_ in instances:
         if path is not None:
             object_template = {
-                "@id": "/" + API_NAME + "/" + path + "/" + str(instance_.id),
+                "@id": "/{}/{}/{}".format(API_NAME, path, instance_.id),
                 "@type": type_
             }
         else:
-            object_template = {"@id": "/" +
-                               API_NAME +
-                               "/" +
-                               type_ +
-                               "Collection/" +
-                               str(instance_.id), "@type": type_}
+            object_template = {
+                "@id": "/{}/{}Collection/{}".format(API_NAME, type_, instance_.id), "@type": type_}
         collection_template["members"].append(object_template)
     return collection_template
 
 
 def get_single(type_: str, api_name: str, session: scoped_session,
-               path: str=None) -> Dict[str, Any]:
+               path: str = None) -> Dict[str, Any]:
     """Get instance of classes with single objects.
     :param type_: type of object to be updated
     :param api_name: api name specified while starting server
     :param session: sqlalchemy scoped session
     :param path: endpoint
     :return: response containing information about a single object
+
+    Raises:
+        ClassNotFound: If `type_` does not represt a valid/defined RDFClass.
+        InstanceNotFound: If no Instance with type `type_` exists.
+
     """
     try:
         rdf_class = session.query(RDFClass).filter(
@@ -557,9 +610,9 @@ def get_single(type_: str, api_name: str, session: scoped_session,
     object_ = get(instance.id, rdf_class.name,
                   session=session, api_name=api_name, path=path)
     if path is not None:
-        object_["@id"] = "/" + api_name + "/" + path
+        object_["@id"] = "/{}/{}".format(api_name, path)
     else:
-        object_["@id"] = "/" + api_name + "/" + type_
+        object_["@id"] = "/{}/{}".format(api_name, type_)
     return object_
 
 
@@ -568,6 +621,11 @@ def insert_single(object_: Dict[str, Any], session: scoped_session) -> Any:
     :param object_: object to be inserted
     :param session: sqlalchemy scoped session
     :return:
+
+    Raises:
+        ClassNotFound: If `type_` does not represt a valid/defined RDFClass.
+        Instance: If an Instance of type `type_` already exists.
+
     """
     try:
         rdf_class = session.query(RDFClass).filter(
@@ -588,13 +646,18 @@ def update_single(object_: Dict[str,
                                 Any],
                   session: scoped_session,
                   api_name: str,
-                  path: str=None) -> int:
+                  path: str = None) -> int:
     """Update instance of classes with single objects.
     :param object_: new object
     :param session: sqlalchemy scoped session
     :param api_name: api name specified while starting server
     :param path: endpoint
     :return: id of the updated object
+
+    Raises:
+        ClassNotFound: If `object['@type']` does not represt a valid/defined RDFClass.
+        InstanceNotFound: If no Instance of the class exists.
+
     """
     try:
         rdf_class = session.query(RDFClass).filter(
@@ -622,6 +685,11 @@ def delete_single(type_: str, session: scoped_session) -> None:
     :param type_: type of object to be deleted
     :param session: sqlalchemy scoped session
     :return: None
+
+    Raises:
+        ClassNotFound: If `type_` does not represt a valid/defined RDFClass.
+        InstanceNotFound: If no Instance of the class exists.
+
     """
     try:
         rdf_class = session.query(RDFClass).filter(

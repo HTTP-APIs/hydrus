@@ -1,10 +1,26 @@
-hydrus
+hydrus [![Build Status](https://travis-ci.com/HTTP-APIs/hydrus.svg?branch=master)](https://travis-ci.com/HTTP-APIs/hydrus)
 ===================
 hydrus is a set of **Python**-based tools for easier and more efficient creation of Hypermedia driven REST-APIs. hydrus utilises the power of [Linked Data](https://en.wikipedia.org/wiki/Linked_data) to create powerful REST APIs to serve data.
 hydrus uses the [Hydra(W3C)](http://www.hydra-cg.com/) standard for creation and documentation of its APIs.
 
+Start-up the demo
+-----------------
+* with *Docker* and *docker-compose* installed, run `docker-compose up --build`
+* open the browser at `http://localhost:8000/api/vocab`
+
+You should be displaying the example API as served by the server.
+
+Add your own Hydra documentation file
+-------------------------------------
+To serve your own Hydra-RDF documentation file:
+* create a `doc.py` file as the ones in `examples/` directory containing your own *ApiDoc*
+* set the `APIDOC_REL_PATH` variable in `docker-compose.yml`. This should the relative path from the project root
+* start-up the demo as above.
+
+You should be displaying your API as served by the server.
+
 Table of Contents
--------------
+=======
 * [Features](#features)
 * [Requirements](#req)
 * [Demo](#demo)
@@ -67,4 +83,4 @@ The demo should now be running on `http://localhost:8080/serverapi/`.
 <a name="usage"></a>
 Usage
 -------------
-For more info, head to the [Usage](https://github.com/HTTP-APIs/hydrus/wiki/Usage) section of the [wiki](https://github.com/HTTP-APIs/hydrus/wiki/).
+For more info, head to the [Usage](http://www.hydraecosystem.org/01-Usage.html) section of the [wiki](http://www.hydraecosystem.org/).

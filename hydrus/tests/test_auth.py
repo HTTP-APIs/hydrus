@@ -2,10 +2,10 @@
 
 import json
 import unittest
-from hydrus.app import app_factory
+from hydrus.app_factory import app_factory
 from hydrus.utils import set_session, set_doc, set_api_name, set_authentication, set_token
 from hydrus.data import doc_parse
-from hydrus.hydraspec import doc_maker
+from hydra_python_core import doc_maker
 from hydrus.samples import doc_writer_sample
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
@@ -14,7 +14,8 @@ from hydrus.data.user import add_user
 from base64 import b64encode
 
 
-# response = requests.get("http://127.0.0.1:8080/serverapi/CommandCollection", headers={'Authorization':'Basic QWxhZGRpbjpPcGVuU2VzYW1l'})
+# response = requests.get("http://127.0.0.1:8080/serverapi/CommandCollection",
+#  headers={'Authorization':'Basic QWxhZGRpbjpPcGVuU2VzYW1l'})
 
 
 class AuthTestCase(unittest.TestCase):
@@ -41,11 +42,13 @@ class AuthTestCase(unittest.TestCase):
         doc_parse.insert_properties(test_properties, self.session)
         add_user(1, "test", self.session)
         self.auth_header = {"X-Authentication": "",
-                            "Authorization": "Basic " + b64encode(b"1:test").decode("ascii")}
+                            "Authorization": "Basic {}".format(
+                                b64encode(b"1:test").decode("ascii"))}
         self.wrong_id = {"X-Authentication": "",
-                         "Authorization": "Basic " + b64encode(b"2:test").decode("ascii")}
+                         "Authorization": "Basic {}".format(b64encode(b"2:test").decode("ascii"))}
         self.wrong_pass = {"X-Authentication": "",
-                           "Authorization": "Basic " + b64encode(b"1:test2").decode("ascii")}
+                           "Authorization": "Basic {}".format(
+                               b64encode(b"1:test2").decode("ascii"))}
         print("Classes, Properties and Users added successfully.")
 
         print("Setting up Hydrus utilities... ")
@@ -79,7 +82,7 @@ class AuthTestCase(unittest.TestCase):
 
     def test_wrongID_GET(self):
         """Test for the index."""
-        response_get = self.client.get("/" + self.API_NAME)
+        response_get = self.client.get("/{}".format(self.API_NAME))
         endpoints = json.loads(response_get.data.decode('utf-8'))
         for endpoint in endpoints:
             if endpoint in self.doc.collections:
@@ -91,7 +94,7 @@ class AuthTestCase(unittest.TestCase):
 
     def test_wrongID_POST(self):
         """Test for the index."""
-        response_get = self.client.get("/" + self.API_NAME)
+        response_get = self.client.get("/{}".format(self.API_NAME))
         endpoints = json.loads(response_get.data.decode('utf-8'))
         for endpoint in endpoints:
             if endpoint in self.doc.collections:
@@ -103,7 +106,7 @@ class AuthTestCase(unittest.TestCase):
 
     def test_wrongPass_GET(self):
         """Test for the index."""
-        response_get = self.client.get("/" + self.API_NAME)
+        response_get = self.client.get("/{}".format(self.API_NAME))
         endpoints = json.loads(response_get.data.decode('utf-8'))
         for endpoint in endpoints:
             if endpoint in self.doc.collections:
@@ -115,7 +118,7 @@ class AuthTestCase(unittest.TestCase):
 
     def test_wrongPass_POST(self):
         """Test for the index."""
-        response_get = self.client.get("/" + self.API_NAME)
+        response_get = self.client.get("/{}".format(self.API_NAME))
         endpoints = json.loads(response_get.data.decode('utf-8'))
         for endpoint in endpoints:
             if endpoint in self.doc.collections:
@@ -127,7 +130,7 @@ class AuthTestCase(unittest.TestCase):
 
     def test_wrong_nonce_get(self):
         """Test for the index."""
-        response_get = self.client.get("/" + self.API_NAME)
+        response_get = self.client.get("/{}".format(self.API_NAME))
         endpoints = json.loads(response_get.data.decode('utf-8'))
         for endpoint in endpoints:
             if endpoint in self.doc.collections:
@@ -138,7 +141,7 @@ class AuthTestCase(unittest.TestCase):
 
     def test_wrong_nonce_post(self):
         """Test for the index."""
-        response_get = self.client.get("/" + self.API_NAME)
+        response_get = self.client.get("/{}".format(self.API_NAME))
         endpoints = json.loads(response_get.data.decode('utf-8'))
         for endpoint in endpoints:
             if endpoint in self.doc.collections:
@@ -149,7 +152,7 @@ class AuthTestCase(unittest.TestCase):
 
     def test_Auth_GET(self):
         """Test for the index."""
-        response_get = self.client.get("/" + self.API_NAME)
+        response_get = self.client.get("/{}".format(self.API_NAME))
         endpoints = json.loads(response_get.data.decode('utf-8'))
         for endpoint in endpoints:
             if endpoint in self.doc.collections:
@@ -161,7 +164,7 @@ class AuthTestCase(unittest.TestCase):
 
     def test_Auth_POST(self):
         """Test for the index."""
-        response_get = self.client.get("/" + self.API_NAME)
+        response_get = self.client.get("/{}".format(self.API_NAME))
         endpoints = json.loads(response_get.data.decode('utf-8'))
         for endpoint in endpoints:
             if endpoint in self.doc.collections:
@@ -173,7 +176,7 @@ class AuthTestCase(unittest.TestCase):
 
     def test_Auth_PUT(self):
         """Test for the index."""
-        response_get = self.client.get("/" + self.API_NAME)
+        response_get = self.client.get("/{}".format(self.API_NAME))
         endpoints = json.loads(response_get.data.decode('utf-8'))
         for endpoint in endpoints:
             if endpoint in self.doc.collections:
@@ -185,7 +188,7 @@ class AuthTestCase(unittest.TestCase):
 
     def test_Auth_DELETE(self):
         """Test for the index."""
-        response_get = self.client.get("/" + self.API_NAME)
+        response_get = self.client.get("/{}".format(self.API_NAME))
         endpoints = json.loads(response_get.data.decode('utf-8'))
         for endpoint in endpoints:
             if endpoint in self.doc.collections:
