@@ -1,16 +1,14 @@
 """Test for checking if the response format is proper. Run test_crud before running this."""
-# -*- coding: utf-8 -*-
-
 import unittest
 import random
 import string
 import json
 import re
 import uuid
-from hydrus.app import app_factory
+from hydrus.app_factory import app_factory
 from hydrus.utils import set_session, set_doc, set_api_name
 from hydrus.data import doc_parse, crud
-from hydrus.hydraspec import doc_maker
+from hydra_python_core import doc_maker
 from hydrus.samples import doc_writer_sample
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
@@ -259,9 +257,8 @@ class ViewsTestCase(unittest.TestCase):
                 if "PUT" in class_methods:
                     dummy_object = gen_dummy_object(
                         collection.class_.title, self.doc)
-                    put_response = self.client.put(
-                        '{}/{}'.format(
-                            endpoints[endpoint], uuid.uuid4()), data=json.dumps(dummy_object))
+                    put_response = self.client.put('{}/{}'.format(
+                        endpoints[endpoint], uuid.uuid4()), data=json.dumps(dummy_object))
                     assert put_response.status_code == 201
 
     def test_object_PUT_at_ids(self):
@@ -275,9 +272,7 @@ class ViewsTestCase(unittest.TestCase):
                 collection = self.doc.collections[collection_name]["collection"]
                 class_ = self.doc.parsed_classes[collection.class_.title]["class"]
                 class_methods = [x.method for x in class_.supportedOperation]
-                data_ = {
-                    "data": list()
-                }
+                data_ = {"data": list()}
                 objects = list()
                 ids = ""
                 for index in range(3):
@@ -288,8 +283,7 @@ class ViewsTestCase(unittest.TestCase):
                 if "PUT" in class_methods:
                     put_response = self.client.put(
                         '{}/add/{}'.format(endpoints[endpoint], ids),
-                        data=json.dumps(
-                            data_))
+                        data=json.dumps(data_))
                     assert put_response.status_code == 201
 
     def test_endpointClass_PUT(self):
@@ -398,13 +392,63 @@ class ViewsTestCase(unittest.TestCase):
                         print(endpoints[class_name])
                         print(response_get_data)
                         for prop_name in class_props:
-                            if "vocab:" in prop_name.prop:
+                            if "vocab:" in prop_name.prop and not prop_name.write:
                                 nested_obj_resp = self.client.get(
                                     response_get_data[prop_name.title])
                                 assert nested_obj_resp.status_code == 200
                                 nested_obj = json.loads(
                                     nested_obj_resp.data.decode('utf-8'))
                                 assert "@type" in nested_obj
+
+    def test_required_props(self):
+        index = self.client.get("/{}".format(self.API_NAME))
+        assert index.status_code == 200
+        endpoints = json.loads(index.data.decode('utf-8'))
+        for endpoint in endpoints:
+            if endpoint not in ["@context", "@id", "@type"]:
+                class_name = "/".join(endpoints[endpoint].split(
+                    "/{}/".format(self.API_NAME))[1:])
+                if class_name not in self.doc.collections:
+                    class_ = self.doc.parsed_classes[class_name]["class"]
+                    class_methods = [
+                        x.method for x in class_.supportedOperation]
+                    if "PUT" in class_methods:
+                        dummy_object = gen_dummy_object(class_.title, self.doc)
+                        required_prop = ""
+                        for prop in class_.supportedProperty:
+                            if prop.required:
+                                required_prop = prop.title
+                                break
+                        if required_prop:
+                            del dummy_object[required_prop]
+                            put_response = self.client.put(
+                                endpoints[class_name], data=json.dumps(dummy_object))
+                            assert put_response.status_code == 400
+
+    def test_write_only_props(self):
+        index = self.client.get("/{}".format(self.API_NAME))
+        assert index.status_code == 200
+        endpoints = json.loads(index.data.decode('utf-8'))
+        for endpoint in endpoints:
+            if endpoint not in ["@context", "@id", "@type"]:
+                class_name = "/".join(endpoints[endpoint].split(
+                    "/{}/".format(self.API_NAME))[1:])
+                if class_name not in self.doc.collections:
+                    class_ = self.doc.parsed_classes[class_name]["class"]
+                    class_methods = [
+                        x.method for x in class_.supportedOperation]
+                    if "GET" in class_methods:
+                        write_only_prop = ""
+                        for prop in class_.supportedProperty:
+                            if prop.write:
+                                write_only_prop = prop.title
+                                break
+                        if write_only_prop:
+                            get_response = self.client.get(
+                                endpoints[class_name])
+                            get_response_data = json.loads(
+                                get_response.data.decode('utf-8'))
+                            assert write_only_prop not in get_response_data
 
     def test_bad_objects(self):
         """Checks if bad objects are added or not."""
@@ -480,4 +524,4 @@ if __name__ == '__main__':
     message = """
     Running tests for the app. Checking if all responses are in proper order.
     """
-    print(message)
+    unittest.main()
