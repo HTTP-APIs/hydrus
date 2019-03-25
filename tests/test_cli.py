@@ -112,8 +112,6 @@ class CliTests(unittest.TestCase):
         result = runner.invoke(startserver,
         ["--adduser","sqlite://not-valid","http://localhost",
         "--port","serve"])
-        print("sdf")
-        print(result.exit_code)
         assert result.exit_code == 2
 
     
