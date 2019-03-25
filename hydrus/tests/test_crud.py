@@ -66,6 +66,7 @@ class TestCRUD(unittest.TestCase):
         object_ = gen_dummy_object(random.choice(
             self.doc_collection_classes), self.doc)
         response = crud.insert(object_=object_, id_="1", session=self.session)
+
         assert isinstance(response, str)
 
     def test_get(self):
