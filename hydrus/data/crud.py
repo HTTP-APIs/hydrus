@@ -37,8 +37,6 @@ from sqlalchemy import exists
 from sqlalchemy.orm.exc import NoResultFound
 from hydrus.data.db_models import (Graph, BaseProperty, RDFClass, Instance,
                                    Terminal, GraphIAC, GraphIIT, GraphIII)
-from hydrus.utils import get_doc
-
 from hydrus.data.exceptions import (
     ClassNotFound,
     InstanceExists,
@@ -106,21 +104,7 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
             properties.id == data.predicate).one().name
         instance = session.query(Instance).filter(
             Instance.id == data.object_).one()
-        # Get class name for instance object
-        inst_class_name = session.query(RDFClass).filter(
-            RDFClass.id == instance.type_).one().name
-        doc = get_doc()
-        nested_class_path = ""
-        for collection in doc.collections:
-            if doc.collections[collection]["collection"].class_.path == inst_class_name:
-                nested_class_path = doc.collections[collection]["collection"].path
-                object_template[prop_name] = "/{}/{}/{}".format(
-                    api_name, nested_class_path, instance.id)
-                break
-
-        if nested_class_path == "":
-            object_template[prop_name] = "/{}/{}/".format(
-                api_name, inst_class_name)
+        object_template[prop_name] = instance.id
 
     for data in data_IIT:
         prop_name = session.query(properties).filter(
