@@ -241,7 +241,6 @@ class ItemCollection(Resource):
                 # Get collection details from the database
                 response = crud.get_collection(
                     get_api_name(), collection.class_.title, session=get_session(), path=path)
-                response = finalize_response(collection.class_.title, response)
                 return set_response_headers(jsonify(hydrafy(response, path=path)))
 
             except ClassNotFound as e:
