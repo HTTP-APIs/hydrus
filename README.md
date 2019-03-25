@@ -30,9 +30,8 @@ Table of Contents
 Features
 -------------
 hydrus supports the following features:
-- Be a client that understands Hydra vocabulary and performs basic [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) operations on data in a Hydra supporting server. 
+- Be a REST server that understands Hydra vocabulary and performs basic [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) operations on data in a Hydra supporting server. 
 - Be a generic server that provides the required data and metadata (in the form of API documentation) to a client over HTTP.
-- Be a middleware that allows users to interact with the server using Natural Language which is a processed machine consumable language. **(under development)**
 
 <a name="req"></a>
 Requirements
