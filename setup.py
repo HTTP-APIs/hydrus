@@ -16,7 +16,7 @@ dependencies = [str(package.req) for package in install_requires]
 
 setup(name='hydrus',
       include_package_data=True,
-      version='0.2.1',
+      version='0.2.3',
       description='Hydra Ecosystem Flagship Server. Deploy REST data for Web 3.0',
       author='Hydra Ecosystem',
       author_email='hydraecosystem@googlegroups.com',
