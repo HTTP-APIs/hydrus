@@ -8,9 +8,12 @@ from sqlalchemy.sql import func
 from typing import Any
 import datetime
 import uuid
+import os
 # from hydrus.settings import DB_URL
 
-engine = create_engine('sqlite:///database.db')
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))) #to put database file in the rootdirectory
+
+engine = create_engine('sqlite:///{}/database.db'.format(BASE_DIR))
 
 Base = declarative_base()  # type: Any
 
