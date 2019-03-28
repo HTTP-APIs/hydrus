@@ -11,7 +11,8 @@ import uuid
 import os
 # from hydrus.settings import DB_URL
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))) #to put database file in the rootdirectory
+#to put database file in the rootdirectory
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))) 
 
 engine = create_engine('sqlite:///{}/database.db'.format(BASE_DIR))
 
