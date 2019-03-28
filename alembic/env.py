@@ -12,12 +12,6 @@ import os
 # access to the values within the .ini file in use.
 config = context.config
 
-#path of root directory
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-
-#overrides configurations in alembic.ini
-config.set_main_option('sqlalchemy.url', 'sqlite:///{}/database.db'.format(BASE_DIR))
-
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
 fileConfig(config.config_file_name)
