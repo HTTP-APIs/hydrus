@@ -112,5 +112,3 @@ ENV/
 
 # Pipenv generated
 Pipfile*
-
-/alembic/versions
