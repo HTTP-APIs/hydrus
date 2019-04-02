@@ -5,10 +5,15 @@ hydrus uses the [Hydra(W3C)](http://www.hydra-cg.com/) standard for creation and
 
 Start-up the demo
 -----------------
+
+#### Automatic with Docker:
 * with *Docker* and *docker-compose* installed, run `docker-compose up --build`
 * open the browser at `http://localhost:8000/api/vocab`
 
 You should be displaying the example API as served by the server.
+
+#### Manually:
+You can install the library in your project from latest Github release with `pip install git+git://github.com/http-apis/hydrus.git#egg=hydrus`; or from PyPi with: `pip install hydrus`.  
 
 Add your own Hydra documentation file
 -------------------------------------
