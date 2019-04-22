@@ -11,7 +11,7 @@ before_script:
   - npm install pyright
 script:
   - python -m unittest discover
-  - npx pyright .
+  - npx pyright ./hydrus/
 env:
   - API_NAME=api PORT=8000
 deploy:
