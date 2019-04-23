@@ -47,6 +47,8 @@ from hydrus.data.exceptions import (
 # from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.scoping import scoped_session
 from typing import Dict, Optional, Any, List
+from typing import Dict, Optional, Any, List, Union, Iterator
+from sqlalchemy_paginator import Paginator
 
 triples = with_polymorphic(Graph, '*')
 properties = with_polymorphic(BaseProperty, "*")
@@ -363,6 +365,90 @@ def insert_multiple(objects_: List[Dict[str,
     session.bulk_save_objects(triples_list)
     session.commit()
     return instance_id_list
+
+
+def create_paginator(type_: str, session: scoped_session, per_page: int) -> Paginator:
+    """
+    Get paginator for type of collection from database
+    :param type_:type of object to be updated
+    :param session:sqlalchemy scoped session
+    :param per_page:items per page
+    :return: Paginator object
+    """
+    try:
+        rdf_class = session.query(RDFClass).filter(
+            RDFClass.name == type_).one()
+    except NoResultFound:
+        raise ClassNotFound(type_=type_)
+    try:
+        paginator = Paginator(session.query(Instance).filter(
+            Instance.type_ == rdf_class.id), per_page)
+    except NoResultFound:
+        paginator = None
+    return paginator
+
+
+def pagewise_get_type(API_NAME: str,
+                      type_: str,
+                      session: scoped_session,
+                      per_page: int,
+                      page_: int,
+                      path: str = None) -> Union[Dict[str, Any], Any]:
+    """Get paginated collection from database.
+    :param API_NAME: api name specified while starting server
+    :param type_: type of object to be updated
+    :param session: sqlalchemy scoped session
+    :param path: endpoint
+    :param per_page: number of items per page
+    :param page_: page number
+    if page number is specified
+        :return: collection of items on that page
+    else
+        :return: generator of collections of items page wise
+    """
+    paginator = create_paginator(type_=type_,
+                                 session=session,
+                                 per_page=per_page)
+    if path is not None:
+        collection_template = {
+            "@id": "/{}/{}/".format(API_NAME, path),
+            "@context": None,
+            "@type": "{}Collection".format(type_),
+            "members": list()
+        }  # type: Dict[str, Any]
+    else:
+        collection_template = {
+            "@id": "/{}/{}Collection/".format(API_NAME, type_),
+            "@context": None,
+            "@type": "{}Collection".format(type_),
+            "members": list()
+        }  # type: Dict[str, Any]
+    if(page_):
+        for instance_ in paginator.page(page_).object_list:
+            if path is not None:
+                object_template = {
+                    "@id": "/{}/{}/{}".format(API_NAME, path, instance_.id),
+                    "@type": type_
+                }
+            else:
+                object_template = {
+                    "@id": "/{}/{}Collection/{}".format(API_NAME,
+                                                        type_, instance_.id), "@type": type_}
+            collection_template["membets"].append(object_template)
+        return collection_template
+    for page in paginator:
+        for instance_ in page.object_list:
+            if path is not None:
+                object_template = {
+                    "@id": "/{}/{}/{}".format(API_NAME, path, instance_.id),
+                    "@type": type_
+                }
+            else:
+                object_template = {
+                    "@id": "/{}/{}Collection/{}".format(API_NAME,
+                                                        type_, instance_.id), "@type": type_}
+            collection_template["members"].append(object_template)
+        yield collection_template
 
 
 def delete(id_: str, type_: str, session: scoped_session) -> None:
