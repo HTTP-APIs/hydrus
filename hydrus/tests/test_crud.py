@@ -248,6 +248,23 @@ class TestCRUD(unittest.TestCase):
             response_code, message = e.get_HTTP()
         assert 404 == response_code
 
+    def test_create_paginator(self):
+        objects = list()
+        ids = ",".join(str(i) for i in range(1001,1100))
+        class_ = random.choice(self.doc_collection_classes)
+        for index in range(len(ids.split(','))):
+            object = gen_dummy_object(class_=class_, doc=self.doc)
+            objects.append(object)
+        response_code = None
+        insert_response = crud.insert_multiple(
+            objects_=objects, session=self.session, id_=ids)
+        paginator = crud.create_paginator(type_=class_,
+                                          session=self.session,
+                                          per_page=5)
+        page = paginator.page(1)
+        self.assertEqual(len(page.object_list),5)
+
+
     @classmethod
     def tearDownClass(self):
         """Undo the setUp steps for the Class."""
