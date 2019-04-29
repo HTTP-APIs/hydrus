@@ -46,7 +46,6 @@ from hydrus.data.exceptions import (
     InstanceNotFound)
 # from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.scoping import scoped_session
-from typing import Dict, Optional, Any, List
 from typing import Dict, Optional, Any, List, Union, Iterator
 from sqlalchemy_paginator import Paginator
 
