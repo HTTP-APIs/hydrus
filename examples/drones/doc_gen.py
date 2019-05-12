@@ -1,6 +1,6 @@
 """API Doc generator for the server side API."""
 
-from hydrus.hydraspec.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp
+from hydra_python_core.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp
 import json
 
 
