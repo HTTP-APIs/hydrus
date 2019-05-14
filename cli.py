@@ -118,7 +118,7 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
         click.echo("No hydradoc specified, using sample hydradoc as default.\n"
                    "For creating api documentation see this "
                    "https://www.hydraecosystem.org/01-Usage.html#newdoc\n"
-                   "You can find the example used in examples/drones/doc.py")
+                   "You can find the example used in hydrus/samples/hydra_doc_sample.py")
         apidoc = doc_maker.create_doc(
             api_document, HYDRUS_SERVER_URL, API_NAME)
 
