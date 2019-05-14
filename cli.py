@@ -98,7 +98,7 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
                     doc = json.load(f)
             elif hydradoc_format == 'py':
                 doc = SourceFileLoader(
-                    "doc", "./examples/drones/doc.py").load_module().doc
+                    "doc", hydradoc).load_module().doc
             elif hydradoc_format == 'yaml':
                 with open(hydradoc, 'r') as stream:
                     doc = parse(yaml.load(stream))
