@@ -107,6 +107,9 @@ ENV/
 # SQLite Databases
 *.db
 
+# Alembic DB Migration scripts
+hydrus/data/migrations/versions
+
 # Keys
 *.pem
 
