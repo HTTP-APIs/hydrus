@@ -79,9 +79,9 @@ You should get something *like hydrus/data/migrations/versions/0bca3dcf0826_auto
     alembic upgrade head
 
 
-#### IMPORTANT - Quotting Alembic official page:
+#### IMPORTANT - Quoting Alembic official page:
 
->> The vast majority of user issues with Alembic centers on the topic of what kinds of changes autogenerate can and cannot detect reliably, as well as how  it re nders Python code for what it does detect. It is critical to note that autogenerate is not intended to be perfect. It is always necessary to manually review and correct the candidate migrations that autogenererate produces. The feature is getting more and more comprehensive and error-free as releases continue, but one should take note of the current limitations.
+>> The vast majority of user issues with Alembic centers on the topic of what kinds of changes autogenerate can and cannot detect reliably, as well as how  it renders Python code for what it does detect. It is critical to note that autogenerate is not intended to be perfect. It is always necessary to manually review and correct the candidate migrations that autogenererate produces. The feature is getting more and more comprehensive and error-free as releases continue, but one should take note of the current limitations.
 
 *To check exactly **what it can automatically do and cannot do**, please head over to: https://alembic.sqlalchemy.org/en/latest/autogenerate.html*
 
