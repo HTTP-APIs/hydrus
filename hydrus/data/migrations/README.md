@@ -12,9 +12,11 @@ With the default hydrus clone run it with a sqlite database:
 
     hydrus serve --dburl sqlite:///hydrus/data/database.db
 
-#### Point to your DB Url(only if not using sqlite):
+#### Point to your DB Url:
 
-If following this tutorial, **the DB Url is already set accordingly SO SKIP THIS** . *If not* go to **hydrus/migration/alembic.ini** and edit the **sqlalchemy.url** key pointing to your DB Address.
+If following this tutorial, **the DB Url is already set accordingly SO SKIP THIS** . By default the DB URL points to your "DB_URL" Environment variable, or sqlite:///hydrus/data/database.db if no Env. Variable available. *If you want to change this* go to **hydrus/data/migrations/env.py** and edit the **DB_URL** variable so it points to your according DB Address.
+
+	DB_URL = os.environ['DB_URL'] if 'DB_URL' in dict(os.environ).keys() else 'sqlite:///database.db'
 
 #### Create migration script
 Navigate to **...hydrus/hydrus/data** first, then run:
