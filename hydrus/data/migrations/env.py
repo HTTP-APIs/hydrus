@@ -7,6 +7,7 @@ from sqlalchemy import pool
 from alembic import context
 
 from hydrus.data.db_models import Base
+import os
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -15,6 +16,12 @@ config = context.config
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
 fileConfig(config.config_file_name)
+
+# Setting the DB URL dynamically from "os.environ" if available
+# or as default sqlite:///database.db
+# please change it according to your DB Address
+DB_URL = os.environ['DB_URL'] if 'DB_URL' in dict(os.environ).keys() else 'sqlite:///database.db'
+config.set_main_option('sqlalchemy.url', DB_URL)
 
 # Importing hydrus db_models base for 'autogenerate' support
 target_metadata = Base.metadata
