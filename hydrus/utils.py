@@ -108,6 +108,42 @@ def get_api_name() -> str:
 
 
 @contextmanager
+def set_page_size(application: Flask, page_size: int) -> Iterator:
+    """
+    Set the page_size of a page view.
+    :param application: Flask app object
+            <flask.app.Flask>
+    :param page_size : Number of maximum elements a page can contain
+            <int>
+
+    Raises:
+        TypeError: If `page_size` is not an int.
+
+    """
+    if not isinstance(page_size, int):
+        raise TypeError("The page_size is not of type <int>")
+
+    def handler(sender: Flask, **kwargs: Any) -> None:
+        g.page_size = page_size
+    with appcontext_pushed.connected_to(handler, application):
+        yield
+
+
+def get_page_size() -> int:
+    """
+    Get the page_size of a page-view.
+    :return page_size : Number of maximum elements a page view can contain.
+            <int>
+    """
+    try:
+        page_size = getattr(g, 'page_size')
+    except AttributeError:
+        page_size = 10
+        g.doc = page_size
+    return page_size
+
+
+@contextmanager
 def set_doc(application: Flask, APIDOC: HydraDoc) -> Iterator:
     """
     Set the API Documentation for the app (before it is run in main.py).
