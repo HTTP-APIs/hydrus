@@ -43,7 +43,8 @@ from hydrus.data.exceptions import (
     PropertyNotFound,
     NotInstanceProperty,
     NotAbstractProperty,
-    InstanceNotFound)
+    InstanceNotFound,
+    PageNotFound)
 # from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.scoping import scoped_session
 from typing import Dict, Optional, Any, List
@@ -584,6 +585,9 @@ def get_collection(API_NAME: str,
         last = total_items // page_size
     else:
         last = total_items // page_size + 1
+
+    if page < 1 or page > last:
+        raise PageNotFound(str(page))
     collection_template["view"] = {
         "@id": "/{}/{}?page={}".format(API_NAME, path, page),
         "@type": "PartialCollectionView",

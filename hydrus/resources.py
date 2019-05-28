@@ -39,7 +39,8 @@ from hydrus.data.exceptions import (
     ClassNotFound,
     InstanceExists,
     PropertyNotFound,
-    InstanceNotFound)
+    InstanceNotFound,
+    PageNotFound)
 from hydrus.helpers import (
     set_response_headers,
     checkClassOp,
@@ -226,7 +227,7 @@ class ItemCollection(Resource):
         """
         Retrieve a collection of items from the database.
         """
-        page_number = int(request.args.get('page', 1))
+        page = request.args.get('page', 1)
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):
             return auth_response
@@ -239,13 +240,17 @@ class ItemCollection(Resource):
             # and collection name in document's collections
             collection = get_doc().collections[path]["collection"]
             try:
+                try:
+                    page_number = int(page)
+                except ValueError:
+                    raise PageNotFound(page)
                 # Get collection details from the database
                 response = crud.get_collection(
                     get_api_name(), collection.class_.title, session=get_session(),
-                    page=page_number, page_size=get_page_size(), path=path)
+                    page=int(page), page_size=get_page_size(), path=path)
                 return set_response_headers(jsonify(hydrafy(response, path=path)))
 
-            except ClassNotFound as e:
+            except (ClassNotFound, PageNotFound) as e:
                 status_code, message = e.get_HTTP()
                 return set_response_headers(jsonify(message), status_code=status_code)
 
