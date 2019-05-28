@@ -514,19 +514,23 @@ def update(id_: str,
 def get_collection(API_NAME: str,
                    type_: str,
                    session: scoped_session,
-                   path: str = None) -> Dict[str,
-                                             Any]:
+                   page: int,
+                   page_size: int,
+                   path: str = None) -> Dict[str, Any]:
     """Retrieve a type of collection from the database.
     :param API_NAME: api name specified while starting server
     :param type_: type of object to be updated
     :param session: sqlalchemy scoped session
+    :param page: page number
+    :param page_size: Number maximum elements showed in a page
     :param path: endpoint
-    :return: response containing all the objects of that particular type_
+    :return: response containing a page of the objects of that particular type_
 
     Raises:
-        ClassNotFound: If `type_` does not represt a valid/defined RDFClass.
+        ClassNotFound: If `type_` does not represent a valid/defined RDFClass.
 
     """
+    offset = (page - 1) * page_size
     if path is not None:
         collection_template = {
             "@id": "/{}/{}/".format(API_NAME, path),
@@ -549,9 +553,11 @@ def get_collection(API_NAME: str,
 
     try:
         instances = session.query(Instance).filter(
-            Instance.type_ == rdf_class.id).all()
+            Instance.type_ == rdf_class.id).limit(page_size).offset(offset)
     except NoResultFound:
         instances = list()
+
+    number_of_instances = 0
 
     for instance_ in instances:
         if path is not None:
@@ -563,6 +569,31 @@ def get_collection(API_NAME: str,
             object_template = {
                 "@id": "/{}/{}Collection/{}".format(API_NAME, type_, instance_.id), "@type": type_}
         collection_template["members"].append(object_template)
+        number_of_instances = number_of_instances + 1
+    # If we are on the first page and there are fewer elements than the
+    # page size then there is no need to make an extra DB call to get count
+    if page == 1 and number_of_instances < page_size:
+        total_items = number_of_instances
+    elif page == 1 and number_of_instances == 0:
+        total_items = 0
+    else:
+        total_items = session.query(Instance).filter(
+            Instance.type_ == rdf_class.id).count()
+    collection_template["totalItems"] = total_items
+    if total_items != 0 and total_items % page_size == 0:
+        last = total_items // page_size
+    else:
+        last = total_items // page_size + 1
+    collection_template["view"] = {
+        "@id": "/{}/{}?page={}".format(API_NAME, path, page),
+        "@type": "PartialCollectionView",
+        "first": "/{}/{}?page=1".format(API_NAME, path),
+        "last": "/{}/{}?page={}".format(API_NAME, path, last)
+    }
+    if page != 1:
+        collection_template["view"]["previous"] = "/{}/{}?page={}".format(API_NAME, path, page-1)
+    if page != last:
+        collection_template["view"]["next"] = "/{}/{}?page={}".format(API_NAME, path, page + 1)
     return collection_template
 
 

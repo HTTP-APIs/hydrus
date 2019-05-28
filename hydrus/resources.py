@@ -52,7 +52,7 @@ from hydrus.helpers import (
     check_read_only_props,
     check_required_props,
     finalize_response)
-from hydrus.utils import get_session, get_doc, get_api_name, get_hydrus_server_url
+from hydrus.utils import get_session, get_doc, get_api_name, get_hydrus_server_url, get_page_size
 
 
 class Index(Resource):
@@ -226,6 +226,7 @@ class ItemCollection(Resource):
         """
         Retrieve a collection of items from the database.
         """
+        page_number = int(request.args.get('page', 1))
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):
             return auth_response
@@ -240,7 +241,8 @@ class ItemCollection(Resource):
             try:
                 # Get collection details from the database
                 response = crud.get_collection(
-                    get_api_name(), collection.class_.title, session=get_session(), path=path)
+                    get_api_name(), collection.class_.title, session=get_session(),
+                    page=page_number, page_size=get_page_size(), path=path)
                 return set_response_headers(jsonify(hydrafy(response, path=path)))
 
             except ClassNotFound as e:
