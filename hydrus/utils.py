@@ -103,7 +103,7 @@ def get_api_name() -> str:
         api_name = getattr(g, 'api_name')
     except AttributeError:
         api_name = "api"
-        g.doc = api_name
+        g.api_name = api_name
     return api_name
 
 
@@ -139,8 +139,44 @@ def get_page_size() -> int:
         page_size = getattr(g, 'page_size')
     except AttributeError:
         page_size = 10
-        g.doc = page_size
+        g.page_size = page_size
     return page_size
+
+
+@contextmanager
+def set_pagination(application: Flask, paginate: bool) -> Iterator:
+    """
+    Enable or disable pagination.
+    :param application: Flask app object
+            <flask.app.Flask>
+    :param paginate : Pagination enabled or not
+            <bool>
+
+    Raises:
+        TypeError: If `paginate` is not a bool.
+
+    """
+    if not isinstance(paginate, bool):
+        raise TypeError("The CLI argument 'pagination' is not of type <bool>")
+
+    def handler(sender: Flask, **kwargs: Any) -> None:
+        g.paginate = paginate
+    with appcontext_pushed.connected_to(handler, application):
+        yield
+
+
+def get_pagination() -> bool:
+    """
+    Get the pagination status(Enable/Disable).
+    :return paginate : Pagination enabled or not
+            <bool>
+    """
+    try:
+        paginate = getattr(g, 'paginate')
+    except AttributeError:
+        paginate = True
+        g.paginate = paginate
+    return paginate
 
 
 @contextmanager

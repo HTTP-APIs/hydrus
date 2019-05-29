@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 from hydrus.app_factory import app_factory
 from hydrus.utils import (set_session, set_doc, set_hydrus_server_url,
                           set_token, set_api_name, set_authentication,
-                          set_page_size)
+                          set_page_size, set_pagination)
 from hydrus.data import doc_parse
 from hydra_python_core import doc_maker
 from hydrus.data.db_models import Base
@@ -36,12 +36,14 @@ import yaml
               help="The port the app is hosted at.", type=int)
 @click.option("--pagesize", "-ps", default=10,
               help="Maximum size of a page(view)", type=int)
+@click.option("--pagination/--no-pagination", default=True,
+              help="Enable or disable pagination.")
 @click.option("--token/--no-token", default=True,
               help="Toggle token based user authentication.")
 @click.option("--serverurl", default="http://localhost",
               help="Set server url", type=str)
 @click.argument("serve", required=True)
-def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
+def startserver(adduser: Tuple, api: str, auth: bool, dburl: str, pagination: bool,
                 hydradoc: str, port: int, pagesize: int, serverurl: str, token: bool,
                 serve: None) -> None:
     """
@@ -168,19 +170,21 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
                     with set_hydrus_server_url(app, HYDRUS_SERVER_URL):
                         # Set the Database session
                         with set_session(app, session):
-                            # Set page size of a collection view
-                            with set_page_size(app, pagesize):
-                                # Start the Hydrus app
-                                http_server = WSGIServer(('', port), app)
-                                click.echo("Server running at:")
-                                click.echo(
-                                    "{}{}".format(
-                                        HYDRUS_SERVER_URL,
-                                        API_NAME))
-                                try:
-                                    http_server.serve_forever()
-                                except KeyboardInterrupt:
-                                    pass
+                            # Disable/Enable pagination
+                            with set_pagination(app, pagination):
+                                # Set page size of a collection view
+                                with set_page_size(app, pagesize):
+                                    # Start the hydrus app
+                                    http_server = WSGIServer(('', port), app)
+                                    click.echo("Server running at:")
+                                    click.echo(
+                                        "{}{}".format(
+                                            HYDRUS_SERVER_URL,
+                                            API_NAME))
+                                    try:
+                                        http_server.serve_forever()
+                                    except KeyboardInterrupt:
+                                        pass
 
 
 if __name__ == "__main__":
