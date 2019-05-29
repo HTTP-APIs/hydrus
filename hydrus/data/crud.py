@@ -574,9 +574,11 @@ def get_collection(API_NAME: str,
             object_template = {
                 "@id": "/{}/{}Collection/{}".format(API_NAME, type_, instance_.id), "@type": type_}
         collection_template["members"].append(object_template)
+
     # If pagination is disabled then stop and return the collection template
     if not paginate:
         return collection_template
+
     number_of_instances = len(collection_template["members"])
     # If we are on the first page and there are fewer elements than the
     # page size then there is no need to make an extra DB call to get count

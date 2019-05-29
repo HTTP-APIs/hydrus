@@ -246,16 +246,19 @@ class ItemCollection(Resource):
             # and collection name in document's collections
             collection = get_doc().collections[path]["collection"]
             try:
+                # Check value of page is valid or not
                 try:
                     page = int(page)
                 except ValueError:
                     raise PageNotFound(page)
                 # Get collection details from the database
                 if get_pagination():
+                    # Get paginated response
                     response = crud.get_collection(
                         get_api_name(), collection.class_.title, session=get_session(),
                         paginate=True, page=page, page_size=get_page_size(), path=path)
                 else:
+                    # Get whole collection
                     response = crud.get_collection(
                         get_api_name(), collection.class_.title, session=get_session(),
                         paginate=False, path=path)

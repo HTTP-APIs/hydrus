@@ -170,7 +170,7 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str, pagination: bo
                     with set_hydrus_server_url(app, HYDRUS_SERVER_URL):
                         # Set the Database session
                         with set_session(app, session):
-                            # Disable/Enable pagination
+                            # Enable/disable pagination
                             with set_pagination(app, pagination):
                                 # Set page size of a collection view
                                 with set_page_size(app, pagesize):
