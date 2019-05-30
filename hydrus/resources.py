@@ -232,8 +232,7 @@ class ItemCollection(Resource):
         """
         Retrieve a collection of items from the database.
         """
-        page = request.args.get('page', 1)
-        print(type(page))
+        page = request.args.get('page')
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):
             return auth_response
@@ -246,17 +245,17 @@ class ItemCollection(Resource):
             # and collection name in document's collections
             collection = get_doc().collections[path]["collection"]
             try:
-                # Check value of page is valid or not
-                try:
-                    page = int(page)
-                except ValueError:
-                    raise PageNotFound(page)
                 # Get collection details from the database
                 if get_pagination():
                     # Get paginated response
-                    response = crud.get_collection(
-                        get_api_name(), collection.class_.title, session=get_session(),
-                        paginate=True, page=page, page_size=get_page_size(), path=path)
+                    if page is None:
+                        response = crud.get_collection(
+                            get_api_name(), collection.class_.title, session=get_session(),
+                            paginate=True, page_size=get_page_size(), path=path)
+                    else:
+                        response = crud.get_collection(
+                            get_api_name(), collection.class_.title, session=get_session(),
+                            paginate=True, page=page, page_size=get_page_size(), path=path)
                 else:
                     # Get whole collection
                     response = crud.get_collection(

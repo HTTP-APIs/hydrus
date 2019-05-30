@@ -516,8 +516,8 @@ def get_collection(API_NAME: str,
                    type_: str,
                    session: scoped_session,
                    paginate: bool,
-                   page_size: int = None,
-                   page: int = None,
+                   page_size: int,
+                   page: int = 1,
                    path: str = None) -> Dict[str, Any]:
     """Retrieve a type of collection from the database.
     :param API_NAME: api name specified while starting server
@@ -533,6 +533,12 @@ def get_collection(API_NAME: str,
         ClassNotFound: If `type_` does not represent a valid/defined RDFClass.
 
     """
+    # Check for valid page value
+    try:
+        page = int(page)
+    except ValueError:
+        raise PageNotFound(page)
+
     if path is not None:
         collection_template = {
             "@id": "/{}/{}/".format(API_NAME, path),
@@ -554,7 +560,7 @@ def get_collection(API_NAME: str,
         raise ClassNotFound(type_=type_)
 
     try:
-        if paginate:
+        if paginate is True:
             offset = (page - 1) * page_size
             instances = session.query(Instance).filter(
                 Instance.type_ == rdf_class.id).limit(page_size).offset(offset)
@@ -576,7 +582,7 @@ def get_collection(API_NAME: str,
         collection_template["members"].append(object_template)
 
     # If pagination is disabled then stop and return the collection template
-    if not paginate:
+    if paginate is False:
         return collection_template
 
     number_of_instances = len(collection_template["members"])
