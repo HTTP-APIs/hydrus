@@ -8,6 +8,7 @@ from hydrus.data import doc_parse
 from hydra_python_core import doc_maker
 from hydrus.data.db_models import Base
 from hydrus.data.user import add_user
+from hydrus.data.exceptions import UserExists
 from gevent.pywsgi import WSGIServer
 from hydra_openapi_parser.openapi_parser import parse
 from hydrus.samples.hydra_doc_sample import doc as api_document
@@ -97,9 +98,8 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
                 with open(hydradoc, 'r') as f:
                     doc = json.load(f)
             elif hydradoc_format == 'py':
-                doc = SourceFileLoader("doc",
-                                       "./examples/drones/doc.py")\
-                    .load_module().doc
+                doc = SourceFileLoader(
+                    "doc", hydradoc).load_module().doc
             elif hydradoc_format == 'yaml':
                 with open(hydradoc, 'r') as stream:
                     doc = parse(yaml.load(stream))
@@ -116,9 +116,12 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
             apidoc = doc_maker.create_doc(api_document,
                                           HYDRUS_SERVER_URL, API_NAME)
     else:
-        click.echo("No hydradoc specified, using sample hydradoc as default.")
-        apidoc = doc_maker.create_doc(api_document,
-                                      HYDRUS_SERVER_URL, API_NAME)
+        click.echo("No hydradoc specified, using sample hydradoc as default.\n"
+                   "For creating api documentation see this "
+                   "https://www.hydraecosystem.org/01-Usage.html#newdoc\n"
+                   "You can find the example used in hydrus/samples/hydra_doc_sample.py")
+        apidoc = doc_maker.create_doc(
+            api_document, HYDRUS_SERVER_URL, API_NAME)
 
     # Start a session with the DB and create all classes needed by the APIDoc
     session = scoped_session(sessionmaker(bind=engine))
@@ -136,8 +139,12 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str,
     doc_parse.insert_classes(classes, session)
     doc_parse.insert_properties(properties, session)
 
+    # Add authorized users and pass if they already exist
     click.echo("Adding authorized users")
-    add_user(id_=adduser[0], paraphrase=adduser[1], session=session)
+    try:
+        add_user(id_=adduser[0], paraphrase=adduser[1], session=session)
+    except UserExists:
+        pass
 
     # Insert them into the database
     doc_parse.insert_classes(classes, session)

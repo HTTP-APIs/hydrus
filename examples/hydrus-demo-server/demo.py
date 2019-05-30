@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 from hydrus.app import app_factory
 from hydrus.utils import set_session, set_doc, set_hydrus_server_url, set_api_name, set_authentication, set_token
 from hydrus.data import doc_parse
-from hydrus.hydraspec import doc_maker
+from hydra_python_core import doc_maker
 from hydrus.data.db_models import Base
 from hydrus.data.user import add_user
 from doc import doc
