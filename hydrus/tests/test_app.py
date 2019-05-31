@@ -6,7 +6,7 @@ import json
 import re
 import uuid
 from hydrus.app_factory import app_factory
-from hydrus.utils import set_session, set_doc, set_api_name
+from hydrus.utils import set_session, set_doc, set_api_name, set_page_size
 from hydrus.data import doc_parse, crud
 from hydra_python_core import doc_maker
 from hydrus.samples import doc_writer_sample
@@ -44,6 +44,7 @@ class ViewsTestCase(unittest.TestCase):
 
         self.session = session
         self.API_NAME = "demoapi"
+        self.page_size = 1
         self.HYDRUS_SERVER_URL = "http://hydrus.com/"
 
         self.app = app_factory(self.API_NAME)
@@ -60,10 +61,11 @@ class ViewsTestCase(unittest.TestCase):
 
         print("Classes and properties added successfully.")
 
-        print("Setting up Hydrus utilities... ")
+        print("Setting up hydrus utilities... ")
         self.api_name_util = set_api_name(self.app, self.API_NAME)
         self.session_util = set_session(self.app, self.session)
         self.doc_util = set_doc(self.app, self.doc)
+        self.page_size_util = set_page_size(self.app, self.page_size)
         self.client = self.app.test_client()
 
         print("Creating utilities context... ")
@@ -85,8 +87,14 @@ class ViewsTestCase(unittest.TestCase):
 
     def setUp(self):
         for class_ in self.doc.parsed_classes:
-            if class_ not in self.doc.collections:
-                dummy_obj = gen_dummy_object(class_, self.doc)
+            dummy_obj = gen_dummy_object(class_, self.doc)
+            crud.insert(
+                dummy_obj,
+                id_=str(
+                    uuid.uuid4()),
+                session=self.session)
+            # If it's a collection class then add an extra object so we can test pagination thoroughly.
+            if class_ in self.doc.collections:
                 crud.insert(
                     dummy_obj,
                     id_=str(
@@ -165,6 +173,30 @@ class ViewsTestCase(unittest.TestCase):
                 assert "@id" in response_get_data
                 assert "@type" in response_get_data
                 assert "members" in response_get_data
+
+    def test_pagination(self):
+        """Test basic pagination"""
+        index = self.client.get("/{}".format(self.API_NAME))
+        assert index.status_code == 200
+        endpoints = json.loads(index.data.decode('utf-8'))
+        for endpoint in endpoints:
+            collection_name = "/".join(endpoints[endpoint].split(
+                "/{}/".format(self.API_NAME))[1:])
+            if collection_name in self.doc.collections:
+                response_get = self.client.get(endpoints[endpoint])
+                assert response_get.status_code == 200
+                response_get_data = json.loads(
+                    response_get.data.decode('utf-8'))
+                assert "view" in response_get_data
+                assert "first" in response_get_data["view"]
+                assert "last" in response_get_data["view"]
+                if "next" in response_get_data["view"]:
+                    response_next = self.client.get(response_get_data["view"]["next"])
+                    assert response_next.status_code == 200
+                    response_next_data = json.loads(
+                        response_next.data.decode('utf-8'))
+                    assert "previous" in response_next_data["view"]
+                break
 
     def test_Collections_PUT(self):
         """Test insert data to the collection."""

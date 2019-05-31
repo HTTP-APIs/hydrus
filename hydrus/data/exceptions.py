@@ -114,3 +114,16 @@ class UserNotFound(Exception):
         """Return the HTTP response for the Exception."""
         return 400, {
             "message": "The User with ID {} is not a valid/defined User".format(self.id_)}
+
+
+class PageNotFound(Exception):
+    """Error when the User is not found."""
+
+    def __init__(self, page_id: str) -> None:
+        """Constructor."""
+        self.page_id = page_id
+
+    def get_HTTP(self) -> Tuple[int, Dict[str, str]]:
+        """Return the HTTP response for the Exception."""
+        return 400, {
+            "message": "The page with ID {} not found".format(self.page_id)}
