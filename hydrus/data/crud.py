@@ -43,7 +43,8 @@ from hydrus.data.exceptions import (
     PropertyNotFound,
     NotInstanceProperty,
     NotAbstractProperty,
-    InstanceNotFound)
+    InstanceNotFound,
+    PageNotFound)
 # from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.scoping import scoped_session
 from typing import Dict, Optional, Any, List
@@ -514,19 +515,30 @@ def update(id_: str,
 def get_collection(API_NAME: str,
                    type_: str,
                    session: scoped_session,
-                   path: str = None) -> Dict[str,
-                                             Any]:
+                   paginate: bool,
+                   page_size: int,
+                   page: int = 1,
+                   path: str = None) -> Dict[str, Any]:
     """Retrieve a type of collection from the database.
     :param API_NAME: api name specified while starting server
     :param type_: type of object to be updated
     :param session: sqlalchemy scoped session
+    :param paginate: Enable/disable pagination
+    :param page_size: Number maximum elements showed in a page
+    :param page: page number
     :param path: endpoint
-    :return: response containing all the objects of that particular type_
+    :return: response containing a page of the objects of that particular type_
 
     Raises:
-        ClassNotFound: If `type_` does not represt a valid/defined RDFClass.
+        ClassNotFound: If `type_` does not represent a valid/defined RDFClass.
 
     """
+    # Check for valid page value
+    try:
+        page = int(page)
+    except ValueError:
+        raise PageNotFound(page)
+
     if path is not None:
         collection_template = {
             "@id": "/{}/{}/".format(API_NAME, path),
@@ -548,8 +560,13 @@ def get_collection(API_NAME: str,
         raise ClassNotFound(type_=type_)
 
     try:
-        instances = session.query(Instance).filter(
-            Instance.type_ == rdf_class.id).all()
+        if paginate is True:
+            offset = (page - 1) * page_size
+            instances = session.query(Instance).filter(
+                Instance.type_ == rdf_class.id).limit(page_size).offset(offset)
+        else:
+            instances = session.query(Instance).filter(
+                Instance.type_ == rdf_class.id).all()
     except NoResultFound:
         instances = list()
 
@@ -563,6 +580,37 @@ def get_collection(API_NAME: str,
             object_template = {
                 "@id": "/{}/{}Collection/{}".format(API_NAME, type_, instance_.id), "@type": type_}
         collection_template["members"].append(object_template)
+
+    # If pagination is disabled then stop and return the collection template
+    if paginate is False:
+        return collection_template
+
+    number_of_instances = len(collection_template["members"])
+    # If we are on the first page and there are fewer elements than the
+    # page size then there is no need to make an extra DB call to get count
+    if page == 1 and number_of_instances < page_size:
+        total_items = number_of_instances
+    else:
+        total_items = session.query(Instance).filter(
+            Instance.type_ == rdf_class.id).count()
+    collection_template["totalItems"] = total_items
+    # Calculate last page number
+    if total_items != 0 and total_items % page_size == 0:
+        last = total_items // page_size
+    else:
+        last = total_items // page_size + 1
+    if page < 1 or page > last:
+        raise PageNotFound(str(page))
+    collection_template["view"] = {
+        "@id": "/{}/{}?page={}".format(API_NAME, path, page),
+        "@type": "PartialCollectionView",
+        "first": "/{}/{}?page=1".format(API_NAME, path),
+        "last": "/{}/{}?page={}".format(API_NAME, path, last)
+    }
+    if page != 1:
+        collection_template["view"]["previous"] = "/{}/{}?page={}".format(API_NAME, path, page-1)
+    if page != last:
+        collection_template["view"]["next"] = "/{}/{}?page={}".format(API_NAME, path, page + 1)
     return collection_template
 
 
