@@ -173,6 +173,17 @@ class ViewsTestCase(unittest.TestCase):
                 assert "@id" in response_get_data
                 assert "@type" in response_get_data
                 assert "members" in response_get_data
+                # Check the item URI has the valid format, so it can be dereferenced
+                if len(response_get_data["members"]) > 0:
+                    for item in response_get_data["members"]:
+                        class_type = item["@type"]
+                        if class_type in self.doc.parsed_classes:
+                            class_ = self.doc.parsed_classes[class_type]["class"]
+                            class_methods = [
+                                x.method for x in class_.supportedOperation]
+                            if "GET" in class_methods:
+                                item_response = self.client.get(response_get_data["members"][0]["@id"])
+                                assert item_response.status_code == 200
 
     def test_pagination(self):
         """Test basic pagination"""
