@@ -423,6 +423,23 @@ doc = {
                     ],
                     "returns": "vocab:Drone",
                     "title": "GetDrone"
+                },
+                {
+                    "@type": "http://schema.org/DeleteAction",
+                    "expects": "null",
+                    "method": "DELETE",
+                    "possibleStatus": [
+                        {
+                            "description": "Drone not found",
+                            "statusCode": 404
+                        },
+                        {
+                            "description": "Drone succesfully deleted",
+                            "statusCode": 200
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "DeleteDrone"
                 }
             ],
             "supportedProperty": [
