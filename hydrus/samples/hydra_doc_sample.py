@@ -434,7 +434,7 @@ doc = {
                             "statusCode": 404
                         },
                         {
-                            "description": "Drone succesfully deleted",
+                            "description": "Drone successfully deleted",
                             "statusCode": 200
                         }
                     ],
@@ -625,7 +625,7 @@ doc = {
                 {
                     "@id": "_:command_create",
                     "@type": "http://schema.org/AddAction",
-                    "description": "Create new Command entitity",
+                    "description": "Create new Command entity",
                     "expects": "vocab:Command",
                     "method": "PUT",
                     "returns": "vocab:Command",
@@ -668,7 +668,7 @@ doc = {
                 {
                     "@id": "_:state_create",
                     "@type": "http://schema.org/AddAction",
-                    "description": "Create new State entitity",
+                    "description": "Create new State entity",
                     "expects": "vocab:State",
                     "method": "PUT",
                     "returns": "vocab:State",
@@ -711,7 +711,7 @@ doc = {
                 {
                     "@id": "_:message_create",
                     "@type": "http://schema.org/AddAction",
-                    "description": "Create new Message entitity",
+                    "description": "Create new Message entity",
                     "expects": "vocab:Message",
                     "method": "PUT",
                     "returns": "vocab:Message",
@@ -754,7 +754,7 @@ doc = {
                 {
                     "@id": "_:drone_create",
                     "@type": "http://schema.org/AddAction",
-                    "description": "Create new Drone entitity",
+                    "description": "Create new Drone entity",
                     "expects": "vocab:Drone",
                     "method": "PUT",
                     "returns": "vocab:Drone",
@@ -797,7 +797,7 @@ doc = {
                 {
                     "@id": "_:logentry_create",
                     "@type": "http://schema.org/AddAction",
-                    "description": "Create new LogEntry entitity",
+                    "description": "Create new LogEntry entity",
                     "expects": "vocab:LogEntry",
                     "method": "PUT",
                     "returns": "vocab:LogEntry",
@@ -840,7 +840,7 @@ doc = {
                 {
                     "@id": "_:datastream_create",
                     "@type": "http://schema.org/AddAction",
-                    "description": "Create new Datastream entitity",
+                    "description": "Create new Datastream entity",
                     "expects": "vocab:Datastream",
                     "method": "PUT",
                     "returns": "vocab:Datastream",
@@ -955,7 +955,7 @@ doc = {
                             {
                                 "@id": "_:command_create",
                                 "@type": "http://schema.org/AddAction",
-                                "description": "Create new Command entitity",
+                                "description": "Create new Command entity",
                                 "expects": "vocab:Command",
                                 "method": "PUT",
                                 "returns": "vocab:Command",
@@ -995,7 +995,7 @@ doc = {
                             {
                                 "@id": "_:state_create",
                                 "@type": "http://schema.org/AddAction",
-                                "description": "Create new State entitity",
+                                "description": "Create new State entity",
                                 "expects": "vocab:State",
                                 "method": "PUT",
                                 "returns": "vocab:State",
@@ -1035,7 +1035,7 @@ doc = {
                             {
                                 "@id": "_:message_create",
                                 "@type": "http://schema.org/AddAction",
-                                "description": "Create new Message entitity",
+                                "description": "Create new Message entity",
                                 "expects": "vocab:Message",
                                 "method": "PUT",
                                 "returns": "vocab:Message",
@@ -1075,7 +1075,7 @@ doc = {
                             {
                                 "@id": "_:drone_create",
                                 "@type": "http://schema.org/AddAction",
-                                "description": "Create new Drone entitity",
+                                "description": "Create new Drone entity",
                                 "expects": "vocab:Drone",
                                 "method": "PUT",
                                 "returns": "vocab:Drone",
@@ -1115,7 +1115,7 @@ doc = {
                             {
                                 "@id": "_:logentry_create",
                                 "@type": "http://schema.org/AddAction",
-                                "description": "Create new LogEntry entitity",
+                                "description": "Create new LogEntry entity",
                                 "expects": "vocab:LogEntry",
                                 "method": "PUT",
                                 "returns": "vocab:LogEntry",
