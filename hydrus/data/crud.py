@@ -237,7 +237,7 @@ def insert(object_: Dict[str, Any], session: scoped_session,
 def insert_multiple(objects_: List[Dict[str,
                                         Any]],
                     session: scoped_session,
-                    id_: Optional[str] = "") -> List[int]:
+                    id_: Optional[str] = "") -> List[str]:
     """
     Adds a list of object with given ids to the database
     :param objects_: List of dict's to be added to the database
