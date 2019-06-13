@@ -62,12 +62,14 @@ doc = {
                     "method": "GET",
                     "possibleStatus": [
                         {
-                            "description": "State not found",
-                            "statusCode": 404
+                            "title": "State not found",
+                            "statusCode": 404,
+                            "description": ""
                         },
                         {
-                            "description": "State Returned",
-                            "statusCode": 200
+                            "title": "State Returned",
+                            "statusCode": 200,
+                            "description": ""
                         }
                     ],
                     "returns": "vocab:State",
@@ -137,12 +139,14 @@ doc = {
                     "method": "GET",
                     "possibleStatus": [
                         {
-                            "description": "Command not found",
-                            "statusCode": 404
+                            "title": "Command not found",
+                            "statusCode": 404,
+                            "description": ""
                         },
                         {
-                            "description": "Command Returned",
-                            "statusCode": 200
+                            "title": "Command Returned",
+                            "statusCode": 200,
+                            "description": ""
                         }
                     ],
                     "returns": "vocab:Command",
@@ -154,8 +158,9 @@ doc = {
                     "method": "PUT",
                     "possibleStatus": [
                         {
-                            "description": "Command added",
-                            "statusCode": 201
+                            "title": "Command added",
+                            "statusCode": 201,
+                            "description": ""
                         }
                     ],
                     "returns": "null",
@@ -167,8 +172,9 @@ doc = {
                     "method": "DELETE",
                     "possibleStatus": [
                         {
-                            "description": "Command deleted",
-                            "statusCode": 201
+                            "title": "Command deleted",
+                            "statusCode": 201,
+                            "description": ""
                         }
                     ],
                     "returns": "null",
@@ -206,12 +212,14 @@ doc = {
                     "method": "GET",
                     "possibleStatus": [
                         {
-                            "description": "Message not found",
-                            "statusCode": 404
+                            "title": "Message not found",
+                            "statusCode": 404,
+                            "description": ""
                         },
                         {
-                            "description": "Message returned",
-                            "statusCode": 200
+                            "title": "Message returned",
+                            "statusCode": 200,
+                            "description": ""
                         }
                     ],
                     "returns": "vocab:Message",
@@ -223,8 +231,9 @@ doc = {
                     "method": "DELETE",
                     "possibleStatus": [
                         {
-                            "description": "Message deleted",
-                            "statusCode": 200
+                            "title": "Message deleted",
+                            "statusCode": 200,
+                            "description": ""
                         }
                     ],
                     "returns": "null",
@@ -254,8 +263,9 @@ doc = {
                     "method": "POST",
                     "possibleStatus": [
                         {
-                            "description": "Area of interest changed",
-                            "statusCode": 200
+                            "title": "Area of interest changed",
+                            "statusCode": 200,
+                            "description": ""
                         }
                     ],
                     "returns": "null",
@@ -267,12 +277,14 @@ doc = {
                     "method": "GET",
                     "possibleStatus": [
                         {
-                            "description": "Area of interest not found",
-                            "statusCode": 404
+                            "title": "Area of interest not found",
+                            "statusCode": 404,
+                            "description": ""
                         },
                         {
-                            "description": "Area of interest returned",
-                            "statusCode": 200
+                            "title": "Area of interest returned",
+                            "statusCode": 200,
+                            "description": ""
                         }
                     ],
                     "returns": "vocab:Area",
@@ -310,12 +322,14 @@ doc = {
                     "method": "GET",
                     "possibleStatus": [
                         {
-                            "description": "Data not found",
-                            "statusCode": 404
+                            "title": "Data not found",
+                            "statusCode": 404,
+                            "description": ""
                         },
                         {
-                            "description": "Data returned",
-                            "statusCode": 200
+                            "title": "Data returned",
+                            "statusCode": 200,
+                            "description": ""
                         }
                     ],
                     "returns": "vocab:Datastream",
@@ -327,8 +341,9 @@ doc = {
                     "method": "POST",
                     "possibleStatus": [
                         {
-                            "description": "Data updated",
-                            "statusCode": 200
+                            "title": "Data updated",
+                            "statusCode": 200,
+                            "description": ""
                         }
                     ],
                     "returns": "null",
@@ -340,8 +355,9 @@ doc = {
                     "method": "DELETE",
                     "possibleStatus": [
                         {
-                            "description": "Data deleted",
-                            "statusCode": 200
+                            "title": "Data deleted",
+                            "statusCode": 200,
+                            "description": ""
                         }
                     ],
                     "returns": "null",
@@ -387,8 +403,9 @@ doc = {
                     "method": "POST",
                     "possibleStatus": [
                         {
-                            "description": "Drone updated",
-                            "statusCode": 200
+                            "title": "Drone updated",
+                            "statusCode": 200,
+                            "description": ""
                         }
                     ],
                     "returns": "null",
@@ -400,8 +417,9 @@ doc = {
                     "method": "PUT",
                     "possibleStatus": [
                         {
-                            "description": "Drone added",
-                            "statusCode": 200
+                            "title": "Drone added",
+                            "statusCode": 200,
+                            "description": ""
                         }
                     ],
                     "returns": "null",
@@ -413,12 +431,14 @@ doc = {
                     "method": "GET",
                     "possibleStatus": [
                         {
-                            "description": "Drone not found",
-                            "statusCode": 404
+                            "title": "Drone not found",
+                            "statusCode": 404,
+                            "description": ""
                         },
                         {
-                            "description": "Drone Returned",
-                            "statusCode": 200
+                            "title": "Drone Returned",
+                            "statusCode": 200,
+                            "description": ""
                         }
                     ],
                     "returns": "vocab:Drone",
@@ -430,12 +450,14 @@ doc = {
                     "method": "DELETE",
                     "possibleStatus": [
                         {
-                            "description": "Drone not found",
-                            "statusCode": 404
+                            "title": "Drone not found",
+                            "statusCode": 404,
+                            "description": ""
                         },
                         {
-                            "description": "Drone successfully deleted",
-                            "statusCode": 200
+                            "title": "Drone successfully deleted",
+                            "statusCode": 200,
+                            "description": ""
                         }
                     ],
                     "returns": "null",
@@ -497,12 +519,14 @@ doc = {
                     "method": "GET",
                     "possibleStatus": [
                         {
-                            "description": "Log entry not found",
-                            "statusCode": 404
+                            "title": "Log entry not found",
+                            "statusCode": 404,
+                            "description": ""
                         },
                         {
-                            "description": "Log entry returned",
-                            "statusCode": 200
+                            "title": "Log entry returned",
+                            "statusCode": 200,
+                            "description": ""
                         }
                     ],
                     "returns": "vocab:LogEntry",
@@ -514,8 +538,9 @@ doc = {
                     "method": "PUT",
                     "possibleStatus": [
                         {
-                            "description": "Log entry created",
-                            "statusCode": 201
+                            "title": "Log entry created",
+                            "statusCode": 201,
+                            "description": ""
                         }
                     ],
                     "returns": "null",
@@ -620,7 +645,7 @@ doc = {
                     "expects": "null",
                     "method": "GET",
                     "returns": "vocab:CommandCollection",
-                    "statusCodes": []
+                    "possibleStatus": []
                 },
                 {
                     "@id": "_:command_create",
@@ -629,10 +654,11 @@ doc = {
                     "expects": "vocab:Command",
                     "method": "PUT",
                     "returns": "vocab:Command",
-                    "statusCodes": [
+                    "possibleStatus": [
                         {
-                            "description": "If the Command entity was created successfully.",
-                            "statusCode": 201
+                            "title": "If the Command entity was created successfully.",
+                            "statusCode": 201,
+                            "description": ""
                         }
                     ]
                 }
@@ -663,7 +689,7 @@ doc = {
                     "expects": "null",
                     "method": "GET",
                     "returns": "vocab:StateCollection",
-                    "statusCodes": []
+                    "possibleStatus": []
                 },
                 {
                     "@id": "_:state_create",
@@ -672,10 +698,11 @@ doc = {
                     "expects": "vocab:State",
                     "method": "PUT",
                     "returns": "vocab:State",
-                    "statusCodes": [
+                    "possibleStatus": [
                         {
-                            "description": "If the State entity was created successfully.",
-                            "statusCode": 201
+                            "title": "If the State entity was created successfully.",
+                            "statusCode": 201,
+                            "description": ""
                         }
                     ]
                 }
@@ -706,7 +733,7 @@ doc = {
                     "expects": "null",
                     "method": "GET",
                     "returns": "vocab:MessageCollection",
-                    "statusCodes": []
+                    "possibleStatus": []
                 },
                 {
                     "@id": "_:message_create",
@@ -715,10 +742,11 @@ doc = {
                     "expects": "vocab:Message",
                     "method": "PUT",
                     "returns": "vocab:Message",
-                    "statusCodes": [
+                    "possibleStatus": [
                         {
-                            "description": "If the Message entity was created successfully.",
-                            "statusCode": 201
+                            "title": "If the Message entity was created successfully.",
+                            "statusCode": 201,
+                            "description": ""
                         }
                     ]
                 }
@@ -749,7 +777,7 @@ doc = {
                     "expects": "null",
                     "method": "GET",
                     "returns": "vocab:DroneCollection",
-                    "statusCodes": []
+                    "possibleStatus": []
                 },
                 {
                     "@id": "_:drone_create",
@@ -758,10 +786,11 @@ doc = {
                     "expects": "vocab:Drone",
                     "method": "PUT",
                     "returns": "vocab:Drone",
-                    "statusCodes": [
+                    "possibleStatus": [
                         {
-                            "description": "If the Drone entity was created successfully.",
-                            "statusCode": 201
+                            "title": "If the Drone entity was created successfully.",
+                            "statusCode": 201,
+                            "description": ""
                         }
                     ]
                 }
@@ -792,7 +821,7 @@ doc = {
                     "expects": "null",
                     "method": "GET",
                     "returns": "vocab:LogEntryCollection",
-                    "statusCodes": []
+                    "possibleStatus": []
                 },
                 {
                     "@id": "_:logentry_create",
@@ -801,10 +830,11 @@ doc = {
                     "expects": "vocab:LogEntry",
                     "method": "PUT",
                     "returns": "vocab:LogEntry",
-                    "statusCodes": [
+                    "possibleStatus": [
                         {
-                            "description": "If the LogEntry entity was created successfully.",
-                            "statusCode": 201
+                            "title": "If the LogEntry entity was created successfully.",
+                            "statusCode": 201,
+                            "description": ""
                         }
                     ]
                 }
@@ -835,7 +865,7 @@ doc = {
                     "expects": "null",
                     "method": "GET",
                     "returns": "vocab:DatastreamCollection",
-                    "statusCodes": []
+                    "possibleStatus": []
                 },
                 {
                     "@id": "_:datastream_create",
@@ -844,10 +874,11 @@ doc = {
                     "expects": "vocab:Datastream",
                     "method": "PUT",
                     "returns": "vocab:Datastream",
-                    "statusCodes": [
+                    "possibleStatus": [
                         {
-                            "description": "If the Datastream entity was created successfully.",
-                            "statusCode": 201
+                            "title": "If the Datastream entity was created successfully.",
+                            "statusCode": 201,
+                            "description": ""
                         }
                     ]
                 }
@@ -877,7 +908,7 @@ doc = {
                     "expects": "null",
                     "method": "GET",
                     "returns": "null",
-                    "statusCodes": "vocab:EntryPoint"
+                    "possibleStatus": "vocab:EntryPoint"
                 }
             ],
             "supportedProperty": [
@@ -900,10 +931,11 @@ doc = {
                                 "label": "UpdateArea",
                                 "method": "POST",
                                 "returns": "null",
-                                "statusCodes": [
+                                "possibleStatus": [
                                     {
-                                        "description": "Area of interest changed",
-                                        "statusCode": 200
+                                        "title": "Area of interest changed",
+                                        "statusCode": 200,
+                                        "description": ""
                                     }
                                 ]
                             },
@@ -915,14 +947,16 @@ doc = {
                                 "label": "GetArea",
                                 "method": "GET",
                                 "returns": "vocab:Area",
-                                "statusCodes": [
+                                "possibleStatus": [
                                     {
-                                        "description": "Area of interest not found",
-                                        "statusCode": 404
+                                        "title": "Area of interest not found",
+                                        "statusCode": 404,
+                                        "description": ""
                                     },
                                     {
-                                        "description": "Area of interest returned",
-                                        "statusCode": 200
+                                        "title": "Area of interest returned",
+                                        "statusCode": 200,
+                                        "description": ""
                                     }
                                 ]
                             }
@@ -950,7 +984,7 @@ doc = {
                                 "expects": "null",
                                 "method": "GET",
                                 "returns": "vocab:CommandCollection",
-                                "statusCodes": []
+                                "possibleStatus": []
                             },
                             {
                                 "@id": "_:command_create",
@@ -959,10 +993,11 @@ doc = {
                                 "expects": "vocab:Command",
                                 "method": "PUT",
                                 "returns": "vocab:Command",
-                                "statusCodes": [
+                                "possibleStatus": [
                                     {
-                                        "description": "If the Command entity was created successfully.",
-                                        "statusCode": 201
+                                        "title": "If the Command entity was created successfully.",
+                                        "statusCode": 201,
+                                        "description": ""
                                     }
                                 ]
                             }
@@ -990,7 +1025,7 @@ doc = {
                                 "expects": "null",
                                 "method": "GET",
                                 "returns": "vocab:StateCollection",
-                                "statusCodes": []
+                                "possibleStatus": []
                             },
                             {
                                 "@id": "_:state_create",
@@ -999,10 +1034,11 @@ doc = {
                                 "expects": "vocab:State",
                                 "method": "PUT",
                                 "returns": "vocab:State",
-                                "statusCodes": [
+                                "possibleStatus": [
                                     {
-                                        "description": "If the State entity was created successfully.",
-                                        "statusCode": 201
+                                        "title": "If the State entity was created successfully.",
+                                        "statusCode": 201,
+                                        "description": ""
                                     }
                                 ]
                             }
@@ -1030,7 +1066,7 @@ doc = {
                                 "expects": "null",
                                 "method": "GET",
                                 "returns": "vocab:MessageCollection",
-                                "statusCodes": []
+                                "possibleStatus": []
                             },
                             {
                                 "@id": "_:message_create",
@@ -1039,10 +1075,11 @@ doc = {
                                 "expects": "vocab:Message",
                                 "method": "PUT",
                                 "returns": "vocab:Message",
-                                "statusCodes": [
+                                "possibleStatus": [
                                     {
-                                        "description": "If the Message entity was created successfully.",
-                                        "statusCode": 201
+                                        "title": "If the Message entity was created successfully.",
+                                        "statusCode": 201,
+                                        "description": ""
                                     }
                                 ]
                             }
@@ -1070,7 +1107,7 @@ doc = {
                                 "expects": "null",
                                 "method": "GET",
                                 "returns": "vocab:DroneCollection",
-                                "statusCodes": []
+                                "possibleStatus": []
                             },
                             {
                                 "@id": "_:drone_create",
@@ -1079,10 +1116,11 @@ doc = {
                                 "expects": "vocab:Drone",
                                 "method": "PUT",
                                 "returns": "vocab:Drone",
-                                "statusCodes": [
+                                "possibleStatus": [
                                     {
-                                        "description": "If the Drone entity was created successfully.",
-                                        "statusCode": 201
+                                        "title": "If the Drone entity was created successfully.",
+                                        "statusCode": 201,
+                                        "description": ""
                                     }
                                 ]
                             }
@@ -1110,7 +1148,7 @@ doc = {
                                 "expects": "null",
                                 "method": "GET",
                                 "returns": "vocab:LogEntryCollection",
-                                "statusCodes": []
+                                "possibleStatus": []
                             },
                             {
                                 "@id": "_:logentry_create",
@@ -1119,10 +1157,11 @@ doc = {
                                 "expects": "vocab:LogEntry",
                                 "method": "PUT",
                                 "returns": "vocab:LogEntry",
-                                "statusCodes": [
+                                "possibleStatus": [
                                     {
-                                        "description": "If the LogEntry entity was created successfully.",
-                                        "statusCode": 201
+                                        "title": "If the LogEntry entity was created successfully.",
+                                        "statusCode": 201,
+                                        "description": ""
                                     }
                                 ]
                             }
@@ -1150,7 +1189,7 @@ doc = {
                                 "expects": "null",
                                 "method": "GET",
                                 "returns": "vocab:DatastreamCollection",
-                                "statusCodes": []
+                                "possibleStatus": []
                             },
                             {
                                 "@id": "_:datastream_create",
@@ -1159,10 +1198,11 @@ doc = {
                                 "expects": "vocab:Datastream",
                                 "method": "PUT",
                                 "returns": "vocab:Datastream",
-                                "statusCodes": [
+                                "possibleStatus": [
                                     {
-                                        "description": "If the Datastream entity was created successfully.",
-                                        "statusCode": 201
+                                        "title": "If the Datastream entity was created successfully.",
+                                        "statusCode": 201,
+                                        "description": ""
                                     }
                                 ]
                             }

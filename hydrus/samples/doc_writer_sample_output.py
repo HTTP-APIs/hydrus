@@ -1,6 +1,5 @@
-"""Generated API Documentation sample using
-         doc_writer_sample.py."""
-
+"""Generated API Documentation sample using doc_writer_sample.py."""
+    
 doc = {
     "@context": {
         "ApiDocumentation": "hydra:ApiDocumentation",
@@ -34,7 +33,6 @@ doc = {
             "@type": "@id"
         },
         "statusCode": "hydra:statusCode",
-        "statusCodes": "hydra:statusCodes",
         "subClassOf": {
             "@id": "rdfs:subClassOf",
             "@type": "@id"
@@ -52,92 +50,6 @@ doc = {
     "possibleStatus": [],
     "supportedClass": [
         {
-            "@id": "vocab:dummyClass",
-            "@type": "hydra:Class",
-            "description": "A dummyClass for demo",
-            "supportedOperation": [
-                {
-                    "@type": "http://schema.org/UpdateAction",
-                    "expects": "vocab:dummyClass",
-                    "method": "POST",
-                    "possibleStatus": [
-                        {
-                            "description": "dummyClass updated",
-                            "statusCode": 200
-                        }
-                    ],
-                    "returns": "null",
-                    "title": "UpdateClass"
-                },
-                {
-                    "@type": "http://schema.org/DeleteAction",
-                    "expects": "null",
-                    "method": "DELETE",
-                    "possibleStatus": [
-                        {
-                            "description": "dummyClass deleted",
-                            "statusCode": 200
-                        }
-                    ],
-                    "returns": "null",
-                    "title": "DeleteClass"
-                },
-                {
-                    "@type": "http://schema.org/AddAction",
-                    "expects": "vocab:dummyClass",
-                    "method": "PUT",
-                    "possibleStatus": [
-                        {
-                            "description": "dummyClass successfully added",
-                            "statusCode": 201
-                        }
-                    ],
-                    "returns": "null",
-                    "title": "AddClass"
-                },
-                {
-                    "@type": "http://schema.org/FindAction",
-                    "expects": "null",
-                    "method": "GET",
-                    "possibleStatus": [
-                        {
-                            "description": "dummyClass returned",
-                            "statusCode": 200
-                        }
-                    ],
-                    "returns": "vocab:dummyClass",
-                    "title": "GetClass"
-                }
-            ],
-            "supportedProperty": [
-                {
-                    "@type": "SupportedProperty",
-                    "property": "http://props.hydrus.com/prop1",
-                    "readonly": "false",
-                    "required": "false",
-                    "title": "Prop1",
-                    "writeonly": "true"
-                },
-                {
-                    "@type": "SupportedProperty",
-                    "property": "http://props.hydrus.com/prop1",
-                    "readonly": "false",
-                    "required": "false",
-                    "title": "Prop2",
-                    "writeonly": "true"
-                }
-            ],
-            "title": "dummyClass"
-        },
-        {
-            "@id": "vocab:extraClass",
-            "@type": "hydra:Class",
-            "description": "Class without any explicit methods",
-            "supportedOperation": [],
-            "supportedProperty": [],
-            "title": "extraClass"
-        },
-        {
             "@id": "vocab:singleClass",
             "@type": "hydra:Class",
             "description": "A non collection class",
@@ -148,8 +60,11 @@ doc = {
                     "method": "POST",
                     "possibleStatus": [
                         {
-                            "description": "singleClass changed",
-                            "statusCode": 200
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
+                            "description": "",
+                            "statusCode": 200,
+                            "title": "singleClass changed."
                         }
                     ],
                     "returns": "null",
@@ -161,8 +76,11 @@ doc = {
                     "method": "DELETE",
                     "possibleStatus": [
                         {
-                            "description": "singleClass deleted",
-                            "statusCode": 200
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
+                            "description": "",
+                            "statusCode": 200,
+                            "title": "singleClass deleted."
                         }
                     ],
                     "returns": "null",
@@ -174,8 +92,11 @@ doc = {
                     "method": "PUT",
                     "possibleStatus": [
                         {
-                            "description": "singleClass successfully added",
-                            "statusCode": 201
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
+                            "description": "",
+                            "statusCode": 201,
+                            "title": "singleClass successfully added."
                         }
                     ],
                     "returns": "null",
@@ -187,8 +108,11 @@ doc = {
                     "method": "GET",
                     "possibleStatus": [
                         {
-                            "description": "singleClass returned",
-                            "statusCode": 200
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
+                            "description": "",
+                            "statusCode": 200,
+                            "title": "singleClass returned."
                         }
                     ],
                     "returns": "vocab:singleClass",
@@ -200,7 +124,7 @@ doc = {
                     "@type": "SupportedProperty",
                     "property": "http://props.hydrus.com/prop1",
                     "readonly": "false",
-                    "required": "false",
+                    "required": "true",
                     "title": "Prop1",
                     "writeonly": "true"
                 },
@@ -218,7 +142,7 @@ doc = {
                     "readonly": "false",
                     "required": "false",
                     "title": "dummyProp",
-                    "writeonly": "true"
+                    "writeonly": "false"
                 },
                 {
                     "@type": "SupportedProperty",
@@ -226,7 +150,7 @@ doc = {
                     "readonly": "false",
                     "required": "false",
                     "title": "singleClassProp",
-                    "writeonly": "true"
+                    "writeonly": "false"
                 }
             ],
             "title": "singleClass"
@@ -242,8 +166,11 @@ doc = {
                     "method": "GET",
                     "possibleStatus": [
                         {
-                            "description": "anotherSingleClass returned",
-                            "statusCode": 200
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
+                            "description": "",
+                            "statusCode": 200,
+                            "title": "anotherSingleClass returned."
                         }
                     ],
                     "returns": "vocab:anotherSingleClass",
@@ -255,12 +182,110 @@ doc = {
                     "@type": "SupportedProperty",
                     "property": "http://props.hydrus.com/prop1",
                     "readonly": "false",
-                    "required": "false",
+                    "required": "true",
                     "title": "Prop1",
                     "writeonly": "true"
                 }
             ],
             "title": "anotherSingleClass"
+        },
+        {
+            "@id": "vocab:extraClass",
+            "@type": "hydra:Class",
+            "description": "Class without any explicit methods",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "extraClass"
+        },
+        {
+            "@id": "vocab:dummyClass",
+            "@type": "hydra:Class",
+            "description": "A dummyClass for demo",
+            "supportedOperation": [
+                {
+                    "@type": "http://schema.org/UpdateAction",
+                    "expects": "vocab:dummyClass",
+                    "method": "POST",
+                    "possibleStatus": [
+                        {
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
+                            "description": "",
+                            "statusCode": 200,
+                            "title": "dummyClass updated."
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "UpdateClass"
+                },
+                {
+                    "@type": "http://schema.org/DeleteAction",
+                    "expects": "null",
+                    "method": "DELETE",
+                    "possibleStatus": [
+                        {
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
+                            "description": "",
+                            "statusCode": 200,
+                            "title": "dummyClass deleted."
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "DeleteClass"
+                },
+                {
+                    "@type": "http://schema.org/AddAction",
+                    "expects": "vocab:dummyClass",
+                    "method": "PUT",
+                    "possibleStatus": [
+                        {
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
+                            "description": "",
+                            "statusCode": 201,
+                            "title": "dummyClass successfully added."
+                        }
+                    ],
+                    "returns": "null",
+                    "title": "AddClass"
+                },
+                {
+                    "@type": "http://schema.org/FindAction",
+                    "expects": "null",
+                    "method": "GET",
+                    "possibleStatus": [
+                        {
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
+                            "description": "",
+                            "statusCode": 200,
+                            "title": "dummyClass returned."
+                        }
+                    ],
+                    "returns": "vocab:dummyClass",
+                    "title": "GetClass"
+                }
+            ],
+            "supportedProperty": [
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://props.hydrus.com/prop1",
+                    "readonly": "false",
+                    "required": "true",
+                    "title": "Prop1",
+                    "writeonly": "true"
+                },
+                {
+                    "@type": "SupportedProperty",
+                    "property": "http://props.hydrus.com/prop1",
+                    "readonly": "false",
+                    "required": "false",
+                    "title": "Prop2",
+                    "writeonly": "true"
+                }
+            ],
+            "title": "dummyClass"
         },
         {
             "@id": "http://www.w3.org/ns/hydra/core#Resource",
@@ -299,22 +324,25 @@ doc = {
                     "description": "Retrieves all dummyClass entities",
                     "expects": "null",
                     "method": "GET",
-                    "returns": "vocab:dummyClassCollection",
-                    "statusCodes": []
+                    "possibleStatus": [],
+                    "returns": "vocab:dummyClassCollection"
                 },
                 {
                     "@id": "_:dummyclass_create",
                     "@type": "http://schema.org/AddAction",
-                    "description": "Create new dummyClass entitity",
+                    "description": "Create new dummyClass entity",
                     "expects": "vocab:dummyClass",
                     "method": "PUT",
-                    "returns": "vocab:dummyClass",
-                    "statusCodes": [
+                    "possibleStatus": [
                         {
-                            "description": "If the dummyClass entity was created successfully.",
-                            "statusCode": 201
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
+                            "description": "If the dummyClass entity was createdsuccessfully.",
+                            "statusCode": 201,
+                            "title": ""
                         }
-                    ]
+                    ],
+                    "returns": "vocab:dummyClass"
                 }
             ],
             "supportedProperty": [
@@ -342,22 +370,25 @@ doc = {
                     "description": "Retrieves all extraClass entities",
                     "expects": "null",
                     "method": "GET",
-                    "returns": "vocab:extraClassCollection",
-                    "statusCodes": []
+                    "possibleStatus": [],
+                    "returns": "vocab:extraClassCollection"
                 },
                 {
                     "@id": "_:extraclass_create",
                     "@type": "http://schema.org/AddAction",
-                    "description": "Create new extraClass entitity",
+                    "description": "Create new extraClass entity",
                     "expects": "vocab:extraClass",
                     "method": "PUT",
-                    "returns": "vocab:extraClass",
-                    "statusCodes": [
+                    "possibleStatus": [
                         {
-                            "description": "If the extraClass entity was created successfully.",
-                            "statusCode": 201
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
+                            "description": "If the extraClass entity was createdsuccessfully.",
+                            "statusCode": 201,
+                            "title": ""
                         }
-                    ]
+                    ],
+                    "returns": "vocab:extraClass"
                 }
             ],
             "supportedProperty": [
@@ -380,12 +411,12 @@ doc = {
             "supportedOperation": [
                 {
                     "@id": "_:entry_point",
-                    "@type": "http://schema.org/FindAction",
+                    "@type": "vocab:EntryPoint",
                     "description": "The APIs main entry point.",
                     "expects": "null",
                     "method": "GET",
-                    "returns": "null",
-                    "statusCodes": "vocab:EntryPoint"
+                    "possibleStatus": [],
+                    "returns": "null"
                 }
             ],
             "supportedProperty": [
@@ -407,13 +438,16 @@ doc = {
                                 "expects": "vocab:singleClass",
                                 "label": "UpdateClass",
                                 "method": "POST",
-                                "returns": "null",
-                                "statusCodes": [
+                                "possibleStatus": [
                                     {
-                                        "description": "singleClass changed",
-                                        "statusCode": 200
+                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                                        "@type": "Status",
+                                        "description": "",
+                                        "statusCode": 200,
+                                        "title": "singleClass changed."
                                     }
-                                ]
+                                ],
+                                "returns": "null"
                             },
                             {
                                 "@id": "deleteclass",
@@ -422,13 +456,16 @@ doc = {
                                 "expects": "null",
                                 "label": "DeleteClass",
                                 "method": "DELETE",
-                                "returns": "null",
-                                "statusCodes": [
+                                "possibleStatus": [
                                     {
-                                        "description": "singleClass deleted",
-                                        "statusCode": 200
+                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                                        "@type": "Status",
+                                        "description": "",
+                                        "statusCode": 200,
+                                        "title": "singleClass deleted."
                                     }
-                                ]
+                                ],
+                                "returns": "null"
                             },
                             {
                                 "@id": "addclass",
@@ -437,13 +474,16 @@ doc = {
                                 "expects": "vocab:singleClass",
                                 "label": "AddClass",
                                 "method": "PUT",
-                                "returns": "null",
-                                "statusCodes": [
+                                "possibleStatus": [
                                     {
-                                        "description": "singleClass successfully added",
-                                        "statusCode": 201
+                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                                        "@type": "Status",
+                                        "description": "",
+                                        "statusCode": 201,
+                                        "title": "singleClass successfully added."
                                     }
-                                ]
+                                ],
+                                "returns": "null"
                             },
                             {
                                 "@id": "getclass",
@@ -452,13 +492,16 @@ doc = {
                                 "expects": "null",
                                 "label": "GetClass",
                                 "method": "GET",
-                                "returns": "vocab:singleClass",
-                                "statusCodes": [
+                                "possibleStatus": [
                                     {
-                                        "description": "singleClass returned",
-                                        "statusCode": 200
+                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                                        "@type": "Status",
+                                        "description": "",
+                                        "statusCode": 200,
+                                        "title": "singleClass returned."
                                     }
-                                ]
+                                ],
+                                "returns": "vocab:singleClass"
                             }
                         ]
                     },
@@ -484,13 +527,16 @@ doc = {
                                 "expects": "null",
                                 "label": "GetClass",
                                 "method": "GET",
-                                "returns": "vocab:anotherSingleClass",
-                                "statusCodes": [
+                                "possibleStatus": [
                                     {
-                                        "description": "anotherSingleClass returned",
-                                        "statusCode": 200
+                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                                        "@type": "Status",
+                                        "description": "",
+                                        "statusCode": 200,
+                                        "title": "anotherSingleClass returned."
                                     }
-                                ]
+                                ],
+                                "returns": "vocab:anotherSingleClass"
                             }
                         ]
                     },
@@ -515,22 +561,25 @@ doc = {
                                 "description": "Retrieves all dummyClass entities",
                                 "expects": "null",
                                 "method": "GET",
-                                "returns": "vocab:dummyClassCollection",
-                                "statusCodes": []
+                                "possibleStatus": [],
+                                "returns": "vocab:dummyClassCollection"
                             },
                             {
                                 "@id": "_:dummyclass_create",
                                 "@type": "http://schema.org/AddAction",
-                                "description": "Create new dummyClass entitity",
+                                "description": "Create new dummyClass entity",
                                 "expects": "vocab:dummyClass",
                                 "method": "PUT",
-                                "returns": "vocab:dummyClass",
-                                "statusCodes": [
+                                "possibleStatus": [
                                     {
-                                        "description": "If the dummyClass entity was created successfully.",
-                                        "statusCode": 201
+                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                                        "@type": "Status",
+                                        "description": "If the dummyClass entity was createdsuccessfully.",
+                                        "statusCode": 201,
+                                        "title": ""
                                     }
-                                ]
+                                ],
+                                "returns": "vocab:dummyClass"
                             }
                         ]
                     },
@@ -555,22 +604,25 @@ doc = {
                                 "description": "Retrieves all extraClass entities",
                                 "expects": "null",
                                 "method": "GET",
-                                "returns": "vocab:extraClassCollection",
-                                "statusCodes": []
+                                "possibleStatus": [],
+                                "returns": "vocab:extraClassCollection"
                             },
                             {
                                 "@id": "_:extraclass_create",
                                 "@type": "http://schema.org/AddAction",
-                                "description": "Create new extraClass entitity",
+                                "description": "Create new extraClass entity",
                                 "expects": "vocab:extraClass",
                                 "method": "PUT",
-                                "returns": "vocab:extraClass",
-                                "statusCodes": [
+                                "possibleStatus": [
                                     {
-                                        "description": "If the extraClass entity was created successfully.",
-                                        "statusCode": 201
+                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                                        "@type": "Status",
+                                        "description": "If the extraClass entity was createdsuccessfully.",
+                                        "statusCode": 201,
+                                        "title": ""
                                     }
-                                ]
+                                ],
+                                "returns": "vocab:extraClass"
                             }
                         ]
                     },
@@ -583,4 +635,4 @@ doc = {
         }
     ],
     "title": "Title for the API Documentation"
-}# nopep8
+}

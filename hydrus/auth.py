@@ -1,6 +1,7 @@
 from typing import Union
 
 from flask import jsonify, Response, request
+from hydra_python_core.doc_writer import HydraError
 from hydrus.utils import get_session, get_token, get_authentication
 
 from hydrus.data.user import (create_nonce, check_authorization,
@@ -48,8 +49,8 @@ def verify_user() -> Union[Response, None]:
             token = add_token(request, get_session())
             return token_response(token)
     except Exception as e:
-        status_code, message = e.get_HTTP()  # type: ignore
-        return set_response_headers(jsonify(message), status_code=status_code)
+        error = e.get_HTTP()  # type: HydraError
+        return set_response_headers(jsonify(error.generate()), status_code=error.code)
     return None
 
 
