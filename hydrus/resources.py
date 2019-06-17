@@ -52,6 +52,7 @@ from hydrus.helpers import (
     hydrafy,
     check_read_only_props,
     check_required_props,
+    add_iri_template,
     finalize_response)
 from hydrus.utils import (get_session,
     get_doc,
@@ -261,6 +262,10 @@ class ItemCollection(Resource):
                     response = crud.get_collection(
                         get_api_name(), collection.class_.title, session=get_session(),
                         paginate=False, path=path)
+
+                response["search"] = add_iri_template(class_type=collection.class_.title,
+                                                      API_NAME=get_api_name(), path=path)
+
                 return set_response_headers(jsonify(hydrafy(response, path=path)))
 
             except (ClassNotFound, PageNotFound) as e:
