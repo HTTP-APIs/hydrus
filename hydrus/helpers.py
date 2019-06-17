@@ -4,6 +4,8 @@ from flask import Response
 
 from hydrus.utils import get_doc, get_api_name, get_hydrus_server_url
 
+from hydra_python_core.doc_writer import HydraIriTemplate, IriTemplateMapping
+
 
 def validObject(object_: Dict[str, Any]) -> bool:
     """
@@ -171,3 +173,20 @@ def finalize_response(class_type: str, obj: Dict[str, Any]) -> Dict[str, Any]:
             else:
                 obj[prop.title] = "/{}/{}".format(get_api_name(), nested_path)
     return obj
+
+
+def add_iri_template(class_type: str, API_NAME: str, path:str) -> Dict[str, Any]:
+    template_mappings = list()
+    template = "/{}/{}(".format(API_NAME, path)
+    first = True
+    for supportedProp in get_doc(
+    ).parsed_classes[class_type]["class"].supportedProperty:
+        mapping = IriTemplateMapping(variable=supportedProp.title, prop=supportedProp.prop)
+        template_mappings.append(mapping)
+        if first == True:
+            template = template + "{}".format(supportedProp.title)
+            first = False
+        else:
+            template = template + ", {}".format(supportedProp.title)
+    template = template + ")"
+    return HydraIriTemplate(template=template, iri_mapping=template_mappings).generate()
