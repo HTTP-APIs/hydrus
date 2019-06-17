@@ -518,6 +518,7 @@ def get_collection(API_NAME: str,
                    paginate: bool,
                    page_size: int,
                    page: int = 1,
+                   search_params: Dict[str, Any] = None,
                    path: str = None) -> Dict[str, Any]:
     """Retrieve a type of collection from the database.
     :param API_NAME: api name specified while starting server
@@ -526,6 +527,7 @@ def get_collection(API_NAME: str,
     :param paginate: Enable/disable pagination
     :param page_size: Number maximum elements showed in a page
     :param page: page number
+    :param search_params: Query parameters
     :param path: endpoint
     :return: response containing a page of the objects of that particular type_
 
@@ -538,6 +540,12 @@ def get_collection(API_NAME: str,
         page = int(page)
     except ValueError:
         raise PageNotFound(page)
+    # Reconstruct dict with property ids as keys
+    search_props = dict()
+    for param in search_params:
+        prop = session.query(properties).filter(
+            properties.name == param).one().id
+        search_props[prop] = search_params[param]
 
     if path is not None:
         collection_template = {
@@ -736,3 +744,24 @@ def delete_single(type_: str, session: scoped_session) -> None:
         raise InstanceNotFound(type_=rdf_class.name)
 
     return delete(instance.id, type_, session=session)
+
+
+def apply_filter(object_id: str, session: scoped_session,
+                 search_props: Dict[str, Any]) -> bool:
+    """Check whether objects has properties with query values or not.
+    :param object_id: Id of the instance.
+    :param session: sqlalchemy scoped session.
+    :param search_props: Dictionary of query parameters with values.
+    :return: True if the instance has properties with given values, False otherwise.
+    """
+    for prop in search_props:
+        data = session.query(triples).filter(
+            triples.GraphIIT.subject == object_id, triples.GraphIIT.predicate == prop).one()
+        terminal = session.query(Terminal).filter(
+            Terminal.id == data.object_).one()
+        if terminal.value != search_props[prop]:
+            return False
+    return True
+
+
+
