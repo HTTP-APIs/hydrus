@@ -517,7 +517,6 @@ def get_collection(API_NAME: str,
                    session: scoped_session,
                    paginate: bool,
                    page_size: int,
-                   page: int = 1,
                    search_params: Dict[str, Any] = None,
                    path: str = None) -> Dict[str, Any]:
     """Retrieve a type of collection from the database.
@@ -526,7 +525,6 @@ def get_collection(API_NAME: str,
     :param session: sqlalchemy scoped session
     :param paginate: Enable/disable pagination
     :param page_size: Number maximum elements showed in a page
-    :param page: page number
     :param search_params: Query parameters
     :param path: endpoint
     :return: response containing a page of the objects of that particular type_
@@ -535,6 +533,8 @@ def get_collection(API_NAME: str,
         ClassNotFound: If `type_` does not represent a valid/defined RDFClass.
 
     """
+    # Extract page number from query arguments
+    page = search_params.pop('page', 1)
     # Check for valid page value
     try:
         page = int(page)
@@ -542,6 +542,7 @@ def get_collection(API_NAME: str,
         raise PageNotFound(page)
     # Reconstruct dict with property ids as keys
     search_props = dict()
+
     for param in search_params:
         prop = session.query(properties).filter(
             properties.name == param).one().id
@@ -579,6 +580,8 @@ def get_collection(API_NAME: str,
         instances = list()
 
     for instance_ in instances:
+        if not apply_filter(instance_.id, session, search_props=search_props):
+            continue
         if path is not None:
             object_template = {
                 "@id": "/{}/{}/{}".format(API_NAME, path, instance_.id),

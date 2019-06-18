@@ -233,7 +233,7 @@ class ItemCollection(Resource):
         """
         Retrieve a collection of items from the database.
         """
-        page = request.args.get('page')
+        search_params = request.args.to_dict()
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):
             return auth_response
@@ -249,19 +249,14 @@ class ItemCollection(Resource):
                 # Get collection details from the database
                 if get_pagination():
                     # Get paginated response
-                    if page is None:
-                        response = crud.get_collection(
-                            get_api_name(), collection.class_.title, session=get_session(),
-                            paginate=True, page_size=get_page_size(), path=path)
-                    else:
-                        response = crud.get_collection(
-                            get_api_name(), collection.class_.title, session=get_session(),
-                            paginate=True, page=page, page_size=get_page_size(), path=path)
+                    response = crud.get_collection(
+                        get_api_name(), collection.class_.title, session=get_session(),
+                        paginate=True, path=path, page_size=get_page_size(), search_params=search_params)
                 else:
                     # Get whole collection
                     response = crud.get_collection(
                         get_api_name(), collection.class_.title, session=get_session(),
-                        paginate=False, path=path)
+                        paginate=False, path=path, search_params=search_params)
 
                 response["search"] = add_iri_template(class_type=collection.class_.title,
                                                       API_NAME=get_api_name(), path=path)
