@@ -540,9 +540,9 @@ def get_collection(API_NAME: str,
         page = int(page)
     except ValueError:
         raise PageNotFound(page)
+
     # Reconstruct dict with property ids as keys
     search_props = dict()
-
     for param in search_params:
         prop = session.query(properties).filter(
             properties.name == param).one().id
@@ -569,7 +569,7 @@ def get_collection(API_NAME: str,
         raise ClassNotFound(type_=type_)
 
     try:
-        if paginate is True:
+        if paginate is True and len(search_params) == 0:
             offset = (page - 1) * page_size
             instances = session.query(Instance).filter(
                 Instance.type_ == rdf_class.id).limit(page_size).offset(offset)
@@ -578,18 +578,29 @@ def get_collection(API_NAME: str,
                 Instance.type_ == rdf_class.id).all()
     except NoResultFound:
         instances = list()
-
+    filtered_instances = list()
     for instance_ in instances:
-        if not apply_filter(instance_.id, session, search_props=search_props):
-            continue
+        if apply_filter(instance_.id, session, search_props=search_props) is True:
+            filtered_instances.append(instance_)
+    if paginate is True:
+        offset = (page - 1) * page_size
+        if len(filtered_instances) < page_size:
+            page_limit = len(filtered_instances)
+        else:
+            page_limit = page_size
+    else:
+        offset = 0
+        page_limit = len(filtered_instances)
+
+    for i in range(offset, page_limit):
         if path is not None:
             object_template = {
-                "@id": "/{}/{}/{}".format(API_NAME, path, instance_.id),
+                "@id": "/{}/{}/{}".format(API_NAME, path, filtered_instances[i].id),
                 "@type": type_
             }
         else:
             object_template = {
-                "@id": "/{}/{}Collection/{}".format(API_NAME, type_, instance_.id), "@type": type_}
+                "@id": "/{}/{}Collection/{}".format(API_NAME, type_, filtered_instances[i].id), "@type": type_}
         collection_template["members"].append(object_template)
 
     # If pagination is disabled then stop and return the collection template
@@ -602,8 +613,11 @@ def get_collection(API_NAME: str,
     if page == 1 and number_of_instances < page_size:
         total_items = number_of_instances
     else:
-        total_items = session.query(Instance).filter(
-            Instance.type_ == rdf_class.id).count()
+        if len(search_params) == 0:
+            total_items = session.query(Instance).filter(
+                Instance.type_ == rdf_class.id).count()
+        else:
+            total_items = len(filtered_instances)
     collection_template["totalItems"] = total_items
     # Calculate last page number
     if total_items != 0 and total_items % page_size == 0:
@@ -612,16 +626,17 @@ def get_collection(API_NAME: str,
         last = total_items // page_size + 1
     if page < 1 or page > last:
         raise PageNotFound(str(page))
+    recreated_iri = recreate_iri(API_NAME, path, search_params=search_params)
     collection_template["view"] = {
-        "@id": "/{}/{}?page={}".format(API_NAME, path, page),
+        "@id": "{}page={}".format(recreated_iri, page),
         "@type": "PartialCollectionView",
-        "first": "/{}/{}?page=1".format(API_NAME, path),
-        "last": "/{}/{}?page={}".format(API_NAME, path, last)
+        "first": "{}page=1".format(recreated_iri, path),
+        "last": "{}page={}".format(recreated_iri, last)
     }
     if page != 1:
-        collection_template["view"]["previous"] = "/{}/{}?page={}".format(API_NAME, path, page-1)
+        collection_template["view"]["previous"] = "{}page={}".format(recreated_iri, page-1)
     if page != last:
-        collection_template["view"]["next"] = "/{}/{}?page={}".format(API_NAME, path, page + 1)
+        collection_template["view"]["next"] = "{}page={}".format(recreated_iri, page + 1)
     return collection_template
 
 
@@ -767,4 +782,14 @@ def apply_filter(object_id: str, session: scoped_session,
     return True
 
 
-
+def recreate_iri(API_NAME: str, path: str, search_params: Dict[str, Any]) -> str:
+    """Recreate the IRI with query arguments
+    :param API_NAME: API name specified while starting the server.
+    :param path: endpoint
+    :param search_params: List of query parameters.
+    :return: Recreated IRI.
+    """
+    iri = "/{}/{}?".format(API_NAME, path)
+    for param in search_params:
+        iri += "{}={}&".format(param, search_params[param])
+    return iri
