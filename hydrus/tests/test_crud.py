@@ -139,8 +139,8 @@ class TestCRUD(unittest.TestCase):
                 session=self.session,
                 api_name="api")
         except Exception as e:
-            response_code, message = e.get_HTTP()
-        assert 404 == response_code
+            error = e.get_HTTP()
+        assert 404 == error.code
 
     def test_get_id(self):
         """Test CRUD get when wrong/undefined ID is given."""
@@ -151,8 +151,8 @@ class TestCRUD(unittest.TestCase):
             get_response = crud.get(
                 id_=id_, type_=type_, session=self.session, api_name="api")
         except Exception as e:
-            response_code, message = e.get_HTTP()
-        assert 404 == response_code
+            error = e.get_HTTP()
+        assert 404 == error.code
 
     def test_get_type(self):
         """Test CRUD get when wrong/undefined class is given."""
@@ -163,8 +163,8 @@ class TestCRUD(unittest.TestCase):
             get_response = crud.get(
                 id_=id_, type_=type_, session=self.session, api_name="api")
         except Exception as e:
-            response_code, message = e.get_HTTP()
-        assert 400 == response_code
+            error = e.get_HTTP()
+        assert 400 == error.code
 
     def test_delete_type(self):
         """Test CRUD delete when wrong/undefined class is given."""
@@ -180,8 +180,8 @@ class TestCRUD(unittest.TestCase):
             delete_response = crud.delete(
                 id_=id_, type_="otherClass", session=self.session)
         except Exception as e:
-            response_code, message = e.get_HTTP()
-        assert 400 == response_code
+            error = e.get_HTTP()
+        assert 400 == error.code
 
     def test_delete_id(self):
         """Test CRUD delete when wrong/undefined ID is given."""
@@ -195,8 +195,8 @@ class TestCRUD(unittest.TestCase):
             delete_response = crud.delete(
                 id_=999, type_=object_["@type"], session=self.session)
         except Exception as e:
-            response_code, message = e.get_HTTP()
-        assert 404 == response_code
+            error = e.get_HTTP()
+        assert 404 == error.code
         assert isinstance(insert_response, str)
         assert insert_response == id_
 
@@ -211,8 +211,8 @@ class TestCRUD(unittest.TestCase):
             insert_response = crud.insert(
                 object_=object_, id_=id_, session=self.session)
         except Exception as e:
-            response_code, message = e.get_HTTP()
-        assert 400 == response_code
+            error = e.get_HTTP()
+        assert 400 == error.code
 
     def test_insert_used_id(self):
         """Test CRUD insert when used ID is given."""
@@ -226,8 +226,8 @@ class TestCRUD(unittest.TestCase):
             insert_response = crud.insert(
                 object_=object_, id_=id_, session=self.session)
         except Exception as e:
-            response_code, message = e.get_HTTP()
-        assert 400 == response_code
+            error = e.get_HTTP()
+        assert 400 == error.code
 
     def test_insert_ids(self):
         """Test CRUD insert when multiple ID's are given """
@@ -265,8 +265,8 @@ class TestCRUD(unittest.TestCase):
                     session=self.session,
                     api_name="api")
         except Exception as e:
-            response_code, message = e.get_HTTP()
-        assert 404 == response_code
+            error = e.get_HTTP()
+        assert 404 == error.code
 
     @classmethod
     def tearDownClass(self):
