@@ -179,14 +179,14 @@ def add_iri_template(class_type: str, API_NAME: str, path:str) -> Dict[str, Any]
     template_mappings = list()
     template = "/{}/{}(".format(API_NAME, path)
     first = True
-    template, template_mappings, skip_del = generate_iri_mappings(class_type, template, skip_nested=False,
+    template, template_mappings, skip_del = generate_iri_mappings(class_type, template,
                                                                   template_mapping=template_mappings,)
     template += ")"
     return HydraIriTemplate(template=template, iri_mapping=template_mappings).generate()
 
 
-def generate_iri_mappings(class_type: str, template: str, skip_nested: bool = True, skip_delimiter: bool = True,
-                     template_mapping: List[IriTemplateMapping]=[]) -> Tuple[str,
+def generate_iri_mappings(class_type: str, template: str, skip_nested: bool =False, skip_delimiter: bool = True,
+                     template_mapping: List[IriTemplateMapping]=[], parent_prop_name: str = None) -> Tuple[str,
                                                                              List[IriTemplateMapping], bool]:
     """Generate iri mappings to add to IriTemplate
     :param class_type: class name objects contained in collection.
@@ -194,6 +194,7 @@ def generate_iri_mappings(class_type: str, template: str, skip_nested: bool = Tr
     :param skip_nested: To only add properties of the class_type class or its immediate children.
     :param skip_delimiter: Used to place delimiters between various parameters of template.
     :param template_mapping: List of template mappings.
+    :param parent_prop_name: Property name according to parent object (only applies for nested properties)
     :return: Template string, list of template mappings and boolean showing whether to keep adding
                 delimiter or not.
     """
@@ -203,16 +204,19 @@ def generate_iri_mappings(class_type: str, template: str, skip_nested: bool = Tr
             prop_class = supportedProp.prop.replace("vocab:", "")
             template, template_mapping, skip_delimiter = generate_iri_mappings(prop_class, template, skip_nested=True,
                                                                                skip_delimiter=skip_delimiter,
+                                                                               parent_prop_name=supportedProp.title,
                                                                                template_mapping=template_mapping)
+            continue
         if skip_nested is True:
-            var = "{}[{}]".format(class_type, supportedProp.title)
+            var = "{}[{}]".format(parent_prop_name, supportedProp.title)
             mapping = IriTemplateMapping(variable=var, prop=supportedProp.prop)
         else:
-            mapping = IriTemplateMapping(variable=supportedProp.title, prop=supportedProp.prop)
+            var = supportedProp.title
+            mapping = IriTemplateMapping(variable=var, prop=supportedProp.prop)
         template_mapping.append(mapping)
         if skip_delimiter is True:
-            template = template + "{}".format(supportedProp.title)
+            template = template + "{}".format(var)
             skip_delimiter = False
         else:
-            template = template + ", {}".format(supportedProp.title)
+            template = template + ", {}".format(var)
     return template, template_mapping, skip_delimiter

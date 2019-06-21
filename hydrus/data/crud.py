@@ -544,9 +544,22 @@ def get_collection(API_NAME: str,
     # Reconstruct dict with property ids as keys
     search_props = dict()
     for param in search_params:
-        prop = session.query(properties).filter(
-            properties.name == param).one().id
-        search_props[prop] = search_params[param]
+        # For one level deep nested parameters
+        if "[" in param and "]" in param:
+            prop_name = param.split('[')[0]
+            prop_id = session.query(properties).filter(
+                properties.name == prop_name).one().id
+            if prop_id not in search_props:
+                search_props[prop_id] = {}
+            nested_prop_id = session.query(properties).filter(
+                properties.name == param[param.find('[')+1:param.find(']')]).one().id
+            search_props[prop_id][nested_prop_id] = search_params[param]
+        # For normal parameters
+        else:
+            prop_id = session.query(properties).filter(
+                properties.name == param).one().id
+            search_props[prop_id] = search_params[param]
+
 
     if path is not None:
         collection_template = {
@@ -582,17 +595,18 @@ def get_collection(API_NAME: str,
     for instance_ in instances:
         if apply_filter(instance_.id, session, search_props=search_props) is True:
             filtered_instances.append(instance_)
+    # To paginate, calculate offset and page_limit values for pagination of search results
     if paginate is True:
         offset = (page - 1) * page_size
-        if len(filtered_instances) < page_size:
-            page_limit = len(filtered_instances)
+        if len(filtered_instances) - offset < page_size:
+            page_limit = len(filtered_instances) - offset
         else:
             page_limit = page_size
     else:
         offset = 0
         page_limit = len(filtered_instances)
 
-    for i in range(offset, page_limit):
+    for i in range(offset, offset+page_limit):
         if path is not None:
             object_template = {
                 "@id": "/{}/{}/{}".format(API_NAME, path, filtered_instances[i].id),
@@ -769,16 +783,23 @@ def apply_filter(object_id: str, session: scoped_session,
     """Check whether objects has properties with query values or not.
     :param object_id: Id of the instance.
     :param session: sqlalchemy scoped session.
-    :param search_props: Dictionary of query parameters with values.
+    :param search_props: Dictionary of query parameters with property id and values.
     :return: True if the instance has properties with given values, False otherwise.
     """
     for prop in search_props:
-        data = session.query(triples).filter(
-            triples.GraphIIT.subject == object_id, triples.GraphIIT.predicate == prop).one()
-        terminal = session.query(Terminal).filter(
-            Terminal.id == data.object_).one()
-        if terminal.value != search_props[prop]:
-            return False
+        # For nested properties
+        if isinstance(search_props[prop], dict):
+            data = session.query(triples).filter(
+                triples.GraphIII.subject == object_id, triples.GraphIII.predicate == prop).one()
+            if apply_filter(data.object_, session, search_props=search_props[prop]) is False:
+                return False
+        else:
+            data = session.query(triples).filter(
+                triples.GraphIIT.subject == object_id, triples.GraphIIT.predicate == prop).one()
+            terminal = session.query(Terminal).filter(
+                Terminal.id == data.object_).one()
+            if terminal.value != search_props[prop]:
+                return False
     return True
 
 
