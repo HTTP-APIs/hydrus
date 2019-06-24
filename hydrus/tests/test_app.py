@@ -407,6 +407,27 @@ class ViewsTestCase(unittest.TestCase):
                         assert "@id" in response_get_data
                         assert "@type" in response_get_data
 
+    def test_IriTemplate(self):
+        """Test structure of IriTemplates attached to collections"""
+        index = self.client.get("/{}".format(self.API_NAME))
+        assert index.status_code == 200
+        endpoints = json.loads(index.data.decode('utf-8'))
+        for endpoint in endpoints:
+            collection_name = "/".join(endpoints[endpoint].split(
+                "/{}/".format(self.API_NAME))[1:])
+            if collection_name in self.doc.collections:
+                response_get = self.client.get(endpoints[endpoint])
+                assert response_get.status_code == 200
+                response_get_data = json.loads(
+                    response_get.data.decode('utf-8'))
+                assert "search" in response_get_data
+                assert "mapping" in response_get_data["search"]
+                collection = self.doc.collections[collection_name]["collection"]
+                class_ = self.doc.parsed_classes[collection.class_.title]["class"]
+                class_props = [x.prop for x in class_.supportedProperty]
+                for mapping in response_get_data["search"]["mapping"]:
+                    assert mapping["property"] in class_props
+
     def test_GET_for_nested_class(self):
         index = self.client.get("/{}".format(self.API_NAME))
         assert index.status_code == 200
