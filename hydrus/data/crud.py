@@ -47,7 +47,7 @@ from hydrus.data.exceptions import (
     PageNotFound)
 # from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.scoping import scoped_session
-from typing import Dict, Optional, Any, List
+from typing import Dict, Optional, Any, List, Tuple
 
 triples = with_polymorphic(Graph, '*')
 properties = with_polymorphic(BaseProperty, "*")
@@ -542,24 +542,7 @@ def get_collection(API_NAME: str,
         raise PageNotFound(page)
 
     # Reconstruct dict with property ids as keys
-    search_props = dict()
-    for param in search_params:
-        # For one level deep nested parameters
-        if "[" in param and "]" in param:
-            prop_name = param.split('[')[0]
-            prop_id = session.query(properties).filter(
-                properties.name == prop_name).one().id
-            if prop_id not in search_props:
-                search_props[prop_id] = {}
-            nested_prop_id = session.query(properties).filter(
-                properties.name == param[param.find('[')+1:param.find(']')]).one().id
-            search_props[prop_id][nested_prop_id] = search_params[param]
-        # For normal parameters
-        else:
-            prop_id = session.query(properties).filter(
-                properties.name == param).one().id
-            search_props[prop_id] = search_params[param]
-
+    search_props = parse_search_params(search_params=search_params, session=session)
 
     if path is not None:
         collection_template = {
@@ -582,29 +565,18 @@ def get_collection(API_NAME: str,
         raise ClassNotFound(type_=type_)
 
     try:
-        if paginate is True and len(search_params) == 0:
-            offset = (page - 1) * page_size
-            instances = session.query(Instance).filter(
-                Instance.type_ == rdf_class.id).limit(page_size).offset(offset)
-        else:
-            instances = session.query(Instance).filter(
-                Instance.type_ == rdf_class.id).all()
+        instances = session.query(Instance).filter(
+            Instance.type_ == rdf_class.id).all()
     except NoResultFound:
         instances = list()
     filtered_instances = list()
     for instance_ in instances:
         if apply_filter(instance_.id, session, search_props=search_props) is True:
             filtered_instances.append(instance_)
+    result_length = len(filtered_instances)
     # To paginate, calculate offset and page_limit values for pagination of search results
-    if paginate is True:
-        offset = (page - 1) * page_size
-        if len(filtered_instances) - offset < page_size:
-            page_limit = len(filtered_instances) - offset
-        else:
-            page_limit = page_size
-    else:
-        offset = 0
-        page_limit = len(filtered_instances)
+    page_limit, offset = calculate_page_limit_and_offset(paginate=paginate, page_size=page_size, page=page,
+                                                         result_length=result_length)
 
     for i in range(offset, offset+page_limit):
         if path is not None:
@@ -627,11 +599,7 @@ def get_collection(API_NAME: str,
     if page == 1 and number_of_instances < page_size:
         total_items = number_of_instances
     else:
-        if len(search_params) == 0:
-            total_items = session.query(Instance).filter(
-                Instance.type_ == rdf_class.id).count()
-        else:
-            total_items = len(filtered_instances)
+        total_items = result_length
     collection_template["totalItems"] = total_items
     # Calculate last page number
     if total_items != 0 and total_items % page_size == 0:
@@ -814,3 +782,49 @@ def recreate_iri(API_NAME: str, path: str, search_params: Dict[str, Any]) -> str
     for param in search_params:
         iri += "{}={}&".format(param, search_params[param])
     return iri
+
+
+def parse_search_params(search_params: Dict[str, Any], session: scoped_session) -> Dict[str, Any]:
+    """Parse search parameters and create a dict with id of parameters as keys.
+    :param search_params: Dictionary having input search parameters.
+    :param session: sqlalchemy session.
+    :return: A dictionary having property ids as keys.
+    """
+    search_props = dict()
+    for param in search_params:
+        # For one level deep nested parameters
+        if "[" in param and "]" in param:
+            prop_name = param.split('[')[0]
+            prop_id = session.query(properties).filter(
+                properties.name == prop_name).one().id
+            if prop_id not in search_props:
+                search_props[prop_id] = {}
+            nested_prop_id = session.query(properties).filter(
+                properties.name == param[param.find('[') + 1:param.find(']')]).one().id
+            search_props[prop_id][nested_prop_id] = search_params[param]
+        # For normal parameters
+        else:
+            prop_id = session.query(properties).filter(
+                properties.name == param).one().id
+            search_props[prop_id] = search_params[param]
+    return search_props
+
+
+def calculate_page_limit_and_offset(paginate: bool, page_size: int, page: int, result_length: int) -> Tuple[int, int]:
+    """Calculate page limit and offset for pagination.
+    :param paginate: Showing whether pagination is enable/disable.
+    :param page_size: Number maximum elements showed in a page.
+    :param page: page number.
+    :param result_length: Length of the list containing desired elements.
+    :return: page limit and offset.
+    """
+    if paginate is True:
+        offset = (page - 1) * page_size
+        if result_length - offset < page_size:
+            page_limit = result_length - offset
+        else:
+            page_limit = page_size
+    else:
+        offset = 0
+        page_limit = result_length
+    return page_limit, offset
