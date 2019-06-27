@@ -544,20 +544,13 @@ def get_collection(API_NAME: str,
     # Reconstruct dict with property ids as keys
     search_props = parse_search_params(search_params=search_params, session=session)
 
-    if path is not None:
-        collection_template = {
-            "@id": "/{}/{}/".format(API_NAME, path),
-            "@context": None,
-            "@type": "{}Collection".format(type_),
-            "members": list()
-        }  # type: Dict[str, Any]
-    else:
-        collection_template = {
-            "@id": "/{}/{}Collection/".format(API_NAME, type_),
-            "@context": None,
-            "@type": "{}Collection".format(type_),
-            "members": list()
-        }  # type: Dict[str, Any]
+    collection_template = {
+        "@id": "/{}/{}/".format(API_NAME, path),
+        "@context": None,
+        "@type": "{}Collection".format(type_),
+        "members": list()
+    }  # type: Dict[str, Any]
+
     try:
         rdf_class = session.query(RDFClass).filter(
             RDFClass.name == type_).one()
@@ -574,6 +567,7 @@ def get_collection(API_NAME: str,
         if apply_filter(instance_.id, session, search_props=search_props) is True:
             filtered_instances.append(instance_)
     result_length = len(filtered_instances)
+
     # To paginate, calculate offset and page_limit values for pagination of search results
     page_limit, offset = calculate_page_limit_and_offset(paginate=paginate, page_size=page_size, page=page,
                                                          result_length=result_length)
