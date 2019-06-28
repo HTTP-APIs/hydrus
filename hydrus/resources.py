@@ -39,7 +39,8 @@ from hydrus.data.exceptions import (
     InstanceExists,
     PropertyNotFound,
     InstanceNotFound,
-    PageNotFound)
+    PageNotFound,
+    InvalidSearchParameter)
 from hydrus.helpers import (
     set_response_headers,
     checkClassOp,
@@ -51,6 +52,7 @@ from hydrus.helpers import (
     hydrafy,
     check_read_only_props,
     check_required_props,
+    add_iri_template,
     finalize_response)
 from hydrus.utils import (get_session,
     get_doc,
@@ -236,7 +238,7 @@ class ItemCollection(Resource):
         """
         Retrieve a collection of items from the database.
         """
-        page = request.args.get('page')
+        search_params = request.args.to_dict()
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):
             return auth_response
@@ -252,22 +254,21 @@ class ItemCollection(Resource):
                 # Get collection details from the database
                 if get_pagination():
                     # Get paginated response
-                    if page is None:
-                        response = crud.get_collection(
-                            get_api_name(), collection.class_.title, session=get_session(),
-                            paginate=True, page_size=get_page_size(), path=path)
-                    else:
-                        response = crud.get_collection(
-                            get_api_name(), collection.class_.title, session=get_session(),
-                            paginate=True, page=page, page_size=get_page_size(), path=path)
+                    response = crud.get_collection(
+                        get_api_name(), collection.class_.title, session=get_session(),
+                        paginate=True, path=path, page_size=get_page_size(), search_params=search_params)
                 else:
                     # Get whole collection
                     response = crud.get_collection(
                         get_api_name(), collection.class_.title, session=get_session(),
-                        paginate=False, path=path)
+                        paginate=False, path=path, search_params=search_params)
+
+                response["search"] = add_iri_template(class_type=collection.class_.title,
+                                                      API_NAME=get_api_name(), path=path)
+
                 return set_response_headers(jsonify(hydrafy(response, path=path)))
 
-            except (ClassNotFound, PageNotFound) as e:
+            except (ClassNotFound, PageNotFound, InvalidSearchParameter) as e:
                 error = e.get_HTTP()
                 return set_response_headers(jsonify(error.generate()), status_code=error.code)
 

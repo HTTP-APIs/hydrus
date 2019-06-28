@@ -100,6 +100,46 @@ class TestCRUD(unittest.TestCase):
                     assert nested_obj["@id"].split("/")[-1] == nested_obj_id
                     break
 
+    def test_searching(self):
+        """Test searching over collection elements."""
+        for class_ in self.doc_collection_classes:
+            target_property_1 = ""
+            target_property_2 = ""
+            for prop in self.doc.parsed_classes[class_]["class"].supportedProperty:
+                # Find nested object so we can test searching of elements by properties of nested objects.
+                if "vocab:" in prop.prop:
+                    object_ = gen_dummy_object(class_, self.doc)
+                    # Setting property of a nested object as target
+                    for property_ in object_[prop.title]:
+                        if property_ != "@type":
+                            object_[prop.title][property_] = "target_1"
+                            target_property_1 = "{}[{}]".format(prop.title, property_)
+                            break
+                    break
+                elif target_property_1 is not "":
+                    for property_ in object_:
+                        if property_ != "@type":
+                            object_[property_] = "target_2"
+                            target_property_2 = property_
+                            break
+                    break
+
+                if target_property_1 is not "" and target_property_2 is not "":
+                    # Set search parameters
+                    search_params = {
+                        target_property_1: "target_1",
+                        target_property_2: "target_2"
+                    }
+
+                    obj_id = str(uuid.uuid4())
+                    response = crud.insert(object_=object_, id_=obj_id, session=self.session)
+                    search_result = crud.get_collection(API_NAME="api", type_=class_, session=self.session,
+                                                        paginate=True, page_size=5, search_params=search_params)
+                    assert len(search_result["members"]) > 0
+                    search_item_id = search_result["members"][0]["@id"].split('/')[-1]
+                    assert search_item_id == obj_id
+                    break
+
     def test_update(self):
         """Test CRUD update."""
         random_class = random.choice(self.doc_collection_classes)

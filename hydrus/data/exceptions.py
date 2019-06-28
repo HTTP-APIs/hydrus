@@ -130,3 +130,16 @@ class PageNotFound(Exception):
         """Return the HTTP response for the Exception."""
         description = "The page with ID {} not found".format(self.page_id)
         return HydraError(code=400, title="Page not found", desc=description)
+
+
+class InvalidSearchParameter(Exception):
+    "Error when client uses invalid query parameter for searching."
+
+    def __init__(self, param: str) -> None:
+        """Constructor."""
+        self.param = param
+
+    def get_HTTP(self) -> HydraError:
+        """Return the HTTP response for the Exception."""
+        description = "Query parameter [{}] is invalid".format(self.param)
+        return HydraError(code=400, title="Invalid query parameter", desc=description)
