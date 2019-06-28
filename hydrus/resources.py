@@ -39,7 +39,8 @@ from hydrus.data.exceptions import (
     InstanceExists,
     PropertyNotFound,
     InstanceNotFound,
-    PageNotFound)
+    PageNotFound,
+    InvalidSearchParameter)
 from hydrus.helpers import (
     set_response_headers,
     checkClassOp,
@@ -267,7 +268,7 @@ class ItemCollection(Resource):
 
                 return set_response_headers(jsonify(hydrafy(response, path=path)))
 
-            except (ClassNotFound, PageNotFound) as e:
+            except (ClassNotFound, PageNotFound, InvalidSearchParameter) as e:
                 error = e.get_HTTP()
                 return set_response_headers(jsonify(error.generate()), status_code=error.code)
 

@@ -44,7 +44,8 @@ from hydrus.data.exceptions import (
     NotInstanceProperty,
     NotAbstractProperty,
     InstanceNotFound,
-    PageNotFound)
+    PageNotFound,
+    InvalidSearchParameter)
 # from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.scoping import scoped_session
 from typing import Dict, Optional, Any, List, Tuple
@@ -540,9 +541,11 @@ def get_collection(API_NAME: str,
         page = int(page)
     except ValueError:
         raise PageNotFound(page)
-
-    # Reconstruct dict with property ids as keys
-    search_props = parse_search_params(search_params=search_params, session=session)
+    try:
+        # Reconstruct dict with property ids as keys
+        search_props = parse_search_params(search_params=search_params, session=session)
+    except InvalidSearchParameter:
+        raise
 
     collection_template = {
         "@id": "/{}/{}/".format(API_NAME, path),
@@ -789,18 +792,24 @@ def parse_search_params(search_params: Dict[str, Any], session: scoped_session) 
         # For one level deep nested parameters
         if "[" in param and "]" in param:
             prop_name = param.split('[')[0]
-            prop_id = session.query(properties).filter(
-                properties.name == prop_name).one().id
-            if prop_id not in search_props:
-                search_props[prop_id] = {}
-            nested_prop_id = session.query(properties).filter(
-                properties.name == param[param.find('[') + 1:param.find(']')]).one().id
-            search_props[prop_id][nested_prop_id] = search_params[param]
+            try:
+                prop_id = session.query(properties).filter(
+                    properties.name == prop_name).one().id
+                if prop_id not in search_props:
+                    search_props[prop_id] = {}
+                nested_prop_id = session.query(properties).filter(
+                    properties.name == param[param.find('[') + 1:param.find(']')]).one().id
+                search_props[prop_id][nested_prop_id] = search_params[param]
+            except NoResultFound:
+                raise InvalidSearchParameter(param)
         # For normal parameters
         else:
-            prop_id = session.query(properties).filter(
-                properties.name == param).one().id
-            search_props[prop_id] = search_params[param]
+            try:
+                prop_id = session.query(properties).filter(
+                    properties.name == param).one().id
+                search_props[prop_id] = search_params[param]
+            except NoResultFound:
+                raise InvalidSearchParameter(param)
     return search_props
 
 
