@@ -1,6 +1,7 @@
 """Sample to create Hydra APIDocumentation using doc_writer."""
 
-from hydra_python_core.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp
+from hydra_python_core.doc_writer import (HydraDoc, HydraClass, HydraClassProp, HydraClassOp,
+                                          HydraStatus, HydraError)
 from typing import Any, Dict, Union
 
 # Creating the HydraDoc object, this is the primary class for the Doc
@@ -77,7 +78,7 @@ op_method = "POST"  # The method of the Operation [GET, POST, PUT, DELETE]
 op_expects = "vocab:dummyClass"
 op_returns = None   # URI of the object that is returned by the operation
 # List of statusCode for the operation
-op_status = [{"statusCode": 200, "description": "dummyClass updated"}]
+op_status = [HydraStatus(code=200, title="dummyClass updated.")]
 
 op1 = HydraClassOp(op_name,
                    op_method,
@@ -86,34 +87,28 @@ op1 = HydraClassOp(op_name,
                    op_status)
 
 # Same way add DELETE, PUT and GET operations
-op2_status = [{"statusCode": 200, "description": "dummyClass deleted"}]
+op2_status = [HydraStatus(code=200, title="dummyClass deleted.")]
 op2 = HydraClassOp("DeleteClass", "DELETE", None, None, op2_status)
-op3_status = [
-    {"statusCode": 201, "description": "dummyClass successfully added"}]
+op3_status = [HydraStatus(code=201, title="dummyClass successfully added.")]
 op3 = HydraClassOp("AddClass", "PUT", "vocab:dummyClass", None, op3_status)
-op4_status = [{"statusCode": 200, "description": "dummyClass returned"}]
+op4_status = [HydraStatus(code=200, title="dummyClass returned.")]
 op4 = HydraClassOp("GetClass", "GET", None, "vocab:dummyClass", op4_status)
 
 # Operations for non collection class
-class_2_op1_status = [
-    {"statusCode": 200, "description": "singleClass changed"}]
+class_2_op1_status = [HydraStatus(code=200, title="singleClass changed.")]
 class_2_op1 = HydraClassOp("UpdateClass", "POST",
                            "vocab:singleClass", None, class_2_op1_status)
-class_2_op2_status = [
-    {"statusCode": 200, "description": "singleClass deleted"}]
+class_2_op2_status = [HydraStatus(code=200, title="singleClass deleted.")]
 class_2_op2 = HydraClassOp("DeleteClass", "DELETE",
                            None, None, class_2_op2_status)
-class_2_op3_status = [
-    {"statusCode": 201, "description": "singleClass successfully added"}]
+class_2_op3_status = [HydraStatus(code=201, title="singleClass successfully added.")]
 class_2_op3 = HydraClassOp(
     "AddClass", "PUT", "vocab:singleClass", None, class_2_op3_status)
-class_2_op4_status = [
-    {"statusCode": 200, "description": "singleClass returned"}]
+class_2_op4_status = [HydraStatus(code=200, title="singleClass returned.")]
 class_2_op4 = HydraClassOp("GetClass", "GET", None,
                            "vocab:singleClass", class_2_op4_status)
 
-class_1_op1_status = [
-    {"statusCode": 200, "description": "anotherSingleClass returned"}]
+class_1_op1_status = [HydraStatus(code=200, title="anotherSingleClass returned.")]
 class_1_op1 = HydraClassOp("GetClass", "GET", None,
                            "vocab:anotherSingleClass", class_1_op1_status)
 # Add the properties to the classes

@@ -245,7 +245,7 @@ class ViewsTestCase(unittest.TestCase):
                 response = json.loads(
                     initial_put_response.data.decode('utf-8'))
                 regex = r'(.*)ID (.{36})* (.*)'
-                matchObj = re.match(regex, response["message"])
+                matchObj = re.match(regex, response["description"])
                 assert matchObj is not None
                 id_ = matchObj.group(2)
                 if "POST" in class_methods:
@@ -275,7 +275,7 @@ class ViewsTestCase(unittest.TestCase):
                 response = json.loads(
                     initial_put_response.data.decode('utf-8'))
                 regex = r'(.*)ID (.{36})* (.*)'
-                matchObj = re.match(regex, response["message"])
+                matchObj = re.match(regex, response["description"])
                 assert matchObj is not None
                 id_ = matchObj.group(2)
                 if "DELETE" in class_methods:
@@ -550,7 +550,7 @@ class ViewsTestCase(unittest.TestCase):
                 response = json.loads(
                     initial_put_response.data.decode('utf-8'))
                 regex = r'(.*)ID (.{36})* (.*)'
-                matchObj = re.match(regex, response["message"])
+                matchObj = re.match(regex, response["description"])
                 assert matchObj is not None
                 id_ = matchObj.group(2)
                 if "POST" not in class_methods:
