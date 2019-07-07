@@ -1,5 +1,6 @@
 """Exceptions for the crud operations."""
-from typing import Dict, Tuple, Union
+from typing import Dict, Tuple, Union, Any
+from hydra_python_core.doc_writer import HydraError
 
 
 class ClassNotFound(Exception):
@@ -9,10 +10,10 @@ class ClassNotFound(Exception):
         """Constructor."""
         self.type_ = type_
 
-    def get_HTTP(self) -> Tuple[int, Dict[str, str]]:
+    def get_HTTP(self) -> HydraError:
         """Return the HTTP response for the Exception."""
-        return 400, {
-            "message": "The class {} is not a valid/defined RDFClass".format(self.type_)}
+        description = "The class {} is not a valid/defined RDFClass".format(self.type_)
+        return HydraError(code=400, title="Invalid class", desc=description)
 
 
 class InstanceNotFound(Exception):
@@ -23,14 +24,15 @@ class InstanceNotFound(Exception):
         self.type_ = type_
         self.id_ = id_
 
-    def get_HTTP(self) -> Tuple[int, Dict[str, str]]:
+    def get_HTTP(self) -> HydraError:
         """Return the HTTP response for the Exception."""
         if str(self.id_) is None:
-            return 404, {
-                "message": "Instance of type {} not found".format(self.type_)}
+            description = "Instance of type {} not found".format(self.type_)
+            return HydraError(code=404, title="Instance not found", desc=description)
         else:
-            return 404, {"message": "Instance of type {} with ID {} not found".format(
-                self.type_, str(self.id_))}
+            description = "Instance of type {} with ID {} not found".format(
+                self.type_, str(self.id_))
+            return HydraError(code=404, title="Instance not found", desc=description)
 
 
 class PropertyNotFound(Exception):
@@ -40,10 +42,10 @@ class PropertyNotFound(Exception):
         """Constructor."""
         self.type_ = type_
 
-    def get_HTTP(self) -> Tuple[int, Dict[str, str]]:
+    def get_HTTP(self) -> HydraError:
         """Return the HTTP response for the Exception."""
-        return 400, {
-            "message": "The property {} is not a valid/defined Property".format(self.type_)}
+        description = "The property {} is not a valid/defined Property".format(self.type_)
+        return HydraError(code=400, title="Property not found", desc=description)
 
 
 class InstanceExists(Exception):
@@ -54,14 +56,15 @@ class InstanceExists(Exception):
         self.type_ = type_
         self.id_ = id_
 
-    def get_HTTP(self) -> Tuple[int, Dict[str, str]]:
+    def get_HTTP(self) -> HydraError:
         """Return the HTTP response for the Exception."""
         if str(self.id_) is None:
-            return 400, {
-                "message": "Instance of type {} already exists".format(self.type_)}
+            description = "Instance of type {} already exists".format(self.type_)
+            return HydraError(code=400, title="Instance already exists.", desc=description)
         else:
-            return 400, {"message": "Instance of type {} with ID {} already exists".format(
-                self.type_, str(self.id_))}
+            description = "Instance of type {} with ID {} already exists".format(
+                self.type_, str(self.id_))
+            return HydraError(code=400, title="Instance already exists.", desc=description)
 
 
 class NotInstanceProperty(Exception):
@@ -71,10 +74,10 @@ class NotInstanceProperty(Exception):
         """Constructor."""
         self.type_ = type_
 
-    def get_HTTP(self) -> Tuple[int, Dict[str, str]]:
+    def get_HTTP(self) -> HydraError:
         """Return the HTTP response for the Exception."""
-        return 400, {
-            "message": "The property {} is not an Instance property".format(self.type_)}
+        description = "The property {} is not an Instance property".format(self.type_)
+        return HydraError(code=400, title="Not an Instance property", desc=description)
 
 
 class NotAbstractProperty(Exception):
@@ -84,10 +87,10 @@ class NotAbstractProperty(Exception):
         """Constructor."""
         self.type_ = type_
 
-    def get_HTTP(self) -> Tuple[int, Dict[str, str]]:
+    def get_HTTP(self) -> HydraError:
         """Return the HTTP response for the Exception."""
-        return 400, {
-            "message": "The property {} is not an Abstract property".format(self.type_)}
+        description = "The property {} is not an Abstract property".format(self.type_)
+        return HydraError(code=400, title="Not an Abstract property", desc=description)
 
 
 class UserExists(Exception):
@@ -97,10 +100,10 @@ class UserExists(Exception):
         """Constructor."""
         self.id_ = id_
 
-    def get_HTTP(self) -> Tuple[int, Dict[str, str]]:
+    def get_HTTP(self) -> HydraError:
         """Return the HTTP response for the Exception."""
-        return 400, {
-            "message": "The user with ID {} already exists".format(self.id_)}
+        description = "The user with ID {} already exists".format(self.id_)
+        return HydraError(code=400, title="User already exists.", desc=description)
 
 
 class UserNotFound(Exception):
@@ -110,10 +113,10 @@ class UserNotFound(Exception):
         """Constructor."""
         self.id_ = id_
 
-    def get_HTTP(self) -> Tuple[int, Dict[str, str]]:
+    def get_HTTP(self) -> HydraError:
         """Return the HTTP response for the Exception."""
-        return 400, {
-            "message": "The User with ID {} is not a valid/defined User".format(self.id_)}
+        description = "The User with ID {} is not a valid/defined User".format(self.id_)
+        return HydraError(code=400, title="User not found", desc=description)
 
 
 class PageNotFound(Exception):
@@ -123,7 +126,20 @@ class PageNotFound(Exception):
         """Constructor."""
         self.page_id = page_id
 
-    def get_HTTP(self) -> Tuple[int, Dict[str, str]]:
+    def get_HTTP(self) -> HydraError:
         """Return the HTTP response for the Exception."""
-        return 400, {
-            "message": "The page with ID {} not found".format(self.page_id)}
+        description = "The page with ID {} not found".format(self.page_id)
+        return HydraError(code=400, title="Page not found", desc=description)
+
+
+class InvalidSearchParameter(Exception):
+    "Error when client uses invalid query parameter for searching."
+
+    def __init__(self, param: str) -> None:
+        """Constructor."""
+        self.param = param
+
+    def get_HTTP(self) -> HydraError:
+        """Return the HTTP response for the Exception."""
+        description = "Query parameter [{}] is invalid".format(self.param)
+        return HydraError(code=400, title="Invalid query parameter", desc=description)

@@ -1,6 +1,7 @@
 """Unit tests for CRUD operations in hydrus.data.crud."""
 
 import unittest
+import uuid
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
@@ -65,7 +66,8 @@ class TestCRUD(unittest.TestCase):
         """Test CRUD insert."""
         object_ = gen_dummy_object(random.choice(
             self.doc_collection_classes), self.doc)
-        response = crud.insert(object_=object_, id_="1", session=self.session)
+        id_ = str(uuid.uuid4())
+        response = crud.insert(object_=object_, id_=id_, session=self.session)
 
         assert isinstance(response, str)
 
@@ -73,19 +75,77 @@ class TestCRUD(unittest.TestCase):
         """Test CRUD get."""
         object_ = gen_dummy_object(random.choice(
             self.doc_collection_classes), self.doc)
-        id_ = "2"
+        id_ = str(uuid.uuid4())
         response = crud.insert(object_=object_, id_=id_, session=self.session)
         object_ = crud.get(id_=id_, type_=object_[
                            "@type"], session=self.session, api_name="api")
         assert isinstance(response, str)
         assert object_["@id"].split("/")[-1] == id_
 
+    def test_get_for_nested_obj(self):
+        """Test get operation for object that can contain other objects."""
+        for class_ in self.doc_collection_classes:
+            for prop in self.doc.parsed_classes[class_]["class"].supportedProperty:
+                if "vocab:" in prop.prop:
+                    nested_class = prop.prop.replace("vocab:", "")
+                    object_ = gen_dummy_object(class_, self.doc)
+                    obj_id = str(uuid.uuid4())
+                    response = crud.insert(object_=object_, id_=obj_id, session=self.session)
+                    object_ = crud.get(id_=obj_id, type_=class_, session=self.session,
+                                       api_name="api")
+                    assert prop.title in object_
+                    nested_obj_id = object_[prop.title]
+                    nested_obj = crud.get(id_=nested_obj_id, type_=nested_class,
+                                          session=self.session, api_name="api")
+                    assert nested_obj["@id"].split("/")[-1] == nested_obj_id
+                    break
+
+    def test_searching(self):
+        """Test searching over collection elements."""
+        for class_ in self.doc_collection_classes:
+            target_property_1 = ""
+            target_property_2 = ""
+            for prop in self.doc.parsed_classes[class_]["class"].supportedProperty:
+                # Find nested object so we can test searching of elements by properties of nested objects.
+                if "vocab:" in prop.prop:
+                    object_ = gen_dummy_object(class_, self.doc)
+                    # Setting property of a nested object as target
+                    for property_ in object_[prop.title]:
+                        if property_ != "@type":
+                            object_[prop.title][property_] = "target_1"
+                            target_property_1 = "{}[{}]".format(prop.title, property_)
+                            break
+                    break
+                elif target_property_1 is not "":
+                    for property_ in object_:
+                        if property_ != "@type":
+                            object_[property_] = "target_2"
+                            target_property_2 = property_
+                            break
+                    break
+
+                if target_property_1 is not "" and target_property_2 is not "":
+                    # Set search parameters
+                    search_params = {
+                        target_property_1: "target_1",
+                        target_property_2: "target_2"
+                    }
+
+                    obj_id = str(uuid.uuid4())
+                    response = crud.insert(object_=object_, id_=obj_id, session=self.session)
+                    search_result = crud.get_collection(API_NAME="api", type_=class_, session=self.session,
+                                                        paginate=True, page_size=5, search_params=search_params)
+                    assert len(search_result["members"]) > 0
+                    search_item_id = search_result["members"][0]["@id"].split('/')[-1]
+                    assert search_item_id == obj_id
+                    break
+
     def test_update(self):
         """Test CRUD update."""
         random_class = random.choice(self.doc_collection_classes)
         object_ = gen_dummy_object(random_class, self.doc)
         new_object = gen_dummy_object(random_class, self.doc)
-        id_ = "30"
+        id_ = str(uuid.uuid4())
         insert_response = crud.insert(
             object_=object_, id_=id_, session=self.session)
         update_response = crud.update(
@@ -105,7 +165,7 @@ class TestCRUD(unittest.TestCase):
         """Test CRUD delete."""
         object_ = gen_dummy_object(random.choice(
             self.doc_collection_classes), self.doc)
-        id_ = "4"
+        id_ = str(uuid.uuid4())
         insert_response = crud.insert(
             object_=object_, id_=id_, session=self.session)
         delete_response = crud.delete(
@@ -119,38 +179,38 @@ class TestCRUD(unittest.TestCase):
                 session=self.session,
                 api_name="api")
         except Exception as e:
-            response_code, message = e.get_HTTP()
-        assert 404 == response_code
+            error = e.get_HTTP()
+        assert 404 == error.code
 
     def test_get_id(self):
         """Test CRUD get when wrong/undefined ID is given."""
-        id_ = "999"
+        id_ = str(uuid.uuid4())
         type_ = random.choice(self.doc_collection_classes)
         response_code = None
         try:
             get_response = crud.get(
                 id_=id_, type_=type_, session=self.session, api_name="api")
         except Exception as e:
-            response_code, message = e.get_HTTP()
-        assert 404 == response_code
+            error = e.get_HTTP()
+        assert 404 == error.code
 
     def test_get_type(self):
         """Test CRUD get when wrong/undefined class is given."""
-        id_ = "1"
+        id_ = str(uuid.uuid4())
         type_ = "otherClass"
         response_code = None
         try:
             get_response = crud.get(
                 id_=id_, type_=type_, session=self.session, api_name="api")
         except Exception as e:
-            response_code, message = e.get_HTTP()
-        assert 400 == response_code
+            error = e.get_HTTP()
+        assert 400 == error.code
 
     def test_delete_type(self):
         """Test CRUD delete when wrong/undefined class is given."""
         object_ = gen_dummy_object(random.choice(
             self.doc_collection_classes), self.doc)
-        id_ = "50"
+        id_ = str(uuid.uuid4())
         insert_response = crud.insert(
             object_=object_, id_=id_, session=self.session)
         assert isinstance(insert_response, str)
@@ -160,14 +220,14 @@ class TestCRUD(unittest.TestCase):
             delete_response = crud.delete(
                 id_=id_, type_="otherClass", session=self.session)
         except Exception as e:
-            response_code, message = e.get_HTTP()
-        assert 400 == response_code
+            error = e.get_HTTP()
+        assert 400 == error.code
 
     def test_delete_id(self):
         """Test CRUD delete when wrong/undefined ID is given."""
         object_ = gen_dummy_object(random.choice(
             self.doc_collection_classes), self.doc)
-        id_ = "6"
+        id_ = str(uuid.uuid4())
         insert_response = crud.insert(
             object_=object_, id_=id_, session=self.session)
         response_code = None
@@ -175,8 +235,8 @@ class TestCRUD(unittest.TestCase):
             delete_response = crud.delete(
                 id_=999, type_=object_["@type"], session=self.session)
         except Exception as e:
-            response_code, message = e.get_HTTP()
-        assert 404 == response_code
+            error = e.get_HTTP()
+        assert 404 == error.code
         assert isinstance(insert_response, str)
         assert insert_response == id_
 
@@ -184,48 +244,48 @@ class TestCRUD(unittest.TestCase):
         """Test CRUD insert when wrong/undefined class is given."""
         object_ = gen_dummy_object(random.choice(
             self.doc_collection_classes), self.doc)
-        id_ = "7"
+        id_ = str(uuid.uuid4())
         object_["@type"] = "otherClass"
         response_code = None
         try:
             insert_response = crud.insert(
                 object_=object_, id_=id_, session=self.session)
         except Exception as e:
-            response_code, message = e.get_HTTP()
-        assert 400 == response_code
+            error = e.get_HTTP()
+        assert 400 == error.code
 
-    def test_insert_id(self):
+    def test_insert_used_id(self):
         """Test CRUD insert when used ID is given."""
         object_ = gen_dummy_object(random.choice(
             self.doc_collection_classes), self.doc)
-        id_ = "1"
+        id_ = str(uuid.uuid4())
+        insert_response = crud.insert(
+            object_=object_, id_=id_, session=self.session)
         response_code = None
         try:
             insert_response = crud.insert(
                 object_=object_, id_=id_, session=self.session)
         except Exception as e:
-            response_code, message = e.get_HTTP()
-        assert 400 == response_code
+            error = e.get_HTTP()
+        assert 400 == error.code
 
     def test_insert_ids(self):
         """Test CRUD insert when multiple ID's are given """
         objects = list()
-        ids = "1,2,3"
-        for index in range(len(ids.split(','))):
+        ids = "{},{}".format(str(uuid.uuid4()), str(uuid.uuid4()))
+        ids_list = ids.split(',')
+        for index in range(len(ids_list)):
             object = gen_dummy_object(random.choice(
                 self.doc_collection_classes), self.doc)
             objects.append(object)
-        response_code = None
-        try:
-            insert_response = crud.insert_multiple(
-                objects_=objects, session=self.session, id_=ids)
-        except Exception as e:
-            response_code, message = e.get_HTTP()
-        assert 400 == response_code
+        insert_response = crud.insert_multiple(
+            objects_=objects, session=self.session, id_=ids)
+        for id_ in ids_list:
+            assert id_ in insert_response
 
     def test_delete_ids(self):
         objects = list()
-        ids = "1,2,3"
+        ids = "{},{}".format(str(uuid.uuid4()), str(uuid.uuid4()))
         for index in range(len(ids.split(','))):
             object = gen_dummy_object(random.choice(
                 self.doc_collection_classes), self.doc)
@@ -245,8 +305,8 @@ class TestCRUD(unittest.TestCase):
                     session=self.session,
                     api_name="api")
         except Exception as e:
-            response_code, message = e.get_HTTP()
-        assert 404 == response_code
+            error = e.get_HTTP()
+        assert 404 == error.code
 
     @classmethod
     def tearDownClass(self):
