@@ -53,6 +53,7 @@ class Instance(Base):
     type_ = Column(String, ForeignKey("classes.id"), nullable=True)
     created = Column('created', DateTime, default=func.now())
     last_modified = Column('last_modified', DateTime, onupdate=func.now())
+    children = Column(String, default=None)
 
 
 class BaseProperty(Base):
