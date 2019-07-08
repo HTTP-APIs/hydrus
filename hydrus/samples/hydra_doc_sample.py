@@ -119,10 +119,10 @@ doc = {
                 },
                 {
                     "@type": "SupportedProperty",
-                    "property": "http://schema.org/identifier",
+                    "property": "vocab:Drone",
                     "readonly": "false",
                     "required": "true",
-                    "title": "DroneID",
+                    "title": "DroneURI",
                     "writeonly": "false"
                 }
             ],
@@ -471,6 +471,14 @@ doc = {
                     "readonly": "false",
                     "required": "true",
                     "title": "DroneState",
+                    "writeonly": "false"
+                },
+{
+                    "@type": "SupportedProperty",
+                    "property": "vocab:StateCollection",
+                    "readonly": "false",
+                    "required": "false",
+                    "title": "Previous_states",
                     "writeonly": "false"
                 },
                 {

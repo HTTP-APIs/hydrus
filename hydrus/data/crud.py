@@ -130,11 +130,13 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
     return object_template
 
 
-def insert(object_: Dict[str, Any], session: scoped_session,
+def insert(object_: Dict[str, Any], session: scoped_session, parent_id: str = None, parent_type: str = None,
            id_: Optional[str] = None) -> str:
     """Insert an object to database [POST] and returns the inserted object.
     :param object_: object to be inserted
     :param session: sqlalchemy scoped session
+    :param parent_id: id of the parent object
+    :param parent_type: type of the parent object
     :param id_: id of the object to be inserted (optional param)
     :return: ID of object inserted
 
@@ -166,6 +168,17 @@ def insert(object_: Dict[str, Any], session: scoped_session,
         instance = Instance(type_=rdf_class.id)
     session.add(instance)
     session.flush()
+    if parent_id is not None:
+        try:
+            parent_instance = session.query(Instance).filter(
+                        Instance.id == parent_id).one()
+            if parent_instance.children is None:
+                parent_instance.children = str(instance.id)
+            else:
+                parent_instance.children += ",{}".format(str(instance.id))
+        except NoResultFound:
+            session.close()
+            raise InstanceNotFound(parent_type, parent_id)
 
     for prop_name in object_:
 
@@ -616,6 +629,46 @@ def get_collection(API_NAME: str,
         collection_template["view"]["previous"] = "{}page={}".format(recreated_iri, page-1)
     if page != last:
         collection_template["view"]["next"] = "{}page={}".format(recreated_iri, page + 1)
+    return collection_template
+
+
+def get_nested_collection(api_name: str, parent_collection_name:str, parent_object_type: str,
+                          parent_id: str, nested_collection_name: str,
+                          object_type: str, session: scoped_session) -> Dict[str, Any]:
+    """Get items of a nested collection.
+    :param api_name: api name specified while starting server.
+    :param parent_collection_name: name of the parent collection.
+    :param parent_object_type: type of the parent object.
+    :param parent_id: id of the parent object.
+    :param nested_collection_name: name of the nested collections.
+    :param object_type: type of the objects of the nested collection.
+    :param session: sqlalchemy scoped session.
+    :return: response containing a nested collection.
+    """
+    collection_template = {
+        "@id": "/{}/{}/{}/{}".format(api_name, parent_collection_name, parent_id, nested_collection_name),
+        "@context": None,
+        "@type": nested_collection_name,
+        "members": list()
+    }  # type: Dict[str, Any]
+
+    try:
+        parent_instance = session.query(Instance).filter(
+                    Instance.id == str(parent_id)).one()
+        if parent_instance.children is None:
+            object_list = []
+        else:
+            object_list = parent_instance.children.split(',')
+    except NoResultFound:
+        session.close()
+        raise InstanceNotFound(parent_object_type, parent_id)
+
+    for item in object_list:
+        object_template = {
+            "@id": "/{}/{}/{}".format(api_name, nested_collection_name, item),
+            "@type": object_type
+        }
+        collection_template["members"].append(object_template)
     return collection_template
 
 

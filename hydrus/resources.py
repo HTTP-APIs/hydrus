@@ -316,9 +316,34 @@ class ItemCollection(Resource):
                         obj_type, object_):
                     # If Item in request's JSON is a valid object ie. @type is a key in object_
                     # and the right Item type is being added to the collection
+                    parent_id = None
+                    parent_type = None
+                    # Check if the new object is a child of any other object and extract parent id
+                    for supportedProp in get_doc().parsed_classes[obj_type]['class'].supportedProperty:
+                        if "vocab:" in supportedProp.prop:
+                            parent_class = supportedProp.prop.replace("vocab:", "")
+                            if parent_class in get_doc().collections:
+                                continue
+                            for property_of_parent in get_doc().parsed_classes[parent_class]['class'].supportedProperty:
+                                if "vocab:" in property_of_parent.prop:
+                                    nested_collection_of_parent = property_of_parent.prop.replace("vocab:", "")
+                                    if nested_collection_of_parent == path:
+                                        parent_id = object_[supportedProp.title].split('/')[-1]
+                                        parent_type = parent_class
+                                        break
+                        if parent_id is not None:
+                            break
                     try:
-                        # Insert object and return location in Header
-                        object_id = crud.insert(object_=object_, session=get_session())
+                        if parent_id is not None:
+                            # Insert object and return location in Header
+                            print(parent_id)
+                            print(parent_type)
+                            object_id = crud.insert(object_=object_, parent_id=parent_id,
+                                                    parent_type=parent_type,session=get_session())
+                        else:
+                            # Insert object and return location in Header
+                            object_id = crud.insert(object_=object_, session=get_session())
+
                         headers_ = [
                             {"Location": "{}{}/{}/{}".format(
                                 get_hydrus_server_url(), get_api_name(), path, object_id)}]
@@ -520,6 +545,45 @@ class Items(Resource):
                 return set_response_headers(jsonify(error.generate()), status_code=error.code)
 
         abort(405)
+
+
+class NestedCollection(Resource):
+    """Handle operation related to NestedCollection."""
+
+    def get(self, collection_type:str, id_: str, nested_collection_type: str) -> Response:
+        """
+        Retrieve a collection of items from the database.
+        """
+        auth_response = check_authentication_response()
+        if isinstance(auth_response, Response):
+            return auth_response
+        endpoint_ = checkEndpoint("GET", collection_type)
+        if not endpoint_['method']:
+            # If endpoint and Get method not supported in the API
+            abort(endpoint_['status'])
+        elif collection_type in get_doc().collections:
+            # If endpoint and GET method is supported in the API
+            # and collection name in document's collections
+            nested_collection = get_doc().collections[nested_collection_type]["collection"]
+
+            # title of HydraClass object corresponding to the nested collection
+            nested_obj_type = nested_collection.class_.title
+
+            parent_collection = get_doc().collections[collection_type]["collection"]
+            parent_obj_type = parent_collection.class_.title
+
+            try:
+                # Get nested collection details from the database
+                response = crud.get_nested_collection(
+                    get_api_name(), parent_collection_name=collection_type, parent_object_type=parent_obj_type,
+                    parent_id=id_, nested_collection_name=nested_collection_type,
+                    object_type= nested_obj_type, session=get_session())
+                return set_response_headers(jsonify(hydrafy(response, path=nested_collection_type)))
+
+            except (ClassNotFound, PageNotFound, InvalidSearchParameter) as e:
+                error = e.get_HTTP()
+                return set_response_headers(jsonify(error.generate()), status_code=error.code)
+
 
 
 class Contexts(Resource):

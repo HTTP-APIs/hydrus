@@ -166,6 +166,9 @@ def finalize_response(class_type: str, obj: Dict[str, Any]) -> Dict[str, Any]:
             obj.pop(prop.title, None)
         elif 'vocab:' in prop.prop:
             prop_class = prop.prop.replace("vocab:", "")
+            if prop_class in get_doc().collections:
+                obj[prop.title] = obj["@id"] + "/" + prop_class
+                continue
             nested_path, is_collection = get_nested_class_path(prop_class)
             if is_collection:
                 id = obj[prop.title]
@@ -202,6 +205,8 @@ def generate_iri_mappings(class_type: str, template: str, skip_nested: bool =Fal
     ).parsed_classes[class_type]["class"].supportedProperty:
         if "vocab:" in supportedProp.prop and skip_nested is False:
             prop_class = supportedProp.prop.replace("vocab:", "")
+            if prop_class in get_doc().collections:
+                continue
             template, template_mapping, skip_delimiter = generate_iri_mappings(prop_class, template, skip_nested=True,
                                                                                skip_delimiter=skip_delimiter,
                                                                                parent_prop_name=supportedProp.title,

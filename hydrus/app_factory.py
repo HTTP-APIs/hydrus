@@ -3,7 +3,7 @@ from flask_cors import CORS
 from flask_restful import Api
 
 from hydrus.resources import (Index, Vocab, Contexts, Entrypoint,
-                              ItemCollection, Item, Items)
+                              ItemCollection, NestedCollection, Item, Items)
 
 
 def app_factory(api_name: str = "api") -> Flask:
@@ -38,5 +38,9 @@ def app_factory(api_name: str = "api") -> Flask:
         "/{}/<string:path>/add/<int_list>".format(api_name),
         "/{}/<string:path>/add".format(api_name),
         "/{}/<string:path>/delete/<int_list>".format(api_name))
+    api.add_resource(
+        NestedCollection,
+        "/{}/<string:collection_type>/<uuid:id_>/<string:nested_collection_type>".format(api_name),
+        endpoint="nested_collection")
 
     return app
