@@ -426,7 +426,8 @@ class ViewsTestCase(unittest.TestCase):
                 class_ = self.doc.parsed_classes[collection.class_.title]["class"]
                 class_props = [x.prop for x in class_.supportedProperty]
                 for mapping in response_get_data["search"]["mapping"]:
-                    assert mapping["property"] in class_props
+                    if mapping["property"] not in ["limit", "offset", "pageIndex"]:
+                        assert mapping["property"] in class_props
 
     def test_GET_for_nested_class(self):
         index = self.client.get("/{}".format(self.API_NAME))
