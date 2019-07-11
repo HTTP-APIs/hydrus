@@ -1,5 +1,5 @@
 """Exceptions for the crud operations."""
-from typing import Dict, Tuple, Union, Any
+from typing import Dict, Tuple, Union, Any, List
 from hydra_python_core.doc_writer import HydraError
 
 
@@ -143,3 +143,21 @@ class InvalidSearchParameter(Exception):
         """Return the HTTP response for the Exception."""
         description = "Query parameter [{}] is invalid".format(self.param)
         return HydraError(code=400, title="Invalid query parameter", desc=description)
+
+
+class IncompatibleParameters(Exception):
+    """Error when two or more query parameters are incompatible with each other."""
+
+    def __init__(self, params: List[str]) -> None:
+        """Constructor."""
+        self.params = params
+
+    def get_HTTP(self) -> HydraError:
+        """Return the HTTP response for the Exception."""
+        description = "Following parameters are incompatible with each other: ["
+        for i in range(len(self.params)):
+            if i == len(self.params) - 1:
+                description += "{}]".format(self.params[i])
+            else:
+                description += "{}, ".format(self.params[i])
+        return HydraError(code=400, title="Incompatible parameters.", desc=description)
