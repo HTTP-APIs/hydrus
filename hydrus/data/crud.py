@@ -46,7 +46,8 @@ from hydrus.data.exceptions import (
     InstanceNotFound,
     PageNotFound,
     InvalidSearchParameter,
-    IncompatibleParameters)
+    IncompatibleParameters,
+    OffsetOutOfRange)
 # from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.scoping import scoped_session
 from typing import Dict, Optional, Any, List, Tuple
@@ -567,8 +568,8 @@ def get_collection(API_NAME: str,
     try:
         # To paginate, calculate offset and page_limit values for pagination of search results
         page, page_size, offset = pre_process_pagination_parameters(search_params=search_params, paginate=paginate,
-                                                                 page_size=page_size, result_length=result_length)
-    except (IncompatibleParameters, PageNotFound):
+                                                                    page_size=page_size, result_length=result_length)
+    except (IncompatibleParameters, PageNotFound, OffsetOutOfRange):
         raise
     current_page_size = page_size
     if result_length - offset < page_size:
@@ -603,30 +604,9 @@ def get_collection(API_NAME: str,
         paginate_param = "pageIndex"
     else:
         paginate_param = "page"
-    if paginate_param == "offset":
-        collection_template["view"] = {
-            "@id": "{}{}={}".format(recreated_iri, paginate_param, offset),
-            "@type": "PartialCollectionView",
-            "first": "{}{}=0".format(recreated_iri, paginate_param),
-            "last": "{}{}={}".format(recreated_iri, paginate_param, result_length-page_size)
-        }
-        if offset > page_size:
-            collection_template["view"]["previous"] = "{}{}={}".format(recreated_iri,
-                                                                       paginate_param, offset - page_size)
-        if offset < result_length-page_size:
-            collection_template["view"]["next"] = "{}{}={}".format(recreated_iri,
-                                                                   paginate_param, offset + page_size)
-    else:
-        collection_template["view"] = {
-            "@id": "{}{}={}".format(recreated_iri, paginate_param, page),
-            "@type": "PartialCollectionView",
-            "first": "{}{}=1".format(recreated_iri, paginate_param),
-            "last": "{}{}={}".format(recreated_iri, paginate_param, last)
-        }
-        if page != 1:
-            collection_template["view"]["previous"] = "{}{}={}".format(recreated_iri, paginate_param, page-1)
-        if page != last:
-            collection_template["view"]["next"] = "{}{}={}".format(recreated_iri, paginate_param, page + 1)
+    attach_hydra_view(collection_template=collection_template, paginate_param=paginate_param,
+                      result_length=result_length, iri=recreated_iri, page_size=page_size, offset=offset,
+                      page=page, last=last)
     return collection_template
 
 
@@ -882,8 +862,8 @@ def pre_process_pagination_parameters(search_params: Dict[str, Any], paginate: b
         elif "offset" in search_params:
             offset = int(search_params.get("offset"))
             page = offset//page_size + 1
-            if page != 1 and offset > result_length:
-                raise PageNotFound(page)
+            if offset > result_length:
+                raise OffsetOutOfRange(str(offset))
         else:
             page = int(search_params.get("page", 1))
             offset = None
@@ -896,3 +876,43 @@ def pre_process_pagination_parameters(search_params: Dict[str, Any], paginate: b
     page_limit, offset = calculate_page_limit_and_offset(paginate=paginate, page_size=page_size, page=page,
                                                          result_length=result_length, offset=offset, limit=limit)
     return page, page_limit, offset
+
+
+def attach_hydra_view(collection_template: Dict[str, Any], paginate_param: str, result_length: int, page_size: int,
+                      iri: str, offset: int = None, page: int = None, last: int = None) -> None:
+    """Attaches hydra:view to the collection template.
+    :param collection_template: the collection template.
+    :param paginate_param: type of paginate parameter used.
+    :param result_length: length of the result set.
+    :param page_size: size of the page.
+    :param iri: IRI of the collection with query parameters except "page", "pageIndex" and "offset".
+    :param offset: offset used for pagination, None if not used.
+    :param page: page number used for pagination, None if not used.
+    :param last: Page number of the last page only used when "page" or "pageIndex" is used for pagination
+                    None otherwise.
+    """
+    if paginate_param == "offset":
+        collection_template["view"] = {
+            "@id": "{}{}={}".format(iri, paginate_param, offset),
+            "@type": "PartialCollectionView",
+            "first": "{}{}=0".format(iri, paginate_param),
+            "last": "{}{}={}".format(iri, paginate_param, result_length-page_size)
+        }
+        if offset > page_size:
+            collection_template["view"]["previous"] = "{}{}={}".format(iri,
+                                                                       paginate_param, offset - page_size)
+        if offset < result_length-page_size:
+            collection_template["view"]["next"] = "{}{}={}".format(iri,
+                                                                   paginate_param, offset + page_size)
+    else:
+        collection_template["view"] = {
+            "@id": "{}{}={}".format(iri, paginate_param, page),
+            "@type": "PartialCollectionView",
+            "first": "{}{}=1".format(iri, paginate_param),
+            "last": "{}{}={}".format(iri, paginate_param, last)
+        }
+        if page != 1:
+            collection_template["view"]["previous"] = "{}{}={}".format(iri, paginate_param, page-1)
+        if page != last:
+            collection_template["view"]["next"] = "{}{}={}".format(iri, paginate_param, page + 1)
+    return collection_template

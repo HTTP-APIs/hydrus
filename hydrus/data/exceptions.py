@@ -120,7 +120,7 @@ class UserNotFound(Exception):
 
 
 class PageNotFound(Exception):
-    """Error when the User is not found."""
+    """Error when the page is not found."""
 
     def __init__(self, page_id: str) -> None:
         """Constructor."""
@@ -161,3 +161,17 @@ class IncompatibleParameters(Exception):
             else:
                 description += "{}, ".format(self.params[i])
         return HydraError(code=400, title="Incompatible parameters.", desc=description)
+
+
+class OffsetOutOfRange(Exception):
+    """Error when the offset provided by client is out of range"""
+
+    def __init__(self, offset: str) -> None:
+        """Constructor."""
+        self.offset = offset
+
+    def get_HTTP(self) -> HydraError:
+        """Return the HTTP response for the Exception."""
+        description = "Offset {} is out of range.".format(self.offset)
+        return HydraError(code=400, title="Page not found", desc=description)
+
