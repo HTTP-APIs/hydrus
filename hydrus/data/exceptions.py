@@ -174,4 +174,3 @@ class OffsetOutOfRange(Exception):
         """Return the HTTP response for the Exception."""
         description = "Offset {} is out of range.".format(self.offset)
         return HydraError(code=400, title="Page not found", desc=description)
-

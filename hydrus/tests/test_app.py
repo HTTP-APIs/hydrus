@@ -93,7 +93,8 @@ class ViewsTestCase(unittest.TestCase):
                 id_=str(
                     uuid.uuid4()),
                 session=self.session)
-            # If it's a collection class then add an extra object so we can test pagination thoroughly.
+            # If it's a collection class then add an extra object so
+            # we can test pagination thoroughly.
             if class_ in self.doc.collections:
                 crud.insert(
                     dummy_obj,
@@ -182,7 +183,8 @@ class ViewsTestCase(unittest.TestCase):
                             class_methods = [
                                 x.method for x in class_.supportedOperation]
                             if "GET" in class_methods:
-                                item_response = self.client.get(response_get_data["members"][0]["@id"])
+                                item_response = self.client.get(
+                                    response_get_data["members"][0]["@id"])
                                 assert item_response.status_code == 200
 
     def test_pagination(self):
@@ -430,7 +432,8 @@ class ViewsTestCase(unittest.TestCase):
                         assert mapping["property"] in class_props
 
     def test_client_controlled_pagination(self):
-        """Test pagination controlled by client with help of pageIndex, offset and limit parameters."""
+        """Test pagination controlled by client with help of pageIndex,
+        offset and limit parameters."""
         index = self.client.get("/{}".format(self.API_NAME))
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
@@ -446,7 +449,7 @@ class ViewsTestCase(unittest.TestCase):
                 assert "mapping" in response_get_data["search"]
                 # Test with pageIndex and limit
                 params = {"pageIndex": 1, "limit": 2}
-                response_for_page_param = self.client.get(endpoints[endpoint], query_string= params)
+                response_for_page_param = self.client.get(endpoints[endpoint], query_string=params)
                 assert response_for_page_param.status_code == 200
                 response_for_page_param_data = json.loads(
                     response_for_page_param.data.decode('utf-8'))
@@ -462,7 +465,8 @@ class ViewsTestCase(unittest.TestCase):
                     assert "pageIndex=1" in next_response_data["view"]["previous"]
                     # Test with offset and limit
                     params = {"offset": 1, "limit": 2}
-                    response_for_offset_param = self.client.get(endpoints[endpoint], query_string=params)
+                    response_for_offset_param = self.client.get(endpoints[endpoint],
+                                                                query_string=params)
                     assert response_for_offset_param.status_code == 200
                     response_for_offset_param_data = json.loads(
                         response_for_offset_param.data.decode('utf-8'))
@@ -470,7 +474,8 @@ class ViewsTestCase(unittest.TestCase):
                     assert "last" in response_for_offset_param_data["view"]
                     if "next" in response_for_offset_param_data["view"]:
                         assert "offset=3" in response_for_offset_param_data["view"]["next"]
-                        next_response = self.client.get(response_for_offset_param_data["view"]["next"])
+                        next_response = self.client.get(
+                            response_for_offset_param_data["view"]["next"])
                         assert next_response.status_code == 200
                         next_response_data = json.loads(
                             next_response.data.decode('utf-8'))

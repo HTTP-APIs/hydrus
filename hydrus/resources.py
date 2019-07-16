@@ -55,7 +55,8 @@ from hydrus.helpers import (
     check_required_props,
     add_iri_template,
     finalize_response)
-from hydrus.utils import (get_session,
+from hydrus.utils import (
+    get_session,
     get_doc,
     get_api_name,
     get_hydrus_server_url,
@@ -257,7 +258,8 @@ class ItemCollection(Resource):
                     # Get paginated response
                     response = crud.get_collection(
                         get_api_name(), collection.class_.title, session=get_session(),
-                        paginate=True, path=path, page_size=get_page_size(), search_params=search_params)
+                        paginate=True, path=path, page_size=get_page_size(),
+                        search_params=search_params)
                 else:
                     # Get whole collection
                     response = crud.get_collection(
@@ -323,14 +325,16 @@ class ItemCollection(Resource):
                         headers_ = [
                             {"Location": "{}{}/{}/{}".format(
                                 get_hydrus_server_url(), get_api_name(), path, object_id)}]
-                        status_description = "Object with ID {} successfully added".format(object_id)
+                        status_description = "Object with ID {} successfully added".format(
+                            object_id)
                         status = HydraStatus(code=201, title="Object successfully added",
                                              desc=status_description)
                         return set_response_headers(
                             jsonify(status.generate()), headers=headers_, status_code=status.code)
                     except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
                         error = e.get_HTTP()
-                        return set_response_headers(jsonify(error.generate()), status_code=error.code)
+                        return set_response_headers(jsonify(error.generate()),
+                                                    status_code=error.code)
 
                 else:
                     error = HydraError(code=400, title="Data is not valid")
@@ -351,7 +355,8 @@ class ItemCollection(Resource):
                             jsonify(status.generate()), headers=headers_, status_code=status.code)
                     except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
                         error = e.get_HTTP()
-                        return set_response_headers(jsonify(error.generate()), status_code=error.code)
+                        return set_response_headers(jsonify(error.generate()),
+                                                    status_code=error.code)
 
                 else:
                     error = HydraError(code=400, title="Data is not valid")
@@ -475,20 +480,24 @@ class Items(Resource):
                             headers_ = [{"Location": "{}{}/{}/{}".format(
                                     get_hydrus_server_url(), get_api_name(), path, object_id)}]
                             if len(incomplete_objects) > 0:
-                                status = HydraStatus(code=202, title="Object(s) missing required property")
+                                status = HydraStatus(code=202,
+                                                     title="Object(s) missing required property")
                                 response = status.generate()
                                 response["objects"] = incomplete_objects
                                 return set_response_headers(
                                     jsonify(response), headers=headers_, status_code=status.code)
                             else:
-                                status_description = "Objects with ID {} successfully added".format(object_id)
+                                status_description = "Objects with ID {} successfully added".format(
+                                    object_id)
                                 status = HydraStatus(code=201, title="Objects successfully added",
                                                      desc=status_description)
                                 return set_response_headers(
-                                    jsonify(status.generate()), headers=headers_, status_code=status.code)
+                                    jsonify(status.generate()), headers=headers_,
+                                    status_code=status.code)
                         except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
                             error = e.get_HTTP()
-                            return set_response_headers(jsonify(error.generate()), status_code=error.code)
+                            return set_response_headers(jsonify(error.generate()),
+                                                        status_code=error.code)
 
                 error = HydraError(code=400, title="Data is not valid")
                 return set_response_headers(jsonify(error.generate()), status_code=error.code)
@@ -512,8 +521,10 @@ class Items(Resource):
             try:
                 # Delete the Item with ID == id_
                 crud.delete_multiple(int_list, class_type, session=get_session())
-                status_description = "Objects with ID {} successfully deleted".format(int_list.split(','))
-                status = HydraStatus(code=200, title="Objects successfully deleted", desc=status_description)
+                status_description = "Objects with ID {} successfully deleted".format(
+                    int_list.split(','))
+                status = HydraStatus(code=200, title="Objects successfully deleted",
+                                     desc=status_description)
                 return set_response_headers(jsonify(status.generate()))
 
             except (ClassNotFound, InstanceNotFound) as e:

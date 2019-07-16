@@ -520,7 +520,7 @@ def get_collection(API_NAME: str,
                    session: scoped_session,
                    paginate: bool,
                    page_size: int,
-                   search_params: Dict[str, Any] = None,
+                   search_params: Dict[str, Any]=None,
                    path: str = None) -> Dict[str, Any]:
     """Retrieve a type of collection from the database.
     :param API_NAME: api name specified while starting server
@@ -567,8 +567,10 @@ def get_collection(API_NAME: str,
     result_length = len(filtered_instances)
     try:
         # To paginate, calculate offset and page_limit values for pagination of search results
-        page, page_size, offset = pre_process_pagination_parameters(search_params=search_params, paginate=paginate,
-                                                                    page_size=page_size, result_length=result_length)
+        page, page_size, offset = pre_process_pagination_parameters(search_params=search_params,
+                                                                    paginate=paginate,
+                                                                    page_size=page_size,
+                                                                    result_length=result_length)
     except (IncompatibleParameters, PageNotFound, OffsetOutOfRange):
         raise
     current_page_size = page_size
@@ -582,7 +584,10 @@ def get_collection(API_NAME: str,
             }
         else:
             object_template = {
-                "@id": "/{}/{}Collection/{}".format(API_NAME, type_, filtered_instances[i].id), "@type": type_}
+                "@id": "/{}/{}Collection/{}".format(API_NAME, type_,
+                                                    filtered_instances[i].id),
+                "@type": type_
+            }
         collection_template["members"].append(object_template)
 
     # If pagination is disabled then stop and return the collection template
@@ -605,8 +610,8 @@ def get_collection(API_NAME: str,
     else:
         paginate_param = "page"
     attach_hydra_view(collection_template=collection_template, paginate_param=paginate_param,
-                      result_length=result_length, iri=recreated_iri, page_size=page_size, offset=offset,
-                      page=page, last=last)
+                      result_length=result_length, iri=recreated_iri, page_size=page_size,
+                      offset=offset, page=page, last=last)
     return collection_template
 
 
@@ -768,14 +773,16 @@ def recreate_iri(API_NAME: str, path: str, search_params: Dict[str, Any]) -> str
     """
     iri = "/{}/{}?".format(API_NAME, path)
     for param in search_params:
-        # Skip page, pageIndex or offset parameters as they will be updated to point to next, previous and last page
+        # Skip page, pageIndex or offset parameters as they will be updated to point to
+        # next, previous and last page
         if param == "page" or param == "pageIndex" or param == "offset":
             continue
         iri += "{}={}&".format(param, search_params[param])
     return iri
 
 
-def parse_search_params(search_params: Dict[str, Any], session: scoped_session) -> Dict[str, Any]:
+def parse_search_params(search_params: Dict[str, Any],
+                        session: scoped_session) -> Dict[str, Any]:
     """Parse search parameters and create a dict with id of parameters as keys.
     :param search_params: Dictionary having input search parameters.
     :param session: sqlalchemy session.
@@ -853,7 +860,8 @@ def pre_process_pagination_parameters(search_params: Dict[str, Any], paginate: b
         if i != incompatible_parameters_len - 1:
             for j in range(i+1, incompatible_parameters_len):
                 if incompatible_parameters[j] in search_params:
-                    raise IncompatibleParameters([incompatible_parameters[i], incompatible_parameters[j]])
+                    raise IncompatibleParameters([incompatible_parameters[i],
+                                                  incompatible_parameters[j]])
     try:
         # Extract page number from query arguments
         if "pageIndex" in search_params:
@@ -873,13 +881,16 @@ def pre_process_pagination_parameters(search_params: Dict[str, Any], paginate: b
             limit = None
     except ValueError:
         raise PageNotFound(page)
-    page_limit, offset = calculate_page_limit_and_offset(paginate=paginate, page_size=page_size, page=page,
-                                                         result_length=result_length, offset=offset, limit=limit)
+    page_limit, offset = calculate_page_limit_and_offset(paginate=paginate, page_size=page_size,
+                                                         page=page, result_length=result_length,
+                                                         offset=offset, limit=limit)
     return page, page_limit, offset
 
 
-def attach_hydra_view(collection_template: Dict[str, Any], paginate_param: str, result_length: int, page_size: int,
-                      iri: str, offset: int = None, page: int = None, last: int = None) -> None:
+def attach_hydra_view(collection_template: Dict[str, Any], paginate_param: str,
+                      result_length: int, page_size: int,
+                      iri: str, offset: int = None,
+                      page: int = None, last: int = None) -> None:
     """Attaches hydra:view to the collection template.
     :param collection_template: the collection template.
     :param paginate_param: type of paginate parameter used.
@@ -888,8 +899,8 @@ def attach_hydra_view(collection_template: Dict[str, Any], paginate_param: str, 
     :param iri: IRI of the collection with query parameters except "page", "pageIndex" and "offset".
     :param offset: offset used for pagination, None if not used.
     :param page: page number used for pagination, None if not used.
-    :param last: Page number of the last page only used when "page" or "pageIndex" is used for pagination
-                    None otherwise.
+    :param last: Page number of the last page only used when "page" or "pageIndex"
+                 is used for pagination, None otherwise.
     """
     if paginate_param == "offset":
         collection_template["view"] = {
@@ -900,10 +911,12 @@ def attach_hydra_view(collection_template: Dict[str, Any], paginate_param: str, 
         }
         if offset > page_size:
             collection_template["view"]["previous"] = "{}{}={}".format(iri,
-                                                                       paginate_param, offset - page_size)
+                                                                       paginate_param,
+                                                                       offset - page_size)
         if offset < result_length-page_size:
             collection_template["view"]["next"] = "{}{}={}".format(iri,
-                                                                   paginate_param, offset + page_size)
+                                                                   paginate_param,
+                                                                   offset + page_size)
     else:
         collection_template["view"] = {
             "@id": "{}{}={}".format(iri, paginate_param, page),
@@ -912,7 +925,8 @@ def attach_hydra_view(collection_template: Dict[str, Any], paginate_param: str, 
             "last": "{}{}={}".format(iri, paginate_param, last)
         }
         if page != 1:
-            collection_template["view"]["previous"] = "{}{}={}".format(iri, paginate_param, page-1)
+            collection_template["view"]["previous"] = "{}{}={}".format(iri, paginate_param,
+                                                                       page-1)
         if page != last:
-            collection_template["view"]["next"] = "{}{}={}".format(iri, paginate_param, page + 1)
-    return collection_template
+            collection_template["view"]["next"] = "{}{}={}".format(iri, paginate_param,
+                                                                   page + 1)
