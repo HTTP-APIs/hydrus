@@ -19,7 +19,7 @@ class Pep8Test(unittest.TestCase):
         # Set this to desired folder location
         for root, _, files in os.walk(self.file_structure):
             python_files = [f for f in files if f.endswith(
-                '.py') and f.find("examples") == 0]
+                '.py') and "examples" not in root]
             for file in python_files:
                 if len(root.split('samples')) != 2:     # Ignore samples directory
                     filename = '{0}/{1}'.format(root, file)

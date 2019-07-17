@@ -175,37 +175,40 @@ def finalize_response(class_type: str, obj: Dict[str, Any]) -> Dict[str, Any]:
     return obj
 
 
-def add_iri_template(class_type: str, API_NAME: str, path:str) -> Dict[str, Any]:
+def add_iri_template(class_type: str, API_NAME: str, path: str) -> Dict[str, Any]:
     template_mappings = list()
     template = "/{}/{}(".format(API_NAME, path)
     first = True
-    template, template_mappings, skip_del = generate_iri_mappings(class_type, template,
-                                                                  template_mapping=template_mappings,)
-    template += ")"
+    template, template_mappings = generate_iri_mappings(class_type, template,
+                                                        template_mapping=template_mappings,)
+
+    template, template_mappings = add_pagination_iri_mappings(template=template,
+                                                              template_mapping=template_mappings)
     return HydraIriTemplate(template=template, iri_mapping=template_mappings).generate()
 
 
-def generate_iri_mappings(class_type: str, template: str, skip_nested: bool =False, skip_delimiter: bool = True,
-                     template_mapping: List[IriTemplateMapping]=[], parent_prop_name: str = None) -> Tuple[str,
-                                                                             List[IriTemplateMapping], bool]:
+def generate_iri_mappings(class_type: str, template: str, skip_nested: bool = False,
+                          template_mapping: List[IriTemplateMapping] = [],
+                          parent_prop_name: str = None) -> Tuple[str, List[IriTemplateMapping]]:
     """Generate iri mappings to add to IriTemplate
     :param class_type: class name objects contained in collection.
     :param template: IriTemplate string.
-    :param skip_nested: To only add properties of the class_type class or its immediate children.
-    :param skip_delimiter: Used to place delimiters between various parameters of template.
+    :param skip_nested: To only add properties of the class_type class or
+                        its immediate children.
     :param template_mapping: List of template mappings.
-    :param parent_prop_name: Property name according to parent object (only applies for nested properties)
-    :return: Template string, list of template mappings and boolean showing whether to keep adding
-                delimiter or not.
+    :param parent_prop_name: Property name according to parent object
+                             (only applies for nested properties)
+    :return: Template string, list of template mappings and boolean showing whether
+             to keep adding delimiter or not.
     """
     for supportedProp in get_doc(
     ).parsed_classes[class_type]["class"].supportedProperty:
         if "vocab:" in supportedProp.prop and skip_nested is False:
             prop_class = supportedProp.prop.replace("vocab:", "")
-            template, template_mapping, skip_delimiter = generate_iri_mappings(prop_class, template, skip_nested=True,
-                                                                               skip_delimiter=skip_delimiter,
-                                                                               parent_prop_name=supportedProp.title,
-                                                                               template_mapping=template_mapping)
+            template, template_mapping = generate_iri_mappings(prop_class, template,
+                                                               skip_nested=True,
+                                                               parent_prop_name=supportedProp.title,
+                                                               template_mapping=template_mapping)
             continue
         if skip_nested is True:
             var = "{}[{}]".format(parent_prop_name, supportedProp.title)
@@ -214,9 +217,25 @@ def generate_iri_mappings(class_type: str, template: str, skip_nested: bool =Fal
             var = supportedProp.title
             mapping = IriTemplateMapping(variable=var, prop=supportedProp.prop)
         template_mapping.append(mapping)
-        if skip_delimiter is True:
-            template = template + "{}".format(var)
-            skip_delimiter = False
+        template = template + "{}, ".format(var)
+    return template, template_mapping
+
+
+def add_pagination_iri_mappings(template: str,
+                                template_mapping: List[IriTemplateMapping]
+                                ) -> Tuple[str, List[IriTemplateMapping]]:
+    """Add various pagination related to variable to the IRI template and also adds mappings for them.
+    :param template: IriTemplate string.
+    :param template_mapping: List of template mappings.
+    :return: Final IriTemplate string and related list of mappings.
+    """
+    paginate_variables = ["pageIndex", "limit", "offset"]
+    for i in range(len(paginate_variables)):
+        # If final variable then do not add space and comma and add the final parentheses
+        if i == len(paginate_variables) - 1:
+            template += "{})".format(paginate_variables[i])
         else:
-            template = template + ", {}".format(var)
-    return template, template_mapping, skip_delimiter
+            template += "{}, ".format(paginate_variables[i])
+        mapping = IriTemplateMapping(variable=paginate_variables[i], prop=paginate_variables[i])
+        template_mapping.append(mapping)
+    return template, template_mapping
