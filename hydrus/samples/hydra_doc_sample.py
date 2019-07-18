@@ -27,14 +27,13 @@ doc = {
         },
         "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
         "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-        "readonly": "hydra:readonly",
+        "readable": "hydra:readable",
         "required": "hydra:required",
         "returns": {
             "@id": "hydra:returns",
             "@type": "@id"
         },
         "statusCode": "hydra:statusCode",
-        "statusCodes": "hydra:statusCodes",
         "subClassOf": {
             "@id": "rdfs:subClassOf",
             "@type": "@id"
@@ -44,7 +43,10 @@ doc = {
         "supportedProperty": "hydra:supportedProperty",
         "title": "hydra:title",
         "vocab": "http://localhost:8080/api/vocab#",
-        "writeonly": "hydra:writeonly"
+        "writeable": "hydra:writeable",
+        "expectsHeader": "hydra:expectsHeader",
+        "returnsHeader": "hydra:returnsHeader",
+        "manages": "hydra:manages"
     },
     "@id": "http://localhost:8080/api/vocab",
     "@type": "ApiDocumentation",
@@ -73,6 +75,8 @@ doc = {
                         }
                     ],
                     "returns": "vocab:State",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "GetState"
                 }
             ],
@@ -80,50 +84,50 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "http://auto.schema.org/speed",
-                    "readonly": "false",
+                    "readable": "ture",
                     "required": "true",
                     "title": "Speed",
-                    "writeonly": "false"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/geo",
-                    "readonly": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "Position",
-                    "writeonly": "false"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/Property",
-                    "readonly": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "Direction",
-                    "writeonly": "false"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/fuelCapacity",
-                    "readonly": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "Battery",
-                    "writeonly": "false"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "https://schema.org/status",
-                    "readonly": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "SensorStatus",
-                    "writeonly": "false"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/identifier",
-                    "readonly": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "DroneID",
-                    "writeonly": "false"
+                    "writeable": "true"
                 }
             ],
             "title": "State"
@@ -150,6 +154,8 @@ doc = {
                         }
                     ],
                     "returns": "vocab:Command",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "GetCommand"
                 },
                 {
@@ -164,6 +170,8 @@ doc = {
                         }
                     ],
                     "returns": "null",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "AddCommand"
                 },
                 {
@@ -178,6 +186,8 @@ doc = {
                         }
                     ],
                     "returns": "null",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "DeleteCommand"
                 }
             ],
@@ -185,18 +195,18 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/identifier",
-                    "readonly": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "DroneID",
-                    "writeonly": "false"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "vocab:State",
-                    "readonly": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "State",
-                    "writeonly": "false"
+                    "writeable": "true"
                 }
             ],
             "title": "Command"
@@ -223,6 +233,8 @@ doc = {
                         }
                     ],
                     "returns": "vocab:Message",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "GetMessage"
                 },
                 {
@@ -237,6 +249,8 @@ doc = {
                         }
                     ],
                     "returns": "null",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "DeleteMessage"
                 }
             ],
@@ -244,10 +258,10 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/Text",
-                    "readonly": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "MessageString",
-                    "writeonly": "false"
+                    "writeable": "true"
                 }
             ],
             "title": "Message"
@@ -269,6 +283,8 @@ doc = {
                         }
                     ],
                     "returns": "null",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "UpdateArea"
                 },
                 {
@@ -288,6 +304,8 @@ doc = {
                         }
                     ],
                     "returns": "vocab:Area",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "GetArea"
                 }
             ],
@@ -295,18 +313,18 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/geo",
-                    "readonly": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "TopLeft",
-                    "writeonly": "false"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/geo",
-                    "readonly": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "BottomRight",
-                    "writeonly": "false"
+                    "writeable": "true"
                 }
             ],
             "title": "Area"
@@ -333,6 +351,8 @@ doc = {
                         }
                     ],
                     "returns": "vocab:Datastream",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "ReadDatastream"
                 },
                 {
@@ -347,6 +367,8 @@ doc = {
                         }
                     ],
                     "returns": "null",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "UpdateDatastream"
                 },
                 {
@@ -361,6 +383,8 @@ doc = {
                         }
                     ],
                     "returns": "null",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "DeleteDatastream"
                 }
             ],
@@ -368,26 +392,26 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/QuantitativeValue",
-                    "readonly": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "Temperature",
-                    "writeonly": "false"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/identifier",
-                    "readonly": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "DroneID",
-                    "writeonly": "false"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/geo",
-                    "readonly": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "Position",
-                    "writeonly": "false"
+                    "writeable": "true"
                 }
             ],
             "title": "Datastream"
@@ -409,6 +433,8 @@ doc = {
                         }
                     ],
                     "returns": "null",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "SubmitDrone"
                 },
                 {
@@ -423,6 +449,8 @@ doc = {
                         }
                     ],
                     "returns": "null",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "CreateDrone"
                 },
                 {
@@ -442,6 +470,8 @@ doc = {
                         }
                     ],
                     "returns": "vocab:Drone",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "GetDrone"
                 },
                 {
@@ -461,6 +491,8 @@ doc = {
                         }
                     ],
                     "returns": "null",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "DeleteDrone"
                 }
             ],
@@ -468,42 +500,42 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "vocab:State",
-                    "readonly": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "DroneState",
-                    "writeonly": "false"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/name",
-                    "readonly": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "name",
-                    "writeonly": "false"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/model",
-                    "readonly": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "model",
-                    "writeonly": "false"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "http://auto.schema.org/speed",
-                    "readonly": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "MaxSpeed",
-                    "writeonly": "false"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/device",
-                    "readonly": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "Sensor",
-                    "writeonly": "false"
+                    "writeable": "true"
                 }
             ],
             "title": "Drone"
@@ -530,6 +562,8 @@ doc = {
                         }
                     ],
                     "returns": "vocab:LogEntry",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "GetLog"
                 },
                 {
@@ -544,6 +578,8 @@ doc = {
                         }
                     ],
                     "returns": "null",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "title": "AddLog"
                 }
             ],
@@ -551,58 +587,58 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/identifier",
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "false",
                     "title": "DroneID",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/UpdateAction",
-                    "readonly": "false",
+                    "readable": "false",
                     "required": "false",
                     "title": "Update",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/ReplyAction",
-                    "readonly": "false",
+                    "readable": "false",
                     "required": "false",
                     "title": "Get",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/SendAction",
-                    "readonly": "false",
+                    "readable": "false",
                     "required": "false",
                     "title": "Send",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "vocab:State",
-                    "readonly": "false",
+                    "readable": "false",
                     "required": "false",
                     "title": "State",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "vocab:Datastream",
-                    "readonly": "false",
+                    "readable": "false",
                     "required": "false",
                     "title": "Data",
-                    "writeonly": "true"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "vocab:Command",
-                    "readonly": "false",
+                    "readable": "false",
                     "required": "false",
                     "title": "Command",
-                    "writeonly": "true"
+                    "writeable": "true"
                 }
             ],
             "title": "LogEntry"
@@ -624,10 +660,10 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "http://www.w3.org/ns/hydra/core#member",
-                    "readonly": "false",
+                    "readable": "true",
                     "required": "null",
                     "title": "members",
-                    "writeonly": "false"
+                    "writeable": "true"
                 }
             ],
             "title": "Collection"
@@ -645,6 +681,8 @@ doc = {
                     "expects": "null",
                     "method": "GET",
                     "returns": "vocab:CommandCollection",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "possibleStatus": []
                 },
                 {
@@ -654,6 +692,8 @@ doc = {
                     "expects": "vocab:Command",
                     "method": "PUT",
                     "returns": "vocab:Command",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "possibleStatus": [
                         {
                             "title": "If the Command entity was created successfully.",
@@ -668,10 +708,10 @@ doc = {
                     "@type": "SupportedProperty",
                     "description": "The command",
                     "property": "http://www.w3.org/ns/hydra/core#member",
-                    "readonly": "false",
+                    "readable": "true",
                     "required": "false",
                     "title": "members",
-                    "writeonly": "false"
+                    "writeable": "true"
                 }
             ],
             "title": "CommandCollection"
@@ -689,6 +729,8 @@ doc = {
                     "expects": "null",
                     "method": "GET",
                     "returns": "vocab:StateCollection",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "possibleStatus": []
                 },
                 {
@@ -698,6 +740,8 @@ doc = {
                     "expects": "vocab:State",
                     "method": "PUT",
                     "returns": "vocab:State",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "possibleStatus": [
                         {
                             "title": "If the State entity was created successfully.",
@@ -712,10 +756,10 @@ doc = {
                     "@type": "SupportedProperty",
                     "description": "The state",
                     "property": "http://www.w3.org/ns/hydra/core#member",
-                    "readonly": "false",
+                    "readable": "true",
                     "required": "false",
                     "title": "members",
-                    "writeonly": "false"
+                    "writeable": "true"
                 }
             ],
             "title": "StateCollection"
@@ -733,6 +777,8 @@ doc = {
                     "expects": "null",
                     "method": "GET",
                     "returns": "vocab:MessageCollection",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "possibleStatus": []
                 },
                 {
@@ -742,6 +788,8 @@ doc = {
                     "expects": "vocab:Message",
                     "method": "PUT",
                     "returns": "vocab:Message",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "possibleStatus": [
                         {
                             "title": "If the Message entity was created successfully.",
@@ -756,10 +804,10 @@ doc = {
                     "@type": "SupportedProperty",
                     "description": "The message",
                     "property": "http://www.w3.org/ns/hydra/core#member",
-                    "readonly": "false",
+                    "readable": "true",
                     "required": "false",
                     "title": "members",
-                    "writeonly": "false"
+                    "writeable": "true"
                 }
             ],
             "title": "MessageCollection"
@@ -777,6 +825,8 @@ doc = {
                     "expects": "null",
                     "method": "GET",
                     "returns": "vocab:DroneCollection",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "possibleStatus": []
                 },
                 {
@@ -786,6 +836,8 @@ doc = {
                     "expects": "vocab:Drone",
                     "method": "PUT",
                     "returns": "vocab:Drone",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "possibleStatus": [
                         {
                             "title": "If the Drone entity was created successfully.",
@@ -800,10 +852,10 @@ doc = {
                     "@type": "SupportedProperty",
                     "description": "The drone",
                     "property": "http://www.w3.org/ns/hydra/core#member",
-                    "readonly": "false",
+                    "readable": "true",
                     "required": "false",
                     "title": "members",
-                    "writeonly": "false"
+                    "writeable": "true"
                 }
             ],
             "title": "DroneCollection"
@@ -821,6 +873,8 @@ doc = {
                     "expects": "null",
                     "method": "GET",
                     "returns": "vocab:LogEntryCollection",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "possibleStatus": []
                 },
                 {
@@ -830,6 +884,8 @@ doc = {
                     "expects": "vocab:LogEntry",
                     "method": "PUT",
                     "returns": "vocab:LogEntry",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "possibleStatus": [
                         {
                             "title": "If the LogEntry entity was created successfully.",
@@ -844,10 +900,10 @@ doc = {
                     "@type": "SupportedProperty",
                     "description": "The logentry",
                     "property": "http://www.w3.org/ns/hydra/core#member",
-                    "readonly": "false",
+                    "readable": "true",
                     "required": "false",
                     "title": "members",
-                    "writeonly": "false"
+                    "writeable": "true"
                 }
             ],
             "title": "LogEntryCollection"
@@ -865,6 +921,8 @@ doc = {
                     "expects": "null",
                     "method": "GET",
                     "returns": "vocab:DatastreamCollection",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "possibleStatus": []
                 },
                 {
@@ -874,6 +932,8 @@ doc = {
                     "expects": "vocab:Datastream",
                     "method": "PUT",
                     "returns": "vocab:Datastream",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "possibleStatus": [
                         {
                             "title": "If the Datastream entity was created successfully.",
@@ -888,10 +948,10 @@ doc = {
                     "@type": "SupportedProperty",
                     "description": "The datastream",
                     "property": "http://www.w3.org/ns/hydra/core#member",
-                    "readonly": "false",
+                    "readable": "true",
                     "required": "false",
                     "title": "members",
-                    "writeonly": "false"
+                    "writeable": "true"
                 }
             ],
             "title": "DatastreamCollection"
@@ -908,6 +968,8 @@ doc = {
                     "expects": "null",
                     "method": "GET",
                     "returns": "null",
+                    "expectsHeader": [],
+                    "returnsHeader": [],
                     "possibleStatus": "vocab:EntryPoint"
                 }
             ],
@@ -931,6 +993,8 @@ doc = {
                                 "label": "UpdateArea",
                                 "method": "POST",
                                 "returns": "null",
+                                "expectsHeader": [],
+                                "returnsHeader": [],
                                 "possibleStatus": [
                                     {
                                         "title": "Area of interest changed",
@@ -947,6 +1011,8 @@ doc = {
                                 "label": "GetArea",
                                 "method": "GET",
                                 "returns": "vocab:Area",
+                                "expectsHeader": [],
+                                "returnsHeader": [],
                                 "possibleStatus": [
                                     {
                                         "title": "Area of interest not found",
@@ -962,9 +1028,9 @@ doc = {
                             }
                         ]
                     },
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "null",
-                    "writeonly": "false"
+                    "writeable": "false"
                 },
                 {
                     "hydra:description": "The CommandCollection collection",
@@ -984,6 +1050,8 @@ doc = {
                                 "expects": "null",
                                 "method": "GET",
                                 "returns": "vocab:CommandCollection",
+                                "expectsHeader": [],
+                                "returnsHeader": [],
                                 "possibleStatus": []
                             },
                             {
@@ -993,6 +1061,8 @@ doc = {
                                 "expects": "vocab:Command",
                                 "method": "PUT",
                                 "returns": "vocab:Command",
+                                "expectsHeader": [],
+                                "returnsHeader": [],
                                 "possibleStatus": [
                                     {
                                         "title": "If the Command entity was created successfully.",
@@ -1003,9 +1073,9 @@ doc = {
                             }
                         ]
                     },
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "null",
-                    "writeonly": "false"
+                    "writeable": "false"
                 },
                 {
                     "hydra:description": "The StateCollection collection",
@@ -1025,6 +1095,8 @@ doc = {
                                 "expects": "null",
                                 "method": "GET",
                                 "returns": "vocab:StateCollection",
+                                "expectsHeader": [],
+                                "returnsHeader": [],
                                 "possibleStatus": []
                             },
                             {
@@ -1034,6 +1106,8 @@ doc = {
                                 "expects": "vocab:State",
                                 "method": "PUT",
                                 "returns": "vocab:State",
+                                "expectsHeader": [],
+                                "returnsHeader": [],
                                 "possibleStatus": [
                                     {
                                         "title": "If the State entity was created successfully.",
@@ -1044,9 +1118,9 @@ doc = {
                             }
                         ]
                     },
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "null",
-                    "writeonly": "false"
+                    "writeable": "false"
                 },
                 {
                     "hydra:description": "The MessageCollection collection",
@@ -1066,6 +1140,8 @@ doc = {
                                 "expects": "null",
                                 "method": "GET",
                                 "returns": "vocab:MessageCollection",
+                                "expectsHeader": [],
+                                "returnsHeader": [],
                                 "possibleStatus": []
                             },
                             {
@@ -1075,6 +1151,8 @@ doc = {
                                 "expects": "vocab:Message",
                                 "method": "PUT",
                                 "returns": "vocab:Message",
+                                "expectsHeader": [],
+                                "returnsHeader": [],
                                 "possibleStatus": [
                                     {
                                         "title": "If the Message entity was created successfully.",
@@ -1085,9 +1163,9 @@ doc = {
                             }
                         ]
                     },
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "null",
-                    "writeonly": "false"
+                    "writeable": "false"
                 },
                 {
                     "hydra:description": "The DroneCollection collection",
@@ -1107,6 +1185,8 @@ doc = {
                                 "expects": "null",
                                 "method": "GET",
                                 "returns": "vocab:DroneCollection",
+                                "expectsHeader": [],
+                                "returnsHeader": [],
                                 "possibleStatus": []
                             },
                             {
@@ -1116,6 +1196,8 @@ doc = {
                                 "expects": "vocab:Drone",
                                 "method": "PUT",
                                 "returns": "vocab:Drone",
+                                "expectsHeader": [],
+                                "returnsHeader": [],
                                 "possibleStatus": [
                                     {
                                         "title": "If the Drone entity was created successfully.",
@@ -1126,9 +1208,9 @@ doc = {
                             }
                         ]
                     },
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "null",
-                    "writeonly": "false"
+                    "writeable": "false"
                 },
                 {
                     "hydra:description": "The LogEntryCollection collection",
@@ -1148,6 +1230,8 @@ doc = {
                                 "expects": "null",
                                 "method": "GET",
                                 "returns": "vocab:LogEntryCollection",
+                                "expectsHeader": [],
+                                "returnsHeader": [],
                                 "possibleStatus": []
                             },
                             {
@@ -1157,6 +1241,8 @@ doc = {
                                 "expects": "vocab:LogEntry",
                                 "method": "PUT",
                                 "returns": "vocab:LogEntry",
+                                "expectsHeader": [],
+                                "returnsHeader": [],
                                 "possibleStatus": [
                                     {
                                         "title": "If the LogEntry entity was created successfully.",
@@ -1167,9 +1253,9 @@ doc = {
                             }
                         ]
                     },
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "null",
-                    "writeonly": "false"
+                    "writeable": "false"
                 },
                 {
                     "hydra:description": "The DatastreamCollection collection",
@@ -1189,6 +1275,8 @@ doc = {
                                 "expects": "null",
                                 "method": "GET",
                                 "returns": "vocab:DatastreamCollection",
+                                "expectsHeader": [],
+                                "returnsHeader": [],
                                 "possibleStatus": []
                             },
                             {
@@ -1198,6 +1286,8 @@ doc = {
                                 "expects": "vocab:Datastream",
                                 "method": "PUT",
                                 "returns": "vocab:Datastream",
+                                "expectsHeader": [],
+                                "returnsHeader": [],
                                 "possibleStatus": [
                                     {
                                         "title": "If the Datastream entity was created successfully.",
@@ -1208,9 +1298,9 @@ doc = {
                             }
                         ]
                     },
-                    "readonly": "true",
+                    "readable": "true",
                     "required": "null",
-                    "writeonly": "false"
+                    "writeable": "false"
                 }
             ],
             "title": "EntryPoint"

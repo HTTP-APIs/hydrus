@@ -65,9 +65,9 @@ prop2_uri = "http://props.hydrus.com/prop2"
 prop2_title = "Prop2"
 
 dummyProp2 = HydraClassProp(prop1_uri, prop2_title,
-                            required=False, read=False, write=True)
+                            required=False, read=True, write=False)
 # NOTE: Properties that are required=True must be added during class object creation
-#       Properties that are read=True are read only
+#       Properties that are read=True are readable
 #       Properties that are write=True are writable
 
 
@@ -77,6 +77,8 @@ op_method = "POST"  # The method of the Operation [GET, POST, PUT, DELETE]
 # URI of the object that is expected for the operation
 op_expects = "vocab:dummyClass"
 op_returns = None   # URI of the object that is returned by the operation
+op_returns_header = ["Content-Type", "Content-Length"]
+op_expects_header = []
 # List of statusCode for the operation
 op_status = [HydraStatus(code=200, title="dummyClass updated.")]
 
@@ -84,40 +86,42 @@ op1 = HydraClassOp(op_name,
                    op_method,
                    op_expects,
                    op_returns,
+                   op_expects_header,
+                   op_returns_header,
                    op_status)
 
 # Same way add DELETE, PUT and GET operations
 op2_status = [HydraStatus(code=200, title="dummyClass deleted.")]
-op2 = HydraClassOp("DeleteClass", "DELETE", None, None, op2_status)
+op2 = HydraClassOp("DeleteClass", "DELETE", None, None, [], [], op2_status)
 op3_status = [HydraStatus(code=201, title="dummyClass successfully added.")]
-op3 = HydraClassOp("AddClass", "PUT", "vocab:dummyClass", None, op3_status)
+op3 = HydraClassOp("AddClass", "PUT", "vocab:dummyClass", None, [], [], op3_status)
 op4_status = [HydraStatus(code=200, title="dummyClass returned.")]
-op4 = HydraClassOp("GetClass", "GET", None, "vocab:dummyClass", op4_status)
+op4 = HydraClassOp("GetClass", "GET", None, "vocab:dummyClass", [], [], op4_status)
 
 # Operations for non collection class
 class_2_op1_status = [HydraStatus(code=200, title="singleClass changed.")]
 class_2_op1 = HydraClassOp("UpdateClass", "POST",
-                           "vocab:singleClass", None, class_2_op1_status)
+                           "vocab:singleClass", None, [], [], class_2_op1_status)
 class_2_op2_status = [HydraStatus(code=200, title="singleClass deleted.")]
 class_2_op2 = HydraClassOp("DeleteClass", "DELETE",
-                           None, None, class_2_op2_status)
+                           None, None, [], [], class_2_op2_status)
 class_2_op3_status = [HydraStatus(code=201, title="singleClass successfully added.")]
 class_2_op3 = HydraClassOp(
-    "AddClass", "PUT", "vocab:singleClass", None, class_2_op3_status)
+    "AddClass", "PUT", "vocab:singleClass", None, [], [], class_2_op3_status)
 class_2_op4_status = [HydraStatus(code=200, title="singleClass returned.")]
 class_2_op4 = HydraClassOp("GetClass", "GET", None,
-                           "vocab:singleClass", class_2_op4_status)
+                           "vocab:singleClass", [], [], class_2_op4_status)
 
 class_1_op1_status = [HydraStatus(code=200, title="anotherSingleClass returned.")]
 class_1_op1 = HydraClassOp("GetClass", "GET", None,
-                           "vocab:anotherSingleClass", class_1_op1_status)
+                           "vocab:anotherSingleClass", [], [], class_1_op1_status)
 # Add the properties to the classes
 class_.add_supported_prop(dummyProp1)
 class_.add_supported_prop(dummyProp2)
 class_2.add_supported_prop(dummyProp1)
 class_2.add_supported_prop(dummyProp2)
 class_2.add_supported_prop(HydraClassProp(
-    "vocab:dummyClass", "dummyProp", required=False, read=False, write=False))
+    "vocab:dummyClass", "dummyProp", required=False, read=True, write=True))
 class_2.add_supported_prop(HydraClassProp(
     "vocab:anotherSingleClass", "singleClassProp", required=False, read=False, write=False))
 class_1.add_supported_prop(dummyProp1)

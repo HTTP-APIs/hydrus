@@ -120,16 +120,16 @@ def check_required_props(class_type: str, obj: Dict[str, Any]) -> bool:
     return True
 
 
-def check_read_only_props(class_type: str, obj: Dict[str, Any]) -> bool:
+def check_writeable_props(class_type: str, obj: Dict[str, Any]) -> bool:
     """
-    Check that the object does not contain any read-only properties.
+    Check that the object only contains writeable fields(properties).
     :param class_type: class name of the object
     :param obj: object under check
-    :return: True if the object doesn't contain any read-only properties
+    :return: True if the object only contains writeable properties
              False otherwise.
     """
     for prop in get_doc().parsed_classes[class_type]["class"].supportedProperty:
-        if prop.read:
+        if prop.write is False:
             if prop.title in obj:
                 return False
     return True
@@ -152,15 +152,15 @@ def get_nested_class_path(class_type: str) -> Tuple[str, bool]:
 
 def finalize_response(class_type: str, obj: Dict[str, Any]) -> Dict[str, Any]:
     """
-    finalize response objects by removing write-only properties and correcting path
+    finalize response objects by removing properties which are not readable and correcting path
     of nested objects.
     :param class_type: class name of the object
     :param obj: object being finalized
-    :return: An object not containing any write-only properties and having proper path
+    :return: An object not containing any `readable=False` properties and having proper path
              of any nested object's url.
     """
     for prop in get_doc().parsed_classes[class_type]["class"].supportedProperty:
-        if prop.write:
+        if prop.read is False:
             obj.pop(prop.title, None)
         elif 'vocab:' in prop.prop:
             prop_class = prop.prop.replace("vocab:", "")
