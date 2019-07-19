@@ -106,7 +106,8 @@ class TestCRUD(unittest.TestCase):
             target_property_1 = ""
             target_property_2 = ""
             for prop in self.doc.parsed_classes[class_]["class"].supportedProperty:
-                # Find nested object so we can test searching of elements by properties of nested objects.
+                # Find nested object so we can test searching of elements by
+                # properties of nested objects.
                 if "vocab:" in prop.prop:
                     object_ = gen_dummy_object(class_, self.doc)
                     # Setting property of a nested object as target
@@ -133,8 +134,9 @@ class TestCRUD(unittest.TestCase):
 
                     obj_id = str(uuid.uuid4())
                     response = crud.insert(object_=object_, id_=obj_id, session=self.session)
-                    search_result = crud.get_collection(API_NAME="api", type_=class_, session=self.session,
-                                                        paginate=True, page_size=5, search_params=search_params)
+                    search_result = crud.get_collection(API_NAME="api", type_=class_,
+                                                        session=self.session, paginate=True,
+                                                        page_size=5, search_params=search_params)
                     assert len(search_result["members"]) > 0
                     search_item_id = search_result["members"][0]["@id"].split('/')[-1]
                     assert search_item_id == obj_id
