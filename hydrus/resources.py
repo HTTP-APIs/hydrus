@@ -51,7 +51,7 @@ from hydrus.helpers import (
     validObjectList,
     type_match,
     hydrafy,
-    check_read_only_props,
+    check_writeable_props,
     check_required_props,
     add_iri_template,
     finalize_response)
@@ -139,7 +139,7 @@ class Item(Resource):
 
         class_type = get_doc().collections[path]["collection"].class_.title
         object_ = json.loads(request.data.decode('utf-8'))
-        if checkClassOp(class_type, "POST") and check_read_only_props(class_type, object_):
+        if checkClassOp(class_type, "POST") and check_writeable_props(class_type, object_):
             # Check if class_type supports POST operation
             obj_type = getType(class_type, "POST")
             # Load new object and type
@@ -381,7 +381,7 @@ class ItemCollection(Resource):
             if path in get_doc().parsed_classes and "{}Collection".format(path) not in get_doc(
             ).collections:
                 obj_type = getType(path, "POST")
-                if check_read_only_props(obj_type, object_):
+                if check_writeable_props(obj_type, object_):
                     if object_["@type"] == obj_type and check_required_props(
                             obj_type, object_) and validObject(object_):
                         try:
