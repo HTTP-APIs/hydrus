@@ -744,7 +744,9 @@ def get_modification_table_diff(session: scoped_session,
                 Modification.job_id == agent_job_id).one()
         except NoResultFound:
             return []
+    # Otherwise
     try:
+        # Get all modifications in sorted order from latest to oldest
         modifications = session.query(Modification).order_by(Modification.timestamp.desc()).all()
     except NoResultFound:
         modifications = []

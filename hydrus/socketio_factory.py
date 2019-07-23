@@ -1,8 +1,8 @@
 from flask import Flask
-from flask_socketio import SocketIO, Namespace, emit
+from flask_socketio import SocketIO, Namespace
 
 
-class MyCustomNamespace(Namespace):
+class SyncNamespace(Namespace):
     def on_connect(self):
         print("A Client connected")
 
@@ -15,5 +15,5 @@ socketio = SocketIO()
 
 def create_socket(app: Flask) -> SocketIO:
     socketio.init_app(app, logger=True)
-    socketio.on_namespace(MyCustomNamespace('/sync'))
+    socketio.on_namespace(SyncNamespace('/sync'))
     return socketio
