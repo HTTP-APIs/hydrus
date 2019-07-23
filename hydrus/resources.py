@@ -241,7 +241,7 @@ class Item(Resource):
                                  last_job_id=last_job_id, method=method,
                                  resource_url=resource_url)
                 status_description = "Object with ID {} successfully deleted".format(id_)
-                status = HydraStatus(code=200, title="Object successfully created.",
+                status = HydraStatus(code=200, title="Object successfully deleted.",
                                      desc=status_description)
                 return set_response_headers(jsonify(status.generate()))
 
@@ -587,3 +587,17 @@ class Contexts(Resource):
         else:
             error = HydraError(code=404, title="NOT FOUND", desc="Context not found")
             return set_response_headers(jsonify(error.generate()), status_code=error.code)
+
+
+class ModificationTableDiff(Resource):
+    """Difference between server modification table and client table."""
+
+    def get(self) -> Response:
+        """Return the modification table difference between server and client."""
+        agent_job_id = request.args.get("agent_job_id")
+        if agent_job_id is not None:
+            response = crud.get_modification_table_diff(session=get_session(),
+                                                        agent_job_id=agent_job_id)
+        else:
+            response = crud.get_modification_table_diff(session=get_session())
+        return jsonify(response)

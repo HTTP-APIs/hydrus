@@ -772,6 +772,39 @@ def get_last_modification_job_id(session: scoped_session) -> str:
     return last_job_id
 
 
+def get_modification_table_diff(session: scoped_session,
+                                agent_job_id: str = None) -> List[Dict[str, Any]]:
+    """
+    Get modification table difference.
+    :param session: sqlalchemy session.
+    :param agent_job_id: Job id from the client.
+    :return: List of all modifications done after job with job_id = agent_job_id.
+    """
+    # When client provides a job id but server does not have corresponding record
+    # meaning that client is too outdated.
+    if agent_job_id is not None:
+        try:
+            record_for_agent_job_id = session.query(Modification).filter(
+                Modification.job_id == agent_job_id).one()
+        except NoResultFound:
+            return []
+    try:
+        modifications = session.query(Modification).order_by(Modification.timestamp.desc()).all()
+    except NoResultFound:
+        modifications = []
+    list_of_modification_records = []
+    for modification in modifications:
+        if modification.job_id == agent_job_id:
+            break
+        modification_record = {
+            "job_id": modification.job_id,
+            "method": modification.method,
+            "resource_url": modification.resource_url
+        }
+        list_of_modification_records.append(modification_record)
+    return list_of_modification_records
+
+
 def apply_filter(object_id: str, session: scoped_session,
                  search_props: Dict[str, Any]) -> bool:
     """Check whether objects has properties with query values or not.
