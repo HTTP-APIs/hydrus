@@ -6,6 +6,7 @@ import json
 import re
 import uuid
 from hydrus.app_factory import app_factory
+from hydrus.socketio_factory import create_socket
 from hydrus.utils import set_session, set_doc, set_api_name, set_page_size
 from hydrus.data import doc_parse, crud
 from hydra_python_core import doc_maker
@@ -51,6 +52,7 @@ class ViewsTestCase(unittest.TestCase):
         self.HYDRUS_SERVER_URL = "http://hydrus.com/"
 
         self.app = app_factory(self.API_NAME)
+        self.socketio = create_socket(self.app)
         print("going for create doc")
 
         self.doc = doc_maker.create_doc(

@@ -235,6 +235,22 @@ class GraphIIT(Graph):
             self.subject, self.predicate, self.object_)
 
 
+class Modification(Base):
+    """Model for sync related state-changing modifications."""
+
+    __tablename__ = "modifications"
+
+    job_id = Column(
+        String,
+        default=lambda: str(
+            uuid.uuid4()),
+        unique=True,
+        primary_key=True)
+    timestamp = Column(DateTime, default=func.now())
+    method = Column(String)
+    resource_url = Column(String)
+
+
 class User(Base):
     """Model for a user that stores the ID, paraphrase and a nonce."""
 

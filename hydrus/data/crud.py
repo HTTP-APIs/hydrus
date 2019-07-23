@@ -36,7 +36,7 @@ from sqlalchemy.orm import with_polymorphic
 from sqlalchemy import exists
 from sqlalchemy.orm.exc import NoResultFound
 from hydrus.data.db_models import (Graph, BaseProperty, RDFClass, Instance,
-                                   Terminal, GraphIAC, GraphIIT, GraphIII)
+                                   Terminal, GraphIAC, GraphIIT, GraphIII, Modification)
 from hydrus.data.exceptions import (
     ClassNotFound,
     InstanceExists,
@@ -737,6 +737,39 @@ def delete_single(type_: str, session: scoped_session) -> None:
         raise InstanceNotFound(type_=rdf_class.name)
 
     return delete(instance.id, type_, session=session)
+
+
+def insert_modification_record(method: str, resource_url: str,
+                               session: scoped_session) -> str:
+    """
+    Insert a modification record into the database.
+    :param method: HTTP method type of related operation.
+    :param resource_url: URL of resource modified.
+    :param session: sqlalchemy session.
+    :return: ID of new modification record.
+    """
+    modification = Modification(method=method, resource_url=resource_url)
+    session.add(modification)
+    record_count = session.query(Modification).count()
+    if record_count > 1000:
+        oldest_record = session.query(Modification).order_by(Modification.timestamp.asc()).first()
+        session.delete(oldest_record)
+    session.commit()
+    return modification.job_id
+
+
+def get_last_modification_job_id(session: scoped_session) -> str:
+    """
+    Get job id of most recent modification record stored in the db.
+    :param session: sqlalchemy session
+    :return: job id of recent modification.
+    """
+    last_modification = session.query(Modification).order_by(Modification.timestamp.desc()).first()
+    if last_modification is None:
+        last_job_id = ""
+    else:
+        last_job_id = last_modification.job_id
+    return last_job_id
 
 
 def apply_filter(object_id: str, session: scoped_session,
