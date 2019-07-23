@@ -2,6 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 
 from hydrus.app_factory import app_factory
+from hydrus.socketio_factory import create_socket
 from hydrus.utils import (set_session, set_doc, set_hydrus_server_url,
                           set_token, set_api_name, set_authentication,
                           set_page_size, set_pagination)
@@ -159,6 +160,8 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str, pagination: bo
     # Create a Hydrus app with the API name you want, default will be "api"
     app = app_factory(API_NAME)
     # Set the name of the API
+    # Create a socket for the app
+    socketio = create_socket(app)
     click.echo("Starting the application")
     with set_authentication(app, auth):
         # Use authentication for all requests
@@ -175,16 +178,12 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str, pagination: bo
                                 # Set page size of a collection view
                                 with set_page_size(app, pagesize):
                                     # Start the hydrus app
-                                    http_server = WSGIServer(('', port), app)
+                                    socketio.run(app, port=port)
                                     click.echo("Server running at:")
                                     click.echo(
                                         "{}{}".format(
                                             HYDRUS_SERVER_URL,
                                             API_NAME))
-                                    try:
-                                        http_server.serve_forever()
-                                    except KeyboardInterrupt:
-                                        pass
 
 
 if __name__ == "__main__":
