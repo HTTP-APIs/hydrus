@@ -251,7 +251,7 @@ def send_sync_update(socketio, new_job_id: str, last_job_id: str,
     :param resource_url: URL of resource which needs to be synchronized.
     """
     data = {
-        "new_job_id": new_job_id,
+        "job_id": new_job_id,
         "last_job_id": last_job_id,
         "method": method,
         "resource_url": resource_url
