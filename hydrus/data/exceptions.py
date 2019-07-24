@@ -174,3 +174,11 @@ class OffsetOutOfRange(Exception):
         """Return the HTTP response for the Exception."""
         description = "Offset {} is out of range.".format(self.offset)
         return HydraError(code=400, title="Page not found", desc=description)
+
+
+class ClientTooOutdated(Exception):
+    """Client is oudated so sync can't be done."""
+
+    def get_HTTP(self) -> HydraError:
+        """Return the HTTP response for the Exception."""
+        return HydraError(code=204, title="Client is too outdated.")

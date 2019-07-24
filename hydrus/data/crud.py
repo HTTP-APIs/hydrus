@@ -47,7 +47,8 @@ from hydrus.data.exceptions import (
     PageNotFound,
     InvalidSearchParameter,
     IncompatibleParameters,
-    OffsetOutOfRange)
+    OffsetOutOfRange,
+    ClientTooOutdated)
 from hydrus.data.crud_helpers import (
     apply_filter,
     recreate_iri,
@@ -736,24 +737,24 @@ def get_modification_table_diff(session: scoped_session,
     :param agent_job_id: Job id from the client.
     :return: List of all modifications done after job with job_id = agent_job_id.
     """
-    # When client provides a job id but server does not have corresponding record
-    # meaning that client is too outdated.
-    if agent_job_id is not None:
+    # If agent_job_id is not given then return all the elements.
+    if agent_job_id is None:
+        modifications = session.query(Modification).order_by(
+            Modification.timestamp.desc()).all()
+    # If agent_job_id is given then return all records which are older
+    # than the record with agent_job_id.
+    else:
         try:
             record_for_agent_job_id = session.query(Modification).filter(
                 Modification.job_id == agent_job_id).one()
         except NoResultFound:
-            return []
-    # Otherwise
-    try:
-        # Get all modifications in sorted order from latest to oldest
-        modifications = session.query(Modification).order_by(Modification.timestamp.desc()).all()
-    except NoResultFound:
-        modifications = []
+            raise ClientTooOutdated()
+        modifications = session.query(Modification).filter(
+            Modification.timestamp > record_for_agent_job_id.timestamp).order_by(
+            Modification.timestamp.desc()).all()
+    # Create response body
     list_of_modification_records = []
     for modification in modifications:
-        if modification.job_id == agent_job_id:
-            break
         modification_record = {
             "job_id": modification.job_id,
             "method": modification.method,

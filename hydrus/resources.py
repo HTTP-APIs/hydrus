@@ -41,7 +41,8 @@ from hydrus.data.exceptions import (
     InstanceNotFound,
     PageNotFound,
     InvalidSearchParameter,
-    OffsetOutOfRange)
+    OffsetOutOfRange,
+    ClientTooOutdated)
 from hydrus.helpers import (
     set_response_headers,
     checkClassOp,
@@ -201,8 +202,16 @@ class Item(Resource):
                 try:
                     # Add the object with given ID
                     object_id = crud.insert(object_=object_, id_=id_, session=get_session())
-                    headers_ = [{"Location": "{}{}/{}/{}".format(
-                            get_hydrus_server_url(), get_api_name(), path, object_id)}]
+                    method = "PUT"
+                    resource_url = "{}{}/{}/{}".format(
+                        get_hydrus_server_url(), get_api_name(), path, object_id)
+                    last_job_id = crud.get_last_modification_job_id(session=get_session())
+                    new_job_id = crud.insert_modification_record(method, resource_url,
+                                                                 session=get_session())
+                    send_sync_update(socketio=socketio, new_job_id=new_job_id,
+                                     last_job_id=last_job_id, method=method,
+                                     resource_url=resource_url)
+                    headers_ = [{"Location": resource_url}]
                     status_description = "Object with ID {} successfully added".format(object_id)
                     status = HydraStatus(code=201, title="Object successfully added.",
                                          desc=status_description)
@@ -608,9 +617,12 @@ class ModificationTableDiff(Resource):
     def get(self) -> Response:
         """Return the modification table difference between server and client."""
         agent_job_id = request.args.get("agent_job_id")
-        if agent_job_id is not None:
-            response = crud.get_modification_table_diff(session=get_session(),
-                                                        agent_job_id=agent_job_id)
-        else:
-            response = crud.get_modification_table_diff(session=get_session())
+        try:
+            if agent_job_id is not None:
+                response = crud.get_modification_table_diff(session=get_session(),
+                                                            agent_job_id=agent_job_id)
+            else:
+                response = crud.get_modification_table_diff(session=get_session())
+        except ClientTooOutdated as status:
+            response = status.get_HTTP()
         return jsonify(response)
