@@ -557,8 +557,21 @@ class Items(Resource):
             try:
                 # Delete the Item with ID == id_
                 crud.delete_multiple(int_list, class_type, session=get_session())
+                method = "DELETE"
+                path_url = "{}{}/{}".format(
+                    get_hydrus_server_url(), get_api_name(), path)
+                last_job_id = crud.get_last_modification_job_id(session=get_session())
+                id_list = int_list.split(',')
+                for item in id_list:
+                    resource_url = path_url + item
+                    new_job_id = crud.insert_modification_record(method, resource_url,
+                                                                 session=get_session())
+                    send_sync_update(socketio=socketio, new_job_id=new_job_id,
+                                     last_job_id=last_job_id, method=method,
+                                     resource_url=resource_url)
+                    last_job_id = new_job_id
                 status_description = "Objects with ID {} successfully deleted".format(
-                    int_list.split(','))
+                    id_list)
                 status = HydraStatus(code=200, title="Objects successfully deleted",
                                      desc=status_description)
                 return set_response_headers(jsonify(status.generate()))
