@@ -31,7 +31,7 @@
     typing : Module which provides support for type hints .
 
 """  # nopep8
-
+from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.orm import with_polymorphic
 from sqlalchemy import exists
 from sqlalchemy.orm.exc import NoResultFound

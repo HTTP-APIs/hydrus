@@ -202,16 +202,8 @@ class Item(Resource):
                 try:
                     # Add the object with given ID
                     object_id = crud.insert(object_=object_, id_=id_, session=get_session())
-                    method = "PUT"
-                    resource_url = "{}{}/{}/{}".format(
-                        get_hydrus_server_url(), get_api_name(), path, object_id)
-                    last_job_id = crud.get_last_modification_job_id(session=get_session())
-                    new_job_id = crud.insert_modification_record(method, resource_url,
-                                                                 session=get_session())
-                    send_sync_update(socketio=socketio, new_job_id=new_job_id,
-                                     last_job_id=last_job_id, method=method,
-                                     resource_url=resource_url)
-                    headers_ = [{"Location": resource_url}]
+                    headers_ = [{"Location": "{}{}/{}/{}".format(
+                        get_hydrus_server_url(), get_api_name(), path, object_id)}]
                     status_description = "Object with ID {} successfully added".format(object_id)
                     status = HydraStatus(code=201, title="Object successfully added.",
                                          desc=status_description)

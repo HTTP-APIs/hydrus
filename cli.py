@@ -11,6 +11,7 @@ from hydra_python_core import doc_maker
 from hydrus.data.db_models import Base
 from hydrus.data.user import add_user
 from hydrus.data.exceptions import UserExists
+from hydrus.data.stale_records_cleanup import remove_stale_modification_records
 from gevent.pywsgi import WSGIServer
 from hydra_openapi_parser.openapi_parser import parse
 from hydrus.samples.hydra_doc_sample import doc as api_document
@@ -28,7 +29,7 @@ import yaml
               help="The API name.", type=str)
 @click.option("--auth/--no-auth", default=True,
               help="Set authentication to True or False.")
-@click.option("--dburl", default="sqlite:///:memory:",
+@click.option("--dburl", default="sqlite:///database.db",
               help="Set database url", type=str)
 @click.option("--hydradoc", "-d", default=None,
               help="Location to HydraDocumentation (JSON-LD) of server.",
@@ -43,10 +44,13 @@ import yaml
               help="Toggle token based user authentication.")
 @click.option("--serverurl", default="http://localhost",
               help="Set server url", type=str)
+@click.option("--stale_records_removal_interval", default=900,
+              help="Interval period between removal of stale modification records.",
+              type=int)
 @click.argument("serve", required=True)
 def startserver(adduser: Tuple, api: str, auth: bool, dburl: str, pagination: bool,
                 hydradoc: str, port: int, pagesize: int, serverurl: str, token: bool,
-                serve: None) -> None:
+                stale_records_removal_interval: int, serve: None) -> None:
     """
     Python Hydrus CLI
 
@@ -83,8 +87,8 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str, pagination: bo
 
     click.echo("Setting up the database")
     # Create a connection to the database you want to use
-    engine = create_engine(DB_URL)
-
+    engine = create_engine(DB_URL, connect_args={'check_same_thread': False})
+    Base.metadata.drop_all(engine)
     click.echo("Creating models")
     # Add the required Models to the database
     Base.metadata.create_all(engine)
@@ -177,6 +181,10 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str, pagination: bo
                             with set_pagination(app, pagination):
                                 # Set page size of a collection view
                                 with set_page_size(app, pagesize):
+                                    # Run a thread to remove stale modification records at some
+                                    # interval of time.
+                                    remove_stale_modification_records(
+                                        session, stale_records_removal_interval)
                                     # Start the hydrus app
                                     socketio.run(app, port=port)
                                     click.echo("Server running at:")
