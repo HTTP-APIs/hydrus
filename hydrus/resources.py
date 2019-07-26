@@ -617,5 +617,6 @@ class ModificationTableDiff(Resource):
                 response = crud.get_modification_table_diff(session=get_session())
         except ClientTooOutdated as e:
             status = e.get_HTTP()
-            response = status.generate()
+            # Return empty response
+            return Response(status=status.code)
         return jsonify(response)

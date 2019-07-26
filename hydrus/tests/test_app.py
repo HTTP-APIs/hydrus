@@ -484,7 +484,7 @@ class ViewsTestCase(unittest.TestCase):
                 self.API_NAME), query_string={'agent_job_id': valid_job_id})
             assert query_by_valid_job_id.status_code == 200
             data = json.loads(query_by_valid_job_id.data.decode('utf-8'))
-            # Check data for queried valid records
+            # Check format of data for queried valid records
             if len(data) != 0:
                 for record in data:
                     assert "resource_url" in record
@@ -494,8 +494,7 @@ class ViewsTestCase(unittest.TestCase):
             invalid_job_id = "invalid_job_id"
             query_by_invalid_job_id = self.client.get("/{}/modification-table-diff".format(
                 self.API_NAME), query_string={'agent_job_id': invalid_job_id})
-            data = json.loads(query_by_invalid_job_id.data.decode('utf-8'))
-            assert data["statusCode"] == 204
+            assert query_by_invalid_job_id.status_code == 204
 
     def test_IriTemplate(self):
         """Test structure of IriTemplates attached to collections"""
