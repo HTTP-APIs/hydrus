@@ -615,6 +615,7 @@ class ModificationTableDiff(Resource):
                                                             agent_job_id=agent_job_id)
             else:
                 response = crud.get_modification_table_diff(session=get_session())
-        except ClientTooOutdated as status:
-            response = status.get_HTTP()
+        except ClientTooOutdated as e:
+            status = e.get_HTTP()
+            response = status.generate()
         return jsonify(response)
