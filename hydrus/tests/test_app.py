@@ -72,6 +72,7 @@ class ViewsTestCase(unittest.TestCase):
         self.doc_util = set_doc(self.app, self.doc)
         self.page_size_util = set_page_size(self.app, self.page_size)
         self.client = self.app.test_client()
+        self.socketio_client = self.socketio.test_client(self.app, namespace='/sync')
 
         print("Creating utilities context... ")
         self.api_name_util.__enter__()
@@ -414,6 +415,88 @@ class ViewsTestCase(unittest.TestCase):
                         assert "@id" in response_get_data
                         assert "@type" in response_get_data
 
+    def test_socketio_POST_updates(self):
+        """Test 'update' event emitted by socketio for POST operations."""
+        index = self.client.get("/{}".format(self.API_NAME))
+        assert index.status_code == 200
+        endpoints = json.loads(index.data.decode('utf-8'))
+        for endpoint in endpoints:
+            if endpoint not in ["@context", "@id", "@type"]:
+                class_name = "/".join(endpoints[endpoint].split(
+                    "/{}/".format(self.API_NAME))[1:])
+                if class_name not in self.doc.collections:
+                    class_ = self.doc.parsed_classes[class_name]["class"]
+                    class_methods = [
+                        x.method for x in class_.supportedOperation]
+                    if "POST" in class_methods:
+                        dummy_object = gen_dummy_object(class_.title, self.doc)
+                        # Flush old socketio updates
+                        self.socketio_client.get_received('/sync')
+                        post_response = self.client.post(
+                            endpoints[class_name], data=json.dumps(dummy_object))
+                        assert post_response.status_code == 200
+                        # Get new socketio update
+                        update = self.socketio_client.get_received('/sync')
+                        assert len(update) != 0
+                        assert update[0]['args'][0]['method'] == "POST"
+                        resource_name = update[0]['args'][0]['resource_url'].split('/')[-1]
+                        assert resource_name == endpoints[class_name].split('/')[-1]
+
+    def test_socketio_DELETE_updates(self):
+        """Test 'update' event emitted by socketio for DELETE operations."""
+        index = self.client.get("/{}".format(self.API_NAME))
+        assert index.status_code == 200
+        endpoints = json.loads(index.data.decode('utf-8'))
+        for endpoint in endpoints:
+            if endpoint not in ["@context", "@id", "@type"]:
+                class_name = "/".join(endpoints[endpoint].split(
+                    "/{}/".format(self.API_NAME))[1:])
+                if class_name not in self.doc.collections:
+                    class_ = self.doc.parsed_classes[class_name]["class"]
+                    class_methods = [
+                        x.method for x in class_.supportedOperation]
+                    if "DELETE" in class_methods:
+                        # Flush old socketio updates
+                        self.socketio_client.get_received('/sync')
+                        delete_response = self.client.delete(
+                            endpoints[class_name])
+                        assert delete_response.status_code == 200
+                        # Get new update event
+                        update = self.socketio_client.get_received('/sync')
+                        assert len(update) != 0
+                        assert update[0]['args'][0]['method'] == "DELETE"
+                        resource_name = update[0]['args'][0]['resource_url'].split('/')[-1]
+                        assert resource_name == endpoints[class_name].split('/')[-1]
+
+    def test_modification_table_route(self):
+        """Test 'modification-table-diff' endpoint."""
+        modifications = self.client.get("/{}/modification-table-diff".format(self.API_NAME))
+        assert modifications.status_code == 200
+        modifications_data = json.loads(modifications.data.decode('utf-8'))
+        if len(modifications_data) != 0:
+            for modification in modifications_data:
+                assert "resource_url" in modification
+                assert "job_id" in modification
+                assert "method" in modification
+                assert modification["method"] in ["POST", "DELETE"]
+            valid_job_id = modifications_data[-1]["job_id"]
+            query_by_valid_job_id = self.client.get("/{}/modification-table-diff".format(
+                self.API_NAME), query_string={'agent_job_id': valid_job_id})
+            assert query_by_valid_job_id.status_code == 200
+            data = json.loads(query_by_valid_job_id.data.decode('utf-8'))
+            # Check data for queried valid records
+            if len(data) != 0:
+                for record in data:
+                    assert "resource_url" in record
+                    assert "job_id" in record
+                    assert "method" in record
+                    assert record["method"] in ["POST", "DELETE"]
+            invalid_job_id = "invalid_job_id"
+            query_by_invalid_job_id = self.client.get("/{}/modification-table-diff".format(
+                self.API_NAME), query_string={'agent_job_id': invalid_job_id})
+            data = json.loads(query_by_invalid_job_id.data.decode('utf-8'))
+            assert data["statusCode"] == 204
+
     def test_IriTemplate(self):
         """Test structure of IriTemplates attached to collections"""
         index = self.client.get("/{}".format(self.API_NAME))
@@ -512,8 +595,6 @@ class ViewsTestCase(unittest.TestCase):
                         for prop in response_get_data:
                             assert "@type" not in response_get_data[prop]
                         class_props = [x for x in class_.supportedProperty]
-                        print(endpoints[class_name])
-                        print(response_get_data)
                         for prop_name in class_props:
                             if "vocab:" in prop_name.prop and prop_name.read is True:
                                 nested_obj_resp = self.client.get(
