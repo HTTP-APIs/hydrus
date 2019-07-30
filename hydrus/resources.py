@@ -41,8 +41,7 @@ from hydrus.data.exceptions import (
     InstanceNotFound,
     PageNotFound,
     InvalidSearchParameter,
-    OffsetOutOfRange,
-    ClientTooOutdated)
+    OffsetOutOfRange)
 from hydrus.helpers import (
     set_response_headers,
     checkClassOp,
@@ -601,22 +600,3 @@ class Contexts(Resource):
         else:
             error = HydraError(code=404, title="NOT FOUND", desc="Context not found")
             return set_response_headers(jsonify(error.generate()), status_code=error.code)
-
-
-class ModificationTableDiff(Resource):
-    """Difference between server modification table and client table."""
-
-    def get(self) -> Response:
-        """Return the modification table difference between server and client."""
-        agent_job_id = request.args.get("agent_job_id")
-        try:
-            if agent_job_id is not None:
-                response = crud.get_modification_table_diff(session=get_session(),
-                                                            agent_job_id=agent_job_id)
-            else:
-                response = crud.get_modification_table_diff(session=get_session())
-        except ClientTooOutdated as e:
-            status = e.get_HTTP()
-            # Return empty response
-            return Response(status=status.code)
-        return jsonify(response)

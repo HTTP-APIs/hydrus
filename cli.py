@@ -165,7 +165,7 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str, pagination: bo
     app = app_factory(API_NAME)
     # Set the name of the API
     # Create a socket for the app
-    socketio = create_socket(app)
+    socketio = create_socket(app, session)
     click.echo("Starting the application")
     with set_authentication(app, auth):
         # Use authentication for all requests

@@ -52,7 +52,7 @@ class ViewsTestCase(unittest.TestCase):
         self.HYDRUS_SERVER_URL = "http://hydrus.com/"
 
         self.app = app_factory(self.API_NAME)
-        self.socketio = create_socket(self.app)
+        self.socketio = create_socket(self.app, self.session)
         print("going for create doc")
 
         self.doc = doc_maker.create_doc(
@@ -464,37 +464,9 @@ class ViewsTestCase(unittest.TestCase):
                         # Get new update event
                         update = self.socketio_client.get_received('/sync')
                         assert len(update) != 0
-                        assert update[0]['args'][0]['method'] == "DELETE"
+                        assert update[0]['args'][0]['method'] == 'DELETE'
                         resource_name = update[0]['args'][0]['resource_url'].split('/')[-1]
                         assert resource_name == endpoints[class_name].split('/')[-1]
-
-    def test_modification_table_route(self):
-        """Test 'modification-table-diff' endpoint."""
-        modifications = self.client.get("/{}/modification-table-diff".format(self.API_NAME))
-        assert modifications.status_code == 200
-        modifications_data = json.loads(modifications.data.decode('utf-8'))
-        if len(modifications_data) != 0:
-            for modification in modifications_data:
-                assert "resource_url" in modification
-                assert "job_id" in modification
-                assert "method" in modification
-                assert modification["method"] in ["POST", "DELETE"]
-            valid_job_id = modifications_data[-1]["job_id"]
-            query_by_valid_job_id = self.client.get("/{}/modification-table-diff".format(
-                self.API_NAME), query_string={'agent_job_id': valid_job_id})
-            assert query_by_valid_job_id.status_code == 200
-            data = json.loads(query_by_valid_job_id.data.decode('utf-8'))
-            # Check format of data for queried valid records
-            if len(data) != 0:
-                for record in data:
-                    assert "resource_url" in record
-                    assert "job_id" in record
-                    assert "method" in record
-                    assert record["method"] in ["POST", "DELETE"]
-            invalid_job_id = "invalid_job_id"
-            query_by_invalid_job_id = self.client.get("/{}/modification-table-diff".format(
-                self.API_NAME), query_string={'agent_job_id': invalid_job_id})
-            assert query_by_invalid_job_id.status_code == 204
 
     def test_IriTemplate(self):
         """Test structure of IriTemplates attached to collections"""

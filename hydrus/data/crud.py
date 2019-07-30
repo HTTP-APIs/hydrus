@@ -47,8 +47,7 @@ from hydrus.data.exceptions import (
     PageNotFound,
     InvalidSearchParameter,
     IncompatibleParameters,
-    OffsetOutOfRange,
-    ClientTooOutdated)
+    OffsetOutOfRange)
 from hydrus.data.crud_helpers import (
     apply_filter,
     recreate_iri,
@@ -748,7 +747,7 @@ def get_modification_table_diff(session: scoped_session,
             record_for_agent_job_id = session.query(Modification).filter(
                 Modification.job_id == agent_job_id).one()
         except NoResultFound:
-            raise ClientTooOutdated()
+            return []
         modifications = session.query(Modification).filter(
             Modification.timestamp > record_for_agent_job_id.timestamp).order_by(
             Modification.timestamp.desc()).all()
