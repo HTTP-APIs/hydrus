@@ -241,12 +241,8 @@ class Modification(Base):
     __tablename__ = "modifications"
 
     job_id = Column(
-        String,
-        default=lambda: str(
-            uuid.uuid4()),
-        unique=True,
+        Integer,
         primary_key=True)
-    timestamp = Column(DateTime, default=func.now())
     method = Column(String)
     resource_url = Column(String)
 

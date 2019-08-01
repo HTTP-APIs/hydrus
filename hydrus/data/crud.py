@@ -716,7 +716,7 @@ def get_last_modification_job_id(session: scoped_session) -> str:
     :param session: sqlalchemy session
     :return: job id of recent modification.
     """
-    last_modification = session.query(Modification).order_by(Modification.timestamp.desc()).first()
+    last_modification = session.query(Modification).order_by(Modification.job_id.desc()).first()
     if last_modification is None:
         last_job_id = ""
     else:
@@ -735,7 +735,7 @@ def get_modification_table_diff(session: scoped_session,
     # If agent_job_id is not given then return all the elements.
     if agent_job_id is None:
         modifications = session.query(Modification).order_by(
-            Modification.timestamp.asc()).all()
+            Modification.job_id.asc()).all()
     # If agent_job_id is given then return all records which are older
     # than the record with agent_job_id.
     else:
@@ -745,8 +745,9 @@ def get_modification_table_diff(session: scoped_session,
         except NoResultFound:
             return []
         modifications = session.query(Modification).filter(
-            Modification.timestamp > record_for_agent_job_id.timestamp).order_by(
-            Modification.timestamp.asc()).all()
+            Modification.job_id > record_for_agent_job_id.job_id).order_by(
+            Modification.job_id.asc()).all()
+
     # Create response body
     list_of_modification_records = []
     for modification in modifications:

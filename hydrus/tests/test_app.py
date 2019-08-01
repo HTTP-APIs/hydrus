@@ -784,7 +784,6 @@ class SocketTestCase(unittest.TestCase):
         self.socketio_client.get_received('/sync')
         # Set last_job_id as the agent_job_id
         agent_job_id = crud.get_last_modification_job_id(self.session)
-        sleep(1)
         # Add an extra modification record newer than the agent_job_id
         new_latest_job_id = crud.insert_modification_record(method="POST",
                                                             resource_url="", session=self.session)
