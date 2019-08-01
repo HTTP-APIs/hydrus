@@ -10,7 +10,7 @@ class SyncNamespace(Namespace):
 
     def on_connect(self):
         print('A client connected')
-        emit('connect', {'last_job_id': get_last_modification_job_id(self.db_session)} )
+        emit('connect', {'last_job_id': get_last_modification_job_id(self.db_session)})
 
     def on_disconnect(self):
         print('A client disconnected')

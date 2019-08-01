@@ -17,6 +17,7 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 from hydrus.data.db_models import Base
 from time import sleep
 
+
 def gen_dummy_object(class_, doc):
     """Create a dummy object based on the definitions in the API Doc."""
     object_ = {
@@ -652,7 +653,6 @@ class ViewsTestCase(unittest.TestCase):
                         '{}/{}'.format(endpoints[endpoint], id_))
                     assert delete_response.status_code == 405
 
-
     def test_Endpoints_Contexts(self):
         """Test all endpoints contexts are generated properly."""
         index = self.client.get("/{}".format(self.API_NAME))
@@ -789,11 +789,12 @@ class SocketTestCase(unittest.TestCase):
         new_latest_job_id = crud.insert_modification_record(method="POST",
                                                             resource_url="", session=self.session)
         self.socketio_client.emit('get_modification_table_diff',
-                                  {'agent_job_id': agent_job_id}, namespace= '/sync')
+                                  {'agent_job_id': agent_job_id}, namespace='/sync')
         data = self.socketio_client.get_received('/sync')
         assert len(data) > 0
         event = data[0]
         assert event['name'] == 'modification_table_diff'
+        # Check received event contains data of newly added modification record.
         assert event['args'][0][0]['method'] == "POST"
         assert event['args'][0][0]['resource_url'] == ""
         assert event['args'][0][0]['job_id'] == new_latest_job_id
