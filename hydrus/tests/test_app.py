@@ -9,13 +9,11 @@ from hydrus.app_factory import app_factory
 from hydrus.socketio_factory import create_socket
 from hydrus.utils import set_session, set_doc, set_api_name, set_page_size
 from hydrus.data import doc_parse, crud
-from hydrus.data.db_models import Modification
 from hydra_python_core import doc_maker
 from hydrus.samples import doc_writer_sample
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from hydrus.data.db_models import Base
-from time import sleep
 
 
 def gen_dummy_object(class_, doc):
@@ -745,13 +743,14 @@ class SocketTestCase(unittest.TestCase):
                     id_=str(
                         uuid.uuid4()),
                     session=self.session)
-        # Add to dummy modification records
+        # Add two dummy modification records
         crud.insert_modification_record(method="POST",
                                         resource_url="", session=self.session)
         crud.insert_modification_record(method="DELETE",
                                         resource_url="", session=self.session)
 
     def test_connect(self):
+        """Test connect event."""
         socket_client = self.socketio.test_client(self.app, namespace='/sync')
         data = socket_client.get_received('/sync')
         assert len(data) > 0
@@ -762,6 +761,7 @@ class SocketTestCase(unittest.TestCase):
         socket_client.disconnect(namespace='/sync')
 
     def test_reconnect(self):
+        """Test reconnect event."""
         socket_client = self.socketio.test_client(self.app, namespace='/sync')
         # Flush data of first connect event
         socket_client.get_received('/sync')

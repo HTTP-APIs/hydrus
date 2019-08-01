@@ -4,13 +4,13 @@ from sqlalchemy.orm import scoped_session
 
 
 def remove_stale_modification_records(session: scoped_session,
-                                      stale_records_removal_interval: int= 900):
+                                      stale_records_removal_interval: int=900):
     """
     Remove modification records which are older than last 1000 records.
     :param session: sqlalchemy session.
     :param stale_records_removal_interval: Interval time to run the removal job.
     """
-    timer = Timer(15,
+    timer = Timer(stale_records_removal_interval,
                   remove_stale_modification_records, [session])
     timer.daemon = True
     timer.start()

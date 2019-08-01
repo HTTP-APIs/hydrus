@@ -242,7 +242,8 @@ class Modification(Base):
 
     job_id = Column(
         Integer,
-        primary_key=True)
+        primary_key=True,
+        autoincrement=True)
     method = Column(String)
     resource_url = Column(String)
 
