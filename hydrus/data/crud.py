@@ -706,10 +706,6 @@ def insert_modification_record(method: str, resource_url: str,
     """
     modification = Modification(method=method, resource_url=resource_url)
     session.add(modification)
-    record_count = session.query(Modification).count()
-    if record_count > 1000:
-        oldest_record = session.query(Modification).order_by(Modification.timestamp.asc()).first()
-        session.delete(oldest_record)
     session.commit()
     return modification.job_id
 
@@ -739,7 +735,7 @@ def get_modification_table_diff(session: scoped_session,
     # If agent_job_id is not given then return all the elements.
     if agent_job_id is None:
         modifications = session.query(Modification).order_by(
-            Modification.timestamp.desc()).all()
+            Modification.timestamp.asc()).all()
     # If agent_job_id is given then return all records which are older
     # than the record with agent_job_id.
     else:
@@ -750,7 +746,7 @@ def get_modification_table_diff(session: scoped_session,
             return []
         modifications = session.query(Modification).filter(
             Modification.timestamp > record_for_agent_job_id.timestamp).order_by(
-            Modification.timestamp.desc()).all()
+            Modification.timestamp.asc()).all()
     # Create response body
     list_of_modification_records = []
     for modification in modifications:

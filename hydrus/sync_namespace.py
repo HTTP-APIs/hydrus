@@ -1,5 +1,5 @@
 from flask_socketio import Namespace, emit
-from hydrus.data.crud import get_modification_table_diff
+from hydrus.data.crud import get_modification_table_diff, get_last_modification_job_id
 
 
 class SyncNamespace(Namespace):
@@ -9,10 +9,15 @@ class SyncNamespace(Namespace):
         self.db_session = db_session
 
     def on_connect(self):
-        print("A Client connected")
+        print('A client connected')
+        emit('connect', {'last_job_id': get_last_modification_job_id(self.db_session)} )
 
     def on_disconnect(self):
-        print("A client disconnected")
+        print('A client disconnected')
+
+    def on_reconnect(self):
+        print('A client reconnected.')
+        emit('connect', {'last_job_id': get_last_modification_job_id(self.db_session)})
 
     def on_get_modification_table_diff(self, data):
         """Get modification table diff and emit it to the client.
