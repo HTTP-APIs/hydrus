@@ -239,3 +239,21 @@ def add_pagination_iri_mappings(template: str,
         mapping = IriTemplateMapping(variable=paginate_variables[i], prop=paginate_variables[i])
         template_mapping.append(mapping)
     return template, template_mapping
+
+
+def send_sync_update(socketio, new_job_id: int, last_job_id: str,
+                     method: str, resource_url: str):
+    """Sends synchronization update to all connected clients.
+    :param socketio: socketio connection.
+    :param new_job_id: Job id of the new modification(update).
+    :param last_job_id: Job id of the last(most recent) modification until this new one.
+    :param method: Method type of the operation.
+    :param resource_url: URL of resource which needs to be synchronized.
+    """
+    data = {
+        "job_id": new_job_id,
+        "last_job_id": last_job_id,
+        "method": method,
+        "resource_url": resource_url
+    }
+    socketio.emit('update', data, namespace="/sync")

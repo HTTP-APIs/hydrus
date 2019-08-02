@@ -31,12 +31,12 @@
     typing : Module which provides support for type hints .
 
 """  # nopep8
-
+from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.orm import with_polymorphic
 from sqlalchemy import exists
 from sqlalchemy.orm.exc import NoResultFound
-from hydrus.data.db_models import (Graph, GraphIIT, GraphIAC, GraphIII, BaseProperty,
-                                   RDFClass, Instance, Terminal)
+from hydrus.data.db_models import (Graph, BaseProperty, RDFClass, Instance,
+                                   Terminal, GraphIAC, GraphIIT, GraphIII, Modification)
 from hydrus.data.exceptions import (
     ClassNotFound,
     InstanceExists,
@@ -693,6 +693,71 @@ def delete_single(type_: str, session: scoped_session) -> None:
         raise InstanceNotFound(type_=rdf_class.name)
 
     return delete(instance.id, type_, session=session)
+
+
+def insert_modification_record(method: str, resource_url: str,
+                               session: scoped_session) -> str:
+    """
+    Insert a modification record into the database.
+    :param method: HTTP method type of related operation.
+    :param resource_url: URL of resource modified.
+    :param session: sqlalchemy session.
+    :return: ID of new modification record.
+    """
+    modification = Modification(method=method, resource_url=resource_url)
+    session.add(modification)
+    session.commit()
+    return modification.job_id
+
+
+def get_last_modification_job_id(session: scoped_session) -> str:
+    """
+    Get job id of most recent modification record stored in the db.
+    :param session: sqlalchemy session
+    :return: job id of recent modification.
+    """
+    last_modification = session.query(Modification).order_by(Modification.job_id.desc()).first()
+    if last_modification is None:
+        last_job_id = ""
+    else:
+        last_job_id = last_modification.job_id
+    return last_job_id
+
+
+def get_modification_table_diff(session: scoped_session,
+                                agent_job_id: str = None) -> List[Dict[str, Any]]:
+    """
+    Get modification table difference.
+    :param session: sqlalchemy session.
+    :param agent_job_id: Job id from the client.
+    :return: List of all modifications done after job with job_id = agent_job_id.
+    """
+    # If agent_job_id is not given then return all the elements.
+    if agent_job_id is None:
+        modifications = session.query(Modification).order_by(
+            Modification.job_id.asc()).all()
+    # If agent_job_id is given then return all records which are older
+    # than the record with agent_job_id.
+    else:
+        try:
+            record_for_agent_job_id = session.query(Modification).filter(
+                Modification.job_id == agent_job_id).one()
+        except NoResultFound:
+            return []
+        modifications = session.query(Modification).filter(
+            Modification.job_id > record_for_agent_job_id.job_id).order_by(
+            Modification.job_id.asc()).all()
+
+    # Create response body
+    list_of_modification_records = []
+    for modification in modifications:
+        modification_record = {
+            "job_id": modification.job_id,
+            "method": modification.method,
+            "resource_url": modification.resource_url
+        }
+        list_of_modification_records.append(modification_record)
+    return list_of_modification_records
 
 
 def insert_iii(object_: Dict[str, Any], prop_name: str,
