@@ -31,7 +31,7 @@
     typing : Module which provides support for type hints .
 
 """  # nopep8
-from sqlalchemy.orm import sessionmaker, scoped_session
+import re
 from sqlalchemy.orm import with_polymorphic
 from sqlalchemy import exists
 from sqlalchemy.orm.exc import NoResultFound
@@ -186,7 +186,18 @@ def insert(object_: Dict[str, Any], session: scoped_session,
                 # Adds new Property
                 session.close()
                 raise PropertyNotFound(type_=prop_name)
-
+            # For insertion in III through link
+            if isinstance(object_[prop_name], str):
+                regex = r'/.*/.*/[a-z0-9]{8}-([a-z0-9]{4}-){3}[a-z0-9]{12}'
+                matchObj = re.match(regex, object_[prop_name])
+                if matchObj:
+                    nested_obj_id = object_[prop_name].split('/')[-1]
+                    triple = GraphIII(
+                        subject=instance.id,
+                        predicate=property_.id,
+                        object_=nested_obj_id)
+                    session.add(triple)
+                    continue
             # For insertion in III
             if isinstance(object_[prop_name], dict):
                 try:
