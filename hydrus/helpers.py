@@ -2,9 +2,11 @@ from typing import Dict, Any, List, Optional, Union, Tuple
 
 from flask import Response
 
-from hydrus.utils import get_doc, get_api_name, get_hydrus_server_url
+from hydrus.data import crud
 
-from hydra_python_core.doc_writer import HydraIriTemplate, IriTemplateMapping
+from hydrus.utils import get_doc, get_api_name, get_hydrus_server_url, get_session
+
+from hydra_python_core.doc_writer import HydraIriTemplate, IriTemplateMapping, HydraLink
 
 
 def validObject(object_: Dict[str, Any]) -> bool:
@@ -162,16 +164,24 @@ def finalize_response(class_type: str, obj: Dict[str, Any]) -> Dict[str, Any]:
              of any nested object's url.
     """
     for prop in get_doc().parsed_classes[class_type]["class"].supportedProperty:
+        # Skip not required properties which are not inserted yet.
+        if not prop.required and prop.title not in obj:
+            continue
         if prop.read is False:
             obj.pop(prop.title, None)
-        elif 'vocab:' in prop.prop:
-            prop_class = prop.prop.replace("vocab:", "")
-            nested_path, is_collection = get_nested_class_path(prop_class)
+        elif isinstance(prop.prop, HydraLink):
+            hydra_link = prop.prop
+            range_class = hydra_link.range.replace("vocab:", "")
+            nested_path, is_collection = get_nested_class_path(range_class)
             if is_collection:
                 id = obj[prop.title]
                 obj[prop.title] = "/{}/{}/{}".format(get_api_name(), nested_path, id)
             else:
                 obj[prop.title] = "/{}/{}".format(get_api_name(), nested_path)
+        elif 'vocab:' in prop.prop:
+            prop_class = prop.prop.replace("vocab:", "")
+            id = obj[prop.title]
+            obj[prop.title] = crud.get(id, prop_class, get_api_name(), get_session())
     return obj
 
 
@@ -203,8 +213,16 @@ def generate_iri_mappings(class_type: str, template: str, skip_nested: bool = Fa
     """
     for supportedProp in get_doc(
     ).parsed_classes[class_type]["class"].supportedProperty:
-        if "vocab:" in supportedProp.prop and skip_nested is False:
+        prop_class = supportedProp.prop
+        nested_class_prop = False
+        if isinstance(supportedProp.prop, HydraLink):
+            hydra_link = supportedProp.prop
+            prop_class = hydra_link.range.replace("vocab:", "")
+            nested_class_prop = True
+        elif "vocab:" in supportedProp.prop:
             prop_class = supportedProp.prop.replace("vocab:", "")
+            nested_class_prop = True
+        if nested_class_prop and skip_nested is False:
             template, template_mapping = generate_iri_mappings(prop_class, template,
                                                                skip_nested=True,
                                                                parent_prop_name=supportedProp.title,
@@ -212,10 +230,10 @@ def generate_iri_mappings(class_type: str, template: str, skip_nested: bool = Fa
             continue
         if skip_nested is True:
             var = "{}[{}]".format(parent_prop_name, supportedProp.title)
-            mapping = IriTemplateMapping(variable=var, prop=supportedProp.prop)
+            mapping = IriTemplateMapping(variable=var, prop=prop_class)
         else:
             var = supportedProp.title
-            mapping = IriTemplateMapping(variable=var, prop=supportedProp.prop)
+            mapping = IriTemplateMapping(variable=var, prop=prop_class)
         template_mapping.append(mapping)
         template = template + "{}, ".format(var)
     return template, template_mapping

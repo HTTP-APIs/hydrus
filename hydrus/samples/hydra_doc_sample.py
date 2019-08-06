@@ -499,9 +499,17 @@ doc = {
             "supportedProperty": [
                 {
                     "@type": "SupportedProperty",
-                    "property": "vocab:State",
+                    "property": {
+                        "@id": "vocab:Drone/DroneState",
+                        "@type": "hydra:Link",
+                        "description": "",
+                        "domain": "vocab:Drone",
+                        "range": "vocab:State",
+                        "supportedOperation": [],
+                        "title": "Drone State"
+                    },
                     "readable": "true",
-                    "required": "true",
+                    "required": "false",
                     "title": "DroneState",
                     "writeable": "true"
                 },
