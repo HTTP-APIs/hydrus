@@ -116,6 +116,8 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
         instance = session.query(Instance).filter(
             Instance.id == data.object_).one()
         object_template[prop_name] = instance.id
+        print("yes")
+        print(object_template[prop_name])
 
     for data in data_IIT:
         prop_name = session.query(properties).filter(
@@ -139,10 +141,11 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
     return object_template
 
 
-def insert(object_: Dict[str, Any], session: scoped_session,
+def insert(object_: Dict[str, Any], session: scoped_session, link_props: Dict[str, Any]={},
            id_: Optional[str] = None) -> str:
     """Insert an object to database [POST] and returns the inserted object.
     :param object_: object to be inserted
+    :param link_props: Hydra link properties in the object.
     :param session: sqlalchemy scoped session
     :param id_: id of the object to be inserted (optional param)
     :return: ID of object inserted
@@ -187,17 +190,38 @@ def insert(object_: Dict[str, Any], session: scoped_session,
                 session.close()
                 raise PropertyNotFound(type_=prop_name)
             # For insertion in III through link
-            if isinstance(object_[prop_name], str):
-                regex = r'/.*/.*/[a-z0-9]{8}-([a-z0-9]{4}-){3}[a-z0-9]{12}'
-                matchObj = re.match(regex, object_[prop_name])
+            if prop_name in link_props:
+                regex = r'[a-z0-9]{8}-([a-z0-9]{4}-){3}[a-z0-9]{12}'
+                matchObj = re.match(regex, link_props[prop_name])
+                # Link is to an instance of a collection class
                 if matchObj:
-                    nested_obj_id = object_[prop_name].split('/')[-1]
+                    try:
+                        nested_instance = session.query(Instance).filter(
+                            Instance.id == link_props[prop_name]).one()
+                    except NoResultFound:
+                        raise InstanceNotFound(id_=link_props[prop_name], type_="")
                     triple = GraphIII(
                         subject=instance.id,
                         predicate=property_.id,
-                        object_=nested_obj_id)
+                        object_=nested_instance.id)
                     session.add(triple)
-                    continue
+                else:
+                    try:
+                        nested_rdf_class = session.query(RDFClass).filter(
+                            RDFClass.name == link_props[prop_name]).one()
+                    except NoResultFound:
+                        raise ClassNotFound(type_=link_props[prop_name])
+                    try:
+                        nested_instance = session.query(Instance).filter(
+                            Instance.type_ == nested_rdf_class.id).all()[-1]
+                    except (NoResultFound, IndexError, ValueError):
+                        raise InstanceNotFound(type_=nested_rdf_class.name)
+                    triple = GraphIII(
+                        subject=instance.id,
+                        predicate=property_.id,
+                        object_=nested_instance.id)
+                    session.add(triple)
+                continue
             # For insertion in III
             if isinstance(object_[prop_name], dict):
                 try:
@@ -454,6 +478,7 @@ def update(id_: str,
                          str],
            session: scoped_session,
            api_name: str,
+           link_props: Dict[str, Any]={},
            path: str = None) -> str:
     """Update an object properties based on the given object [PUT].
     :param id_: if of object to be updated
@@ -461,6 +486,7 @@ def update(id_: str,
     :param object_: object that has to be inserted
     :param session: sqlalchemy scoped session
     :param api_name: api name specified while starting server
+    :param link_props: Link properties of the object being updated.
     :param path: endpoint
     :return: id of updated object
     """
@@ -471,10 +497,11 @@ def update(id_: str,
     delete(id_=id_, type_=type_, session=session)
     # Try inserting new object
     try:
-        insert(object_=object_, id_=id_, session=session)
+        insert(object_=object_, id_=id_, link_props=link_props, session=session)
     except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
         # Put old object back
-        insert(object_=instance, id_=id_, session=session)
+        print("uhh")
+        insert(object_=instance, id_=id_, link_props=link_props, session=session)
         raise e
 
     get(id_=id_, type_=type_, session=session, api_name=api_name, path=path)
@@ -646,11 +673,13 @@ def update_single(object_: Dict[str,
                                 Any],
                   session: scoped_session,
                   api_name: str,
+                  link_props: Dict[str, Any],
                   path: str = None) -> int:
     """Update instance of classes with single objects.
     :param object_: new object
     :param session: sqlalchemy scoped session
     :param api_name: api name specified while starting server
+    :param link_props: Link properties of the object being updated
     :param path: endpoint
     :return: id of the updated object
 
@@ -677,6 +706,7 @@ def update_single(object_: Dict[str,
         object_=object_,
         session=session,
         api_name=api_name,
+        link_props=link_props,
         path=path)
 
 
@@ -707,7 +737,7 @@ def delete_single(type_: str, session: scoped_session) -> None:
 
 
 def insert_modification_record(method: str, resource_url: str,
-                               session: scoped_session) -> str:
+                               session: scoped_session) -> int:
     """
     Insert a modification record into the database.
     :param method: HTTP method type of related operation.

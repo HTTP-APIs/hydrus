@@ -55,7 +55,8 @@ from hydrus.helpers import (
     check_required_props,
     add_iri_template,
     finalize_response,
-    send_sync_update)
+    send_sync_update,
+    get_link_props)
 from hydrus.utils import (
     get_session,
     get_doc,
@@ -144,15 +145,17 @@ class Item(Resource):
         if checkClassOp(class_type, "POST") and check_writeable_props(class_type, object_):
             # Check if class_type supports POST operation
             obj_type = getType(class_type, "POST")
+            link_props = get_link_props(class_type, object_)
             # Load new object and type
             if validObject(object_) and object_["@type"] == obj_type and check_required_props(
-                    class_type, object_):
+                    class_type, object_) and isinstance(link_props, Dict):
                 try:
                     # Update the right ID if the object is valid and matches
                     # type of Item
                     object_id = crud.update(
                         object_=object_,
                         id_=id_,
+                        link_props=link_props,
                         type_=object_["@type"],
                         session=get_session(),
                         api_name=get_api_name())
@@ -195,12 +198,14 @@ class Item(Resource):
             # Check if class_type supports PUT operation
             object_ = json.loads(request.data.decode('utf-8'))
             obj_type = getType(class_type, "PUT")
+            link_props = get_link_props(class_type, object_)
             # Load new object and type
             if validObject(object_) and object_["@type"] == obj_type and check_required_props(
-                    class_type, object_):
+                    class_type, object_) and isinstance(link_props, Dict):
                 try:
                     # Add the object with given ID
-                    object_id = crud.insert(object_=object_, id_=id_, session=get_session())
+                    object_id = crud.insert(object_=object_, id_=id_,
+                                            link_props=link_props, session=get_session())
                     headers_ = [{"Location": "{}{}/{}/{}".format(
                         get_hydrus_server_url(), get_api_name(), path, object_id)}]
                     status_description = "Object with ID {} successfully added".format(object_id)
@@ -363,10 +368,12 @@ class ItemCollection(Resource):
             ).collections:
                 # If path is in parsed_classes but is not a collection
                 obj_type = getType(path, "PUT")
+                link_props = get_link_props(obj_type, object_)
                 if object_["@type"] == obj_type and validObject(object_) and check_required_props(
-                        obj_type, object_):
+                        obj_type, object_) and isinstance(link_props, Dict):
                     try:
-                        object_id = crud.insert(object_=object_, session=get_session())
+                        object_id = crud.insert(object_=object_, link_props=link_props,
+                                                session=get_session())
                         headers_ = [{"Location": "{}{}/{}/".format(
                                 get_hydrus_server_url(), get_api_name(), path)}]
                         status = HydraStatus(code=201, title="Object successfully added")
@@ -400,14 +407,17 @@ class ItemCollection(Resource):
             if path in get_doc().parsed_classes and "{}Collection".format(path) not in get_doc(
             ).collections:
                 obj_type = getType(path, "POST")
+                link_props = get_link_props(obj_type, object_)
                 if check_writeable_props(obj_type, object_):
                     if object_["@type"] == obj_type and check_required_props(
-                            obj_type, object_) and validObject(object_):
+                            obj_type, object_) and validObject(object_) and isinstance(
+                                    link_props, Dict):
                         try:
                             crud.update_single(
                                 object_=object_,
                                 session=get_session(),
                                 api_name=get_api_name(),
+                                link_props=link_props,
                                 path=path)
                             method = "POST"
                             resource_url = "{}{}/{}".format(

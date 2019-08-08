@@ -275,3 +275,35 @@ def send_sync_update(socketio, new_job_id: int, last_job_id: str,
         "resource_url": resource_url
     }
     socketio.emit('update', data, namespace="/sync")
+
+
+def get_link_props(class_type: str, object_) -> Union[Dict[str, Any], bool]:
+    """
+    Get dict of all hydra_link properties of a class.
+    :param class_type: Type of the class.
+    :param object_: Object being inserted/updated.
+    :return: Dict with property_title as key and instance_id(for collection class)
+             or class_name(for non-collection class) as value,
+             if links are invalid then returns false.
+    """
+    link_props = {}
+    for supportedProp in get_doc().parsed_classes[class_type]['class'].supportedProperty:
+        if isinstance(supportedProp.prop, HydraLink) and supportedProp.title in object_:
+            prop_range = supportedProp.prop.range
+            range_class_name = prop_range.replace("vocab:", "")
+            for collection_path in get_doc().collections:
+                if collection_path in object_[supportedProp.title]:
+                    class_title = get_doc().collections[collection_path]['collection'].class_.title
+                    if range_class_name != class_title:
+                        return False
+                    link_props[supportedProp.title] = object_[supportedProp.title].split('/')[-1]
+                    break
+            if supportedProp.title not in link_props:
+                for class_path in get_doc().parsed_classes:
+                    if class_path in object_[supportedProp.title]:
+                        class_title = get_doc().parsed_classes[class_path]['class'].title
+                        if range_class_name != class_title:
+                            return False
+                        link_props[supportedProp.title] = class_title
+                        break
+    return link_props
