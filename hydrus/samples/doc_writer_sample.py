@@ -125,7 +125,7 @@ range_="vocab:dummyClass")
 class_2.add_supported_prop(HydraClassProp(
     dummy_prop_link, "dummyProp", required=False, read=True, write=True))
 class_2.add_supported_prop(HydraClassProp(
-    "vocab:anotherSingleClass", "singleClassProp", required=False, read=False, write=False))
+    "vocab:anotherSingleClass", "singleClassProp", required=False, read=True, write=True))
 class_1.add_supported_prop(dummyProp1)
 # Add the operations to the classes
 class_.add_supported_op(op1)
