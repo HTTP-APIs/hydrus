@@ -307,3 +307,19 @@ def get_link_props(class_type: str, object_) -> Union[Dict[str, Any], bool]:
                         link_props[supportedProp.title] = class_title
                         break
     return link_props
+
+
+def get_link_props_for_multiple_objects(class_type: str,
+                                        object_list: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """
+    Get link_props of multiple objects.
+    :param class_type: Class type of objects.
+    :param object_list: List of objects being inserted.
+    :return: List of link properties processed with the help of get_link_props.
+    """
+    link_prop_list = list()
+    for object_ in object_list:
+        if get_link_props(class_type, object_) is False:
+            return False
+        link_prop_list.append(get_link_props(class_type, object_))
+    return link_prop_list

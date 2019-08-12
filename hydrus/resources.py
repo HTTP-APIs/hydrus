@@ -56,7 +56,8 @@ from hydrus.helpers import (
     add_iri_template,
     finalize_response,
     send_sync_update,
-    get_link_props)
+    get_link_props,
+    get_link_props_for_multiple_objects)
 from hydrus.utils import (
     get_session,
     get_doc,
@@ -512,7 +513,8 @@ class Items(Resource):
                     if not check_required_props(obj_type, obj):
                         incomplete_objects.append(obj)
                         object_.remove(obj)
-                if validObjectList(object_):
+                link_props_list = get_link_props_for_multiple_objects(obj_type, object_)
+                if validObjectList(object_) and isinstance(link_props_list, list):
                     type_result = type_match(object_, obj_type)
                     # If Item in request's JSON is a valid object
                     # ie. @type is one of the keys in object_
@@ -522,7 +524,8 @@ class Items(Resource):
                         try:
                             # Insert object and return location in Header
                             object_id = crud.insert_multiple(
-                                objects_=object_, session=get_session(), id_=int_list)
+                                objects_=object_, session=get_session(), id_=int_list,
+                                link_props_list=link_props_list)
                             headers_ = [{"Location": "{}{}/{}/{}".format(
                                     get_hydrus_server_url(), get_api_name(), path, object_id)}]
                             if len(incomplete_objects) > 0:

@@ -116,8 +116,6 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
         instance = session.query(Instance).filter(
             Instance.id == data.object_).one()
         object_template[prop_name] = instance.id
-        print("yes")
-        print(object_template[prop_name])
 
     for data in data_IIT:
         prop_name = session.query(properties).filter(
@@ -191,36 +189,11 @@ def insert(object_: Dict[str, Any], session: scoped_session, link_props: Dict[st
                 raise PropertyNotFound(type_=prop_name)
             # For insertion in III through link
             if prop_name in link_props:
-                regex = r'[a-z0-9]{8}-([a-z0-9]{4}-){3}[a-z0-9]{12}'
-                matchObj = re.match(regex, link_props[prop_name])
-                # Link is to an instance of a collection class
-                if matchObj:
-                    try:
-                        nested_instance = session.query(Instance).filter(
-                            Instance.id == link_props[prop_name]).one()
-                    except NoResultFound:
-                        raise InstanceNotFound(id_=link_props[prop_name], type_="")
-                    triple = GraphIII(
-                        subject=instance.id,
-                        predicate=property_.id,
-                        object_=nested_instance.id)
-                    session.add(triple)
-                else:
-                    try:
-                        nested_rdf_class = session.query(RDFClass).filter(
-                            RDFClass.name == link_props[prop_name]).one()
-                    except NoResultFound:
-                        raise ClassNotFound(type_=link_props[prop_name])
-                    try:
-                        nested_instance = session.query(Instance).filter(
-                            Instance.type_ == nested_rdf_class.id).all()[-1]
-                    except (NoResultFound, IndexError, ValueError):
-                        raise InstanceNotFound(type_=nested_rdf_class.name)
-                    triple = GraphIII(
-                        subject=instance.id,
-                        predicate=property_.id,
-                        object_=nested_instance.id)
-                    session.add(triple)
+                try:
+                    insert_iii_with_link(instance.id, property_,
+                                         link_props[prop_name], session)
+                except (NotInstanceProperty, InstanceNotFound, ClassNotFound):
+                    raise
                 continue
             # For insertion in III
             if isinstance(object_[prop_name], dict):
@@ -253,11 +226,13 @@ def insert(object_: Dict[str, Any], session: scoped_session, link_props: Dict[st
 def insert_multiple(objects_: List[Dict[str,
                                         Any]],
                     session: scoped_session,
+                    link_props_list: List[Dict[str, Any]]=[],
                     id_: Optional[str] = "") -> List[str]:
     """
     Adds a list of object with given ids to the database
     :param objects_: List of dict's to be added to the database
     :param session: scoped session from getSession in utils
+    :param link_props_list: List of link properties for each object being inserted.
     :param id_: optional parameter containing the ids of objects that have to be inserted
     :return: Ids that have been inserted
 
@@ -319,7 +294,19 @@ def insert_multiple(objects_: List[Dict[str,
                     # Adds new Property
                     session.close()
                     raise PropertyNotFound(type_=prop_name)
-
+                if len(link_props_list) > 0:
+                    # For insertion in III through link
+                    if prop_name in link_props_list[index]:
+                        try:
+                            triple = insert_iii_with_link(instances[index].id,
+                                                          property_,
+                                                          link_props_list[index][prop_name],
+                                                          session)
+                            triples_list.append(triple)
+                            properties_list.append(property_)
+                        except (NotInstanceProperty, InstanceNotFound, ClassNotFound):
+                            raise
+                        continue
                 # For insertion in III
                 if isinstance(objects_[index][prop_name], dict):
                     try:
@@ -500,7 +487,6 @@ def update(id_: str,
         insert(object_=object_, id_=id_, link_props=link_props, session=session)
     except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
         # Put old object back
-        print("uhh")
         insert(object_=instance, id_=id_, link_props=link_props, session=session)
         raise e
 
@@ -895,3 +881,56 @@ def insert_iit(object_: Dict[str, Any], prop_name: str,
     else:
         session.close()
         raise NotInstanceProperty(type_=prop_name)
+
+
+def insert_iii_with_link(instance_id: str, property_: BaseProperty,
+                         property_value: str, session: scoped_session):
+    """
+    Inserts GraphIII triple to store a relation defined with hydra:Link.
+    :param instance_id:  Id of the instance being inserted
+    :param property_: Property being used as predicate in the new triple.
+    :param property_value: Value of the property being inserted.
+    :param session: sqlalchemy session
+    :return:
+    """
+    if property_.type_ == "PROPERTY" or property_.type_ == "INSTANCE":
+        property_.type_ = "INSTANCE"
+        # If value matches with the regex then value is an id and link is to an
+        # instance of a collection class otherwise value is a class_type and link
+        # is to a non collection class.
+        regex = r'[a-z0-9]{8}-([a-z0-9]{4}-){3}[a-z0-9]{12}'
+        matchObj = re.match(regex, property_value)
+        # Link is to an instance of a collection class
+        if matchObj:
+            try:
+                nested_instance = session.query(Instance).filter(
+                    Instance.id == property_value).one()
+            except NoResultFound:
+                raise InstanceNotFound(id_=property_value, type_="")
+            triple = GraphIII(
+                subject=instance_id,
+                predicate=property_.id,
+                object_=nested_instance.id)
+            session.add(triple)
+            return triple
+        # Link is to a non collection, single instance class
+        else:
+            try:
+                nested_rdf_class = session.query(RDFClass).filter(
+                    RDFClass.name == property_value).one()
+            except NoResultFound:
+                raise ClassNotFound(type_=property_value)
+            try:
+                nested_instance = session.query(Instance).filter(
+                    Instance.type_ == nested_rdf_class.id).all()[-1]
+            except (NoResultFound, IndexError, ValueError):
+                raise InstanceNotFound(type_=nested_rdf_class.name)
+            triple = GraphIII(
+                subject=instance_id,
+                predicate=property_.id,
+                object_=nested_instance.id)
+            session.add(triple)
+            return triple
+    else:
+        session.close()
+        raise NotInstanceProperty(type_=property_.name)
