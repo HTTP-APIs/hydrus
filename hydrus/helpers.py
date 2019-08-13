@@ -277,14 +277,14 @@ def send_sync_update(socketio, new_job_id: int, last_job_id: str,
     socketio.emit('update', data, namespace="/sync")
 
 
-def get_link_props(class_type: str, object_) -> Union[Dict[str, Any], bool]:
+def get_link_props(class_type: str, object_) -> Tuple[Dict[str, Any], bool]:
     """
     Get dict of all hydra_link properties of a class.
     :param class_type: Type of the class.
     :param object_: Object being inserted/updated.
-    :return: Dict with property_title as key and instance_id(for collection class)
-             or class_name(for non-collection class) as value,
-             if links are invalid then returns false.
+    :return: Tuple with one elements as Dict with property_title as key and
+             instance_id(for collection class) or class_name(for non-collection class) as value,
+             second element represents boolean representing validity of the link.
     """
     link_props = {}
     for supportedProp in get_doc().parsed_classes[class_type]['class'].supportedProperty:
@@ -295,7 +295,7 @@ def get_link_props(class_type: str, object_) -> Union[Dict[str, Any], bool]:
                 if collection_path in object_[supportedProp.title]:
                     class_title = get_doc().collections[collection_path]['collection'].class_.title
                     if range_class_name != class_title:
-                        return False
+                        return {}, False
                     link_props[supportedProp.title] = object_[supportedProp.title].split('/')[-1]
                     break
             if supportedProp.title not in link_props:
@@ -303,14 +303,15 @@ def get_link_props(class_type: str, object_) -> Union[Dict[str, Any], bool]:
                     if class_path in object_[supportedProp.title]:
                         class_title = get_doc().parsed_classes[class_path]['class'].title
                         if range_class_name != class_title:
-                            return False
+                            return {}, False
                         link_props[supportedProp.title] = class_title
                         break
-    return link_props
+    return link_props, True
 
 
 def get_link_props_for_multiple_objects(class_type: str,
-                                        object_list: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+                                        object_list: List[Dict[str, Any]]
+                                        ) -> Tuple[List[Dict[str, Any]], bool]:
     """
     Get link_props of multiple objects.
     :param class_type: Class type of objects.
@@ -319,7 +320,9 @@ def get_link_props_for_multiple_objects(class_type: str,
     """
     link_prop_list = list()
     for object_ in object_list:
-        if get_link_props(class_type, object_) is False:
-            return False
-        link_prop_list.append(get_link_props(class_type, object_))
-    return link_prop_list
+        link_props, type_check = get_link_props(class_type, object_)
+        if type_check is True:
+            link_prop_list.append(link_props)
+        else:
+            return [], False
+    return link_prop_list, True
