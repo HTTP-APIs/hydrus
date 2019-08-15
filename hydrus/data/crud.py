@@ -31,7 +31,7 @@
     typing : Module which provides support for type hints .
 
 """  # nopep8
-from sqlalchemy.orm import sessionmaker, scoped_session
+import re
 from sqlalchemy.orm import with_polymorphic
 from sqlalchemy import exists
 from sqlalchemy.orm.exc import NoResultFound
@@ -139,10 +139,11 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
     return object_template
 
 
-def insert(object_: Dict[str, Any], session: scoped_session,
+def insert(object_: Dict[str, Any], session: scoped_session, link_props: Dict[str, Any]={},
            id_: Optional[str] = None) -> str:
     """Insert an object to database [POST] and returns the inserted object.
     :param object_: object to be inserted
+    :param link_props: Hydra link properties in the object.
     :param session: sqlalchemy scoped session
     :param id_: id of the object to be inserted (optional param)
     :return: ID of object inserted
@@ -186,7 +187,14 @@ def insert(object_: Dict[str, Any], session: scoped_session,
                 # Adds new Property
                 session.close()
                 raise PropertyNotFound(type_=prop_name)
-
+            # For insertion in III through link
+            if prop_name in link_props:
+                try:
+                    insert_iii_with_link(instance.id, property_,
+                                         link_props[prop_name], session)
+                except (NotInstanceProperty, InstanceNotFound, ClassNotFound):
+                    raise
+                continue
             # For insertion in III
             if isinstance(object_[prop_name], dict):
                 try:
@@ -218,11 +226,13 @@ def insert(object_: Dict[str, Any], session: scoped_session,
 def insert_multiple(objects_: List[Dict[str,
                                         Any]],
                     session: scoped_session,
+                    link_props_list: List[Dict[str, Any]]=[],
                     id_: Optional[str] = "") -> List[str]:
     """
     Adds a list of object with given ids to the database
     :param objects_: List of dict's to be added to the database
     :param session: scoped session from getSession in utils
+    :param link_props_list: List of link properties for each object being inserted.
     :param id_: optional parameter containing the ids of objects that have to be inserted
     :return: Ids that have been inserted
 
@@ -284,7 +294,19 @@ def insert_multiple(objects_: List[Dict[str,
                     # Adds new Property
                     session.close()
                     raise PropertyNotFound(type_=prop_name)
-
+                if len(link_props_list) > 0:
+                    # For insertion in III through link
+                    if prop_name in link_props_list[index]:
+                        try:
+                            triple = insert_iii_with_link(instances[index].id,
+                                                          property_,
+                                                          link_props_list[index][prop_name],
+                                                          session)
+                            triples_list.append(triple)
+                            properties_list.append(property_)
+                        except (NotInstanceProperty, InstanceNotFound, ClassNotFound):
+                            raise
+                        continue
                 # For insertion in III
                 if isinstance(objects_[index][prop_name], dict):
                     try:
@@ -443,6 +465,7 @@ def update(id_: str,
                          str],
            session: scoped_session,
            api_name: str,
+           link_props: Dict[str, Any]={},
            path: str = None) -> str:
     """Update an object properties based on the given object [PUT].
     :param id_: if of object to be updated
@@ -450,6 +473,7 @@ def update(id_: str,
     :param object_: object that has to be inserted
     :param session: sqlalchemy scoped session
     :param api_name: api name specified while starting server
+    :param link_props: Link properties of the object being updated.
     :param path: endpoint
     :return: id of updated object
     """
@@ -460,10 +484,10 @@ def update(id_: str,
     delete(id_=id_, type_=type_, session=session)
     # Try inserting new object
     try:
-        insert(object_=object_, id_=id_, session=session)
+        insert(object_=object_, id_=id_, link_props=link_props, session=session)
     except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
         # Put old object back
-        insert(object_=instance, id_=id_, session=session)
+        insert(object_=instance, id_=id_, link_props=link_props, session=session)
         raise e
 
     get(id_=id_, type_=type_, session=session, api_name=api_name, path=path)
@@ -635,11 +659,13 @@ def update_single(object_: Dict[str,
                                 Any],
                   session: scoped_session,
                   api_name: str,
+                  link_props: Dict[str, Any],
                   path: str = None) -> int:
     """Update instance of classes with single objects.
     :param object_: new object
     :param session: sqlalchemy scoped session
     :param api_name: api name specified while starting server
+    :param link_props: Link properties of the object being updated
     :param path: endpoint
     :return: id of the updated object
 
@@ -666,6 +692,7 @@ def update_single(object_: Dict[str,
         object_=object_,
         session=session,
         api_name=api_name,
+        link_props=link_props,
         path=path)
 
 
@@ -696,7 +723,7 @@ def delete_single(type_: str, session: scoped_session) -> None:
 
 
 def insert_modification_record(method: str, resource_url: str,
-                               session: scoped_session) -> str:
+                               session: scoped_session) -> int:
     """
     Insert a modification record into the database.
     :param method: HTTP method type of related operation.
@@ -854,3 +881,56 @@ def insert_iit(object_: Dict[str, Any], prop_name: str,
     else:
         session.close()
         raise NotInstanceProperty(type_=prop_name)
+
+
+def insert_iii_with_link(instance_id: str, property_: BaseProperty,
+                         property_value: str, session: scoped_session):
+    """
+    Inserts GraphIII triple to store a relation defined with hydra:Link.
+    :param instance_id:  Id of the instance being inserted
+    :param property_: Property being used as predicate in the new triple.
+    :param property_value: Value of the property being inserted.
+    :param session: sqlalchemy session
+    :return:
+    """
+    if property_.type_ == "PROPERTY" or property_.type_ == "INSTANCE":
+        property_.type_ = "INSTANCE"
+        # If value matches with the regex then value is an id and link is to an
+        # instance of a collection class otherwise value is a class_type and link
+        # is to a non collection class.
+        regex = r'[a-z0-9]{8}-([a-z0-9]{4}-){3}[a-z0-9]{12}'
+        matchObj = re.match(regex, property_value)
+        # Link is to an instance of a collection class
+        if matchObj:
+            try:
+                nested_instance = session.query(Instance).filter(
+                    Instance.id == property_value).one()
+            except NoResultFound:
+                raise InstanceNotFound(id_=property_value, type_="")
+            triple = GraphIII(
+                subject=instance_id,
+                predicate=property_.id,
+                object_=nested_instance.id)
+            session.add(triple)
+            return triple
+        # Link is to a non collection, single instance class
+        else:
+            try:
+                nested_rdf_class = session.query(RDFClass).filter(
+                    RDFClass.name == property_value).one()
+            except NoResultFound:
+                raise ClassNotFound(type_=property_value)
+            try:
+                nested_instance = session.query(Instance).filter(
+                    Instance.type_ == nested_rdf_class.id).all()[-1]
+            except (NoResultFound, IndexError, ValueError):
+                raise InstanceNotFound(type_=nested_rdf_class.name)
+            triple = GraphIII(
+                subject=instance_id,
+                predicate=property_.id,
+                object_=nested_instance.id)
+            session.add(triple)
+            return triple
+    else:
+        session.close()
+        raise NotInstanceProperty(type_=property_.name)

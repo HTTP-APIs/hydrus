@@ -10,6 +10,7 @@ from hydrus.socketio_factory import create_socket
 from hydrus.utils import set_session, set_doc, set_api_name, set_page_size
 from hydrus.data import doc_parse, crud
 from hydra_python_core import doc_maker
+from hydra_python_core.doc_writer import HydraLink
 from hydrus.samples import doc_writer_sample
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
@@ -25,6 +26,8 @@ def gen_dummy_object(class_, doc):
         for prop in doc.parsed_classes[class_]["class"].supportedProperty:
             # Skip properties which are not writeable
             if prop.write is False:
+                continue
+            if isinstance(prop.prop, HydraLink):
                 continue
             if "vocab:" in prop.prop:
                 prop_class = prop.prop.replace("vocab:", "")
@@ -92,11 +95,28 @@ class ViewsTestCase(unittest.TestCase):
 
     def setUp(self):
         for class_ in self.doc.parsed_classes:
+            link_props = {}
             dummy_obj = gen_dummy_object(class_, self.doc)
+            for supportedProp in self.doc.parsed_classes[class_]['class'].supportedProperty:
+                if isinstance(supportedProp.prop, HydraLink):
+                    class_name = supportedProp.prop.range.replace("vocab:", "")
+                    for collection_path in self.doc.collections:
+                        coll_class = self.doc.collections[
+                            collection_path]['collection'].class_.title
+                        if class_name == coll_class:
+                            id_ = str(uuid.uuid4())
+                            crud.insert(
+                                gen_dummy_object(class_name, self.doc),
+                                id_=id_,
+                                session=self.session)
+                            link_props[supportedProp.title] = id_
+                            dummy_obj[supportedProp.title] = "{}/{}/{}".format(
+                                self.API_NAME, collection_path, id_)
             crud.insert(
                 dummy_obj,
                 id_=str(
                     uuid.uuid4()),
+                link_props=link_props,
                 session=self.session)
             # If it's a collection class then add an extra object so
             # we can test pagination thoroughly.
@@ -507,19 +527,17 @@ class ViewsTestCase(unittest.TestCase):
                         assert "@context" in response_get_data
                         assert "@id" in response_get_data
                         assert "@type" in response_get_data
-                        # server should not return nested objects in the same
-                        # response
-                        for prop in response_get_data:
-                            assert "@type" not in response_get_data[prop]
                         class_props = [x for x in class_.supportedProperty]
                         for prop_name in class_props:
-                            if "vocab:" in prop_name.prop and prop_name.read is True:
+                            if isinstance(prop_name.prop, HydraLink) and prop_name.read is True:
                                 nested_obj_resp = self.client.get(
                                     response_get_data[prop_name.title])
                                 assert nested_obj_resp.status_code == 200
                                 nested_obj = json.loads(
                                     nested_obj_resp.data.decode('utf-8'))
                                 assert "@type" in nested_obj
+                            elif "vocab:" in prop_name.prop:
+                                assert "@type" in response_get_data[prop_name.title]
 
     def test_required_props(self):
         index = self.client.get("/{}".format(self.API_NAME))
