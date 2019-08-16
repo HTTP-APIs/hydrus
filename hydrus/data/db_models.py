@@ -235,19 +235,6 @@ class GraphIIT(Graph):
             self.subject, self.predicate, self.object_)
 
 
-class Modification(Base):
-    """Model for sync related state-changing modifications."""
-
-    __tablename__ = "modifications"
-
-    job_id = Column(
-        Integer,
-        primary_key=True,
-        autoincrement=True)
-    method = Column(String)
-    resource_url = Column(String)
-
-
 class User(Base):
     """Model for a user that stores the ID, paraphrase and a nonce."""
 
