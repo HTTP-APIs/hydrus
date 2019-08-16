@@ -2,9 +2,11 @@ from typing import Dict, Any, List, Optional, Union, Tuple
 
 from flask import Response
 
-from hydrus.utils import get_doc, get_api_name, get_hydrus_server_url
+from hydrus.data import crud
 
-from hydra_python_core.doc_writer import HydraIriTemplate, IriTemplateMapping
+from hydrus.utils import get_doc, get_api_name, get_hydrus_server_url, get_session
+
+from hydra_python_core.doc_writer import HydraIriTemplate, IriTemplateMapping, HydraLink
 
 
 def validObject(object_: Dict[str, Any]) -> bool:
@@ -162,16 +164,24 @@ def finalize_response(class_type: str, obj: Dict[str, Any]) -> Dict[str, Any]:
              of any nested object's url.
     """
     for prop in get_doc().parsed_classes[class_type]["class"].supportedProperty:
+        # Skip not required properties which are not inserted yet.
+        if not prop.required and prop.title not in obj:
+            continue
         if prop.read is False:
             obj.pop(prop.title, None)
-        elif 'vocab:' in prop.prop:
-            prop_class = prop.prop.replace("vocab:", "")
-            nested_path, is_collection = get_nested_class_path(prop_class)
+        elif isinstance(prop.prop, HydraLink):
+            hydra_link = prop.prop
+            range_class = hydra_link.range.replace("vocab:", "")
+            nested_path, is_collection = get_nested_class_path(range_class)
             if is_collection:
                 id = obj[prop.title]
                 obj[prop.title] = "/{}/{}/{}".format(get_api_name(), nested_path, id)
             else:
                 obj[prop.title] = "/{}/{}".format(get_api_name(), nested_path)
+        elif 'vocab:' in prop.prop:
+            prop_class = prop.prop.replace("vocab:", "")
+            id = obj[prop.title]
+            obj[prop.title] = crud.get(id, prop_class, get_api_name(), get_session())
     return obj
 
 
@@ -203,8 +213,16 @@ def generate_iri_mappings(class_type: str, template: str, skip_nested: bool = Fa
     """
     for supportedProp in get_doc(
     ).parsed_classes[class_type]["class"].supportedProperty:
-        if "vocab:" in supportedProp.prop and skip_nested is False:
+        prop_class = supportedProp.prop
+        nested_class_prop = False
+        if isinstance(supportedProp.prop, HydraLink):
+            hydra_link = supportedProp.prop
+            prop_class = hydra_link.range.replace("vocab:", "")
+            nested_class_prop = True
+        elif "vocab:" in supportedProp.prop:
             prop_class = supportedProp.prop.replace("vocab:", "")
+            nested_class_prop = True
+        if nested_class_prop and skip_nested is False:
             template, template_mapping = generate_iri_mappings(prop_class, template,
                                                                skip_nested=True,
                                                                parent_prop_name=supportedProp.title,
@@ -212,10 +230,10 @@ def generate_iri_mappings(class_type: str, template: str, skip_nested: bool = Fa
             continue
         if skip_nested is True:
             var = "{}[{}]".format(parent_prop_name, supportedProp.title)
-            mapping = IriTemplateMapping(variable=var, prop=supportedProp.prop)
+            mapping = IriTemplateMapping(variable=var, prop=prop_class)
         else:
             var = supportedProp.title
-            mapping = IriTemplateMapping(variable=var, prop=supportedProp.prop)
+            mapping = IriTemplateMapping(variable=var, prop=prop_class)
         template_mapping.append(mapping)
         template = template + "{}, ".format(var)
     return template, template_mapping
@@ -239,3 +257,72 @@ def add_pagination_iri_mappings(template: str,
         mapping = IriTemplateMapping(variable=paginate_variables[i], prop=paginate_variables[i])
         template_mapping.append(mapping)
     return template, template_mapping
+
+
+def send_sync_update(socketio, new_job_id: int, last_job_id: str,
+                     method: str, resource_url: str):
+    """Sends synchronization update to all connected clients.
+    :param socketio: socketio connection.
+    :param new_job_id: Job id of the new modification(update).
+    :param last_job_id: Job id of the last(most recent) modification until this new one.
+    :param method: Method type of the operation.
+    :param resource_url: URL of resource which needs to be synchronized.
+    """
+    data = {
+        "job_id": new_job_id,
+        "last_job_id": last_job_id,
+        "method": method,
+        "resource_url": resource_url
+    }
+    socketio.emit('update', data, namespace="/sync")
+
+
+def get_link_props(class_type: str, object_) -> Tuple[Dict[str, Any], bool]:
+    """
+    Get dict of all hydra_link properties of a class.
+    :param class_type: Type of the class.
+    :param object_: Object being inserted/updated.
+    :return: Tuple with one elements as Dict with property_title as key and
+             instance_id(for collection class) or class_name(for non-collection class) as value,
+             second element represents boolean representing validity of the link.
+    """
+    link_props = {}
+    for supportedProp in get_doc().parsed_classes[class_type]['class'].supportedProperty:
+        if isinstance(supportedProp.prop, HydraLink) and supportedProp.title in object_:
+            prop_range = supportedProp.prop.range
+            range_class_name = prop_range.replace("vocab:", "")
+            for collection_path in get_doc().collections:
+                if collection_path in object_[supportedProp.title]:
+                    class_title = get_doc().collections[collection_path]['collection'].class_.title
+                    if range_class_name != class_title:
+                        return {}, False
+                    link_props[supportedProp.title] = object_[supportedProp.title].split('/')[-1]
+                    break
+            if supportedProp.title not in link_props:
+                for class_path in get_doc().parsed_classes:
+                    if class_path in object_[supportedProp.title]:
+                        class_title = get_doc().parsed_classes[class_path]['class'].title
+                        if range_class_name != class_title:
+                            return {}, False
+                        link_props[supportedProp.title] = class_title
+                        break
+    return link_props, True
+
+
+def get_link_props_for_multiple_objects(class_type: str,
+                                        object_list: List[Dict[str, Any]]
+                                        ) -> Tuple[List[Dict[str, Any]], bool]:
+    """
+    Get link_props of multiple objects.
+    :param class_type: Class type of objects.
+    :param object_list: List of objects being inserted.
+    :return: List of link properties processed with the help of get_link_props.
+    """
+    link_prop_list = list()
+    for object_ in object_list:
+        link_props, type_check = get_link_props(class_type, object_)
+        if type_check is True:
+            link_prop_list.append(link_props)
+        else:
+            return [], False
+    return link_prop_list, True

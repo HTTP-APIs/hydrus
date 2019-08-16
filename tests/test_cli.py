@@ -9,6 +9,7 @@ from hydrus.app_factory import app_factory
 from hydrus.utils import set_session, set_doc, set_api_name
 from hydrus.data import doc_parse, crud
 from hydra_python_core import doc_maker
+from hydra_python_core.doc_writer import HydraLink
 from hydrus.samples import doc_writer_sample
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
@@ -25,6 +26,8 @@ def gen_dummy_object(class_, doc):
     }
     if class_ in doc.parsed_classes:
         for prop in doc.parsed_classes[class_]["class"].supportedProperty:
+            if isinstance(prop.prop, HydraLink):
+                continue
             if "vocab:" in prop.prop:
                 prop_class = prop.prop.replace("vocab:", "")
                 object_[prop.title] = gen_dummy_object(prop_class, doc)
