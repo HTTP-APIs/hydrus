@@ -10,6 +10,7 @@ from hydrus.data.db_models import Base
 from hydrus.data import doc_parse
 from hydra_python_core import doc_maker
 from hydrus.samples.hydra_doc_sample import doc
+from hydra_python_core.doc_writer import HydraLink
 
 import random
 from typing import List
@@ -23,6 +24,8 @@ def gen_dummy_object(class_, doc):
     }
     if class_ in doc.parsed_classes:
         for prop in doc.parsed_classes[class_]["class"].supportedProperty:
+            if isinstance(prop.prop, HydraLink):
+                continue
             if "vocab:" in prop.prop:
                 prop_class = prop.prop.replace("vocab:", "")
                 object_[prop.title] = gen_dummy_object(prop_class, doc)
@@ -86,6 +89,8 @@ class TestCRUD(unittest.TestCase):
         """Test get operation for object that can contain other objects."""
         for class_ in self.doc_collection_classes:
             for prop in self.doc.parsed_classes[class_]["class"].supportedProperty:
+                if isinstance(prop.prop, HydraLink):
+                    continue
                 if "vocab:" in prop.prop:
                     nested_class = prop.prop.replace("vocab:", "")
                     object_ = gen_dummy_object(class_, self.doc)
@@ -106,6 +111,8 @@ class TestCRUD(unittest.TestCase):
             target_property_1 = ""
             target_property_2 = ""
             for prop in self.doc.parsed_classes[class_]["class"].supportedProperty:
+                if isinstance(prop.prop, HydraLink):
+                    continue
                 # Find nested object so we can test searching of elements by
                 # properties of nested objects.
                 if "vocab:" in prop.prop:

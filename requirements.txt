@@ -6,6 +6,8 @@ click==6.7
 Flask
 Flask-Cors
 Flask-RESTful
+Flask_SocketIO
+gevent-websocket
 gevent==1.3.5
 greenlet==0.4.13
 itsdangerous==0.24

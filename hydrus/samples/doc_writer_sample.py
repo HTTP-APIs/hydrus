@@ -1,7 +1,7 @@
 """Sample to create Hydra APIDocumentation using doc_writer."""
 
 from hydra_python_core.doc_writer import (HydraDoc, HydraClass, HydraClassProp, HydraClassOp,
-                                          HydraStatus, HydraError)
+                                          HydraStatus, HydraError, HydraLink)
 from typing import Any, Dict, Union
 
 # Creating the HydraDoc object, this is the primary class for the Doc
@@ -120,10 +120,12 @@ class_.add_supported_prop(dummyProp1)
 class_.add_supported_prop(dummyProp2)
 class_2.add_supported_prop(dummyProp1)
 class_2.add_supported_prop(dummyProp2)
+dummy_prop_link = HydraLink("singleClass/dummyProp", "dummyProp", domain="vocab:singleClass",
+range_="vocab:dummyClass")
 class_2.add_supported_prop(HydraClassProp(
-    "vocab:dummyClass", "dummyProp", required=False, read=True, write=True))
+    dummy_prop_link, "dummyProp", required=False, read=True, write=True))
 class_2.add_supported_prop(HydraClassProp(
-    "vocab:anotherSingleClass", "singleClassProp", required=False, read=False, write=False))
+    "vocab:anotherSingleClass", "singleClassProp", required=False, read=True, write=True))
 class_1.add_supported_prop(dummyProp1)
 # Add the operations to the classes
 class_.add_supported_op(op1)
