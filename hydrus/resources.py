@@ -54,10 +54,7 @@ from hydrus.helpers import (
     check_writeable_props,
     check_required_props,
     add_iri_template,
-    finalize_response,
-    send_sync_update,
-    get_link_props,
-    get_link_props_for_multiple_objects)
+    finalize_response)
 from hydrus.utils import (
     get_session,
     get_doc,
@@ -65,7 +62,6 @@ from hydrus.utils import (
     get_hydrus_server_url,
     get_page_size,
     get_pagination)
-from hydrus.socketio_factory import socketio
 
 
 class Index(Resource):
@@ -146,30 +142,20 @@ class Item(Resource):
         if checkClassOp(class_type, "POST") and check_writeable_props(class_type, object_):
             # Check if class_type supports POST operation
             obj_type = getType(class_type, "POST")
-            link_props, link_type_check = get_link_props(class_type, object_)
             # Load new object and type
             if validObject(object_) and object_["@type"] == obj_type and check_required_props(
-                    class_type, object_) and link_type_check:
+                    class_type, object_):
                 try:
                     # Update the right ID if the object is valid and matches
                     # type of Item
                     object_id = crud.update(
                         object_=object_,
                         id_=id_,
-                        link_props=link_props,
                         type_=object_["@type"],
                         session=get_session(),
                         api_name=get_api_name())
-                    method = "POST"
-                    resource_url = "{}{}/{}/{}".format(
-                            get_hydrus_server_url(), get_api_name(), path, object_id)
-                    last_job_id = crud.get_last_modification_job_id(session=get_session())
-                    new_job_id = crud.insert_modification_record(method, resource_url,
-                                                                 session=get_session())
-                    send_sync_update(socketio=socketio, new_job_id=new_job_id,
-                                     last_job_id=last_job_id, method=method,
-                                     resource_url=resource_url)
-                    headers_ = [{"Location": resource_url}]
+                    headers_ = [{"Location": "{}{}/{}/{}".format(
+                            get_hydrus_server_url(), get_api_name(), path, object_id)}]
                     status_description = "Object with ID {} successfully updated".format(object_id)
                     status = HydraStatus(code=200, title="Object updated", desc=status_description)
                     return set_response_headers(jsonify(status.generate()), headers=headers_)
@@ -199,16 +185,14 @@ class Item(Resource):
             # Check if class_type supports PUT operation
             object_ = json.loads(request.data.decode('utf-8'))
             obj_type = getType(class_type, "PUT")
-            link_props, link_type_check = get_link_props(class_type, object_)
             # Load new object and type
             if validObject(object_) and object_["@type"] == obj_type and check_required_props(
-                    class_type, object_) and link_type_check:
+                    class_type, object_):
                 try:
                     # Add the object with given ID
-                    object_id = crud.insert(object_=object_, id_=id_,
-                                            link_props=link_props, session=get_session())
+                    object_id = crud.insert(object_=object_, id_=id_, session=get_session())
                     headers_ = [{"Location": "{}{}/{}/{}".format(
-                        get_hydrus_server_url(), get_api_name(), path, object_id)}]
+                            get_hydrus_server_url(), get_api_name(), path, object_id)}]
                     status_description = "Object with ID {} successfully added".format(object_id)
                     status = HydraStatus(code=201, title="Object successfully added.",
                                          desc=status_description)
@@ -237,17 +221,8 @@ class Item(Resource):
             try:
                 # Delete the Item with ID == id_
                 crud.delete(id_, class_type, session=get_session())
-                method = "DELETE"
-                resource_url = "{}{}/{}/{}".format(
-                    get_hydrus_server_url(), get_api_name(), path, id_)
-                last_job_id = crud.get_last_modification_job_id(session=get_session())
-                new_job_id = crud.insert_modification_record(method, resource_url,
-                                                             session=get_session())
-                send_sync_update(socketio=socketio, new_job_id=new_job_id,
-                                 last_job_id=last_job_id, method=method,
-                                 resource_url=resource_url)
                 status_description = "Object with ID {} successfully deleted".format(id_)
-                status = HydraStatus(code=200, title="Object successfully deleted.",
+                status = HydraStatus(code=200, title="Object successfully created.",
                                      desc=status_description)
                 return set_response_headers(jsonify(status.generate()))
 
@@ -369,12 +344,10 @@ class ItemCollection(Resource):
             ).collections:
                 # If path is in parsed_classes but is not a collection
                 obj_type = getType(path, "PUT")
-                link_props, link_type_check = get_link_props(obj_type, object_)
                 if object_["@type"] == obj_type and validObject(object_) and check_required_props(
-                        obj_type, object_) and link_type_check:
+                        obj_type, object_):
                     try:
-                        object_id = crud.insert(object_=object_, link_props=link_props,
-                                                session=get_session())
+                        object_id = crud.insert(object_=object_, session=get_session())
                         headers_ = [{"Location": "{}{}/{}/".format(
                                 get_hydrus_server_url(), get_api_name(), path)}]
                         status = HydraStatus(code=201, title="Object successfully added")
@@ -408,26 +381,16 @@ class ItemCollection(Resource):
             if path in get_doc().parsed_classes and "{}Collection".format(path) not in get_doc(
             ).collections:
                 obj_type = getType(path, "POST")
-                link_props, link_type_check = get_link_props(obj_type, object_)
                 if check_writeable_props(obj_type, object_):
                     if object_["@type"] == obj_type and check_required_props(
-                            obj_type, object_) and validObject(object_) and link_type_check:
+                            obj_type, object_) and validObject(object_):
                         try:
                             crud.update_single(
                                 object_=object_,
                                 session=get_session(),
                                 api_name=get_api_name(),
-                                link_props=link_props,
                                 path=path)
-                            method = "POST"
-                            resource_url = "{}{}/{}".format(
-                                get_hydrus_server_url(), get_api_name(), path)
-                            last_job_id = crud.get_last_modification_job_id(session=get_session())
-                            new_job_id = crud.insert_modification_record(method, resource_url,
-                                                                         session=get_session())
-                            send_sync_update(socketio=socketio, new_job_id=new_job_id,
-                                             last_job_id=last_job_id, method=method,
-                                             resource_url=resource_url)
+
                             headers_ = [
                                 {"Location": "{}/{}/".format(
                                     get_hydrus_server_url(), get_api_name(), path)}]
@@ -467,15 +430,6 @@ class ItemCollection(Resource):
             try:
                 class_type = get_doc().parsed_classes[path]['class'].title
                 crud.delete_single(class_type, session=get_session())
-                method = "DELETE"
-                resource_url = "{}{}/{}".format(
-                    get_hydrus_server_url(), get_api_name(), path)
-                last_job_id = crud.get_last_modification_job_id(session=get_session())
-                new_job_id = crud.insert_modification_record(method, resource_url,
-                                                             session=get_session())
-                send_sync_update(socketio=socketio, new_job_id=new_job_id,
-                                 last_job_id=last_job_id, method=method,
-                                 resource_url=resource_url)
                 status = HydraStatus(code=200, title="Object successfully added")
                 return set_response_headers(jsonify(status.generate()))
             except (ClassNotFound, InstanceNotFound) as e:
@@ -512,9 +466,7 @@ class Items(Resource):
                     if not check_required_props(obj_type, obj):
                         incomplete_objects.append(obj)
                         object_.remove(obj)
-                link_props_list, link_type_check = get_link_props_for_multiple_objects(obj_type,
-                                                                                       object_)
-                if validObjectList(object_) and link_type_check:
+                if validObjectList(object_):
                     type_result = type_match(object_, obj_type)
                     # If Item in request's JSON is a valid object
                     # ie. @type is one of the keys in object_
@@ -524,8 +476,7 @@ class Items(Resource):
                         try:
                             # Insert object and return location in Header
                             object_id = crud.insert_multiple(
-                                objects_=object_, session=get_session(), id_=int_list,
-                                link_props_list=link_props_list)
+                                objects_=object_, session=get_session(), id_=int_list)
                             headers_ = [{"Location": "{}{}/{}/{}".format(
                                     get_hydrus_server_url(), get_api_name(), path, object_id)}]
                             if len(incomplete_objects) > 0:
@@ -570,21 +521,8 @@ class Items(Resource):
             try:
                 # Delete the Item with ID == id_
                 crud.delete_multiple(int_list, class_type, session=get_session())
-                method = "DELETE"
-                path_url = "{}{}/{}".format(
-                    get_hydrus_server_url(), get_api_name(), path)
-                last_job_id = crud.get_last_modification_job_id(session=get_session())
-                id_list = int_list.split(',')
-                for item in id_list:
-                    resource_url = path_url + item
-                    new_job_id = crud.insert_modification_record(method, resource_url,
-                                                                 session=get_session())
-                    send_sync_update(socketio=socketio, new_job_id=new_job_id,
-                                     last_job_id=last_job_id, method=method,
-                                     resource_url=resource_url)
-                    last_job_id = new_job_id
                 status_description = "Objects with ID {} successfully deleted".format(
-                    id_list)
+                    int_list.split(','))
                 status = HydraStatus(code=200, title="Objects successfully deleted",
                                      desc=status_description)
                 return set_response_headers(jsonify(status.generate()))

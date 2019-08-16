@@ -6,11 +6,9 @@ import json
 import re
 import uuid
 from hydrus.app_factory import app_factory
-from hydrus.socketio_factory import create_socket
 from hydrus.utils import set_session, set_doc, set_api_name, set_page_size
 from hydrus.data import doc_parse, crud
 from hydra_python_core import doc_maker
-from hydra_python_core.doc_writer import HydraLink
 from hydrus.samples import doc_writer_sample
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
@@ -26,8 +24,6 @@ def gen_dummy_object(class_, doc):
         for prop in doc.parsed_classes[class_]["class"].supportedProperty:
             # Skip properties which are not writeable
             if prop.write is False:
-                continue
-            if isinstance(prop.prop, HydraLink):
                 continue
             if "vocab:" in prop.prop:
                 prop_class = prop.prop.replace("vocab:", "")
@@ -55,7 +51,6 @@ class ViewsTestCase(unittest.TestCase):
         self.HYDRUS_SERVER_URL = "http://hydrus.com/"
 
         self.app = app_factory(self.API_NAME)
-        self.socketio = create_socket(self.app, self.session)
         print("going for create doc")
 
         self.doc = doc_maker.create_doc(
@@ -95,28 +90,11 @@ class ViewsTestCase(unittest.TestCase):
 
     def setUp(self):
         for class_ in self.doc.parsed_classes:
-            link_props = {}
             dummy_obj = gen_dummy_object(class_, self.doc)
-            for supportedProp in self.doc.parsed_classes[class_]['class'].supportedProperty:
-                if isinstance(supportedProp.prop, HydraLink):
-                    class_name = supportedProp.prop.range.replace("vocab:", "")
-                    for collection_path in self.doc.collections:
-                        coll_class = self.doc.collections[
-                            collection_path]['collection'].class_.title
-                        if class_name == coll_class:
-                            id_ = str(uuid.uuid4())
-                            crud.insert(
-                                gen_dummy_object(class_name, self.doc),
-                                id_=id_,
-                                session=self.session)
-                            link_props[supportedProp.title] = id_
-                            dummy_obj[supportedProp.title] = "{}/{}/{}".format(
-                                self.API_NAME, collection_path, id_)
             crud.insert(
                 dummy_obj,
                 id_=str(
                     uuid.uuid4()),
-                link_props=link_props,
                 session=self.session)
             # If it's a collection class then add an extra object so
             # we can test pagination thoroughly.
@@ -527,17 +505,21 @@ class ViewsTestCase(unittest.TestCase):
                         assert "@context" in response_get_data
                         assert "@id" in response_get_data
                         assert "@type" in response_get_data
+                        # server should not return nested objects in the same
+                        # response
+                        for prop in response_get_data:
+                            assert "@type" not in response_get_data[prop]
                         class_props = [x for x in class_.supportedProperty]
+                        print(endpoints[class_name])
+                        print(response_get_data)
                         for prop_name in class_props:
-                            if isinstance(prop_name.prop, HydraLink) and prop_name.read is True:
+                            if "vocab:" in prop_name.prop and prop_name.read is True:
                                 nested_obj_resp = self.client.get(
                                     response_get_data[prop_name.title])
                                 assert nested_obj_resp.status_code == 200
                                 nested_obj = json.loads(
                                     nested_obj_resp.data.decode('utf-8'))
                                 assert "@type" in nested_obj
-                            elif "vocab:" in prop_name.prop:
-                                assert "@type" in response_get_data[prop_name.title]
 
     def test_required_props(self):
         index = self.client.get("/{}".format(self.API_NAME))
@@ -687,187 +669,6 @@ class ViewsTestCase(unittest.TestCase):
                     response_context.data.decode('utf-8'))
                 assert response_context.status_code == 200
                 assert "@context" in response_context_data
-
-
-class SocketTestCase(unittest.TestCase):
-    """Test Class for socket events and operations."""
-
-    @classmethod
-    def setUpClass(self):
-        """Database setup before the tests."""
-        print("Creating a temporary database...")
-        engine = create_engine('sqlite:///:memory:')
-        Base.metadata.create_all(engine)
-        session = scoped_session(sessionmaker(bind=engine))
-
-        self.session = session
-        self.API_NAME = "demoapi"
-        self.page_size = 1
-        self.HYDRUS_SERVER_URL = "http://hydrus.com/"
-
-        self.app = app_factory(self.API_NAME)
-        self.socketio = create_socket(self.app, self.session)
-        print("going for create doc")
-
-        self.doc = doc_maker.create_doc(
-            doc_writer_sample.api_doc.generate(),
-            self.HYDRUS_SERVER_URL,
-            self.API_NAME)
-        test_classes = doc_parse.get_classes(self.doc.generate())
-        test_properties = doc_parse.get_all_properties(test_classes)
-        doc_parse.insert_classes(test_classes, self.session)
-        doc_parse.insert_properties(test_properties, self.session)
-
-        print("Classes and properties added successfully.")
-
-        print("Setting up hydrus utilities... ")
-        self.api_name_util = set_api_name(self.app, self.API_NAME)
-        self.session_util = set_session(self.app, self.session)
-        self.doc_util = set_doc(self.app, self.doc)
-        self.page_size_util = set_page_size(self.app, self.page_size)
-        self.client = self.app.test_client()
-        self.socketio_client = self.socketio.test_client(self.app, namespace='/sync')
-
-        print("Creating utilities context... ")
-        self.api_name_util.__enter__()
-        self.session_util.__enter__()
-        self.doc_util.__enter__()
-        self.client.__enter__()
-
-        print("Setup done, running tests...")
-
-    @classmethod
-    def tearDownClass(self):
-        """Tear down temporary database and exit utilities"""
-        self.client.__exit__(None, None, None)
-        self.doc_util.__exit__(None, None, None)
-        self.session_util.__exit__(None, None, None)
-        self.api_name_util.__exit__(None, None, None)
-        self.session.close()
-
-    def setUp(self):
-        for class_ in self.doc.parsed_classes:
-            dummy_obj = gen_dummy_object(class_, self.doc)
-            crud.insert(
-                dummy_obj,
-                id_=str(
-                    uuid.uuid4()),
-                session=self.session)
-            # If it's a collection class then add an extra object so
-            # we can test pagination thoroughly.
-            if class_ in self.doc.collections:
-                crud.insert(
-                    dummy_obj,
-                    id_=str(
-                        uuid.uuid4()),
-                    session=self.session)
-        # Add two dummy modification records
-        crud.insert_modification_record(method="POST",
-                                        resource_url="", session=self.session)
-        crud.insert_modification_record(method="DELETE",
-                                        resource_url="", session=self.session)
-
-    def test_connect(self):
-        """Test connect event."""
-        socket_client = self.socketio.test_client(self.app, namespace='/sync')
-        data = socket_client.get_received('/sync')
-        assert len(data) > 0
-        event = data[0]
-        assert event['name'] == 'connect'
-        last_job_id = crud.get_last_modification_job_id(self.session)
-        assert event['args'][0]['last_job_id'] == last_job_id
-        socket_client.disconnect(namespace='/sync')
-
-    def test_reconnect(self):
-        """Test reconnect event."""
-        socket_client = self.socketio.test_client(self.app, namespace='/sync')
-        # Flush data of first connect event
-        socket_client.get_received('/sync')
-        # Client reconnects by emitting 'reconnect' event.
-        socket_client.emit('reconnect', namespace='/sync')
-        # Get update received on reconnecting to the server
-        data = socket_client.get_received('/sync')
-        assert len(data) > 0
-        # Extract the event information
-        event = data[0]
-        assert event['name'] == 'connect'
-        last_job_id = crud.get_last_modification_job_id(self.session)
-        # Check last job id with last_job_id received by client in the update.
-        assert event['args'][0]['last_job_id'] == last_job_id
-        socket_client.disconnect(namespace='/sync')
-
-    def test_modification_table_diff(self):
-        """Test 'modification-table-diff' events."""
-        # Flush old received data at socket client
-        self.socketio_client.get_received('/sync')
-        # Set last_job_id as the agent_job_id
-        agent_job_id = crud.get_last_modification_job_id(self.session)
-        # Add an extra modification record newer than the agent_job_id
-        new_latest_job_id = crud.insert_modification_record(method="POST",
-                                                            resource_url="", session=self.session)
-        self.socketio_client.emit('get_modification_table_diff',
-                                  {'agent_job_id': agent_job_id}, namespace='/sync')
-        data = self.socketio_client.get_received('/sync')
-        assert len(data) > 0
-        event = data[0]
-        assert event['name'] == 'modification_table_diff'
-        # Check received event contains data of newly added modification record.
-        assert event['args'][0][0]['method'] == "POST"
-        assert event['args'][0][0]['resource_url'] == ""
-        assert event['args'][0][0]['job_id'] == new_latest_job_id
-
-    def test_socketio_POST_updates(self):
-        """Test 'update' event emitted by socketio for POST operations."""
-        index = self.client.get("/{}".format(self.API_NAME))
-        assert index.status_code == 200
-        endpoints = json.loads(index.data.decode('utf-8'))
-        for endpoint in endpoints:
-            if endpoint not in ["@context", "@id", "@type"]:
-                class_name = "/".join(endpoints[endpoint].split(
-                    "/{}/".format(self.API_NAME))[1:])
-                if class_name not in self.doc.collections:
-                    class_ = self.doc.parsed_classes[class_name]["class"]
-                    class_methods = [
-                        x.method for x in class_.supportedOperation]
-                    if "POST" in class_methods:
-                        dummy_object = gen_dummy_object(class_.title, self.doc)
-                        # Flush old socketio updates
-                        self.socketio_client.get_received('/sync')
-                        post_response = self.client.post(
-                            endpoints[class_name], data=json.dumps(dummy_object))
-                        assert post_response.status_code == 200
-                        # Get new socketio update
-                        update = self.socketio_client.get_received('/sync')
-                        assert len(update) != 0
-                        assert update[0]['args'][0]['method'] == "POST"
-                        resource_name = update[0]['args'][0]['resource_url'].split('/')[-1]
-                        assert resource_name == endpoints[class_name].split('/')[-1]
-
-    def test_socketio_DELETE_updates(self):
-        """Test 'update' event emitted by socketio for DELETE operations."""
-        index = self.client.get("/{}".format(self.API_NAME))
-        assert index.status_code == 200
-        endpoints = json.loads(index.data.decode('utf-8'))
-        for endpoint in endpoints:
-            if endpoint not in ["@context", "@id", "@type"]:
-                class_name = "/".join(endpoints[endpoint].split(
-                    "/{}/".format(self.API_NAME))[1:])
-                if class_name not in self.doc.collections:
-                    class_ = self.doc.parsed_classes[class_name]["class"]
-                    class_methods = [
-                        x.method for x in class_.supportedOperation]
-                    if "DELETE" in class_methods:
-                        # Flush old socketio updates
-                        self.socketio_client.get_received('/sync')
-                        delete_response = self.client.delete(
-                            endpoints[class_name])
-                        assert delete_response.status_code == 200
-                        # Get new update event
-                        update = self.socketio_client.get_received('/sync')
-                        assert len(update) != 0
-                        assert update[0]['args'][0]['method'] == 'DELETE'
-                        resource_name = update[0]['args'][0]['resource_url'].split('/')[-1]
-                        assert resource_name == endpoints[class_name].split('/')[-1]
 
 
 if __name__ == '__main__':
