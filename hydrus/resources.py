@@ -110,8 +110,10 @@ class Item(Resource):
             return auth_response
 
         class_type = get_doc().collections[path]["collection"].class_.title
+        # Get path of the collection-class
+        class_path = get_doc().collections[path]["collection"].class_.path
 
-        if checkClassOp(class_type, "GET"):
+        if checkClassOp(class_path, "GET"):
             # Check if class_type supports GET operation
             try:
                 # Try getting the Item based on ID and Class type
@@ -121,7 +123,7 @@ class Item(Resource):
                     api_name=get_api_name(),
                     session=get_session())
 
-                response = finalize_response(class_type, response)
+                response = finalize_response(class_path, response)
                 return set_response_headers(
                     jsonify(hydrafy(response, path=path)))
 
@@ -142,14 +144,16 @@ class Item(Resource):
             return auth_response
 
         class_type = get_doc().collections[path]["collection"].class_.title
+        # Get path of the collection-class
+        class_path = get_doc().collections[path]["collection"].class_.path
         object_ = json.loads(request.data.decode('utf-8'))
-        if checkClassOp(class_type, "POST") and check_writeable_props(class_type, object_):
+        if checkClassOp(class_path, "POST") and check_writeable_props(class_path, object_):
             # Check if class_type supports POST operation
-            obj_type = getType(class_type, "POST")
-            link_props, link_type_check = get_link_props(class_type, object_)
+            obj_type = getType(class_path, "POST")
+            link_props, link_type_check = get_link_props(class_path, object_)
             # Load new object and type
             if validObject(object_) and object_["@type"] == obj_type and check_required_props(
-                    class_type, object_) and link_type_check:
+                    class_path, object_) and link_type_check:
                 try:
                     # Update the right ID if the object is valid and matches
                     # type of Item
@@ -195,14 +199,16 @@ class Item(Resource):
             return auth_response
 
         class_type = get_doc().collections[path]["collection"].class_.title
-        if checkClassOp(class_type, "PUT"):
+        # Get path of the collection-class
+        class_path = get_doc().collections[path]["collection"].class_.path
+        if checkClassOp(class_path, "PUT"):
             # Check if class_type supports PUT operation
             object_ = json.loads(request.data.decode('utf-8'))
-            obj_type = getType(class_type, "PUT")
-            link_props, link_type_check = get_link_props(class_type, object_)
+            obj_type = getType(class_path, "PUT")
+            link_props, link_type_check = get_link_props(class_path, object_)
             # Load new object and type
             if validObject(object_) and object_["@type"] == obj_type and check_required_props(
-                    class_type, object_) and link_type_check:
+                    class_path, object_) and link_type_check:
                 try:
                     # Add the object with given ID
                     object_id = crud.insert(object_=object_, id_=id_,
@@ -231,8 +237,10 @@ class Item(Resource):
             return auth_response
 
         class_type = get_doc().collections[path]["collection"].class_.title
+        # Get path of the collection-class
+        class_path = get_doc().collections[path]["collection"].class_.path
 
-        if checkClassOp(class_type, "DELETE"):
+        if checkClassOp(class_path, "DELETE"):
             # Check if class_type supports PUT operation
             try:
                 # Delete the Item with ID == id_
@@ -277,6 +285,8 @@ class ItemCollection(Resource):
             # If endpoint and GET method is supported in the API
             # and collection name in document's collections
             collection = get_doc().collections[path]["collection"]
+            # get path of the collection class
+            class_path = collection.class_.path
             try:
                 # Get collection details from the database
                 if get_pagination():
@@ -291,8 +301,8 @@ class ItemCollection(Resource):
                         get_api_name(), collection.class_.title, session=get_session(),
                         paginate=False, path=path, search_params=search_params)
 
-                response["search"] = add_iri_template(class_type=collection.class_.title,
-                                                      API_NAME=get_api_name(), path=path)
+                response["search"] = add_iri_template(path=class_path,
+                                                      API_NAME=get_api_name())
 
                 return set_response_headers(jsonify(hydrafy(response, path=path)))
 
@@ -310,7 +320,7 @@ class ItemCollection(Resource):
                     api_name=get_api_name(),
                     session=get_session(),
                     path=path)
-                response = finalize_response(class_type, response)
+                response = finalize_response(path, response)
                 return set_response_headers(jsonify(hydrafy(response, path=path)))
 
             except (ClassNotFound, InstanceNotFound) as e:
@@ -339,9 +349,11 @@ class ItemCollection(Resource):
 
                 # title of HydraClass object corresponding to collection
                 obj_type = collection.class_.title
+                # get path of the collection class
+                class_path = collection.class_.path
 
                 if validObject(object_) and object_["@type"] == obj_type and check_required_props(
-                        obj_type, object_):
+                        class_path, object_):
                     # If Item in request's JSON is a valid object ie. @type is a key in object_
                     # and the right Item type is being added to the collection
                     try:
@@ -369,9 +381,9 @@ class ItemCollection(Resource):
             ).collections:
                 # If path is in parsed_classes but is not a collection
                 obj_type = getType(path, "PUT")
-                link_props, link_type_check = get_link_props(obj_type, object_)
+                link_props, link_type_check = get_link_props(path, object_)
                 if object_["@type"] == obj_type and validObject(object_) and check_required_props(
-                        obj_type, object_) and link_type_check:
+                        path, object_) and link_type_check:
                     try:
                         object_id = crud.insert(object_=object_, link_props=link_props,
                                                 session=get_session())
@@ -408,10 +420,10 @@ class ItemCollection(Resource):
             if path in get_doc().parsed_classes and "{}Collection".format(path) not in get_doc(
             ).collections:
                 obj_type = getType(path, "POST")
-                link_props, link_type_check = get_link_props(obj_type, object_)
-                if check_writeable_props(obj_type, object_):
+                link_props, link_type_check = get_link_props(path, object_)
+                if check_writeable_props(path, object_):
                     if object_["@type"] == obj_type and check_required_props(
-                            obj_type, object_) and validObject(object_) and link_type_check:
+                            path, object_) and validObject(object_) and link_type_check:
                         try:
                             crud.update_single(
                                 object_=object_,
@@ -507,12 +519,14 @@ class Items(Resource):
                 collection = get_doc().collections[path]["collection"]
                 # title of HydraClass object corresponding to collection
                 obj_type = collection.class_.title
+                # get path of the collection class
+                class_path = collection.class_.path
                 incomplete_objects = list()
                 for obj in object_:
-                    if not check_required_props(obj_type, obj):
+                    if not check_required_props(class_path, obj):
                         incomplete_objects.append(obj)
                         object_.remove(obj)
-                link_props_list, link_type_check = get_link_props_for_multiple_objects(obj_type,
+                link_props_list, link_type_check = get_link_props_for_multiple_objects(class_path,
                                                                                        object_)
                 if validObjectList(object_) and link_type_check:
                     type_result = type_match(object_, obj_type)

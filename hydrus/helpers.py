@@ -100,39 +100,43 @@ def getType(class_path: str, method: str) -> Any:
     # 'vocab:' not everything will be returned.
 
 
-def checkClassOp(class_type: str, method: str) -> bool:
-    """Check if the Class supports the operation."""
+def checkClassOp(path: str, method: str) -> bool:
+    """Check if the Class supports the operation.
+    :param path: Path of the collection or non-collection class.
+    :param method: Method name.
+    :return: True if the method is defined, false otherwise.
+    """
     for supportedOp in get_doc(
-    ).parsed_classes[class_type]["class"].supportedOperation:
+    ).parsed_classes[path]["class"].supportedOperation:
         if supportedOp.method == method:
             return True
     return False
 
 
-def check_required_props(class_type: str, obj: Dict[str, Any]) -> bool:
+def check_required_props(path: str, obj: Dict[str, Any]) -> bool:
     """
     Check if the object contains all required properties.
-    :param class_type: class name of the object
+    :param path: Path of the collection or non-collection class.
     :param obj: object under check
     :return: True if the object contains all required properties
              False otherwise.
     """
-    for prop in get_doc().parsed_classes[class_type]["class"].supportedProperty:
+    for prop in get_doc().parsed_classes[path]["class"].supportedProperty:
         if prop.required:
             if prop.title not in obj:
                 return False
     return True
 
 
-def check_writeable_props(class_type: str, obj: Dict[str, Any]) -> bool:
+def check_writeable_props(path: str, obj: Dict[str, Any]) -> bool:
     """
     Check that the object only contains writeable fields(properties).
-    :param class_type: class name of the object
+    :param path: Path of the collection or non-collection class.
     :param obj: object under check
     :return: True if the object only contains writeable properties
              False otherwise.
     """
-    for prop in get_doc().parsed_classes[class_type]["class"].supportedProperty:
+    for prop in get_doc().parsed_classes[path]["class"].supportedProperty:
         if prop.write is False:
             if prop.title in obj:
                 return False
@@ -150,20 +154,21 @@ def get_nested_class_path(class_type: str) -> Tuple[str, bool]:
     for collection in get_doc().collections:
         if get_doc().collections[collection]["collection"].class_.title == class_type:
             return get_doc().collections[collection]["collection"].path, True
+    for class_path in get_doc().parsed_classes:
+        if class_type == get_doc().parsed_classes[class_path]["class"].title:
+            return class_path, False
 
-    return get_doc().parsed_classes[class_type]["class"].path, False
 
-
-def finalize_response(class_type: str, obj: Dict[str, Any]) -> Dict[str, Any]:
+def finalize_response(path: str, obj: Dict[str, Any]) -> Dict[str, Any]:
     """
     finalize response objects by removing properties which are not readable and correcting path
     of nested objects.
-    :param class_type: class name of the object
+    :param path: Path of the collection or non-collection class.
     :param obj: object being finalized
     :return: An object not containing any `readable=False` properties and having proper path
              of any nested object's url.
     """
-    for prop in get_doc().parsed_classes[class_type]["class"].supportedProperty:
+    for prop in get_doc().parsed_classes[path]["class"].supportedProperty:
         # Skip not required properties which are not inserted yet.
         if not prop.required and prop.title not in obj:
             continue
@@ -185,11 +190,17 @@ def finalize_response(class_type: str, obj: Dict[str, Any]) -> Dict[str, Any]:
     return obj
 
 
-def add_iri_template(class_type: str, API_NAME: str, path: str) -> Dict[str, Any]:
+def add_iri_template(path: str, API_NAME: str) -> Dict[str, Any]:
+    """
+    Creates an IriTemplate.
+    :param path: Path of the collection or the non-collection class.
+    :param API_NAME: Name of API.
+    :return: Hydra IriTemplate .
+    """
     template_mappings = list()
     template = "/{}/{}(".format(API_NAME, path)
     first = True
-    template, template_mappings = generate_iri_mappings(class_type, template,
+    template, template_mappings = generate_iri_mappings(path, template,
                                                         template_mapping=template_mappings,)
 
     template, template_mappings = add_pagination_iri_mappings(template=template,
@@ -197,11 +208,11 @@ def add_iri_template(class_type: str, API_NAME: str, path: str) -> Dict[str, Any
     return HydraIriTemplate(template=template, iri_mapping=template_mappings).generate()
 
 
-def generate_iri_mappings(class_type: str, template: str, skip_nested: bool = False,
+def generate_iri_mappings(path: str, template: str, skip_nested: bool = False,
                           template_mapping: List[IriTemplateMapping] = [],
                           parent_prop_name: str = None) -> Tuple[str, List[IriTemplateMapping]]:
     """Generate iri mappings to add to IriTemplate
-    :param class_type: class name objects contained in collection.
+    :param path: Path of the collection or non-collection class.
     :param template: IriTemplate string.
     :param skip_nested: To only add properties of the class_type class or
                         its immediate children.
@@ -212,7 +223,7 @@ def generate_iri_mappings(class_type: str, template: str, skip_nested: bool = Fa
              to keep adding delimiter or not.
     """
     for supportedProp in get_doc(
-    ).parsed_classes[class_type]["class"].supportedProperty:
+    ).parsed_classes[path]["class"].supportedProperty:
         prop_class = supportedProp.prop
         nested_class_prop = False
         if isinstance(supportedProp.prop, HydraLink):
@@ -277,17 +288,17 @@ def send_sync_update(socketio, new_job_id: int, last_job_id: str,
     socketio.emit('update', data, namespace="/sync")
 
 
-def get_link_props(class_type: str, object_) -> Tuple[Dict[str, Any], bool]:
+def get_link_props(path: str, object_) -> Tuple[Dict[str, Any], bool]:
     """
     Get dict of all hydra_link properties of a class.
-    :param class_type: Type of the class.
+    :param path: Path of the collection or non-collection class.
     :param object_: Object being inserted/updated.
     :return: Tuple with one elements as Dict with property_title as key and
              instance_id(for collection class) or class_name(for non-collection class) as value,
              second element represents boolean representing validity of the link.
     """
     link_props = {}
-    for supportedProp in get_doc().parsed_classes[class_type]['class'].supportedProperty:
+    for supportedProp in get_doc().parsed_classes[path]['class'].supportedProperty:
         if isinstance(supportedProp.prop, HydraLink) and supportedProp.title in object_:
             prop_range = supportedProp.prop.range
             range_class_name = prop_range.replace("vocab:", "")
@@ -309,18 +320,18 @@ def get_link_props(class_type: str, object_) -> Tuple[Dict[str, Any], bool]:
     return link_props, True
 
 
-def get_link_props_for_multiple_objects(class_type: str,
+def get_link_props_for_multiple_objects(path: str,
                                         object_list: List[Dict[str, Any]]
                                         ) -> Tuple[List[Dict[str, Any]], bool]:
     """
     Get link_props of multiple objects.
-    :param class_type: Class type of objects.
+    :param path: Path of the collection or non-collection class.
     :param object_list: List of objects being inserted.
     :return: List of link properties processed with the help of get_link_props.
     """
     link_prop_list = list()
     for object_ in object_list:
-        link_props, type_check = get_link_props(class_type, object_)
+        link_props, type_check = get_link_props(path, object_)
         if type_check is True:
             link_prop_list.append(link_props)
         else:
