@@ -19,22 +19,27 @@ from click.testing import CliRunner
 from cli import startserver
 
 
-def gen_dummy_object(class_, doc):
-    """Create a dummy object based on the definitions in the API Doc."""
+def gen_dummy_object(class_title, doc):
+    """Create a dummy object based on the definitions in the API Doc.
+    :param class_title: Title of the class whose object is being created.
+    :param doc: ApiDoc.
+    :return: A dummy object of class `class_title`.
+    """
     object_ = {
-        "@type": class_
+        "@type": class_title
     }
-    if class_ in doc.parsed_classes:
-        for prop in doc.parsed_classes[class_]["class"].supportedProperty:
-            if isinstance(prop.prop, HydraLink):
-                continue
-            if "vocab:" in prop.prop:
-                prop_class = prop.prop.replace("vocab:", "")
-                object_[prop.title] = gen_dummy_object(prop_class, doc)
-            else:
-                object_[prop.title] = ''.join(random.choice(
-                    string.ascii_uppercase + string.digits) for _ in range(6))
-        return object_
+    for class_path in doc.parsed_classes:
+        if class_title == doc.parsed_classes[class_path]["class"].title:
+            for prop in doc.parsed_classes[class_path]["class"].supportedProperty:
+                if isinstance(prop.prop, HydraLink) or prop.write is False:
+                    continue
+                if "vocab:" in prop.prop:
+                    prop_class = prop.prop.replace("vocab:", "")
+                    object_[prop.title] = gen_dummy_object(prop_class, doc)
+                else:
+                    object_[prop.title] = ''.join(random.choice(
+                        string.ascii_uppercase + string.digits) for _ in range(6))
+            return object_
 
 
 class CliTests(unittest.TestCase):
@@ -92,7 +97,8 @@ class CliTests(unittest.TestCase):
     def setUp(self):
         for class_ in self.doc.parsed_classes:
             if class_ not in self.doc.collections:
-                dummy_obj = gen_dummy_object(class_, self.doc)
+                class_type = self.doc.parsed_classes[class_]['class'].title
+                dummy_obj = gen_dummy_object(class_type, self.doc)
                 crud.insert(
                     dummy_obj,
                     id_=str(

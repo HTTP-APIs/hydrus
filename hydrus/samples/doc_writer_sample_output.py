@@ -53,14 +53,6 @@ doc = {
     "possibleStatus": [],
     "supportedClass": [
         {
-            "@id": "vocab:extraClass",
-            "@type": "hydra:Class",
-            "description": "Class without any explicit methods",
-            "supportedOperation": [],
-            "supportedProperty": [],
-            "title": "extraClass"
-        },
-        {
             "@id": "vocab:anotherSingleClass",
             "@type": "hydra:Class",
             "description": "An another non collection class",
@@ -217,6 +209,14 @@ doc = {
                 }
             ],
             "title": "singleClass"
+        },
+        {
+            "@id": "vocab:extraClass",
+            "@type": "hydra:Class",
+            "description": "Class without any explicit methods",
+            "supportedOperation": [],
+            "supportedProperty": [],
+            "title": "extraClass"
         },
         {
             "@id": "vocab:dummyClass",
@@ -503,7 +503,7 @@ doc = {
                     "hydra:description": "The singleClass Class",
                     "hydra:title": "singleclass",
                     "property": {
-                        "@id": "vocab:EntryPoint/singleClass",
+                        "@id": "vocab:EntryPoint/sc_path",
                         "@type": "hydra:Link",
                         "description": "A non collection class",
                         "domain": "vocab:EntryPoint",

@@ -17,25 +17,27 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 from hydrus.data.db_models import Base
 
 
-def gen_dummy_object(class_, doc):
-    """Create a dummy object based on the definitions in the API Doc."""
+def gen_dummy_object(class_title, doc):
+    """Create a dummy object based on the definitions in the API Doc.
+    :param class_title: Title of the class whose object is being created.
+    :param doc: ApiDoc.
+    :return: A dummy object of class `class_title`.
+    """
     object_ = {
-        "@type": class_
+        "@type": class_title
     }
-    if class_ in doc.parsed_classes:
-        for prop in doc.parsed_classes[class_]["class"].supportedProperty:
-            # Skip properties which are not writeable
-            if prop.write is False:
-                continue
-            if isinstance(prop.prop, HydraLink):
-                continue
-            if "vocab:" in prop.prop:
-                prop_class = prop.prop.replace("vocab:", "")
-                object_[prop.title] = gen_dummy_object(prop_class, doc)
-            else:
-                object_[prop.title] = ''.join(random.choice(
-                    string.ascii_uppercase + string.digits) for _ in range(6))
-        return object_
+    for class_path in doc.parsed_classes:
+        if class_title == doc.parsed_classes[class_path]["class"].title:
+            for prop in doc.parsed_classes[class_path]["class"].supportedProperty:
+                if isinstance(prop.prop, HydraLink) or prop.write is False:
+                    continue
+                if "vocab:" in prop.prop:
+                    prop_class = prop.prop.replace("vocab:", "")
+                    object_[prop.title] = gen_dummy_object(prop_class, doc)
+                else:
+                    object_[prop.title] = ''.join(random.choice(
+                        string.ascii_uppercase + string.digits) for _ in range(6))
+            return object_
 
 
 class ViewsTestCase(unittest.TestCase):
@@ -96,7 +98,8 @@ class ViewsTestCase(unittest.TestCase):
     def setUp(self):
         for class_ in self.doc.parsed_classes:
             link_props = {}
-            dummy_obj = gen_dummy_object(class_, self.doc)
+            class_title = self.doc.parsed_classes[class_]["class"].title
+            dummy_obj = gen_dummy_object(class_title, self.doc)
             for supportedProp in self.doc.parsed_classes[class_]['class'].supportedProperty:
                 if isinstance(supportedProp.prop, HydraLink):
                     class_name = supportedProp.prop.range.replace("vocab:", "")
@@ -372,7 +375,7 @@ class ViewsTestCase(unittest.TestCase):
                     if "PUT" in class_methods:
                         dummy_object = gen_dummy_object(class_.title, self.doc)
                         put_response = self.client.put(
-                            endpoints[class_name], data=json.dumps(dummy_object))
+                            endpoints[endpoint], data=json.dumps(dummy_object))
                         assert put_response.status_code == 201
 
     def test_endpointClass_POST(self):
@@ -391,7 +394,7 @@ class ViewsTestCase(unittest.TestCase):
                     if "POST" in class_methods:
                         dummy_object = gen_dummy_object(class_.title, self.doc)
                         post_response = self.client.post(
-                            endpoints[class_name], data=json.dumps(dummy_object))
+                            endpoints[endpoint], data=json.dumps(dummy_object))
                         assert post_response.status_code == 200
 
     def test_endpointClass_DELETE(self):
@@ -409,7 +412,7 @@ class ViewsTestCase(unittest.TestCase):
                         x.method for x in class_.supportedOperation]
                     if "DELETE" in class_methods:
                         delete_response = self.client.delete(
-                            endpoints[class_name])
+                            endpoints[endpoint])
                         assert delete_response.status_code == 200
 
     def test_endpointClass_GET(self):
@@ -426,7 +429,7 @@ class ViewsTestCase(unittest.TestCase):
                     class_methods = [
                         x.method for x in class_.supportedOperation]
                     if "GET" in class_methods:
-                        response_get = self.client.get(endpoints[class_name])
+                        response_get = self.client.get(endpoints[endpoint])
                         assert response_get.status_code == 200
                         response_get_data = json.loads(
                             response_get.data.decode('utf-8'))
@@ -520,7 +523,7 @@ class ViewsTestCase(unittest.TestCase):
                     class_methods = [
                         x.method for x in class_.supportedOperation]
                     if "GET" in class_methods:
-                        response_get = self.client.get(endpoints[class_name])
+                        response_get = self.client.get(endpoints[endpoint])
                         assert response_get.status_code == 200
                         response_get_data = json.loads(
                             response_get.data.decode('utf-8'))
@@ -561,7 +564,7 @@ class ViewsTestCase(unittest.TestCase):
                         if required_prop:
                             del dummy_object[required_prop]
                             put_response = self.client.put(
-                                endpoints[class_name], data=json.dumps(dummy_object))
+                                endpoints[endpoint], data=json.dumps(dummy_object))
                             assert put_response.status_code == 400
 
     def test_writeable_props(self):
@@ -580,7 +583,7 @@ class ViewsTestCase(unittest.TestCase):
                         dummy_object = gen_dummy_object(class_.title, self.doc)
                         # Test for writeable properties
                         post_response = self.client.post(
-                            endpoints[class_name], data=json.dumps(dummy_object))
+                            endpoints[endpoint], data=json.dumps(dummy_object))
                         assert post_response.status_code == 200
                         # Test for properties with writeable=False
                         non_writeable_prop = ""
@@ -591,7 +594,7 @@ class ViewsTestCase(unittest.TestCase):
                         if non_writeable_prop != "":
                             dummy_object[non_writeable_prop] = "xyz"
                             post_response = self.client.post(
-                                endpoints[class_name], data=json.dumps(dummy_object))
+                                endpoints[endpoint], data=json.dumps(dummy_object))
                             assert post_response.status_code == 405
 
     def test_readable_props(self):
@@ -614,7 +617,7 @@ class ViewsTestCase(unittest.TestCase):
                                 break
                         if not_readable_prop:
                             get_response = self.client.get(
-                                endpoints[class_name])
+                                endpoints[endpoint])
                             get_response_data = json.loads(
                                 get_response.data.decode('utf-8'))
                             assert not_readable_prop not in get_response_data
@@ -747,7 +750,8 @@ class SocketTestCase(unittest.TestCase):
 
     def setUp(self):
         for class_ in self.doc.parsed_classes:
-            dummy_obj = gen_dummy_object(class_, self.doc)
+            class_title = self.doc.parsed_classes[class_]["class"].title
+            dummy_obj = gen_dummy_object(class_title, self.doc)
             crud.insert(
                 dummy_obj,
                 id_=str(
@@ -834,14 +838,14 @@ class SocketTestCase(unittest.TestCase):
                         # Flush old socketio updates
                         self.socketio_client.get_received('/sync')
                         post_response = self.client.post(
-                            endpoints[class_name], data=json.dumps(dummy_object))
+                            endpoints[endpoint], data=json.dumps(dummy_object))
                         assert post_response.status_code == 200
                         # Get new socketio update
                         update = self.socketio_client.get_received('/sync')
                         assert len(update) != 0
                         assert update[0]['args'][0]['method'] == "POST"
                         resource_name = update[0]['args'][0]['resource_url'].split('/')[-1]
-                        assert resource_name == endpoints[class_name].split('/')[-1]
+                        assert resource_name == endpoints[endpoint].split('/')[-1]
 
     def test_socketio_DELETE_updates(self):
         """Test 'update' event emitted by socketio for DELETE operations."""
@@ -860,14 +864,14 @@ class SocketTestCase(unittest.TestCase):
                         # Flush old socketio updates
                         self.socketio_client.get_received('/sync')
                         delete_response = self.client.delete(
-                            endpoints[class_name])
+                            endpoints[endpoint])
                         assert delete_response.status_code == 200
                         # Get new update event
                         update = self.socketio_client.get_received('/sync')
                         assert len(update) != 0
                         assert update[0]['args'][0]['method'] == 'DELETE'
                         resource_name = update[0]['args'][0]['resource_url'].split('/')[-1]
-                        assert resource_name == endpoints[class_name].split('/')[-1]
+                        assert resource_name == endpoints[endpoint].split('/')[-1]
 
 
 if __name__ == '__main__':
