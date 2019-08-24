@@ -17,22 +17,27 @@ from typing import List
 import string
 
 
-def gen_dummy_object(class_, doc):
-    """Create a dummy object based on the definitions in the API Doc."""
+def gen_dummy_object(class_title, doc):
+    """Create a dummy object based on the definitions in the API Doc.
+    :param class_title: Title of the class whose object is being created.
+    :param doc: ApiDoc.
+    :return: A dummy object of class `class_title`.
+    """
     object_ = {
-        "@type": class_
+        "@type": class_title
     }
-    if class_ in doc.parsed_classes:
-        for prop in doc.parsed_classes[class_]["class"].supportedProperty:
-            if isinstance(prop.prop, HydraLink):
-                continue
-            if "vocab:" in prop.prop:
-                prop_class = prop.prop.replace("vocab:", "")
-                object_[prop.title] = gen_dummy_object(prop_class, doc)
-            else:
-                object_[prop.title] = ''.join(random.choice(
-                    string.ascii_uppercase + string.digits) for _ in range(6))
-        return object_
+    for class_path in doc.parsed_classes:
+        if class_title == doc.parsed_classes[class_path]["class"].title:
+            for prop in doc.parsed_classes[class_path]["class"].supportedProperty:
+                if isinstance(prop.prop, HydraLink) or prop.write is False:
+                    continue
+                if "vocab:" in prop.prop:
+                    prop_class = prop.prop.replace("vocab:", "")
+                    object_[prop.title] = gen_dummy_object(prop_class, doc)
+                else:
+                    object_[prop.title] = ''.join(random.choice(
+                        string.ascii_uppercase + string.digits) for _ in range(6))
+            return object_
 
 
 class TestCRUD(unittest.TestCase):
@@ -89,13 +94,28 @@ class TestCRUD(unittest.TestCase):
         """Test get operation for object that can contain other objects."""
         for class_ in self.doc_collection_classes:
             for prop in self.doc.parsed_classes[class_]["class"].supportedProperty:
-                if isinstance(prop.prop, HydraLink):
-                    continue
-                if "vocab:" in prop.prop:
-                    nested_class = prop.prop.replace("vocab:", "")
-                    object_ = gen_dummy_object(class_, self.doc)
+                if isinstance(prop.prop, HydraLink) or "vocab:" in prop.prop:
+                    link_props = {}
+                    dummy_obj = gen_dummy_object(class_, self.doc)
+                    if isinstance(prop.prop, HydraLink):
+                        nested_class = prop.prop.range.replace("vocab:", "")
+                        for collection_path in self.doc.collections:
+                            coll_class = self.doc.collections[
+                                collection_path]['collection'].class_.title
+                            if nested_class == coll_class:
+                                id_ = str(uuid.uuid4())
+                                crud.insert(
+                                    gen_dummy_object(nested_class, self.doc),
+                                    id_=id_,
+                                    session=self.session)
+                                link_props[prop.title] = id_
+                                dummy_obj[prop.title] = "{}/{}/{}".format(
+                                    self.API_NAME, collection_path, id_)
+                    else:
+                        nested_class = prop.prop.replace("vocab:", "")
                     obj_id = str(uuid.uuid4())
-                    response = crud.insert(object_=object_, id_=obj_id, session=self.session)
+                    response = crud.insert(object_=dummy_obj, id_=obj_id,
+                                           link_props=link_props, session=self.session)
                     object_ = crud.get(id_=obj_id, type_=class_, session=self.session,
                                        api_name="api")
                     assert prop.title in object_
@@ -189,7 +209,8 @@ class TestCRUD(unittest.TestCase):
                 api_name="api")
         except Exception as e:
             error = e.get_HTTP()
-        assert 404 == error.code
+            response_code = error.code
+        assert 404 == response_code
 
     def test_get_id(self):
         """Test CRUD get when wrong/undefined ID is given."""
@@ -201,7 +222,8 @@ class TestCRUD(unittest.TestCase):
                 id_=id_, type_=type_, session=self.session, api_name="api")
         except Exception as e:
             error = e.get_HTTP()
-        assert 404 == error.code
+            response_code = error.code
+        assert 404 == response_code
 
     def test_get_type(self):
         """Test CRUD get when wrong/undefined class is given."""
@@ -230,7 +252,8 @@ class TestCRUD(unittest.TestCase):
                 id_=id_, type_="otherClass", session=self.session)
         except Exception as e:
             error = e.get_HTTP()
-        assert 400 == error.code
+            response_code = error.code
+        assert 400 == response_code
 
     def test_delete_id(self):
         """Test CRUD delete when wrong/undefined ID is given."""
@@ -245,7 +268,8 @@ class TestCRUD(unittest.TestCase):
                 id_=999, type_=object_["@type"], session=self.session)
         except Exception as e:
             error = e.get_HTTP()
-        assert 404 == error.code
+            response_code = error.code
+        assert 404 == response_code
         assert isinstance(insert_response, str)
         assert insert_response == id_
 
@@ -261,7 +285,8 @@ class TestCRUD(unittest.TestCase):
                 object_=object_, id_=id_, session=self.session)
         except Exception as e:
             error = e.get_HTTP()
-        assert 400 == error.code
+            response_code = error.code
+        assert 400 == response_code
 
     def test_insert_used_id(self):
         """Test CRUD insert when used ID is given."""
@@ -276,7 +301,8 @@ class TestCRUD(unittest.TestCase):
                 object_=object_, id_=id_, session=self.session)
         except Exception as e:
             error = e.get_HTTP()
-        assert 400 == error.code
+            response_code = error.code
+        assert 400 == response_code
 
     def test_insert_ids(self):
         """Test CRUD insert when multiple ID's are given """
@@ -315,7 +341,8 @@ class TestCRUD(unittest.TestCase):
                     api_name="api")
         except Exception as e:
             error = e.get_HTTP()
-        assert 404 == error.code
+            response_code = error.code
+        assert 404 == response_code
 
     @classmethod
     def tearDownClass(self):
