@@ -601,7 +601,9 @@ class Contexts(Resource):
     """Dynamically genereated contexts."""
 
     def get(self, category: str) -> Response:
-        """Return the context for the specified class."""
+        """Return the context for the specified class.
+        :param category: Collection or class path.
+        """
         # Check for collection
         if category in get_doc().collections:
             # type: Union[Dict[str,Any],Dict[int,str]]
