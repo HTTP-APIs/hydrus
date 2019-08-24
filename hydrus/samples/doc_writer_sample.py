@@ -29,7 +29,7 @@ class_2_uri = "singleClass"
 class_2_title = "singleClass"
 class_2_description = "A non collection class"
 class_2 = HydraClass(class_2_uri, class_2_title,
-                     class_2_description, endpoint=True)
+                     class_2_description, path="sc_path", endpoint=True)
 
 # Another class with single instance, will be used as nested class
 
