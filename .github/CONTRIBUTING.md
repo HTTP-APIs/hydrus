@@ -6,7 +6,7 @@
 
 * Read this [how-to about writing a PR](https://github.com/blog/1943-how-to-write-the-perfect-pull-request) and this [other how-to about writing a issue](https://wiredcraft.com/blog/how-we-write-our-github-issues/)
 
-* **first ask in chat**: if you find a problem, first ask for [help in the chat](https://gitter.im/HTTP-APIs/Lobby), then consider opening a issue.
+* **first ask in chat**: if you find a problem, first ask for [help in the chat](https://hydraecosystem.slack.com/), then consider opening a issue.
     
 * **read history**: before opening a PR be sure that all the tests pass successfully. If any is failing for non-related reasons, annotate the test failure in the PR comment.
 

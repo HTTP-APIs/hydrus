@@ -10,10 +10,3 @@ install:
 script: python -m unittest discover
 env:
   - API_NAME=api PORT=8000
-deploy:
-  provider: pypi
-  user: tuned
-  password:
-    secure: vw9srAqCwa4QO7ITuyApU0Y/AazAfi6wWWXszuqa3/wAKPQ1fJ7T8JY/m3pKg0vMhoNp7hmI3v/nnyJPdTZGRGivhvsRUFC0EEC2c238DfPViAfsxEbHEpO45Ak6B3MR/fyvCmAZmMg3lXiwoP/EF5xvUNLu18Bnp1cdql5cd2iRyp6oTv/5/PWCq1a5phTpa3rP0rQvfqvmYERxgh4BjN9Uge2AFhUJqLvG1mGG/E0bWXGq2yOwI5orwcxFM0n2THsvXVD2+2fsM3oo6pXm74CgQJ7HCpnoJqssyXbc9f4aUnqUz1YK2V8PxE3WGv8jT9/IRwIy8ILIi5PQc9hsADDNxCABbxCsw3gPqJi+Gl99mmqwmo74Q9CypcwCE0paZEM5Ql37McRj91mPdpNB05FF4KzNM44eCIJOJbzTDst7MrvLBZqk2dGDtDMb5A9lO78PnCaJwEoRAeM6ktOtbd0ob/umwRTsoYzrJn4DXd4sbfQIGmnC7VdbCCfORCUHE2HjhRr38/LeC6YFbGnxmwNAIW+lavQC4WLpWwxJc8QQeIWQwuOGowwTcPs712bcdmV1Xaqf+nFA7RrAb/AvxxRlS8DZikbzEFQ5nU5UBd9V7gSN6501aq/xoTaslfuFeTwcwtNXOUdkmtZ5eIZHtyT5a1QjJ+jaDNHnwrh1snY=
-  on:
-    tags: true
