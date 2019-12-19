@@ -6,7 +6,7 @@ from sqlalchemy import create_engine
 
 from gevent.pywsgi import WSGIServer
 from sqlalchemy.orm import sessionmaker
-
+from hydrus.data.db_models import User, Token, Nonce
 from hydrus.app_factory import app_factory
 from hydrus.conf import (
     HYDRUS_SERVER_URL, API_NAME, DB_URL, APIDOC_OBJ, PORT, DEBUG)
@@ -47,12 +47,13 @@ TOKEN = True
 
 if AUTH:
     try:
-        add_user(id_=1, paraphrase="test", session=session)
+        add_user(id_=5, paraphrase="test", session=session)
     except UserExists:
         pass
 
 # Create a Hydrus app
 app = app_factory(API_NAME)
+
 
 with set_authentication(app, AUTH):
     # Use authentication for all requests

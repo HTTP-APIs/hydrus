@@ -12,6 +12,8 @@ from werkzeug.local import LocalProxy
 from random import randrange
 from datetime import datetime, timedelta
 from uuid import uuid4
+from flask import make_response, Response, redirect
+import json
 
 
 def add_user(id_: int, paraphrase: str, session: Session) -> None:
@@ -33,7 +35,7 @@ def add_user(id_: int, paraphrase: str, session: Session) -> None:
 def check_nonce(request: LocalProxy, session: Session) -> bool:
     """check validity of nonce passed by the user."""
     try:
-        id_ = request.headers['X-Authentication']
+        id_ = request.cookies.get("nonce")
         nonce = session.query(Nonce).filter(Nonce.id == id_).one()
         present = datetime.now()
         present = present - nonce.timestamp
@@ -88,11 +90,14 @@ def check_token(request: LocalProxy, session: Session) -> bool:
     """
     token = None
     try:
-        id_ = request.headers['X-Authorization']
-        token = session.query(Token).filter(Token.id == id_).one()
-        if not token.is_valid():
-            token.delete()
-            return False
+        id_ = request.cookies.get("nonce")
+        if session.query(Token).filter(Token.id == id_).count():
+            token = session.query(Token).filter(Token.id == id_).one()
+            if not token.is_valid():
+                token.delete()
+                return False
+            return True
+        return False
     except BaseException:
         return False
     return True
@@ -120,8 +125,14 @@ def authenticate_user(id_: int, paraphrase: str, session: Session) -> bool:
         raise UserNotFound(id_=id_)
     hashvalue = user.paraphrase
     generated_hash = sha224(paraphrase.encode('utf-8')).hexdigest()
-
     return generated_hash == hashvalue
+
+def vague_Response(path: str, session: Session) -> Response:
+    resp = Response()
+    resp.set_cookie("nonce", create_nonce(session))
+    resp.status_code = 200
+    resp.response = json.dumps({"message": "Valid Session, Refresh to continue"})
+    return resp
 
 
 def check_authorization(request: LocalProxy, session: Session) -> bool:

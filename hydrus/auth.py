@@ -1,11 +1,11 @@
 from typing import Union
-
-from flask import jsonify, Response, request
+import json
+from flask import jsonify, Response, request, redirect, url_for
 from hydra_python_core.doc_writer import HydraError
 from hydrus.utils import get_session, get_token, get_authentication
 
-from hydrus.data.user import (create_nonce, check_authorization,
-                              add_token, check_token)
+from hydrus.data.user import (create_nonce, check_authorization, vague_Response,
+                              add_token, check_token, check_nonce)
 
 from hydrus.helpers import set_response_headers
 
@@ -14,10 +14,11 @@ def token_response(token: str) -> Response:
     """
     Return succesful token generation object
     """
-    message = {200: "User token generated"}
-    response = set_response_headers(jsonify(message), status_code=200,
-                                    headers=[{'X-Authorization': token}])
-    return response
+    resp = Response()
+    resp.response = json.dumps({"message": "tokengranted"})
+    resp.set_cookie("nonce", token)
+    resp.status_code = 200
+    return resp
 
 
 def failed_authentication(incorrect: bool) -> Response:
@@ -31,9 +32,11 @@ def failed_authentication(incorrect: bool) -> Response:
         message = {401: "Incorrect credentials"}
         realm = 'Basic realm="Incorrect credentials"'
     nonce = create_nonce(get_session())
-    response = set_response_headers(jsonify(message), status_code=401,
-                                    headers=[{'WWW-Authenticate': realm},
-                                             {'X-Authentication': nonce}])
+    response = Response()
+    response.response = json.dumps(message)
+    response.set_cookie("nonce", nonce)
+    response.headers["WWW-Authenticate"] = realm
+    response.status_code = 401
     return response
 
 
@@ -66,6 +69,7 @@ def check_authentication_response() -> Union[Response, None]:
                     return failed_authentication(False)
                 else:
                     return verify_user()
+            return None
         elif request.authorization is None:
             return failed_authentication(False)
         else:

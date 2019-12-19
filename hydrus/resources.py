@@ -24,7 +24,7 @@ from typing import Dict, Any, Union
 from flask import Response, jsonify, request, abort
 from flask_restful import Resource
 from hydra_python_core.doc_writer import HydraStatus, HydraError
-
+from hydrus.utils import get_session
 from hydrus.auth import check_authentication_response
 from hydrus.data import crud
 from hydrus.data.exceptions import (
@@ -59,7 +59,7 @@ from hydrus.utils import (
     get_page_size,
     get_pagination)
 from hydrus.socketio_factory import socketio
-
+from hydrus.data.user import vague_Response
 
 class Index(Resource):
     """Class for the EntryPoint."""
@@ -85,6 +85,7 @@ class Entrypoint(Resource):
         response = {"@context": get_doc().entrypoint.context.generate()}
         return set_response_headers(jsonify(response))
 
+inri = False
 
 class Item(Resource):
     """Handles all operations(GET, POST, PATCH, DELETE) on Items
@@ -97,6 +98,10 @@ class Item(Resource):
         :param path : Path for Item ( Specified in APIDoc @id)
         """
         id_ = str(id_)
+
+        if not request.cookies.get("nonce"):
+            return vague_Response(path, get_session())
+
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):
             return auth_response
@@ -130,6 +135,10 @@ class Item(Resource):
         :param path - Path for Item type( Specified in APIDoc @id)
         """
         id_ = str(id_)
+
+        if not request.cookies.get("nonce"):
+            return vague_Response(path, get_session())
+
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):
             return auth_response
@@ -184,6 +193,10 @@ class Item(Resource):
         :param path - Path for Item type( Specified in APIDoc @id) to be updated
         """
         id_ = str(id_)
+
+        if not request.cookies.get("nonce"):
+            return vague_Response(path, get_session())
+
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):
             return auth_response
@@ -222,6 +235,10 @@ class Item(Resource):
     def delete(self, id_: str, path: str) -> Response:
         """Delete object with id=id_ from database."""
         id_ = str(id_)
+
+        if not request.cookies.get("nonce"):
+            return vague_Response(path, get_session())
+
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):
             return auth_response
@@ -264,9 +281,15 @@ class ItemCollection(Resource):
         Retrieve a collection of items from the database.
         """
         search_params = request.args.to_dict()
+
+
+        if not request.cookies.get("nonce"):
+            return vague_Response(path, get_session())
+
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):
             return auth_response
+
         endpoint_ = checkEndpoint("GET", path)
         if not endpoint_['method']:
             # If endpoint and Get method not supported in the API
@@ -323,6 +346,10 @@ class ItemCollection(Resource):
         Used to add an item to a collection
         :param path - Path for Item type ( Specified in APIDoc @id)
         """
+
+        if not request.cookies.get("nonce"):
+            return vague_Response(path, get_session())
+
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):
             return auth_response
@@ -398,6 +425,9 @@ class ItemCollection(Resource):
         Used to update a non-collection class.
         :param path - Path for Item type ( Specified in APIDoc @id)
         """
+        if not request.cookies.get("nonce"):
+            return vague_Response(path, get_session())
+
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):
             return auth_response
@@ -453,6 +483,10 @@ class ItemCollection(Resource):
         Used to delete a non-collection class.
         :param path - Path for Item ( Specified in APIDoc @id)
         """
+
+        if not request.cookies.get("nonce"):
+            return vague_Response(path, get_session())
+
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):
             return auth_response
@@ -492,6 +526,10 @@ class Items(Resource):
         :param int_list: Optional String containing ',' separated ID's
         :return:
         """
+
+        if not request.cookies.get("nonce"):
+            return vague_Response(path, get_session())
+
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):
             return auth_response
@@ -561,6 +599,10 @@ class Items(Resource):
         :param int_list: Optional String containing ',' separated ID's
         :return:
         """
+
+        if not request.cookies.get("nonce"):
+            return vague_Response(path, get_session())
+
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):
             return auth_response

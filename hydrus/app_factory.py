@@ -17,6 +17,7 @@ def app_factory(api_name: str = "api") -> Flask:
 
     api.add_resource(Index, "/{}/".format(api_name), endpoint="api")
     api.add_resource(Vocab, "/{}/vocab".format(api_name), endpoint="vocab")
+
     api.add_resource(
         Contexts,
         "/{}/contexts/<string:category>.jsonld".format(api_name),
