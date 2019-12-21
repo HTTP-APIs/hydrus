@@ -61,6 +61,7 @@ from hydrus.utils import (
 from hydrus.socketio_factory import socketio
 from hydrus.data.user import vague_Response
 
+
 class Index(Resource):
     """Class for the EntryPoint."""
 
@@ -85,7 +86,6 @@ class Entrypoint(Resource):
         response = {"@context": get_doc().entrypoint.context.generate()}
         return set_response_headers(jsonify(response))
 
-inri = False
 
 class Item(Resource):
     """Handles all operations(GET, POST, PATCH, DELETE) on Items
@@ -282,7 +282,6 @@ class ItemCollection(Resource):
         """
         search_params = request.args.to_dict()
 
-
         if not request.cookies.get("nonce"):
             return vague_Response(path, get_session())
 
@@ -425,8 +424,8 @@ class ItemCollection(Resource):
         Used to update a non-collection class.
         :param path - Path for Item type ( Specified in APIDoc @id)
         """
-        if not request.cookies.get("nonce"):
-            return vague_Response(path, get_session())
+#        if not request.cookies.get("nonce"):
+#            return vague_Response(path, get_session())
 
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):
@@ -484,8 +483,8 @@ class ItemCollection(Resource):
         :param path - Path for Item ( Specified in APIDoc @id)
         """
 
-        if not request.cookies.get("nonce"):
-            return vague_Response(path, get_session())
+#        if not request.cookies.get("nonce"):
+#            return vague_Response(path, get_session())
 
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):

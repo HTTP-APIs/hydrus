@@ -127,11 +127,14 @@ def authenticate_user(id_: int, paraphrase: str, session: Session) -> bool:
     generated_hash = sha224(paraphrase.encode('utf-8')).hexdigest()
     return generated_hash == hashvalue
 
+
 def vague_Response(path: str, session: Session) -> Response:
     resp = Response()
     resp.set_cookie("nonce", create_nonce(session))
     resp.status_code = 200
-    resp.response = json.dumps({"message": "Valid Session, Refresh to continue"})
+    resp.response = json.dumps({"@context": "", "@id": "",
+                                "@type": "", "members": "",
+                                "message": 'Valid Session,Refresh to continue'})
     return resp
 
 

@@ -4,7 +4,8 @@ from flask import jsonify, Response, request, redirect, url_for
 from hydra_python_core.doc_writer import HydraError
 from hydrus.utils import get_session, get_token, get_authentication
 
-from hydrus.data.user import (create_nonce, check_authorization, vague_Response,
+from hydrus.data.user import (create_nonce, check_authorization,
+                              vague_Response,
                               add_token, check_token, check_nonce)
 
 from hydrus.helpers import set_response_headers
@@ -53,7 +54,8 @@ def verify_user() -> Union[Response, None]:
             return token_response(token)
     except Exception as e:
         error = e.get_HTTP()  # type: HydraError
-        return set_response_headers(jsonify(error.generate()), status_code=error.code)
+        return set_response_headers(jsonify(error.generate()),
+                                    status_code=error.code)
     return None
 
 
