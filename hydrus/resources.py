@@ -60,7 +60,7 @@ from hydrus.utils import (
     get_pagination)
 from hydrus.socketio_factory import socketio
 
-from itemhelpers import items_get_check_support
+from hydrus.itemhelpers import items_get_check_support
 
 class Index(Resource):
     """Class for the EntryPoint."""
