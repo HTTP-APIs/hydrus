@@ -62,6 +62,7 @@ from hydrus.socketio_factory import socketio
 
 from hydrus.itemhelpers import items_get_check_support
 
+
 class Index(Resource):
     """Class for the EntryPoint."""
 

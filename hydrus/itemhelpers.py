@@ -7,6 +7,7 @@ from hydrus.data.exceptions import ClassNotFound, InstanceNotFound
 from hydrus.helpers import set_response_headers, finalize_response, hydrafy
 from hydrus.utils import get_session, get_api_name
 
+
 def items_get_check_support(id_, class_type, class_path, path):
     """Check if class_type supports GET operation"""
     try:
