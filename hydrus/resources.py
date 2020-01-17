@@ -60,6 +60,7 @@ from hydrus.utils import (
     get_pagination)
 from hydrus.socketio_factory import socketio
 
+from itemhelpers import items_get_check_support
 
 class Index(Resource):
     """Class for the EntryPoint."""
@@ -106,22 +107,7 @@ class Item(Resource):
         class_path = get_doc().collections[path]["collection"].class_.path
 
         if checkClassOp(class_path, "GET"):
-            # Check if class_type supports GET operation
-            try:
-                # Try getting the Item based on ID and Class type
-                response = crud.get(
-                    id_,
-                    class_type,
-                    api_name=get_api_name(),
-                    session=get_session())
-
-                response = finalize_response(class_path, response)
-                return set_response_headers(
-                    jsonify(hydrafy(response, path=path)))
-
-            except (ClassNotFound, InstanceNotFound) as e:
-                error = e.get_HTTP()
-                return set_response_headers(jsonify(error.generate()), status_code=error.code)
+            items_get_check_support(id_, class_type, class_path, path)
         abort(405)
 
     def post(self, id_: str, path: str) -> Response:
