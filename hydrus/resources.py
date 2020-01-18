@@ -60,7 +60,7 @@ from hydrus.utils import (
     get_pagination)
 from hydrus.socketio_factory import socketio
 
-from hydrus.itemhelpers import items_get_check_support
+from hydrus.itemhelpers import items_get_check_support, items_post_check_support
 
 
 class Index(Resource):
@@ -126,42 +126,7 @@ class Item(Resource):
         class_path = get_doc().collections[path]["collection"].class_.path
         object_ = json.loads(request.data.decode('utf-8'))
         if checkClassOp(class_path, "POST") and check_writeable_props(class_path, object_):
-            # Check if class_type supports POST operation
-            obj_type = getType(class_path, "POST")
-            link_props, link_type_check = get_link_props(class_path, object_)
-            # Load new object and type
-            if validObject(object_) and object_["@type"] == obj_type and check_required_props(
-                    class_path, object_) and link_type_check:
-                try:
-                    # Update the right ID if the object is valid and matches
-                    # type of Item
-                    object_id = crud.update(
-                        object_=object_,
-                        id_=id_,
-                        link_props=link_props,
-                        type_=object_["@type"],
-                        session=get_session(),
-                        api_name=get_api_name())
-                    method = "POST"
-                    resource_url = "{}{}/{}/{}".format(
-                            get_hydrus_server_url(), get_api_name(), path, object_id)
-                    last_job_id = crud.get_last_modification_job_id(session=get_session())
-                    new_job_id = crud.insert_modification_record(method, resource_url,
-                                                                 session=get_session())
-                    send_sync_update(socketio=socketio, new_job_id=new_job_id,
-                                     last_job_id=last_job_id, method=method,
-                                     resource_url=resource_url)
-                    headers_ = [{"Location": resource_url}]
-                    status_description = "Object with ID {} successfully updated".format(object_id)
-                    status = HydraStatus(code=200, title="Object updated", desc=status_description)
-                    return set_response_headers(jsonify(status.generate()), headers=headers_)
-
-                except (ClassNotFound, InstanceNotFound, InstanceExists, PropertyNotFound) as e:
-                    error = e.get_HTTP()
-                    return set_response_headers(jsonify(error.generate()), status_code=error.code)
-            else:
-                error = HydraError(code=400, title="Data is not valid")
-                return set_response_headers(jsonify(error.generate()), status_code=error.code)
+            return items_post_check_support(id_, object_, class_path, path)
         else:
             abort(405)
 
