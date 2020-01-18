@@ -155,28 +155,3 @@ def items_delete_check_support(id_, class_type, path):
                 error = e.get_HTTP()
                 return set_response_headers(jsonify(error.generate()), status_code=error.code)
 
-def get_(collection,path,search_params,class_path):
-            try:
-                # Get collection details from the database
-                if get_pagination():
-                    # Get paginated response
-                    response = crud.get_collection(
-                        get_api_name(), collection.class_.title, session=get_session(),
-                        paginate=True, path=path, page_size=get_page_size(),
-                        search_params=search_params)
-                else:
-                    # Get whole collection
-                        response = crud.get_collection(
-                        get_api_name(), collection.class_.title, session=get_session(),
-                        paginate=False, path=path, search_params=search_params)
-
-                response["search"] = add_iri_template(path=class_path,
-                                                      API_NAME=get_api_name())
-
-                return set_response_headers(jsonify(hydrafy(response, path=path)))
-
-            except (ClassNotFound, PageNotFound, InvalidSearchParameter, OffsetOutOfRange) as e:
-                error = e.get_HTTP()
-                return set_response_headers(jsonify(error.generate()), status_code=error.code)
-
-

@@ -24,7 +24,7 @@ import json
 from typing import Dict, Any, Union
 from flask import Response, jsonify, request, abort
 from flask_restful import Resource
-from hydrus.hydra_python_core.doc_writer import HydraStatus, HydraError
+from hydra_python_core.doc_writer import HydraStatus, HydraError
 from hydrus.auth import check_authentication_response
 from hydrus.data import crud
 from hydrus.data.exceptions import (
