@@ -108,7 +108,7 @@ class Item(Resource):
         class_path = get_doc().collections[path]["collection"].class_.path
 
         if checkClassOp(class_path, "GET"):
-            items_get_check_support(id_, class_type, class_path, path)
+            return items_get_check_support(id_, class_type, class_path, path)
         abort(405)
 
     def post(self, id_: str, path: str) -> Response:
