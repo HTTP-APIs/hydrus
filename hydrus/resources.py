@@ -112,7 +112,7 @@ class Item(Resource):
 
         if checkClassOp(class_path, "GET"):
             # Check if class_type supports GET operation
-            return items_get_check_support(class_type,class_path,path,id_):
+            return items_get_check_support(class_type,class_path,path,id_)
    
         abort(405)
 
@@ -131,7 +131,7 @@ class Item(Resource):
         class_path = get_doc().collections[path]["collection"].class_.path
         object_ = json.loads(request.data.decode('utf-8'))
         if checkClassOp(class_path, "POST") and check_writeable_props(class_path, object_):
-           return items_post_check_support(class_path, object_, id_, path ):
+           return items_post_check_support(class_path, object_, id_, path )
 
         else:
             abort(405)
@@ -151,7 +151,7 @@ class Item(Resource):
         class_path = get_doc().collections[path]["collection"].class_.path
         if checkClassOp(class_path, "PUT"):
             # Check if class_type supports PUT operation
-            return items_put_check_support(class_path, id_, path):
+            return items_put_check_support(class_path, id_, path)
 
         else:
             abort(405)
@@ -169,7 +169,7 @@ class Item(Resource):
 
         if checkClassOp(class_path, "DELETE"):
             # Check if class_type supports PUT operation
-            return items_delete_check_support(id_, class_type, path):
+            return items_delete_check_support(id_, class_type, path)
 
         abort(405)
 
