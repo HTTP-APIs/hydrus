@@ -51,10 +51,10 @@ def items_post_check_support(id_, object_, class_path, path):
     obj_type = getType(class_path, "POST")
     link_props, link_type_check = get_link_props(class_path, object_)
     # Load new object and type
-    if (validObject(object_)
-        and object_["@type"] == obj_type
-        and check_required_props(class_path, object_)
-            and link_type_check):
+    if (validObject(object_) and
+        object_["@type"] == obj_type and
+        check_required_props(class_path, object_)and
+            link_type_check):
         try:
             # Update the right ID if the object is valid and matches
             # type of Item
@@ -103,10 +103,10 @@ def items_put_check_support(id_, class_path, path):
     obj_type = getType(class_path, "PUT")
     link_props, link_type_check = get_link_props(class_path, object_)
     # Load new object and type
-    if (validObject(object_)
-        and object_["@type"] == obj_type
-        and check_required_props(class_path, object_)
-            and link_type_check):
+    if (validObject(object_) and
+        object_["@type"] == obj_type and
+        check_required_props(class_path, object_) and
+            link_type_check):
         try:
             # Add the object with given ID
             object_id = crud.insert(object_=object_, id_=id_,
