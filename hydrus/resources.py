@@ -60,7 +60,10 @@ from hydrus.utils import (
     get_pagination)
 from hydrus.socketio_factory import socketio
 
-from hydrus.itemhelpers import items_get_check_support, items_post_check_support
+from hydrus.itemhelpers import (
+    items_get_check_support,
+    items_post_check_support,
+    items_put_check_support)
 
 
 class Index(Resource):
@@ -144,30 +147,7 @@ class Item(Resource):
         # Get path of the collection-class
         class_path = get_doc().collections[path]["collection"].class_.path
         if checkClassOp(class_path, "PUT"):
-            # Check if class_type supports PUT operation
-            object_ = json.loads(request.data.decode('utf-8'))
-            obj_type = getType(class_path, "PUT")
-            link_props, link_type_check = get_link_props(class_path, object_)
-            # Load new object and type
-            if validObject(object_) and object_["@type"] == obj_type and check_required_props(
-                    class_path, object_) and link_type_check:
-                try:
-                    # Add the object with given ID
-                    object_id = crud.insert(object_=object_, id_=id_,
-                                            link_props=link_props, session=get_session())
-                    headers_ = [{"Location": "{}{}/{}/{}".format(
-                        get_hydrus_server_url(), get_api_name(), path, object_id)}]
-                    status_description = "Object with ID {} successfully added".format(object_id)
-                    status = HydraStatus(code=201, title="Object successfully added.",
-                                         desc=status_description)
-                    return set_response_headers(
-                        jsonify(status.generate()), headers=headers_, status_code=status.code)
-                except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
-                    error = e.get_HTTP()
-                    return set_response_headers(jsonify(error.generate()), status_code=error.code)
-            else:
-                error = HydraError(code=400, title="Data is not valid")
-                return set_response_headers(jsonify(error.generate()), status_code=error.code)
+            return items_put_check_support(id_, class_path, path)
         else:
             abort(405)
 
