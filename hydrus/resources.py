@@ -91,8 +91,7 @@ class Item(Resource):
     (item can be anything depending upon the vocabulary)."""
 
     def get(self, id_: str, path: str) -> Response:
-        """
-        GET object with id = id_ from the database.
+        """GET object with id = id_ from the database.
         :param id_ : Item ID
         :param path : Path for Item ( Specified in APIDoc @id)
         :return : object with id=id_
@@ -265,8 +264,7 @@ class ItemCollection(Resource):
     """Handle operation related to ItemCollection (a collection of items)."""
 
     def get(self, path: str) -> Response:
-        """
-        Retrieve a collection of items from the database.
+        """Retrieve a collection of items from the database.
         :param path : Path of the Collection
         :return : collection of items
         """
@@ -325,8 +323,7 @@ class ItemCollection(Resource):
                 return set_response_headers(jsonify(error.generate()), status_code=error.code)
 
     def put(self, path: str) -> Response:
-        """
-        Method executed for PUT requests.
+        """Method executed for PUT requests.
         Used to add an item to a collection
         :param path - Path for Item type ( Specified in APIDoc @id)
         """
@@ -400,8 +397,7 @@ class ItemCollection(Resource):
         abort(endpoint_['status'])
 
     def post(self, path: str) -> Response:
-        """
-        Method executed for POST requests.
+        """Method executed for POST requests.
         Used to update a non-collection class.
         :param path - Path for Item type ( Specified in APIDoc @id)
         """
@@ -455,8 +451,7 @@ class ItemCollection(Resource):
         abort(endpoint_['status'])
 
     def delete(self, path: str) -> Response:
-        """
-        Method executed for DELETE requests.
+        """Method executed for DELETE requests.
         Used to delete a non-collection class.
         :param path - Path for Item ( Specified in APIDoc @id)
         """
@@ -493,8 +488,7 @@ class ItemCollection(Resource):
 class Items(Resource):
 
     def put(self, path, int_list="") -> Response:
-        """
-        To insert multiple objects into the database
+        """To insert multiple objects into the database
         :param path: endpoint
         :param int_list: Optional String containing ',' separated ID's
         :return:
@@ -562,8 +556,7 @@ class Items(Resource):
         abort(endpoint_['status'])
 
     def delete(self, path, int_list):
-        """
-        To delete multiple objects
+        """To delete multiple objects
         :param path: endpoints
         :param int_list: Optional String containing ',' separated ID's
         :return:

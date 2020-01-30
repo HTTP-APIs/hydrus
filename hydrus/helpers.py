@@ -10,8 +10,7 @@ from hydra_python_core.doc_writer import HydraIriTemplate, IriTemplateMapping, H
 
 
 def validObject(object_: Dict[str, Any]) -> bool:
-    """
-        Check if the Dict passed in POST is of valid format or not.
+    """ Check if the Dict passed in POST is of valid format or not.
         (if there's an "@type" key in the dict)
         :param object_ - Object to be checked
         :return : <bool> True if Object has "@type" key
@@ -22,11 +21,10 @@ def validObject(object_: Dict[str, Any]) -> bool:
 
 
 def validObjectList(objects_: List[Dict[str, Any]]) -> bool:
-    """
-        Check if the List of Dicts passed are of the valid format or not.
+    """Check if the List of Dicts passed are of the valid format or not.
         (if there's an "@type" key in the dict)
     :param objects_: Object to be checked
-    : return : <bool> True if all the Object in the List of Dicts have "@type" key
+    :return : <bool> True if all the Object in the List of Dicts have "@type" key
     """
     for object_ in objects_:
         if "@type" not in object_:
@@ -35,8 +33,7 @@ def validObjectList(objects_: List[Dict[str, Any]]) -> bool:
 
 
 def type_match(object_: List[Dict[str, Any]], obj_type: str) -> bool:
-    """
-    Checks if the object type matches for every object in list.
+    """Checks if the object type matches for every object in list.
     :param object_: List of objects
     :param obj_type: The required object type
     :return: True if all object of list have the right type
@@ -106,7 +103,7 @@ def checkEndpoint(method: str, path: str) -> Dict[str, Union[bool, int]]:
 
 def getType(class_path: str, method: str) -> Any:
     """Return the @type of object allowed for POST/PUT.
-       :param class_path: 
+       :param class_path: path for the class
        :param method: Method name
        
     """
@@ -132,8 +129,7 @@ def checkClassOp(path: str, method: str) -> bool:
 
 
 def check_required_props(path: str, obj: Dict[str, Any]) -> bool:
-    """
-    Check if the object contains all required properties.
+    """Check if the object contains all required properties.
     :param path: Path of the collection or non-collection class.
     :param obj: object under check
     :return: True if the object contains all required properties
@@ -147,8 +143,7 @@ def check_required_props(path: str, obj: Dict[str, Any]) -> bool:
 
 
 def check_writeable_props(path: str, obj: Dict[str, Any]) -> bool:
-    """
-    Check that the object only contains writeable fields(properties).
+    """Check that the object only contains writeable fields(properties).
     :param path: Path of the collection or non-collection class.
     :param obj: object under check
     :return: True if the object only contains writeable properties
@@ -162,8 +157,7 @@ def check_writeable_props(path: str, obj: Dict[str, Any]) -> bool:
 
 
 def get_nested_class_path(class_type: str) -> Tuple[str, bool]:
-    """
-    Get the path of class
+    """Get the path of class
     :param class_type: class name whose path is needed
     :return: Tuple, where the first element is the path string and
              the second element is a boolean, True if the class is a collection class
@@ -178,8 +172,7 @@ def get_nested_class_path(class_type: str) -> Tuple[str, bool]:
 
 
 def finalize_response(path: str, obj: Dict[str, Any]) -> Dict[str, Any]:
-    """
-    finalize response objects by removing properties which are not readable and correcting path
+    """finalize response objects by removing properties which are not readable and correcting path
     of nested objects.
     :param path: Path of the collection or non-collection class.
     :param obj: object being finalized
@@ -209,8 +202,7 @@ def finalize_response(path: str, obj: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def add_iri_template(path: str, API_NAME: str) -> Dict[str, Any]:
-    """
-    Creates an IriTemplate.
+    """Creates an IriTemplate.
     :param path: Path of the collection or the non-collection class.
     :param API_NAME: Name of API.
     :return: Hydra IriTemplate .
@@ -307,8 +299,7 @@ def send_sync_update(socketio, new_job_id: int, last_job_id: str,
 
 
 def get_link_props(path: str, object_) -> Tuple[Dict[str, Any], bool]:
-    """
-    Get dict of all hydra_link properties of a class.
+    """Get dict of all hydra_link properties of a class.
     :param path: Path of the collection or non-collection class.
     :param object_: Object being inserted/updated.
     :return: Tuple with one elements as Dict with property_title as key and
@@ -341,8 +332,7 @@ def get_link_props(path: str, object_) -> Tuple[Dict[str, Any], bool]:
 def get_link_props_for_multiple_objects(path: str,
                                         object_list: List[Dict[str, Any]]
                                         ) -> Tuple[List[Dict[str, Any]], bool]:
-    """
-    Get link_props of multiple objects.
+    """Get link_props of multiple objects.
     :param path: Path of the collection or non-collection class.
     :param object_list: List of objects being inserted.
     :return: List of link properties processed with the help of get_link_props.
