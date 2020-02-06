@@ -12,8 +12,8 @@ from hydra_python_core.doc_writer import HydraIriTemplate, IriTemplateMapping, H
 def validObject(object_: Dict[str, Any]) -> bool:
     """ Check if the Dict passed in POST is of valid format or not.
         (if there's an "@type" key in the dict)
-        :param object_ - Object to be checked
-        :return : <bool> True if Object has "@type" key
+    :param object_ - Object to be checked
+    :return : <bool> True if Object has "@type" key
     """
     if "@type" in object_:
         return True
@@ -50,11 +50,11 @@ def set_response_headers(resp: Response,
                          headers: List[Dict[str, Any]]=[],
                          status_code: int = 200) -> Response:
     """Set the response headers.
-       :param resp: Response 
-       :param ct: Content-type default "application/ld+json"
-       :param headers: List of objects
-       :param status_code: status code default 200
-       :return : Response with headers
+    :param resp: Response.
+    :param ct: Content-type default "application/ld+json".
+    :param headers: List of objects.
+    :param status_code: status code default 200.
+    :return: Response with headers.
     """
     resp.status_code = status_code
     for header in headers:
@@ -68,9 +68,9 @@ def set_response_headers(resp: Response,
 
 def hydrafy(object_: Dict[str, Any], path: Optional[str]) -> Dict[str, Any]:
     """Add hydra context to objects.
-       :param object_ : Object.
-       :param path : Path of the collection or non-collection class .
-       :return : object with hydra context
+    :param object_ : Object.
+    :param path : Path of the collection or non-collection class .
+    :return : object with hydra context
     """
     if path == object_["@type"]:
         object_[
@@ -83,9 +83,9 @@ def hydrafy(object_: Dict[str, Any], path: Optional[str]) -> Dict[str, Any]:
 
 def checkEndpoint(method: str, path: str) -> Dict[str, Union[bool, int]]:
     """Check if endpoint and method is supported in the API.
-       :param method: Method name
-       :param path: Path of the collection or non-collection class
-       :return : Dict with 'method' and 'status' key
+    :param method: Method name
+    :param path: Path of the collection or non-collection class
+    :return : Dict with 'method' and 'status' key
     """
     status_val = 404
     if path == 'vocab':
@@ -103,8 +103,8 @@ def checkEndpoint(method: str, path: str) -> Dict[str, Union[bool, int]]:
 
 def getType(class_path: str, method: str) -> Any:
     """Return the @type of object allowed for POST/PUT.
-       :param class_path: path for the class
-       :param method: Method name
+    :param class_path: path for the class
+    :param method: Method name
     """
     for supportedOp in get_doc(
     ).parsed_classes[class_path]["class"].supportedOperation:

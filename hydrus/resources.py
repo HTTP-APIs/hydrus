@@ -487,10 +487,9 @@ class ItemCollection(Resource):
 class Items(Resource):
 
     def put(self, path, int_list="") -> Response:
-        """To insert multiple objects into the database
-        :param path: endpoint
-        :param int_list: Optional String containing ',' separated ID's
-        :return:
+        """To insert multiple objects into the database.
+        :param path: endpoint.
+        :param int_list: Optional String containing ',' separated ID's.
         """
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):
@@ -513,8 +512,7 @@ class Items(Resource):
                     if not check_required_props(class_path, obj):
                         incomplete_objects.append(obj)
                         object_.remove(obj)
-                link_props_list, link_type_check = get_link_props_for_multiple_objects(class_path,
-                                                                                       object_)
+                link_props_list, link_type_check = get_link_props_for_multiple_objects(class_path,object_)
                 if validObjectList(object_) and link_type_check:
                     type_result = type_match(object_, obj_type)
                     # If Item in request's JSON is a valid object
