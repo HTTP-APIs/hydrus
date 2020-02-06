@@ -223,7 +223,6 @@ class Item(Resource):
         """Delete object with id=id_ from database.
           :param id_ - ID of Item to be deleted
           :param path - Path for Item type( Specified in APIDoc @id) to be deleted
-        
         """
         id_ = str(id_)
         auth_response = check_authentication_response()

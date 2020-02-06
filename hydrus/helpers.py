@@ -105,7 +105,6 @@ def getType(class_path: str, method: str) -> Any:
     """Return the @type of object allowed for POST/PUT.
        :param class_path: path for the class
        :param method: Method name
-       
     """
     for supportedOp in get_doc(
     ).parsed_classes[class_path]["class"].supportedOperation:
