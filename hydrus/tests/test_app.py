@@ -490,7 +490,8 @@ class ViewsTestCase(unittest.TestCase):
                     next_response_data = json.loads(
                         next_response.data.decode('utf-8'))
                     assert "hydra:previous" in next_response_data["hydra:view"]
-                    assert "pageIndex=1" in next_response_data["hydra:view"]["hydra:previous"]
+                    data = next_response_data["hydra:view"]["hydra:previous"]
+                    assert "pageIndex=1" in data
                     # Test with offset and limit
                     params = {"offset": 1, "limit": 2}
                     response_for_offset_param = self.client.get(endpoints[endpoint],
@@ -500,7 +501,8 @@ class ViewsTestCase(unittest.TestCase):
                         response_for_offset_param.data.decode('utf-8'))
                     assert "hydra:first" in response_for_offset_param_data["hydra:view"]
                     assert "hydra:last" in response_for_offset_param_data["hydra:view"]
-                    if "hydra:next" in response_for_offset_param_data["hydra:view"]:
+                    data = response_for_offset_param_data["hydra:view"]
+                    if "hydra:next" in data:
                         assert "offset=3" in response_for_offset_param_data["hydra:view"]["hydra:next"]
                         next_response = self.client.get(
                             response_for_offset_param_data["hydra:view"]["hydra:next"])
