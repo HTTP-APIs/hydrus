@@ -485,7 +485,8 @@ class ViewsTestCase(unittest.TestCase):
                 assert "hydra:last" in response_for_page_param_data["hydra:view"]
                 if "hydra:next" in response_for_page_param_data["hydra:view"]:
                     assert "pageIndex=2" in response_for_page_param_data["hydra:view"]["hydra:next"]
-                    next_response = self.client.get(response_for_page_param_data["hydra:view"]["hydra:next"])
+                    next_response = self.client.get(
+                        response_for_page_param_data["hydra:view"]["hydra:next"])
                     assert next_response.status_code == 200
                     next_response_data = json.loads(
                         next_response.data.decode('utf-8'))
@@ -499,13 +500,12 @@ class ViewsTestCase(unittest.TestCase):
                     assert response_for_offset_param.status_code == 200
                     response_for_offset_param_data = json.loads(
                         response_for_offset_param.data.decode('utf-8'))
-                    assert "hydra:first" in response_for_offset_param_data["hydra:view"]
-                    assert "hydra:last" in response_for_offset_param_data["hydra:view"]
                     data = response_for_offset_param_data["hydra:view"]
+                    assert "hydra:first" in data
+                    assert "hydra:last" in data
                     if "hydra:next" in data:
-                        assert "offset=3" in response_for_offset_param_data["hydra:view"]["hydra:next"]
-                        next_response = self.client.get(
-                            response_for_offset_param_data["hydra:view"]["hydra:next"])
+                        assert "offset=3" in data["hydra:next"]
+                        next_response = self.client.get(data["hydra:next"])
                         assert next_response.status_code == 200
                         next_response_data = json.loads(
                             next_response.data.decode('utf-8'))
