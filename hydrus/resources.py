@@ -513,7 +513,7 @@ class Items(Resource):
                         incomplete_objects.append(obj)
                         object_.remove(obj)
                 link_props_list, link_type_check = get_link_props_for_multiple_objects(class_path,
-                                                                            object_)
+                                                                                       object_)
                 if validObjectList(object_) and link_type_check:
                     type_result = type_match(object_, obj_type)
                     # If Item in request's JSON is a valid object
