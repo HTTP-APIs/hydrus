@@ -518,7 +518,8 @@ class Contexts(Resource):
 
     def get(self, category: str) -> Response:
         """Return the context for the specified class.
-        :param category : category of collection/non collection class for which the contexts to be generated.
+        :param category : category of collection/non collection 
+        class for which the contexts to be generated.
         :return : object with context.
         """      
         # Check for collection
