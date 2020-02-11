@@ -60,6 +60,12 @@ from hydrus.utils import (
     get_pagination)
 from hydrus.socketio_factory import socketio
 
+from hydrus.itemhelpers import (
+    items_get_check_support,
+    items_post_check_support,
+    items_put_check_support,
+    items_delete_check_support)
+
 
 class Index(Resource):
     """Class for the EntryPoint."""
@@ -106,22 +112,7 @@ class Item(Resource):
         class_path = get_doc().collections[path]["collection"].class_.path
 
         if checkClassOp(class_path, "GET"):
-            # Check if class_type supports GET operation
-            try:
-                # Try getting the Item based on ID and Class type
-                response = crud.get(
-                    id_,
-                    class_type,
-                    api_name=get_api_name(),
-                    session=get_session())
-
-                response = finalize_response(class_path, response)
-                return set_response_headers(
-                    jsonify(hydrafy(response, path=path)))
-
-            except (ClassNotFound, InstanceNotFound) as e:
-                error = e.get_HTTP()
-                return set_response_headers(jsonify(error.generate()), status_code=error.code)
+            return items_get_check_support(id_, class_type, class_path, path)
         abort(405)
 
     def post(self, id_: str, path: str) -> Response:
@@ -139,42 +130,7 @@ class Item(Resource):
         class_path = get_doc().collections[path]["collection"].class_.path
         object_ = json.loads(request.data.decode('utf-8'))
         if checkClassOp(class_path, "POST") and check_writeable_props(class_path, object_):
-            # Check if class_type supports POST operation
-            obj_type = getType(class_path, "POST")
-            link_props, link_type_check = get_link_props(class_path, object_)
-            # Load new object and type
-            if validObject(object_) and object_["@type"] == obj_type and check_required_props(
-                    class_path, object_) and link_type_check:
-                try:
-                    # Update the right ID if the object is valid and matches
-                    # type of Item
-                    object_id = crud.update(
-                        object_=object_,
-                        id_=id_,
-                        link_props=link_props,
-                        type_=object_["@type"],
-                        session=get_session(),
-                        api_name=get_api_name())
-                    method = "POST"
-                    resource_url = "{}{}/{}/{}".format(
-                            get_hydrus_server_url(), get_api_name(), path, object_id)
-                    last_job_id = crud.get_last_modification_job_id(session=get_session())
-                    new_job_id = crud.insert_modification_record(method, resource_url,
-                                                                 session=get_session())
-                    send_sync_update(socketio=socketio, new_job_id=new_job_id,
-                                     last_job_id=last_job_id, method=method,
-                                     resource_url=resource_url)
-                    headers_ = [{"Location": resource_url}]
-                    status_description = "Object with ID {} successfully updated".format(object_id)
-                    status = HydraStatus(code=200, title="Object updated", desc=status_description)
-                    return set_response_headers(jsonify(status.generate()), headers=headers_)
-
-                except (ClassNotFound, InstanceNotFound, InstanceExists, PropertyNotFound) as e:
-                    error = e.get_HTTP()
-                    return set_response_headers(jsonify(error.generate()), status_code=error.code)
-            else:
-                error = HydraError(code=400, title="Data is not valid")
-                return set_response_headers(jsonify(error.generate()), status_code=error.code)
+            return items_post_check_support(id_, object_, class_path, path)
         else:
             abort(405)
 
@@ -192,37 +148,14 @@ class Item(Resource):
         # Get path of the collection-class
         class_path = get_doc().collections[path]["collection"].class_.path
         if checkClassOp(class_path, "PUT"):
-            # Check if class_type supports PUT operation
-            object_ = json.loads(request.data.decode('utf-8'))
-            obj_type = getType(class_path, "PUT")
-            link_props, link_type_check = get_link_props(class_path, object_)
-            # Load new object and type
-            if validObject(object_) and object_["@type"] == obj_type and check_required_props(
-                    class_path, object_) and link_type_check:
-                try:
-                    # Add the object with given ID
-                    object_id = crud.insert(object_=object_, id_=id_,
-                                            link_props=link_props, session=get_session())
-                    headers_ = [{"Location": "{}{}/{}/{}".format(
-                        get_hydrus_server_url(), get_api_name(), path, object_id)}]
-                    status_description = "Object with ID {} successfully added".format(object_id)
-                    status = HydraStatus(code=201, title="Object successfully added.",
-                                         desc=status_description)
-                    return set_response_headers(
-                        jsonify(status.generate()), headers=headers_, status_code=status.code)
-                except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
-                    error = e.get_HTTP()
-                    return set_response_headers(jsonify(error.generate()), status_code=error.code)
-            else:
-                error = HydraError(code=400, title="Data is not valid")
-                return set_response_headers(jsonify(error.generate()), status_code=error.code)
+            return items_put_check_support(id_, class_path, path)
         else:
             abort(405)
 
     def delete(self, id_: str, path: str) -> Response:
         """Delete object with id=id_ from database.
-          :param id_ - ID of Item to be deleted
-          :param path - Path for Item type( Specified in APIDoc @id) to be deleted
+        :param id_ - ID of Item to be deleted
+        :param path - Path for Item type( Specified in APIDoc @id) to be deleted
         """
         id_ = str(id_)
         auth_response = check_authentication_response()
@@ -234,28 +167,7 @@ class Item(Resource):
         class_path = get_doc().collections[path]["collection"].class_.path
 
         if checkClassOp(class_path, "DELETE"):
-            # Check if class_type supports PUT operation
-            try:
-                # Delete the Item with ID == id_
-                crud.delete(id_, class_type, session=get_session())
-                method = "DELETE"
-                resource_url = "{}{}/{}/{}".format(
-                    get_hydrus_server_url(), get_api_name(), path, id_)
-                last_job_id = crud.get_last_modification_job_id(session=get_session())
-                new_job_id = crud.insert_modification_record(method, resource_url,
-                                                             session=get_session())
-                send_sync_update(socketio=socketio, new_job_id=new_job_id,
-                                 last_job_id=last_job_id, method=method,
-                                 resource_url=resource_url)
-                status_description = "Object with ID {} successfully deleted".format(id_)
-                status = HydraStatus(code=200, title="Object successfully deleted.",
-                                     desc=status_description)
-                return set_response_headers(jsonify(status.generate()))
-
-            except (ClassNotFound, InstanceNotFound) as e:
-                error = e.get_HTTP()
-                return set_response_headers(jsonify(error.generate()), status_code=error.code)
-
+            return items_delete_check_support(id_, class_type, path)
         abort(405)
 
 
@@ -322,7 +234,8 @@ class ItemCollection(Resource):
                 return set_response_headers(jsonify(error.generate()), status_code=error.code)
 
     def put(self, path: str) -> Response:
-        """Method executed for PUT requests.
+        """
+        Method executed for PUT requests.
         Used to add an item to a collection
         :param path - Path for Item type ( Specified in APIDoc @id)
         """
@@ -396,7 +309,8 @@ class ItemCollection(Resource):
         abort(endpoint_['status'])
 
     def post(self, path: str) -> Response:
-        """Method executed for POST requests.
+        """
+        Method executed for POST requests.
         Used to update a non-collection class.
         :param path - Path for Item type ( Specified in APIDoc @id)
         """
@@ -450,7 +364,8 @@ class ItemCollection(Resource):
         abort(endpoint_['status'])
 
     def delete(self, path: str) -> Response:
-        """Method executed for DELETE requests.
+        """
+        Method executed for DELETE requests.
         Used to delete a non-collection class.
         :param path - Path for Item ( Specified in APIDoc @id)
         """
@@ -487,9 +402,11 @@ class ItemCollection(Resource):
 class Items(Resource):
 
     def put(self, path, int_list="") -> Response:
-        """To insert multiple objects into the database.
-        :param path: endpoint.
-        :param int_list: Optional String containing ',' separated ID's.
+        """
+        To insert multiple objects into the database
+        :param path: endpoint
+        :param int_list: Optional String containing ',' separated ID's
+        :return:
         """
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):
@@ -512,7 +429,8 @@ class Items(Resource):
                     if not check_required_props(class_path, obj):
                         incomplete_objects.append(obj)
                         object_.remove(obj)
-                link_props_list, link_type_check = get_link_props_for_multiple_objects(class_path, object_)
+                link_props_list, link_type_check = get_link_props_for_multiple_objects(class_path,
+                                                                                       object_)
                 if validObjectList(object_) and link_type_check:
                     type_result = type_match(object_, obj_type)
                     # If Item in request's JSON is a valid object
@@ -553,7 +471,8 @@ class Items(Resource):
         abort(endpoint_['status'])
 
     def delete(self, path, int_list):
-        """To delete multiple objects
+        """
+        To delete multiple objects
         :param path: endpoints
         :param int_list: Optional String containing ',' separated ID's
         :return:
@@ -599,9 +518,9 @@ class Contexts(Resource):
 
     def get(self, category: str) -> Response:
         """Return the context for the specified class.
-          :param category : category of collection/non collection class for which the contexts to be generated.
-          :return : object with context.
-        """
+        :param category : category of collection/non collection class for which the contexts to be generated.
+        :return : object with context.
+        """      
         # Check for collection
         if category in get_doc().collections:
             # type: Union[Dict[str,Any],Dict[int,str]]
