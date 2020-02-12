@@ -39,7 +39,7 @@ try:
     apidoc_path = cwd_path / Path(apidoc_env)
 except KeyError:
     # if it is not set, use the example doc
-    apidoc_path = cwd_path / 'examples' / 'drones' / 'doc.py'
+    apidoc_path = cwd_path / 'hydrus' / 'samples' / 'hydra_doc_sample.py'
 
 try:
     APIDOC_OBJ = SourceFileLoader(
