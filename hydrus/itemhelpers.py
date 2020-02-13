@@ -197,7 +197,7 @@ def itemsCollection_get_support(collection, class_path, path, search_params):
                 return set_response_headers(jsonify(error.generate()), status_code=error.code)
 
 
-def itemsCollection_post_support(object_, link_props, path):                       
+def itemsCollection_post_support(object_, link_props, path):
     try:
         crud.update_single(
             object_=object_,
