@@ -39,9 +39,6 @@ from hydrus.utils import (
     get_page_size,
     get_pagination)
 from hydrus.socketio_factory import socketio
-
-
-
 def items_get_check_support(id_, class_type, class_path, path):
     """Check if class_type supports GET operation"""
     try:
