@@ -195,3 +195,70 @@ def itemsCollection_get_support(collection, class_path, path, search_params):
             except (ClassNotFound, PageNotFound, InvalidSearchParameter, OffsetOutOfRange) as e:
                 error = e.get_HTTP()
                 return set_response_headers(jsonify(error.generate()), status_code=error.code)
+
+def itemsCollection_post_support(object_, link_props, path):                       
+    try:
+        crud.update_single(
+            object_=object_,
+            session=get_session(),
+            api_name=get_api_name(),
+            link_props=link_props,
+            path=path)
+        method = "POST"
+        resource_url = "{}{}/{}".format(
+            get_hydrus_server_url(), get_api_name(), path)
+        last_job_id = crud.get_last_modification_job_id(session=get_session())
+        new_job_id = crud.insert_modification_record(method, resource_url,
+                                                        session=get_session())
+        send_sync_update(socketio=socketio, new_job_id=new_job_id,
+                            last_job_id=last_job_id, method=method,
+                            resource_url=resource_url)
+        headers_ = [
+            {"Location": "{}/{}/".format(
+                get_hydrus_server_url(), get_api_name(), path)}]
+        status = HydraStatus(code=200, title="Object successfully added")
+        return set_response_headers(
+            jsonify(status.generate()), headers=headers_)
+    except (ClassNotFound, InstanceNotFound,
+            InstanceExists, PropertyNotFound) as e:
+        error = e.get_HTTP()
+        return set_response_headers(
+            jsonify(error.generate()), status_code=error.code)
+
+def itemsCollection_put_support(object_, path):
+    try:
+        # Insert object and return location in Header
+        object_id = crud.insert(object_=object_, session=get_session())
+        headers_ = [
+            {"Location": "{}{}/{}/{}".format(
+                get_hydrus_server_url(), get_api_name(), path, object_id)}]
+        status_description = "Object with ID {} successfully added".format(
+            object_id)
+        status = HydraStatus(code=201, title="Object successfully added",
+                                desc=status_description)
+        return set_response_headers(
+            jsonify(status.generate()), headers=headers_, status_code=status.code)
+    except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
+        error = e.get_HTTP()
+        return set_response_headers(jsonify(error.generate()),
+                                    status_code=error.code)
+
+def itemsCollection_delete_support(path):
+    try:
+        class_type = get_doc().parsed_classes[path]['class'].title
+        crud.delete_single(class_type, session=get_session())
+        method = "DELETE"
+        resource_url = "{}{}/{}".format(
+            get_hydrus_server_url(), get_api_name(), path)
+        last_job_id = crud.get_last_modification_job_id(session=get_session())
+        new_job_id = crud.insert_modification_record(method, resource_url,
+                                                        session=get_session())
+        send_sync_update(socketio=socketio, new_job_id=new_job_id,
+                            last_job_id=last_job_id, method=method,
+                            resource_url=resource_url)
+        status = HydraStatus(code=200, title="Object successfully added")
+        return set_response_headers(jsonify(status.generate()))
+    except (ClassNotFound, InstanceNotFound) as e:
+        error = e.get_HTTP()
+        return set_response_headers(
+            jsonify(error.generate()), status_code=error.code)
