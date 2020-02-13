@@ -173,7 +173,7 @@ def items_delete_check_support(id_, class_type, path):
                                     status_code=error.code)
 
 
-def itemsCollection_get_support(collection,class_path,path,search_params):
+def itemsCollection_get_support(collection, class_path, path, search_params):
             try:
                 # Get collection details from the database
                 if get_pagination():

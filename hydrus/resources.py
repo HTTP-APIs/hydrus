@@ -190,7 +190,7 @@ class ItemCollection(Resource):
             collection = get_doc().collections[path]["collection"]
             # get path of the collection class
             class_path = collection.class_.path
-            return itemsCollection_get_support(collection,class_path,path, search_params)
+            return itemsCollection_get_support(collection, class_path, path, search_params)
         # If endpoint and GET method is supported in the API and class is supported
         elif path in get_doc().parsed_classes and "{}Collection".format(
                 path) not in get_doc().collections:
