@@ -64,7 +64,8 @@ from hydrus.itemhelpers import (
     items_get_check_support,
     items_post_check_support,
     items_put_check_support,
-    items_delete_check_support)
+    items_delete_check_support,
+    itemsCollection_get_support)
 
 
 class Index(Resource):
@@ -193,29 +194,7 @@ class ItemCollection(Resource):
             collection = get_doc().collections[path]["collection"]
             # get path of the collection class
             class_path = collection.class_.path
-            try:
-                # Get collection details from the database
-                if get_pagination():
-                    # Get paginated response
-                    response = crud.get_collection(
-                        get_api_name(), collection.class_.title, session=get_session(),
-                        paginate=True, path=path, page_size=get_page_size(),
-                        search_params=search_params)
-                else:
-                    # Get whole collection
-                    response = crud.get_collection(
-                        get_api_name(), collection.class_.title, session=get_session(),
-                        paginate=False, path=path, search_params=search_params)
-
-                response["search"] = add_iri_template(path=class_path,
-                                                      API_NAME=get_api_name())
-
-                return set_response_headers(jsonify(hydrafy(response, path=path)))
-
-            except (ClassNotFound, PageNotFound, InvalidSearchParameter, OffsetOutOfRange) as e:
-                error = e.get_HTTP()
-                return set_response_headers(jsonify(error.generate()), status_code=error.code)
-
+            return itemsCollection_get_support(collection,class_path,path, search_params)
         # If endpoint and GET method is supported in the API and class is supported
         elif path in get_doc().parsed_classes and "{}Collection".format(
                 path) not in get_doc().collections:
