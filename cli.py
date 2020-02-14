@@ -20,6 +20,8 @@ from typing import Tuple
 import json
 import click
 import yaml
+from hydrus.conf import (
+    APIDOC_OBJ, FOUND_DOC)
 
 
 @click.command()
@@ -121,17 +123,27 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str, pagination: bo
                                           HYDRUS_SERVER_URL, API_NAME)
 
         except BaseException:
-            click.echo("Problem parsing specified hydradoc file, "
-                       "using sample hydradoc as default.")
-            apidoc = doc_maker.create_doc(api_document,
+            if FOUND_DOC:
+                click.echo("Problem parsing specified hydradoc file"
+                           "Using hydradoc from environment variable")
+            else:
+                click.echo("Problem parsing specified hydradoc file, "
+                           "using sample hydradoc as default.")
+
+            apidoc = doc_maker.create_doc(APIDOC_OBJ,
                                           HYDRUS_SERVER_URL, API_NAME)
     else:
-        click.echo("No hydradoc specified, using sample hydradoc as default.\n"
-                   "For creating api documentation see this "
-                   "https://www.hydraecosystem.org/01-Usage.html#newdoc\n"
-                   "You can find the example used in hydrus/samples/hydra_doc_sample.py")
+        if FOUND_DOC:
+            click.echo(
+                "No hydradoc specified, using hydradoc from environment variable as default.")
+        else:
+            click.echo("No hydradoc specified, using sample hydradoc as default.\n"
+                       "For creating api documentation see this "
+                       "https://www.hydraecosystem.org/01-Usage.html#newdoc\n"
+                       "You can find the example used in hydrus/samples/hydra_doc_sample.py")
+
         apidoc = doc_maker.create_doc(
-            api_document, HYDRUS_SERVER_URL, API_NAME)
+            APIDOC_OBJ, HYDRUS_SERVER_URL, API_NAME)
 
     # Start a session with the DB and create all classes needed by the APIDoc
     session = scoped_session(sessionmaker(bind=engine))

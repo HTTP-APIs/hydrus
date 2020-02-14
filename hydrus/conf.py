@@ -6,6 +6,7 @@ Global variables are loaded or set here:
     DB_URL
     APIDOC_OBJ
     HYDRUS_SERVER_URL
+    FOUND_DOC
 """
 import os
 import logging
@@ -37,8 +38,10 @@ try:
     # try to load the path specified in environment variable
     apidoc_env = os.environ['APIDOC_REL_PATH']
     apidoc_path = cwd_path / Path(apidoc_env)
+    FOUND_DOC = True
 except KeyError:
     # if it is not set, use the example doc
+    FOUND_DOC = False
     apidoc_path = cwd_path / 'hydrus' / 'samples' / 'hydra_doc_sample.py'
 
 try:
