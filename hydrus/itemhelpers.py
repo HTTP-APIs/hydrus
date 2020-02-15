@@ -189,8 +189,7 @@ def itemsCollection_get_support(collection, class_path, path, search_params):
                 paginate=False, path=path, search_params=search_params)
 
         response["search"] = add_iri_template(path=class_path,
-                                                API_NAME=get_api_name())
-
+                                              API_NAME=get_api_name())
         return set_response_headers(jsonify(hydrafy(response, path=path)))
 
     except (ClassNotFound, PageNotFound, InvalidSearchParameter, OffsetOutOfRange) as e:
@@ -202,8 +201,7 @@ def itemsCollection_post_support(object_, link_props, path):
     """
     Check if object_ supports POST operation
     :param object_ : endpoint or member of a collection
-    :param link_props : Dict with property_title as key and
-                        instance_id(for collection class) or class_name(for non-collection class) as value
+    :param link_props : Dict with property_title as key and instance_id(for collection class) as value
     :param path : Path for Item type ( Specified in APIDoc @id)
     """
     try:
@@ -308,8 +306,7 @@ def itemsClass_put_support(object_, link_props, path):
     """
     Check if object_ (class) supports POST operation
     :param object_ : endpoint or member of a collection
-    :param link_props : Dict with property_title as key and
-                        instance_id(for collection class) or class_name(for non-collection class) as value
+    :param link_props : Dict with property_title as key and class_name(for non-collection class) as value
     :param path : Path for Item type ( Specified in APIDoc @id)
     """
     try:
