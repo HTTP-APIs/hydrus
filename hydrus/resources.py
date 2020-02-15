@@ -64,7 +64,8 @@ from hydrus.itemhelpers import (
     items_get_check_support,
     items_post_check_support,
     items_put_check_support,
-    items_delete_check_support)
+    items_delete_check_support,
+    itemsCollection_get_support)
 
 
 class Index(Resource):
@@ -101,6 +102,7 @@ class Item(Resource):
         GET object with id = id_ from the database.
         :param id_ : Item ID
         :param path : Path for Item ( Specified in APIDoc @id)
+        :return : object with id=id_
         """
         id_ = str(id_)
         auth_response = check_authentication_response()
@@ -116,7 +118,8 @@ class Item(Resource):
         abort(405)
 
     def post(self, id_: str, path: str) -> Response:
-        """Update object of type<path> at ID<id_> with new object_ using HTTP POST.
+        """
+        Update object of type<path> at ID<id_> with new object_ using HTTP POST.
         :param id_ - ID of Item to be updated
         :param path - Path for Item type( Specified in APIDoc @id)
         """
@@ -135,7 +138,8 @@ class Item(Resource):
             abort(405)
 
     def put(self, id_: str, path: str) -> Response:
-        """Add new object_ optional <id_> parameter using HTTP PUT.
+        """
+        Add new object_ optional <id_> parameter using HTTP PUT.
         :param id_ - ID of Item to be updated
         :param path - Path for Item type( Specified in APIDoc @id) to be updated
         """
@@ -153,7 +157,11 @@ class Item(Resource):
             abort(405)
 
     def delete(self, id_: str, path: str) -> Response:
-        """Delete object with id=id_ from database."""
+        """
+        Delete object with id=id_ from database.
+        :param id_ - ID of Item to be deleted
+        :param path - Path for Item type( Specified in APIDoc @id) to be deleted
+        """
         id_ = str(id_)
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):
@@ -174,6 +182,8 @@ class ItemCollection(Resource):
     def get(self, path: str) -> Response:
         """
         Retrieve a collection of items from the database.
+        :param path : Path of the Collection
+        :return : collection of items
         """
         search_params = request.args.to_dict()
         auth_response = check_authentication_response()
@@ -189,29 +199,7 @@ class ItemCollection(Resource):
             collection = get_doc().collections[path]["collection"]
             # get path of the collection class
             class_path = collection.class_.path
-            try:
-                # Get collection details from the database
-                if get_pagination():
-                    # Get paginated response
-                    response = crud.get_collection(
-                        get_api_name(), collection.class_.title, session=get_session(),
-                        paginate=True, path=path, page_size=get_page_size(),
-                        search_params=search_params)
-                else:
-                    # Get whole collection
-                    response = crud.get_collection(
-                        get_api_name(), collection.class_.title, session=get_session(),
-                        paginate=False, path=path, search_params=search_params)
-
-                response["search"] = add_iri_template(path=class_path,
-                                                      API_NAME=get_api_name())
-
-                return set_response_headers(jsonify(hydrafy(response, path=path)))
-
-            except (ClassNotFound, PageNotFound, InvalidSearchParameter, OffsetOutOfRange) as e:
-                error = e.get_HTTP()
-                return set_response_headers(jsonify(error.generate()), status_code=error.code)
-
+            return itemsCollection_get_support(collection, class_path, path, search_params)
         # If endpoint and GET method is supported in the API and class is supported
         elif path in get_doc().parsed_classes and "{}Collection".format(
                 path) not in get_doc().collections:
