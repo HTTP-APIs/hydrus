@@ -201,7 +201,7 @@ def itemsCollection_post_support(object_, link_props, path):
     """
     Check if object_ supports POST operation
     :param object_ : endpoint or member of a collection
-    :param link_props : Dict with property_title as key and instance_id(for collection class) as value
+    :param link_props : Dict with property_title and instance_id
     :param path : Path for Item type ( Specified in APIDoc @id)
     """
     try:
@@ -306,7 +306,7 @@ def itemsClass_put_support(object_, link_props, path):
     """
     Check if object_ (class) supports POST operation
     :param object_ : endpoint or member of a collection
-    :param link_props : Dict with property_title as key and class_name(for non-collection class) as value
+    :param link_props : Dict with property_title and class_name
     :param path : Path for Item type ( Specified in APIDoc @id)
     """
     try:
