@@ -64,8 +64,7 @@ from hydrus.itemhelpers import (
     items_get_check_support,
     items_post_check_support,
     items_put_check_support,
-    items_delete_check_support,
-    itemsCollection_get_support)
+    items_delete_check_support)
 
 
 class Index(Resource):
