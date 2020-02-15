@@ -68,7 +68,9 @@ from hydrus.itemhelpers import (
     itemsCollection_get_support,
     itemsCollection_post_support,
     itemsCollection_put_support,
-    itemsCollection_delete_support)
+    itemsClass_delete_support,
+    itemsClass_get_support,
+    itemsClass_put_support)
 
 
 class Index(Resource):
@@ -197,19 +199,7 @@ class ItemCollection(Resource):
         # If endpoint and GET method is supported in the API and class is supported
         elif path in get_doc().parsed_classes and "{}Collection".format(
                 path) not in get_doc().collections:
-            try:
-                class_type = get_doc().parsed_classes[path]['class'].title
-                response = crud.get_single(
-                    class_type,
-                    api_name=get_api_name(),
-                    session=get_session(),
-                    path=path)
-                response = finalize_response(path, response)
-                return set_response_headers(jsonify(hydrafy(response, path=path)))
-
-            except (ClassNotFound, InstanceNotFound) as e:
-                error = e.get_HTTP()
-                return set_response_headers(jsonify(error.generate()), status_code=error.code)
+            return itemsClass_get_support(path)
 
     def put(self, path: str) -> Response:
         """
@@ -252,19 +242,7 @@ class ItemCollection(Resource):
                 link_props, link_type_check = get_link_props(path, object_)
                 if object_["@type"] == obj_type and validObject(object_) and check_required_props(
                         path, object_) and link_type_check:
-                    try:
-                        object_id = crud.insert(object_=object_, link_props=link_props,
-                                                session=get_session())
-                        headers_ = [{"Location": "{}{}/{}/".format(
-                                get_hydrus_server_url(), get_api_name(), path)}]
-                        status = HydraStatus(code=201, title="Object successfully added")
-                        return set_response_headers(
-                            jsonify(status.generate()), headers=headers_, status_code=status.code)
-                    except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
-                        error = e.get_HTTP()
-                        return set_response_headers(jsonify(error.generate()),
-                                                    status_code=error.code)
-
+                    return itemsClass_put_support(object_, link_props, path)
                 else:
                     error = HydraError(code=400, title="Data is not valid")
                     return set_response_headers(jsonify(error.generate()), status_code=error.code)
@@ -316,7 +294,7 @@ class ItemCollection(Resource):
         elif path in get_doc().parsed_classes and "{}Collection".format(
                 path) not in get_doc().collections:
             # No Delete Operation for collections
-            return itemsCollection_delete_support(path)
+            return itemsClass_delete_support(path)
 
 
 class Items(Resource):
