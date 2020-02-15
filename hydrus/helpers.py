@@ -10,7 +10,7 @@ from hydra_python_core.doc_writer import HydraIriTemplate, IriTemplateMapping, H
 
 
 def validObject(object_: Dict[str, Any]) -> bool:
-    """ 
+    """
     Check if the Dict passed in POST is of valid format or not.
         (if there's an "@type" key in the dict)
     :param object_ - Object to be checked
