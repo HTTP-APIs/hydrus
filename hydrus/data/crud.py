@@ -572,7 +572,7 @@ def get_collection(API_NAME: str,
     # If pagination is disabled then stop and return the collection template
     if paginate is False:
         return collection_template
-    collection_template["totalItems"] = result_length
+    collection_template["hydra:totalItems"] = result_length
     # Calculate last page number
     if result_length != 0 and result_length % page_size == 0:
         last = result_length // page_size
