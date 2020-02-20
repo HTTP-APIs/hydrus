@@ -167,8 +167,7 @@ def items_delete_check_support(id_, class_type, path):
 
 
 def itemsCollection_get_support(collection, class_path, path, search_params):
-    """
-    Check if collection supports GET operation
+    """Check if collection supports GET operation
     :param collection : document's collection
     :param class_path : path of the collection class
     :param path : Path for Item type ( Specified in APIDoc @id)
@@ -198,8 +197,7 @@ def itemsCollection_get_support(collection, class_path, path, search_params):
 
 
 def itemsCollection_post_support(object_, link_props, path):
-    """
-    Check if object_ supports POST operation
+    """Check if object_ supports POST operation
     :param object_ : endpoint or member of a collection
     :param link_props : Dict with property_title and instance_id
     :param path : Path for Item type ( Specified in APIDoc @id)
@@ -234,8 +232,7 @@ def itemsCollection_post_support(object_, link_props, path):
 
 
 def itemsCollection_put_support(object_, path):
-    """
-    Check if object_ supports PUT operation
+    """Check if object_ supports PUT operation
     :param object_ - endpoint or member of a collection
     :param path- Path for Item type ( Specified in APIDoc @id)
     """
@@ -258,8 +255,7 @@ def itemsCollection_put_support(object_, path):
 
 
 def itemsClass_delete_support(path):
-    """
-    Supports DELETE operation for the specified path
+    """Supports DELETE operation for the specified path
     :param path- Path for Item ( Specified in APIDoc @id)
     """
     try:
@@ -283,8 +279,7 @@ def itemsClass_delete_support(path):
 
 
 def itemsClass_get_support(path):
-    """
-    Supports GET operation for the specified path
+    """Supports GET operation for the specified path
     :param path- Path for Item ( Specified in APIDoc @id)
     """
     try:
@@ -303,8 +298,7 @@ def itemsClass_get_support(path):
 
 
 def itemsClass_put_support(object_, link_props, path):
-    """
-    Check if object_ (class) supports POST operation
+    """Check if object_ (class) supports POST operation
     :param object_ : endpoint or member of a collection
     :param link_props : Dict with property_title and class_name
     :param path : Path for Item type ( Specified in APIDoc @id)
