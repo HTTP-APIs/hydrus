@@ -7,11 +7,7 @@ from hydrus.resources import (Index, Vocab, Contexts, Entrypoint,
 
 
 def app_factory(api_name: str = "api") -> Flask:
-    """
-    Create an app object
-    :param api_name : Name of the api
-    :return : API with all routes directed at /[api_name].
-    """
+    """Create an app object."""
 
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'secret key'

@@ -11,10 +11,9 @@ from hydra_python_core.doc_writer import HydraIriTemplate, IriTemplateMapping, H
 
 def validObject(object_: Dict[str, Any]) -> bool:
     """
-    Check if the Dict passed in POST is of valid format or not.
+        Check if the Dict passed in POST is of valid format or not.
         (if there's an "@type" key in the dict)
-    :param object_ - Object to be checked
-    :return : <bool> True if Object has "@type" key
+        :param object_ - Object to be checked
     """
     if "@type" in object_:
         return True
@@ -23,10 +22,9 @@ def validObject(object_: Dict[str, Any]) -> bool:
 
 def validObjectList(objects_: List[Dict[str, Any]]) -> bool:
     """
-    Check if the List of Dicts passed are of the valid format or not.
+        Check if the List of Dicts passed are of the valid format or not.
         (if there's an "@type" key in the dict)
     :param objects_: Object to be checked
-    :return : <bool> True if all the Object in the List of Dicts have "@type" key
     """
     for object_ in objects_:
         if "@type" not in object_:
@@ -52,14 +50,7 @@ def set_response_headers(resp: Response,
                          ct: str = "application/ld+json",
                          headers: List[Dict[str, Any]]=[],
                          status_code: int = 200) -> Response:
-    """
-    Set the response headers.
-    :param resp: Response.
-    :param ct: Content-type default "application/ld+json".
-    :param headers: List of objects.
-    :param status_code: status code default 200.
-    :return: Response with headers.
-    """
+    """Set the response headers."""
     resp.status_code = status_code
     for header in headers:
         resp.headers[list(header.keys())[0]] = header[list(header.keys())[0]]
@@ -71,12 +62,7 @@ def set_response_headers(resp: Response,
 
 
 def hydrafy(object_: Dict[str, Any], path: Optional[str]) -> Dict[str, Any]:
-    """
-    Add hydra context to objects.
-    :param object_ : Object.
-    :param path : Path of the collection or non-collection class .
-    :return : object with hydra context
-    """
+    """Add hydra context to objects."""
     if path == object_["@type"]:
         object_[
             "@context"] = "/{}/contexts/{}.jsonld".format(get_api_name(), object_["@type"])
@@ -87,12 +73,7 @@ def hydrafy(object_: Dict[str, Any], path: Optional[str]) -> Dict[str, Any]:
 
 
 def checkEndpoint(method: str, path: str) -> Dict[str, Union[bool, int]]:
-    """
-    Check if endpoint and method is supported in the API.
-    :param method: Method name
-    :param path: Path of the collection or non-collection class
-    :return : Dict with 'method' and 'status' key
-    """
+    """Check if endpoint and method is supported in the API."""
     status_val = 404
     if path == 'vocab':
         return {'method': False, 'status': 405}
@@ -108,11 +89,7 @@ def checkEndpoint(method: str, path: str) -> Dict[str, Union[bool, int]]:
 
 
 def getType(class_path: str, method: str) -> Any:
-    """
-    Return the @type of object allowed for POST/PUT.
-    :param class_path: path for the class
-    :param method: Method name
-    """
+    """Return the @type of object allowed for POST/PUT."""
     for supportedOp in get_doc(
     ).parsed_classes[class_path]["class"].supportedOperation:
         if supportedOp.method == method:
@@ -122,8 +99,7 @@ def getType(class_path: str, method: str) -> Any:
 
 
 def checkClassOp(path: str, method: str) -> bool:
-    """
-    Check if the Class supports the operation.
+    """Check if the Class supports the operation.
     :param path: Path of the collection or non-collection class.
     :param method: Method name.
     :return: True if the method is defined, false otherwise.
@@ -233,8 +209,7 @@ def add_iri_template(path: str, API_NAME: str) -> Dict[str, Any]:
 def generate_iri_mappings(path: str, template: str, skip_nested: bool = False,
                           template_mapping: List[IriTemplateMapping] = [],
                           parent_prop_name: str = None) -> Tuple[str, List[IriTemplateMapping]]:
-    """
-    Generate iri mappings to add to IriTemplate
+    """Generate iri mappings to add to IriTemplate
     :param path: Path of the collection or non-collection class.
     :param template: IriTemplate string.
     :param skip_nested: To only add properties of the class_type class or
@@ -276,8 +251,7 @@ def generate_iri_mappings(path: str, template: str, skip_nested: bool = False,
 def add_pagination_iri_mappings(template: str,
                                 template_mapping: List[IriTemplateMapping]
                                 ) -> Tuple[str, List[IriTemplateMapping]]:
-    """
-    Add various pagination related to variable to the IRI template and also adds mappings for them.
+    """Add various pagination related to variable to the IRI template and also adds mappings for them.
     :param template: IriTemplate string.
     :param template_mapping: List of template mappings.
     :return: Final IriTemplate string and related list of mappings.
@@ -296,8 +270,7 @@ def add_pagination_iri_mappings(template: str,
 
 def send_sync_update(socketio, new_job_id: int, last_job_id: str,
                      method: str, resource_url: str):
-    """
-    Sends synchronization update to all connected clients.
+    """Sends synchronization update to all connected clients.
     :param socketio: socketio connection.
     :param new_job_id: Job id of the new modification(update).
     :param last_job_id: Job id of the last(most recent) modification until this new one.
