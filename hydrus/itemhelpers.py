@@ -237,7 +237,7 @@ def itemsCollection_put_support(object_, path):
     """
     Check if object_ supports PUT operation
     :param object_ : endpoint or member of a collection
-    :param path- Path for Item type ( Specified in APIDoc @id)
+    :param path : Path for Item type ( Specified in APIDoc @id)
     """
     try:
         # Insert object and return location in Header
