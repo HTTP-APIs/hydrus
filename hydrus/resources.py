@@ -107,6 +107,7 @@ class Item(Resource):
         GET object with id = id_ from the database.
         :param id_ : Item ID
         :param path : Path for Item ( Specified in APIDoc @id)
+        :return : object with id=id_
         """
         id_ = str(id_)
         auth_response = check_authentication_response()
@@ -122,7 +123,8 @@ class Item(Resource):
         abort(405)
 
     def post(self, id_: str, path: str) -> Response:
-        """Update object of type<path> at ID<id_> with new object_ using HTTP POST.
+        """
+        Update object of type<path> at ID<id_> with new object_ using HTTP POST.
         :param id_ - ID of Item to be updated
         :param path - Path for Item type( Specified in APIDoc @id)
         """
@@ -141,7 +143,8 @@ class Item(Resource):
             abort(405)
 
     def put(self, id_: str, path: str) -> Response:
-        """Add new object_ optional <id_> parameter using HTTP PUT.
+        """
+        Add new object_ optional <id_> parameter using HTTP PUT.
         :param id_ - ID of Item to be updated
         :param path - Path for Item type( Specified in APIDoc @id) to be updated
         """
@@ -159,7 +162,11 @@ class Item(Resource):
             abort(405)
 
     def delete(self, id_: str, path: str) -> Response:
-        """Delete object with id=id_ from database."""
+        """
+        Delete object with id=id_ from database.
+        :param id_ - ID of Item to be deleted
+        :param path - Path for Item type( Specified in APIDoc @id) to be deleted
+        """
         id_ = str(id_)
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):
@@ -180,6 +187,8 @@ class ItemCollection(Resource):
     def get(self, path: str) -> Response:
         """
         Retrieve a collection of items from the database.
+        :param path : Path of the Collection
+        :return : collection of items
         """
         search_params = request.args.to_dict()
         auth_response = check_authentication_response()
