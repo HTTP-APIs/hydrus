@@ -24,8 +24,7 @@ from hydrus.conf import (
     APIDOC_OBJ, FOUND_DOC)
 
 @click.group()
-@click.pass_context
-def startserver(ctx):
+def startserver():
     """
     Python Hydrus CLI.
     """
