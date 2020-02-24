@@ -23,12 +23,14 @@ import yaml
 from hydrus.conf import (
     APIDOC_OBJ, FOUND_DOC)
 
+
 @click.group()
 def startserver():
     """
     Python Hydrus CLI.
     """
     pass
+
 
 @startserver.command()
 @click.option("--adduser", "-u", default=tuple([1, "test"]),
@@ -56,8 +58,8 @@ def startserver():
               help="Interval period between removal of stale modification records.",
               type=int)
 def serve(adduser: tuple, api: str, auth: bool, dburl: str, pagination: bool,
-                hydradoc: str, port: int, pagesize: int, serverurl: str, token: bool,
-                stale_records_removal_interval: int) -> None:
+          hydradoc: str, port: int, pagesize: int, serverurl: str, token: bool,
+          stale_records_removal_interval: int) -> None:
     """
     Starts up the server.
     \f
