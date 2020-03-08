@@ -24,7 +24,15 @@ from hydrus.conf import (
     APIDOC_OBJ, FOUND_DOC)
 
 
-@click.command()
+@click.group()
+def startserver():
+    """
+    Python Hydrus CLI.
+    """
+    pass
+
+
+@startserver.command()
 @click.option("--adduser", "-u", default=tuple([1, "test"]),
               help="Adds a new user to the API.", nargs=2, type=(int, str))
 @click.option("--api", "-a", default="serverapi",
@@ -32,7 +40,7 @@ from hydrus.conf import (
 @click.option("--auth/--no-auth", default=True,
               help="Set authentication to True or False.")
 @click.option("--dburl", default="sqlite:///database.db",
-              help="Set database url", type=str)
+              help="Set database url.", type=str)
 @click.option("--hydradoc", "-d", default=None,
               help="Location to HydraDocumentation (JSON-LD) of server.",
               type=str)
@@ -49,27 +57,28 @@ from hydrus.conf import (
 @click.option("--stale_records_removal_interval", default=900,
               help="Interval period between removal of stale modification records.",
               type=int)
-@click.argument("serve", required=True)
-def startserver(adduser: Tuple, api: str, auth: bool, dburl: str, pagination: bool,
-                hydradoc: str, port: int, pagesize: int, serverurl: str, token: bool,
-                stale_records_removal_interval: int, serve: None) -> None:
+def serve(adduser: tuple, api: str, auth: bool, dburl: str, pagination: bool,
+          hydradoc: str, port: int, pagesize: int, serverurl: str, token: bool,
+          stale_records_removal_interval: int) -> None:
     """
-    Python Hydrus CLI
+    Starts up the server.
+    \f
 
-    :param openapi:         : Sets the link to the Open Api Doc file.
     :param adduser <tuple>  : Contains the user credentials.
     :param api <str>        : Sets the API name for the server.
     :param auth <bool>      : Toggles the authentication.
     :param dburl <str>      : Sets the database URL.
+    :param pagination <bool>: Toggles the pagination.
     :param hydradoc <str>   : Sets the link to the HydraDoc file
-                            (Supported formats - [.py, .jsonld, .yaml])
+                              (Supported formats - [.py, .jsonld, .yaml])
     :param port <int>       : Sets the API server port.
+    :param pagesize <int>   : Sets maximum size of page(view).
     :param serverurl <str>  : Sets the API server url.
     :param token <bool>     : Toggle token based user auth.
-    :param serve            : Starts up the server.
+    :stable_records_removal_interval <int> : Interval period between removal
+                                             of stale modification records.
 
-    :return                 : None.
-
+    :return                 : None
 
     Raises:
         Error: If `hydradoc` is not of a supported format[.py, .jsonld, .yaml].
