@@ -1,9 +1,14 @@
 """Main route for the application"""
 
 import logging
+import sys
+from os.path import dirname, abspath
+# insert the ./app.py file path in the PYTHONPATH variable for imports to work
+sys.path.insert(0, dirname(dirname(abspath(__file__))))
 
 from sqlalchemy import create_engine
-
+from flask import request
+from collections import defaultdict
 from gevent.pywsgi import WSGIServer
 from sqlalchemy.orm import sessionmaker
 
@@ -42,8 +47,8 @@ properties = doc_parse.get_all_properties(classes)
 doc_parse.insert_classes(classes, session)
 doc_parse.insert_properties(properties, session)
 
-AUTH = True
-TOKEN = True
+AUTH = False
+TOKEN = False
 
 if AUTH:
     try:
@@ -53,6 +58,41 @@ if AUTH:
 
 # Create a Hydrus app
 app = app_factory(API_NAME)
+
+# global dict to store mapping of each function to be run before
+# specified route.
+# stores in the form {'path1': {'method1': function_before_path1_for_method1}}
+before_request_funcs = defaultdict(dict)
+
+
+@app.before_request
+def before_request_callback():
+    path = request.path
+    method = request.method
+    global before_request_funcs
+    func = before_request_funcs.get(path, {}).get(method, None)
+    if func:
+        func()
+
+
+# decorator to define logic for custom before request methods
+def custom_before_request(path, method):
+    def wrapper(f):
+        global before_request_funcs
+        before_request_funcs[path][method] = f
+        return f
+    return wrapper
+
+
+@custom_before_request('/api/MessageCollection', 'PUT')
+def do_this_before_put_on_drone_collections():
+    print("Do something before PUT request on MessageCollection")
+
+
+@custom_before_request('/api/MessageCollection', 'GET')
+def do_this_before_get_on_drone_collections():
+    print("Do something before GET request on MessageCollection")
+
 
 with set_authentication(app, AUTH):
     # Use authentication for all requests
@@ -76,3 +116,4 @@ with set_authentication(app, AUTH):
                                 http_server.serve_forever()
                             except KeyboardInterrupt:
                                 pass
+
