@@ -6,23 +6,25 @@ from os.path import dirname, abspath
 # insert the ./app.py file path in the PYTHONPATH variable for imports to work
 sys.path.insert(0, dirname(dirname(abspath(__file__))))
 
-from sqlalchemy import create_engine
-from flask import request
-from collections import defaultdict
-from gevent.pywsgi import WSGIServer
-from sqlalchemy.orm import sessionmaker
+# ignoring import error by flake 8 temporarily
+# for setting PYTHONPATH before imports
+from sqlalchemy import create_engine  # noqa: E402
+from flask import request  # noqa: E402
+from collections import defaultdict  # noqa: E402
+from gevent.pywsgi import WSGIServer  # noqa: E402
+from sqlalchemy.orm import sessionmaker  # noqa: E402
 
-from hydrus.app_factory import app_factory
+from hydrus.app_factory import app_factory  # noqa: E402
 from hydrus.conf import (
-    HYDRUS_SERVER_URL, API_NAME, DB_URL, APIDOC_OBJ, PORT, DEBUG)
-from hydrus.data import doc_parse
-from hydrus.data.db_models import Base
-from hydrus.data.exceptions import UserExists
-from hydrus.data.user import add_user
-from hydra_python_core import doc_maker
+    HYDRUS_SERVER_URL, API_NAME, DB_URL, APIDOC_OBJ, PORT, DEBUG)  # noqa: E402
+from hydrus.data import doc_parse  # noqa: E402
+from hydrus.data.db_models import Base  # noqa: E402
+from hydrus.data.exceptions import UserExists  # noqa: E402
+from hydrus.data.user import add_user  # noqa: E402
+from hydra_python_core import doc_maker  # noqa: E402
 from hydrus.utils import (
     set_session, set_doc, set_hydrus_server_url,
-    set_token, set_api_name, set_authentication)
+    set_token, set_api_name, set_authentication)  # noqa: E402
 
 logger = logging.getLogger(__file__)
 
@@ -116,4 +118,3 @@ with set_authentication(app, AUTH):
                                 http_server.serve_forever()
                             except KeyboardInterrupt:
                                 pass
-
