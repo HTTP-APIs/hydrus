@@ -102,9 +102,10 @@ class Item(Resource):
         :param path : Path for Item ( Specified in APIDoc @id)
         """
         id_ = str(id_)
-        class_type = get_doc().collections[path]["collection"].class_.title
+        item_class = get_doc().collections[path]["collection"].class_
+        class_type = item_class.title
         # Get path of the collection-class
-        class_path = get_doc().collections[path]["collection"].class_.path
+        class_path = item_class.path
 
         if checkClassOp(class_path, "GET"):
             return items_get_check_support(id_, class_type, class_path, path)
@@ -117,14 +118,13 @@ class Item(Resource):
         :param path - Path for Item type( Specified in APIDoc @id)
         """
         id_ = str(id_)
-        class_type = get_doc().collections[path]["collection"].class_.title
+        item_class = get_doc().collections[path]["collection"].class_
         # Get path of the collection-class
-        class_path = get_doc().collections[path]["collection"].class_.path
+        class_path = item_class.path
         object_ = json.loads(request.data.decode('utf-8'))
         if checkClassOp(class_path, "POST") and check_writeable_props(class_path, object_):
             return items_post_check_support(id_, object_, class_path, path)
-        else:
-            abort(405)
+        abort(405)
 
     @authenticate
     def put(self, id_: str, path: str) -> Response:
@@ -133,21 +133,21 @@ class Item(Resource):
         :param path - Path for Item type( Specified in APIDoc @id) to be updated
         """
         id_ = str(id_)
-        class_type = get_doc().collections[path]["collection"].class_.title
+        item_class = get_doc().collections[path]["collection"].class_
         # Get path of the collection-class
-        class_path = get_doc().collections[path]["collection"].class_.path
+        class_path = item_class.path
         if checkClassOp(class_path, "PUT"):
             return items_put_check_support(id_, class_path, path)
-        else:
-            abort(405)
+        abort(405)
 
     @authenticate
     def delete(self, id_: str, path: str) -> Response:
         """Delete object with id=id_ from database."""
         id_ = str(id_)
-        class_type = get_doc().collections[path]["collection"].class_.title
+        item_class = get_doc().collections[path]["collection"].class_
+        class_type = item_class.title
         # Get path of the collection-class
-        class_path = get_doc().collections[path]["collection"].class_.path
+        class_path = item_class.path
 
         if checkClassOp(class_path, "DELETE"):
             return items_delete_check_support(id_, class_type, path)
