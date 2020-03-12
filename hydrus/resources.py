@@ -9,8 +9,7 @@
     flask_restful.Resource : Represents an abstract RESTful resource.
     Ref - http://flask-restful.readthedocs.io/en/latest/api.html
     hydrus.data.crud : Function/Class to perform basic CRUD operations for the server
-    hydrus.data.user.check_authorization : Funcion checks if the request object has the
-    correct authorization
+    hydrus.auth.authenticate : Decorator for checking authentication of each request
     hydrus.utils.get_session : Gets the database session for the server
     hydrus.utils.get_doc : Function which gets the server API documentation
     hydrus.utils.get_api_name : Function which gets the server API name
@@ -25,7 +24,7 @@ from flask import Response, jsonify, request, abort
 from flask_restful import Resource
 from hydra_python_core.doc_writer import HydraStatus, HydraError
 
-from hydrus.auth import check_authentication_response
+from hydrus.auth import authenticate
 from hydrus.data import crud
 from hydrus.data.exceptions import (
     ClassNotFound,
@@ -95,7 +94,7 @@ class Entrypoint(Resource):
 class Item(Resource):
     """Handles all operations(GET, POST, PATCH, DELETE) on Items
     (item can be anything depending upon the vocabulary)."""
-
+    @authenticate
     def get(self, id_: str, path: str) -> Response:
         """
         GET object with id = id_ from the database.
@@ -103,10 +102,6 @@ class Item(Resource):
         :param path : Path for Item ( Specified in APIDoc @id)
         """
         id_ = str(id_)
-        auth_response = check_authentication_response()
-        if isinstance(auth_response, Response):
-            return auth_response
-
         class_type = get_doc().collections[path]["collection"].class_.title
         # Get path of the collection-class
         class_path = get_doc().collections[path]["collection"].class_.path
@@ -115,16 +110,13 @@ class Item(Resource):
             return items_get_check_support(id_, class_type, class_path, path)
         abort(405)
 
+    @authenticate
     def post(self, id_: str, path: str) -> Response:
         """Update object of type<path> at ID<id_> with new object_ using HTTP POST.
         :param id_ - ID of Item to be updated
         :param path - Path for Item type( Specified in APIDoc @id)
         """
         id_ = str(id_)
-        auth_response = check_authentication_response()
-        if isinstance(auth_response, Response):
-            return auth_response
-
         class_type = get_doc().collections[path]["collection"].class_.title
         # Get path of the collection-class
         class_path = get_doc().collections[path]["collection"].class_.path
@@ -134,16 +126,13 @@ class Item(Resource):
         else:
             abort(405)
 
+    @authenticate
     def put(self, id_: str, path: str) -> Response:
         """Add new object_ optional <id_> parameter using HTTP PUT.
         :param id_ - ID of Item to be updated
         :param path - Path for Item type( Specified in APIDoc @id) to be updated
         """
         id_ = str(id_)
-        auth_response = check_authentication_response()
-        if isinstance(auth_response, Response):
-            return auth_response
-
         class_type = get_doc().collections[path]["collection"].class_.title
         # Get path of the collection-class
         class_path = get_doc().collections[path]["collection"].class_.path
@@ -152,13 +141,10 @@ class Item(Resource):
         else:
             abort(405)
 
+    @authenticate
     def delete(self, id_: str, path: str) -> Response:
         """Delete object with id=id_ from database."""
         id_ = str(id_)
-        auth_response = check_authentication_response()
-        if isinstance(auth_response, Response):
-            return auth_response
-
         class_type = get_doc().collections[path]["collection"].class_.title
         # Get path of the collection-class
         class_path = get_doc().collections[path]["collection"].class_.path
@@ -170,15 +156,12 @@ class Item(Resource):
 
 class ItemCollection(Resource):
     """Handle operation related to ItemCollection (a collection of items)."""
-
+    @authenticate
     def get(self, path: str) -> Response:
         """
         Retrieve a collection of items from the database.
         """
         search_params = request.args.to_dict()
-        auth_response = check_authentication_response()
-        if isinstance(auth_response, Response):
-            return auth_response
         endpoint_ = checkEndpoint("GET", path)
         if not endpoint_['method']:
             # If endpoint and Get method not supported in the API
@@ -228,16 +211,13 @@ class ItemCollection(Resource):
             except (ClassNotFound, InstanceNotFound) as e:
                 error = e.get_HTTP()
                 return set_response_headers(jsonify(error.generate()), status_code=error.code)
-
+    @authenticate
     def put(self, path: str) -> Response:
         """
         Method executed for PUT requests.
         Used to add an item to a collection
         :param path - Path for Item type ( Specified in APIDoc @id)
         """
-        auth_response = check_authentication_response()
-        if isinstance(auth_response, Response):
-            return auth_response
 
         endpoint_ = checkEndpoint("PUT", path)
         if endpoint_['method']:
@@ -304,15 +284,13 @@ class ItemCollection(Resource):
 
         abort(endpoint_['status'])
 
+    @authenticate
     def post(self, path: str) -> Response:
         """
         Method executed for POST requests.
         Used to update a non-collection class.
         :param path - Path for Item type ( Specified in APIDoc @id)
         """
-        auth_response = check_authentication_response()
-        if isinstance(auth_response, Response):
-            return auth_response
 
         endpoint_ = checkEndpoint("POST", path)
         if endpoint_['method']:
@@ -359,15 +337,13 @@ class ItemCollection(Resource):
 
         abort(endpoint_['status'])
 
+    @authenticate
     def delete(self, path: str) -> Response:
         """
         Method executed for DELETE requests.
         Used to delete a non-collection class.
         :param path - Path for Item ( Specified in APIDoc @id)
         """
-        auth_response = check_authentication_response()
-        if isinstance(auth_response, Response):
-            return auth_response
 
         endpoint_ = checkEndpoint("DELETE", path)
         if not endpoint_['method']:
@@ -396,7 +372,7 @@ class ItemCollection(Resource):
 
 
 class Items(Resource):
-
+    @authenticate
     def put(self, path, int_list="") -> Response:
         """
         To insert multiple objects into the database
@@ -404,10 +380,6 @@ class Items(Resource):
         :param int_list: Optional String containing ',' separated ID's
         :return:
         """
-        auth_response = check_authentication_response()
-        if isinstance(auth_response, Response):
-            return auth_response
-
         endpoint_ = checkEndpoint("PUT", path)
         if endpoint_['method']:
             # If endpoint and PUT method is supported in the API
@@ -466,6 +438,7 @@ class Items(Resource):
 
         abort(endpoint_['status'])
 
+    @authenticate
     def delete(self, path, int_list):
         """
         To delete multiple objects
@@ -473,9 +446,6 @@ class Items(Resource):
         :param int_list: Optional String containing ',' separated ID's
         :return:
         """
-        auth_response = check_authentication_response()
-        if isinstance(auth_response, Response):
-            return auth_response
         class_type = get_doc().collections[path]["collection"].class_.title
 
         if checkClassOp(class_type, "DELETE"):
