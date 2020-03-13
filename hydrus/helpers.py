@@ -335,3 +335,19 @@ def get_link_props_for_multiple_objects(path: str,
         else:
             return [], False
     return link_prop_list, True
+
+
+def validate_object(object_: Dict[str, Any],
+                    obj_type: str, class_path: str) -> bool:
+    """
+    Check if the object dict passed in POST can be inserted/updated
+    in database.
+
+    :param object_: Object to be checked
+    :param obj_type: The required object type
+    :param class_path: Path of the class
+    :return: True if the object is completely valid
+    """
+    return (validObject(object_) and
+            object_["@type"] == obj_type and
+            check_required_props(class_path, object_))
