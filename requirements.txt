@@ -13,7 +13,7 @@ greenlet==0.4.13
 itsdangerous==0.24
 Jinja2
 lifter==0.4.1
-MarkupSafe==1.0
+MarkupSafe==1.1.1
 packaging==17.1
 pep8==1.7.1
 persisting-theory==0.2.1
