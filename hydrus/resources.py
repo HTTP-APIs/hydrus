@@ -21,53 +21,35 @@
 """  # nopep8
 
 import json
-from typing import Dict, Any, Union
+
 from flask import Response, jsonify, request, abort
 from flask_restful import Resource
-from hydra_python_core.doc_writer import HydraStatus, HydraError
-from functools import partial
 
 from hydrus.auth import authenticate
-from hydrus.data import crud
-from hydrus.data.exceptions import (
-    ClassNotFound,
-    InstanceExists,
-    PropertyNotFound,
-    InstanceNotFound,
-    PageNotFound,
-    InvalidSearchParameter,
-    OffsetOutOfRange)
 from hydrus.helpers import (
     set_response_headers,
     checkClassOp,
-    getType,
     checkEndpoint,
-    validObjectList,
-    type_match,
-    hydrafy,
     check_writeable_props,
-    check_required_props,
-    add_iri_template,
-    finalize_response,
-    send_sync_update,
-    get_link_props,
-    get_link_props_for_multiple_objects,
-    validate_object)
-from hydrus.utils import (
-    get_session,
-    get_doc,
-    get_api_name,
-    get_hydrus_server_url,
-    get_page_size,
-    get_pagination,
-    get_collections_and_parsed_classes)
-from hydrus.socketio_factory import socketio
-
+    get_context
+)
+from hydrus.utils import get_doc
 from hydrus.itemhelpers import (
     items_get_check_support,
     items_post_check_support,
     items_put_check_support,
-    items_delete_check_support)
+    items_delete_check_support
+)
+from hydrus.item_collection_helpers import (
+    item_collection_get_response,
+    item_collection_put_response,
+    item_collection_post_response,
+    item_collection_delete_response
+)
+from hydrus.items_helpers import (
+    items_put_response,
+    items_delete_response
+)
 
 
 class Index(Resource):
@@ -165,59 +147,11 @@ class ItemCollection(Resource):
         """
         Retrieve a collection of items from the database.
         """
-        search_params = request.args.to_dict()
         endpoint_ = checkEndpoint("GET", path)
         if not endpoint_['method']:
             # If endpoint and Get method not supported in the API
             abort(endpoint_['status'])
-        collections, parsed_classes = get_collections_and_parsed_classes()
-        if path in collections:
-            # If endpoint and GET method is supported in the API
-            # and collection name in document's collections
-            collection = collections[path]["collection"]
-            # get path of the collection class
-            class_path = collection.class_.path
-            class_type = collection.class_.title
-            api_name = get_api_name()
-            try:
-                # Get collection details from the database
-                # create partial function for crud operation
-                crud_response = partial(crud.get_collection, api_name,
-                                        class_type, session=get_session(),
-                                        path=path, search_params=search_params)
-                if get_pagination():
-                    # Get paginated response
-                    response = crud_response(paginate=True,
-                                             page_size=get_page_size())
-                else:
-                    # Get whole collection
-                    response = crud_response(paginate=False)
-
-                response["search"] = add_iri_template(path=class_path,
-                                                      API_NAME=api_name)
-
-                return set_response_headers(jsonify(hydrafy(response, path=path)))
-
-            except (ClassNotFound, PageNotFound, InvalidSearchParameter, OffsetOutOfRange) as e:
-                error = e.get_HTTP()
-                return set_response_headers(jsonify(error.generate()), status_code=error.code)
-
-        # If endpoint and GET method is supported in the API and class is supported
-        if path in parsed_classes and "{}Collection".format(
-                path) not in collections:
-            try:
-                class_type = parsed_classes[path]['class'].title
-                response = crud.get_single(
-                    class_type,
-                    api_name=get_api_name(),
-                    session=get_session(),
-                    path=path)
-                response = finalize_response(path, response)
-                return set_response_headers(jsonify(hydrafy(response, path=path)))
-
-            except (ClassNotFound, InstanceNotFound) as e:
-                error = e.get_HTTP()
-                return set_response_headers(jsonify(error.generate()), status_code=error.code)
+        return item_collection_get_response(path)
 
     @authenticate
     def put(self, path: str) -> Response:
@@ -231,63 +165,7 @@ class ItemCollection(Resource):
         if not endpoint_['method']:
             # If endpoint and PUT method is not supported in the API
             abort(endpoint_['status'])
-
-        object_ = json.loads(request.data.decode('utf-8'))
-        collections, parsed_classes = get_collections_and_parsed_classes()
-        if path in collections:
-            # If collection name in document's collections
-            collection = collections[path]["collection"]
-
-            # title of HydraClass object corresponding to collection
-            obj_type = collection.class_.title
-            # get path of the collection class
-            class_path = collection.class_.path
-
-            if validate_object(object_, obj_type, class_path):
-                # If Item in request's JSON is a valid object ie. @type is a key in object_
-                # and the right Item type is being added to the collection
-                try:
-                    # Insert object and return location in Header
-                    object_id = crud.insert(object_=object_, session=get_session())
-                    headers_ = [
-                        {"Location": "{}{}/{}/{}".format(
-                            get_hydrus_server_url(), get_api_name(), path, object_id)}]
-                    status_description = "Object with ID {} successfully added".format(
-                        object_id)
-                    status = HydraStatus(code=201, title="Object successfully added",
-                                         desc=status_description)
-                    return set_response_headers(
-                        jsonify(status.generate()), headers=headers_, status_code=status.code)
-                except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
-                    error = e.get_HTTP()
-                    return set_response_headers(jsonify(error.generate()),
-                                                status_code=error.code)
-
-            else:
-                error = HydraError(code=400, title="Data is not valid")
-                return set_response_headers(jsonify(error.generate()), status_code=error.code)
-
-        if path in parsed_classes and "{}Collection".format(path) not in collections:
-            # If path is in parsed_classes but is not a collection
-            obj_type = getType(path, "PUT")
-            link_props, link_type_check = get_link_props(path, object_)
-            if validate_object(object_, obj_type, path) and link_type_check:
-                try:
-                    object_id = crud.insert(object_=object_, link_props=link_props,
-                                            session=get_session())
-                    headers_ = [{"Location": "{}{}/{}/".format(
-                            get_hydrus_server_url(), get_api_name(), path)}]
-                    status = HydraStatus(code=201, title="Object successfully added")
-                    return set_response_headers(
-                        jsonify(status.generate()), headers=headers_, status_code=status.code)
-                except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
-                    error = e.get_HTTP()
-                    return set_response_headers(jsonify(error.generate()),
-                                                status_code=error.code)
-
-            else:
-                error = HydraError(code=400, title="Data is not valid")
-                return set_response_headers(jsonify(error.generate()), status_code=error.code)
+        return item_collection_put_response(path)
 
     @authenticate
     def post(self, path: str) -> Response:
@@ -300,45 +178,7 @@ class ItemCollection(Resource):
         endpoint_ = checkEndpoint("POST", path)
         if not endpoint_['method']:
             abort(endpoint_['status'])
-        object_ = json.loads(request.data.decode('utf-8'))
-        collections, parsed_classes = get_collections_and_parsed_classes()
-        if path in parsed_classes and "{}Collection".format(path) not in collections:
-            obj_type = getType(path, "POST")
-            link_props, link_type_check = get_link_props(path, object_)
-            if check_writeable_props(path, object_):
-                if validate_object(object_, obj_type, path) and link_type_check:
-                    try:
-                        crud.update_single(
-                            object_=object_,
-                            session=get_session(),
-                            api_name=get_api_name(),
-                            link_props=link_props,
-                            path=path)
-                        method = "POST"
-                        resource_url = "{}{}/{}".format(
-                            get_hydrus_server_url(), get_api_name(), path)
-                        last_job_id = crud.get_last_modification_job_id(session=get_session())
-                        new_job_id = crud.insert_modification_record(method, resource_url,
-                                                                        session=get_session())
-                        send_sync_update(socketio=socketio, new_job_id=new_job_id,
-                                            last_job_id=last_job_id, method=method,
-                                            resource_url=resource_url)
-                        headers_ = [
-                            {"Location": "{}/{}/".format(
-                                get_hydrus_server_url(), get_api_name(), path)}]
-                        status = HydraStatus(code=200, title="Object successfully added")
-                        return set_response_headers(
-                            jsonify(status.generate()), headers=headers_)
-                    except (ClassNotFound, InstanceNotFound,
-                            InstanceExists, PropertyNotFound) as e:
-                        error = e.get_HTTP()
-                        return set_response_headers(
-                            jsonify(error.generate()), status_code=error.code)
-
-                error = HydraError(code=400, title="Data is not valid")
-                return set_response_headers(jsonify(error.generate()), status_code=error.code)
-            else:
-                abort(405)
+        return item_collection_post_response(path)
 
     @authenticate
     def delete(self, path: str) -> Response:
@@ -351,28 +191,7 @@ class ItemCollection(Resource):
         endpoint_ = checkEndpoint("DELETE", path)
         if not endpoint_['method']:
             abort(endpoint_['status'])
-        collections, parsed_classes = get_collections_and_parsed_classes()
-        if path in parsed_classes and "{}Collection".format(
-                path) not in collections:
-            # No Delete Operation for collections
-            try:
-                class_type = parsed_classes[path]['class'].title
-                crud.delete_single(class_type, session=get_session())
-                method = "DELETE"
-                resource_url = "{}{}/{}".format(
-                    get_hydrus_server_url(), get_api_name(), path)
-                last_job_id = crud.get_last_modification_job_id(session=get_session())
-                new_job_id = crud.insert_modification_record(method, resource_url,
-                                                             session=get_session())
-                send_sync_update(socketio=socketio, new_job_id=new_job_id,
-                                 last_job_id=last_job_id, method=method,
-                                 resource_url=resource_url)
-                status = HydraStatus(code=200, title="Object successfully added")
-                return set_response_headers(jsonify(status.generate()))
-            except (ClassNotFound, InstanceNotFound) as e:
-                error = e.get_HTTP()
-                return set_response_headers(
-                    jsonify(error.generate()), status_code=error.code)
+        return item_collection_delete_response(path)
 
 
 class Items(Resource):
@@ -388,59 +207,7 @@ class Items(Resource):
         if not endpoint_['method']:
             # If endpoint and PUT method is not supported in the API
             abort(endpoint_['status'])
-        object_ = json.loads(request.data.decode('utf-8'))
-        object_ = object_["data"]
-        collections, _ = get_collections_and_parsed_classes()
-        if path in collections:
-            # If collection name in document's collections
-            collection = collections[path]["collection"]
-            # title of HydraClass object corresponding to collection
-            obj_type = collection.class_.title
-            # get path of the collection class
-            class_path = collection.class_.path
-            incomplete_objects = list()
-            for obj in object_:
-                if not check_required_props(class_path, obj):
-                    incomplete_objects.append(obj)
-                    object_.remove(obj)
-            link_props_list, link_type_check = get_link_props_for_multiple_objects(class_path,
-                                                                                    object_)
-            if validObjectList(object_) and link_type_check:
-                type_result = type_match(object_, obj_type)
-                # If Item in request's JSON is a valid object
-                # ie. @type is one of the keys in object_
-                if type_result:
-                    # If the right Item type is being added to the
-                    # collection
-                    try:
-                        # Insert object and return location in Header
-                        object_id = crud.insert_multiple(
-                            objects_=object_, session=get_session(), id_=int_list,
-                            link_props_list=link_props_list)
-                        headers_ = [{"Location": "{}{}/{}/{}".format(
-                                get_hydrus_server_url(), get_api_name(), path, object_id)}]
-                        if len(incomplete_objects) > 0:
-                            status = HydraStatus(code=202,
-                                                    title="Object(s) missing required property")
-                            response = status.generate()
-                            response["objects"] = incomplete_objects
-                            return set_response_headers(
-                                jsonify(response), headers=headers_, status_code=status.code)
-                        else:
-                            status_description = "Objects with ID {} successfully added".format(
-                                object_id)
-                            status = HydraStatus(code=201, title="Objects successfully added",
-                                                    desc=status_description)
-                            return set_response_headers(
-                                jsonify(status.generate()), headers=headers_,
-                                status_code=status.code)
-                    except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
-                        error = e.get_HTTP()
-                        return set_response_headers(jsonify(error.generate()),
-                                                    status_code=error.code)
-
-            error = HydraError(code=400, title="Data is not valid")
-            return set_response_headers(jsonify(error.generate()), status_code=error.code)
+        return items_put_response(path, int_list)
 
     @authenticate
     def delete(self, path, int_list):
@@ -450,54 +217,12 @@ class Items(Resource):
         :param int_list: Optional String containing ',' separated ID's
         :return:
         """
-        class_type = get_doc().collections[path]["collection"].class_.title
-
-        if checkClassOp(class_type, "DELETE"):
-            # Check if class_type supports PUT operation
-            try:
-                # Delete the Item with ID == id_
-                crud.delete_multiple(int_list, class_type, session=get_session())
-                method = "DELETE"
-                path_url = "{}{}/{}".format(
-                    get_hydrus_server_url(), get_api_name(), path)
-                last_job_id = crud.get_last_modification_job_id(session=get_session())
-                id_list = int_list.split(',')
-                for item in id_list:
-                    resource_url = path_url + item
-                    new_job_id = crud.insert_modification_record(method, resource_url,
-                                                                 session=get_session())
-                    send_sync_update(socketio=socketio, new_job_id=new_job_id,
-                                     last_job_id=last_job_id, method=method,
-                                     resource_url=resource_url)
-                    last_job_id = new_job_id
-                status_description = "Objects with ID {} successfully deleted".format(
-                    id_list)
-                status = HydraStatus(code=200, title="Objects successfully deleted",
-                                     desc=status_description)
-                return set_response_headers(jsonify(status.generate()))
-
-            except (ClassNotFound, InstanceNotFound) as e:
-                error = e.get_HTTP()
-                return set_response_headers(jsonify(error.generate()), status_code=error.code)
-
-        abort(405)
+        return items_delete_response(path, int_list)
 
 
 class Contexts(Resource):
-    """Dynamically genereated contexts."""
+    """Dynamically generated contexts."""
 
     def get(self, category: str) -> Response:
         """Return the context for the specified class."""
-        collections, parsed_classes = get_collections_and_parsed_classes()
-        # Check for collection
-        if category in get_doc().collections:
-            # type: Union[Dict[str,Any],Dict[int,str]]
-            response = {"@context": collections[category]["context"].generate()}
-            return set_response_headers(jsonify(response))
-        # Check for non collection class
-        elif category in parsed_classes:
-            response = {"@context": get_doc().parsed_classes[category]["context"].generate()}
-            return set_response_headers(jsonify(response))
-        else:
-            error = HydraError(code=404, title="NOT FOUND", desc="Context not found")
-            return set_response_headers(jsonify(error.generate()), status_code=error.code)
+        return get_context(category)

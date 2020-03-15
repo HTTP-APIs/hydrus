@@ -1,12 +1,14 @@
 from typing import Dict, Any, List, Optional, Union, Tuple
 
-from flask import Response
+from flask import Response, jsonify
 
 from hydrus.data import crud
 
 from hydrus.utils import get_doc, get_api_name, get_hydrus_server_url, get_session
-
+from hydrus.utils import get_collections_and_parsed_classes
 from hydra_python_core.doc_writer import HydraIriTemplate, IriTemplateMapping, HydraLink
+from hydra_python_core.doc_writer import HydraError
+from hydrus.socketio_factory import socketio
 
 
 def validObject(object_: Dict[str, Any]) -> bool:
@@ -351,3 +353,56 @@ def validate_object(object_: Dict[str, Any],
     return (validObject(object_) and
             object_["@type"] == obj_type and
             check_required_props(class_path, object_))
+
+
+def get_context(category: str) -> Response:
+    """
+    Generate the context for a given category.
+
+    :param category: The category of class for which context is required
+    :type category: str
+    :return: Response with context
+    :rtype: Response
+    """
+    collections, parsed_classes = get_collections_and_parsed_classes()
+    # Check for collection
+    if category in get_doc().collections:
+        # type: Union[Dict[str,Any],Dict[int,str]]
+        response = {"@context": collections[category]["context"].generate()}
+        return set_response_headers(jsonify(response))
+    # Check for non collection class
+    elif category in parsed_classes:
+        response = {"@context": get_doc().parsed_classes[category]["context"].generate()}
+        return set_response_headers(jsonify(response))
+    else:
+        error = HydraError(code=404, title="NOT FOUND", desc="Context not found")
+        return set_response_headers(jsonify(error.generate()), status_code=error.code)
+
+
+def error_response(error: HydraError) -> Response:
+    """
+    Generate the response if there is an error while performing any operation
+
+    :param error: HydraError object which will help in generating response
+    :type error: HydraError
+    :return: Error response with appropriate status code
+    :rtype: Response
+    """
+    return set_response_headers(jsonify(error.generate()),
+                                status_code=error.code)
+
+
+def send_update(method: str, path: str):
+    """Handler for sending synchronization update to all connected clients.
+
+    :param method: Method type of the operation.
+    :type method: str
+    :param path: Path to the Item collection to which update is made.
+    :type path: str
+    """
+    resource_url = "{}{}/{}".format(
+        get_hydrus_server_url(), get_api_name(), path)
+    session = get_session()
+    last_job_id = crud.get_last_modification_job_id(session)
+    new_job_id = crud.insert_modification_record(method, resource_url, session)
+    send_sync_update(socketio, new_job_id, last_job_id, method, resource_url)
