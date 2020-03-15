@@ -318,3 +318,16 @@ def get_session() -> scoped_session:
         session = scoped_session(sessionmaker(bind=engine))
         g.dbsession = session
     return session
+
+
+def get_collections_and_parsed_classes():
+    """
+    Get all the collections and parsed classes from
+    the API doc.
+    :return collections, parsed_classes
+            <tuple>
+    """
+    api_doc = get_doc()
+    parsed_classes = api_doc.parsed_classes
+    collections = api_doc.collections
+    return (collections, parsed_classes)

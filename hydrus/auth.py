@@ -1,4 +1,5 @@
 from typing import Union
+from functools import wraps
 
 from flask import jsonify, Response, request
 from hydra_python_core.doc_writer import HydraError
@@ -72,3 +73,18 @@ def check_authentication_response() -> Union[Response, None]:
             return verify_user()
     else:
         return None
+
+
+def authenticate(f):
+    """
+    Decorator for checking authentication of each request.
+    Returns the authentication response if required, else
+    continues with the request.
+    """
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        auth_response = check_authentication_response()
+        if isinstance(auth_response, Response):
+            return auth_response
+        return f(*args, **kwargs)
+    return wrapper
