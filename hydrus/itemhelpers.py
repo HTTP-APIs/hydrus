@@ -64,8 +64,7 @@ def items_post_check_support(id_, object_, class_path, path):
                 session=get_session(),
                 api_name=get_api_name())
             method = "POST"
-            resource_url = "{}{}/{}/{}".format(
-                get_hydrus_server_url(), get_api_name(), path, object_id)
+            resource_url = f"{get_hydrus_server_url()}{get_api_name()}/{path}/{object_id}"
             last_job_id = crud.get_last_modification_job_id(
                 session=get_session())
             new_job_id = crud.insert_modification_record(method, resource_url,
@@ -74,8 +73,8 @@ def items_post_check_support(id_, object_, class_path, path):
                              last_job_id=last_job_id, method=method,
                              resource_url=resource_url)
             headers_ = [{"Location": resource_url}]
-            status_description = ("Object with ID {} successfully "
-                                  "updated").format(object_id)
+            status_description = (f"Object with ID {object_id} successfully "
+                                  "updated")
             status = HydraStatus(
                 code=200, title="Object updated", desc=status_description)
             return set_response_headers(jsonify(status.generate()),
@@ -105,10 +104,9 @@ def items_put_check_support(id_, class_path, path):
             object_id = crud.insert(object_=object_, id_=id_,
                                     link_props=link_props,
                                     session=get_session())
-            headers_ = [{"Location": "{}{}/{}/{}".format(
-                get_hydrus_server_url(), get_api_name(), path, object_id)}]
-            status_description = "Object with ID {} successfully added".format(
-                object_id)
+            headers_ = [{"Location": f"{get_hydrus_server_url()}"
+                                     f"{get_api_name()}/{path}/{object_id}"}]
+            status_description = f"Object with ID {object_id} successfully added"
             status = HydraStatus(code=201, title="Object successfully added.",
                                  desc=status_description)
             return set_response_headers(
@@ -128,16 +126,14 @@ def items_delete_check_support(id_, class_type, path):
         # Delete the Item with ID == id_
         crud.delete(id_, class_type, session=get_session())
         method = "DELETE"
-        resource_url = "{}{}/{}/{}".format(
-            get_hydrus_server_url(), get_api_name(), path, id_)
+        resource_url = f"{get_hydrus_server_url()}{get_api_name()}/{path}/{id_}"
         last_job_id = crud.get_last_modification_job_id(session=get_session())
         new_job_id = crud.insert_modification_record(method, resource_url,
                                                      session=get_session())
         send_sync_update(socketio=socketio, new_job_id=new_job_id,
                          last_job_id=last_job_id, method=method,
                          resource_url=resource_url)
-        status_description = "Object with ID {} successfully deleted".format(
-            id_)
+        status_description = f"Object with ID {id_} successfully deleted"
         status = HydraStatus(code=200, title="Object successfully deleted.",
                              desc=status_description)
         return set_response_headers(jsonify(status.generate()))

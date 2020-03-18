@@ -90,7 +90,7 @@ def serve(adduser: tuple, api: str, auth: bool, dburl: str, pagination: bool,
     DB_URL = dburl
 
     # Define the server URL, this is what will be displayed on the Doc
-    HYDRUS_SERVER_URL = "{}:{}/".format(serverurl, str(port))
+    HYDRUS_SERVER_URL = f"{serverurl}:{str(port)}/"
 
     # The name of the API or the EntryPoint, the api will be at
     # http://localhost/<API_NAME>
@@ -127,7 +127,7 @@ def serve(adduser: tuple, api: str, auth: bool, dburl: str, pagination: bool,
             else:
                 raise("Error - hydradoc format not supported.")
 
-            click.echo("Using %s as hydradoc" % hydradoc)
+            click.echo(f"Using {hydradoc} as hydradoc")
             apidoc = doc_maker.create_doc(doc,
                                           HYDRUS_SERVER_URL, API_NAME)
 
@@ -210,9 +210,7 @@ def serve(adduser: tuple, api: str, auth: bool, dburl: str, pagination: bool,
                                     socketio.run(app, port=port)
                                     click.echo("Server running at:")
                                     click.echo(
-                                        "{}{}".format(
-                                            HYDRUS_SERVER_URL,
-                                            API_NAME))
+                                        f"{HYDRUS_SERVER_URL}{API_NAME}")
 
 
 if __name__ == "__main__":
