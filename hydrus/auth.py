@@ -8,7 +8,7 @@ from hydrus.utils import get_session, get_token, get_authentication
 from hydrus.data.user import (create_nonce, check_authorization,
                               add_token, check_token)
 
-from hydrus.helpers import set_response_headers
+from hydrus.helpers import set_response_headers, error_response
 
 
 def token_response(token: str) -> Response:
@@ -51,7 +51,7 @@ def verify_user() -> Union[Response, None]:
             return token_response(token)
     except Exception as e:
         error = e.get_HTTP()  # type: HydraError
-        return set_response_headers(jsonify(error.generate()), status_code=error.code)
+        return error_response(error)
     return None
 
 

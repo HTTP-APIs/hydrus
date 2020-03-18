@@ -403,7 +403,7 @@ def get_context(category: str) -> Response:
         return set_response_headers(jsonify(response))
     else:
         error = HydraError(code=404, title="NOT FOUND", desc="Context not found")
-        return set_response_headers(jsonify(error.generate()), status_code=error.code)
+        return error_response(error)
 
 
 def error_response(error: HydraError) -> Response:

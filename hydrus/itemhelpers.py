@@ -18,7 +18,9 @@ from hydrus.helpers import (
     validObject,
     check_required_props,
     send_sync_update,
-    get_link_props)
+    get_link_props,
+    error_response,
+    validate_object)
 from hydrus.utils import (
     get_session,
     get_api_name,
@@ -42,8 +44,7 @@ def items_get_check_support(id_, class_type, class_path, path):
 
     except (ClassNotFound, InstanceNotFound) as e:
         error = e.get_HTTP()
-        return set_response_headers(jsonify(error.generate()),
-                                    status_code=error.code)
+        return error_response(error)
 
 
 def items_post_check_support(id_, object_, class_path, path):
@@ -51,10 +52,7 @@ def items_post_check_support(id_, object_, class_path, path):
     obj_type = getType(class_path, "POST")
     link_props, link_type_check = get_link_props(class_path, object_)
     # Load new object and type
-    if (validObject(object_) and
-        object_["@type"] == obj_type and
-        check_required_props(class_path, object_)and
-            link_type_check):
+    if (validate_object(object_, obj_type, class_path) and link_type_check):
         try:
             # Update the right ID if the object is valid and matches
             # type of Item
@@ -89,12 +87,10 @@ def items_post_check_support(id_, object_, class_path, path):
                 PropertyNotFound
                 ) as e:
             error = e.get_HTTP()
-            return set_response_headers(jsonify(error.generate()),
-                                        status_code=error.code)
+            return error_response(error)
     else:
         error = HydraError(code=400, title="Data is not valid")
-        return set_response_headers(jsonify(error.generate()),
-                                    status_code=error.code)
+        return error_response(error)
 
 
 def items_put_check_support(id_, class_path, path):
@@ -103,10 +99,7 @@ def items_put_check_support(id_, class_path, path):
     obj_type = getType(class_path, "PUT")
     link_props, link_type_check = get_link_props(class_path, object_)
     # Load new object and type
-    if (validObject(object_) and
-        object_["@type"] == obj_type and
-        check_required_props(class_path, object_) and
-            link_type_check):
+    if (validate_object(object_, obj_type, class_path) and link_type_check):
         try:
             # Add the object with given ID
             object_id = crud.insert(object_=object_, id_=id_,
@@ -123,12 +116,10 @@ def items_put_check_support(id_, class_path, path):
                 status_code=status.code)
         except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
             error = e.get_HTTP()
-            return set_response_headers(jsonify(error.generate()),
-                                        status_code=error.code)
+            return error_response(error)
     else:
         error = HydraError(code=400, title="Data is not valid")
-        return set_response_headers(jsonify(error.generate()),
-                                    status_code=error.code)
+        return error_response(error)
 
 
 def items_delete_check_support(id_, class_type, path):
@@ -153,5 +144,4 @@ def items_delete_check_support(id_, class_type, path):
 
     except (ClassNotFound, InstanceNotFound) as e:
         error = e.get_HTTP()
-        return set_response_headers(jsonify(error.generate()),
-                                    status_code=error.code)
+        return error_response(error)
