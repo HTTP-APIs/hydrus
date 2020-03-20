@@ -192,7 +192,7 @@ def item_collection_post_response(path: str) -> Response:
                         path=path)
                     send_update("POST", path)
                     headers_ = [
-                        {"Location": "{}/{}/".format(
+                        {"Location": "{}{}/{}/".format(
                             get_hydrus_server_url(), get_api_name(), path)}]
                     status = HydraStatus(
                         code=200, title="Object successfully added")
