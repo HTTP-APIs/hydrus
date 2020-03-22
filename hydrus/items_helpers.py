@@ -69,9 +69,8 @@ def items_put_response(path: str, int_list="") -> Response:
                     object_id = crud.insert_multiple(
                         objects_=object_, session=get_session(), id_=int_list,
                         link_props_list=link_props_list)
-                    headers_ = [{"Location": "{}{}/{}/{}".format(
-                        get_hydrus_server_url(), get_api_name(), path,
-                        object_id)}]
+                    headers_ = [{"Location": f"{get_hydrus_server_url()}"
+                                             f"{get_api_name()}/{path}/{object_id}"}]
                     if len(incomplete_objects) > 0:
                         status = HydraStatus(code=202,
                                              title="Object(s) missing required property")
@@ -81,8 +80,7 @@ def items_put_response(path: str, int_list="") -> Response:
                             jsonify(response), headers=headers_,
                             status_code=status.code)
                     else:
-                        status_description = "Objects with ID {} successfully added".format(
-                            object_id)
+                        status_description = f"Objects with ID {object_id} successfully added"
                         status = HydraStatus(code=201, title="Objects successfully added",
                                              desc=status_description)
                         return set_response_headers(
@@ -115,8 +113,7 @@ def items_delete_response(path: str, int_list="") -> Response:
             # Delete the Item with ID == id_
             crud.delete_multiple(int_list, class_type, session=get_session())
             method = "DELETE"
-            path_url = "{}{}/{}".format(
-                get_hydrus_server_url(), get_api_name(), path)
+            path_url = f"{get_hydrus_server_url()}{get_api_name()}/{path}"
             last_job_id = crud.get_last_modification_job_id(session=get_session())
             id_list = int_list.split(',')
             for item in id_list:
@@ -128,8 +125,7 @@ def items_delete_response(path: str, int_list="") -> Response:
                                  last_job_id=last_job_id, method=method,
                                  resource_url=resource_url)
                 last_job_id = new_job_id
-            status_description = "Objects with ID {} successfully deleted".format(
-                id_list)
+            status_description = f"Objects with ID {id_list} successfully deleted"
             status = HydraStatus(code=200,
                                  title="Objects successfully deleted",
                                  desc=status_description)

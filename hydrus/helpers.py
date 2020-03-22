@@ -67,8 +67,7 @@ def set_response_headers(resp: Response,
         resp.headers[list(header.keys())[0]] = header[list(header.keys())[0]]
     resp.headers['Content-type'] = ct
     link = "http://www.w3.org/ns/hydra/core#apiDocumentation"
-    resp.headers['Link'] = '<{}{}/vocab>; rel="{}"'.format(
-        get_hydrus_server_url(), get_api_name(), link)
+    resp.headers['Link'] = f'<{get_hydrus_server_url()}{get_api_name()}/vocab>; rel="{link}"'
     return resp
 
 
@@ -81,10 +80,10 @@ def hydrafy(object_: Dict[str, Any], path: Optional[str]) -> Dict[str, Any]:
     """
     if path == object_["@type"]:
         object_[
-            "@context"] = "/{}/contexts/{}.jsonld".format(get_api_name(), object_["@type"])
+            "@context"] = f"/{get_api_name()}/contexts/{object_['@type']}.jsonld"
     else:
         object_[
-            "@context"] = "/{}/contexts/{}.jsonld".format(get_api_name(), path)
+            "@context"] = f"/{get_api_name()}/contexts/{path}.jsonld"
     return object_
 
 
@@ -204,9 +203,9 @@ def finalize_response(path: str, obj: Dict[str, Any]) -> Dict[str, Any]:
             nested_path, is_collection = get_nested_class_path(range_class)
             if is_collection:
                 id = obj[prop.title]
-                obj[prop.title] = "/{}/{}/{}".format(get_api_name(), nested_path, id)
+                obj[prop.title] = f"/{get_api_name()}/{nested_path}/{id}"
             else:
-                obj[prop.title] = "/{}/{}".format(get_api_name(), nested_path)
+                obj[prop.title] = f"/{get_api_name()}/{nested_path}"
         elif 'vocab:' in prop.prop:
             prop_class = prop.prop.replace("vocab:", "")
             id = obj[prop.title]
@@ -222,7 +221,7 @@ def add_iri_template(path: str, API_NAME: str) -> Dict[str, Any]:
     :return: Hydra IriTemplate .
     """
     template_mappings = list()
-    template = "/{}/{}(".format(API_NAME, path)
+    template = f"/{API_NAME}/{path}("
     first = True
     template, template_mappings = generate_iri_mappings(path, template,
                                                         template_mapping=template_mappings,)
@@ -265,13 +264,13 @@ def generate_iri_mappings(path: str, template: str, skip_nested: bool = False,
                                                                template_mapping=template_mapping)
             continue
         if skip_nested is True:
-            var = "{}[{}]".format(parent_prop_name, supportedProp.title)
+            var = f"{parent_prop_name}[{supportedProp.title}]"
             mapping = IriTemplateMapping(variable=var, prop=prop_class)
         else:
             var = supportedProp.title
             mapping = IriTemplateMapping(variable=var, prop=prop_class)
         template_mapping.append(mapping)
-        template = template + "{}, ".format(var)
+        template = template + f"{var}, "
     return template, template_mapping
 
 
@@ -288,9 +287,9 @@ def add_pagination_iri_mappings(template: str,
     for i in range(len(paginate_variables)):
         # If final variable then do not add space and comma and add the final parentheses
         if i == len(paginate_variables) - 1:
-            template += "{})".format(paginate_variables[i])
+            template += f"{paginate_variables[i]})"
         else:
-            template += "{}, ".format(paginate_variables[i])
+            template += f"{paginate_variables[i]}, "
         mapping = IriTemplateMapping(variable=paginate_variables[i], prop=paginate_variables[i])
         template_mapping.append(mapping)
     return template, template_mapping
@@ -403,7 +402,7 @@ def get_context(category: str) -> Response:
         return set_response_headers(jsonify(response))
     else:
         error = HydraError(code=404, title="NOT FOUND", desc="Context not found")
-        return set_response_headers(jsonify(error.generate()), status_code=error.code)
+        return error_response(error)
 
 
 def error_response(error: HydraError) -> Response:
@@ -427,8 +426,7 @@ def send_update(method: str, path: str):
     :param path: Path to the Item collection to which update is made.
     :type path: str
     """
-    resource_url = "{}{}/{}".format(
-        get_hydrus_server_url(), get_api_name(), path)
+    resource_url = f"{get_hydrus_server_url()}{get_api_name()}/{path}"
     session = get_session()
     last_job_id = crud.get_last_modification_job_id(session)
     new_job_id = crud.insert_modification_record(method, resource_url, session)
