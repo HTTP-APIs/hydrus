@@ -45,13 +45,13 @@ def recreate_iri(API_NAME: str, path: str, search_params: Dict[str, Any]) -> str
     :param search_params: List of query parameters.
     :return: Recreated IRI.
     """
-    iri = "/{}/{}?".format(API_NAME, path)
+    iri = f"/{API_NAME}/{path}?"
     for param in search_params:
         # Skip page, pageIndex or offset parameters as they will be updated to point to
         # next, previous and last page
         if param == "page" or param == "pageIndex" or param == "offset":
             continue
-        iri += "{}={}&".format(param, search_params[param])
+        iri += f"{param}={search_params[param]}&"
     return iri
 
 
@@ -179,30 +179,28 @@ def attach_hydra_view(collection_template: Dict[str, Any], paginate_param: str,
                  is used for pagination, None otherwise.
     """
     if paginate_param == "offset":
-        collection_template["view"] = {
-            "@id": "{}{}={}".format(iri, paginate_param, offset),
-            "@type": "PartialCollectionView",
-            "first": "{}{}=0".format(iri, paginate_param),
-            "last": "{}{}={}".format(iri, paginate_param, result_length-page_size)
+        collection_template["hydra:view"] = {
+            "@id": f"{iri}{paginate_param}={offset}",
+            "@type": "hydra:PartialCollectionView",
+            "hydra:first": f"{iri}{paginate_param}=0",
+            "hydra:last": f"{iri}{paginate_param}={result_length - page_size}"
         }
         if offset > page_size:
-            collection_template["view"]["previous"] = "{}{}={}".format(iri,
-                                                                       paginate_param,
-                                                                       offset - page_size)
+            collection_template["hydra:view"]["hydra:previous"] = (
+                f"{iri}{paginate_param}={offset - page_size}")
         if offset < result_length-page_size:
-            collection_template["view"]["next"] = "{}{}={}".format(iri,
-                                                                   paginate_param,
-                                                                   offset + page_size)
+            collection_template["hydra:view"]["hydra:next"] = (
+                f"{iri}{paginate_param}={offset + page_size}")
     else:
-        collection_template["view"] = {
-            "@id": "{}{}={}".format(iri, paginate_param, page),
-            "@type": "PartialCollectionView",
-            "first": "{}{}=1".format(iri, paginate_param),
-            "last": "{}{}={}".format(iri, paginate_param, last)
+        collection_template["hydra:view"] = {
+            "@id": f"{iri}{paginate_param}={page}",
+            "@type": "hydra:PartialCollectionView",
+            "hydra:first": f"{iri}{paginate_param}=1",
+            "hydra:last": f"{iri}{paginate_param}={last}"
         }
         if page != 1:
-            collection_template["view"]["previous"] = "{}{}={}".format(iri, paginate_param,
-                                                                       page-1)
+            collection_template["hydra:view"]["hydra:previous"] = (
+                f"{iri}{paginate_param}={page-1}")
         if page != last:
-            collection_template["view"]["next"] = "{}{}={}".format(iri, paginate_param,
-                                                                   page + 1)
+            collection_template["hydra:view"]["hydra:next"] = (
+               f"{iri}{paginate_param}={page + 1}")

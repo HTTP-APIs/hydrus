@@ -109,8 +109,7 @@ class TestCRUD(unittest.TestCase):
                                     id_=id_,
                                     session=self.session)
                                 link_props[prop.title] = id_
-                                dummy_obj[prop.title] = "{}/{}/{}".format(
-                                    self.API_NAME, collection_path, id_)
+                                dummy_obj[prop.title] = f"{self.API_NAME}/{collection_path}/{id_}"
                     else:
                         nested_class = prop.prop.replace("vocab:", "")
                     obj_id = str(uuid.uuid4())
@@ -141,7 +140,7 @@ class TestCRUD(unittest.TestCase):
                     for property_ in object_[prop.title]:
                         if property_ != "@type":
                             object_[prop.title][property_] = "target_1"
-                            target_property_1 = "{}[{}]".format(prop.title, property_)
+                            target_property_1 = f"{prop.title}[{property_}]"
                             break
                     break
                 elif target_property_1 is not "":
@@ -307,7 +306,7 @@ class TestCRUD(unittest.TestCase):
     def test_insert_ids(self):
         """Test CRUD insert when multiple ID's are given """
         objects = list()
-        ids = "{},{}".format(str(uuid.uuid4()), str(uuid.uuid4()))
+        ids = f"{str(uuid.uuid4())},{str(uuid.uuid4())}"
         ids_list = ids.split(',')
         for index in range(len(ids_list)):
             object = gen_dummy_object(random.choice(
@@ -320,7 +319,7 @@ class TestCRUD(unittest.TestCase):
 
     def test_delete_ids(self):
         objects = list()
-        ids = "{},{}".format(str(uuid.uuid4()), str(uuid.uuid4()))
+        ids = f"{str(uuid.uuid4())},{str(uuid.uuid4())}"
         for index in range(len(ids.split(','))):
             object = gen_dummy_object(random.choice(
                 self.doc_collection_classes), self.doc)

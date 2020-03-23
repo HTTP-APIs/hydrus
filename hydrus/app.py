@@ -71,7 +71,7 @@ with set_authentication(app, AUTH):
                         else:
                             # Start the Hydrus app
                             http_server = WSGIServer(('', PORT), app)
-                            logger.info('Running server at port {}'.format(PORT))
+                            logger.info(f'Running server at port {PORT}')
                             try:
                                 http_server.serve_forever()
                             except KeyboardInterrupt:

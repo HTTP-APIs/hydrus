@@ -129,11 +129,9 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
     object_template["@type"] = rdf_class.name
 
     if path is not None:
-        object_template["@id"] = "/{}/{}Collection/{}".format(
-            api_name, path, id_)
+        object_template["@id"] = f"/{api_name}/{path}Collection/{id_}"
     else:
-        object_template["@id"] = "/{}/{}Collection/{}".format(
-            api_name, type_, id_)
+        object_template["@id"] = f"/{api_name}/{type_}Collection/{id_}"
 
     return object_template
 
@@ -522,9 +520,9 @@ def get_collection(API_NAME: str,
         raise
 
     collection_template = {
-        "@id": "/{}/{}/".format(API_NAME, path),
+        "@id": f"/{API_NAME}/{path}/",
         "@context": None,
-        "@type": "{}Collection".format(type_),
+        "@type": f"{type_}Collection",
         "members": list()
     }  # type: Dict[str, Any]
 
@@ -558,13 +556,12 @@ def get_collection(API_NAME: str,
     for i in range(offset, offset+current_page_size):
         if path is not None:
             object_template = {
-                "@id": "/{}/{}/{}".format(API_NAME, path, filtered_instances[i].id),
+                "@id": f"/{API_NAME}/{path}/{filtered_instances[i].id}",
                 "@type": type_
             }
         else:
             object_template = {
-                "@id": "/{}/{}Collection/{}".format(API_NAME, type_,
-                                                    filtered_instances[i].id),
+                "@id": f"/{API_NAME}/{type_}Collection/{filtered_instances[i].id}",
                 "@type": type_
             }
         collection_template["members"].append(object_template)
@@ -572,7 +569,7 @@ def get_collection(API_NAME: str,
     # If pagination is disabled then stop and return the collection template
     if paginate is False:
         return collection_template
-    collection_template["totalItems"] = result_length
+    collection_template["hydra:totalItems"] = result_length
     # Calculate last page number
     if result_length != 0 and result_length % page_size == 0:
         last = result_length // page_size
@@ -622,9 +619,9 @@ def get_single(type_: str, api_name: str, session: scoped_session,
     object_ = get(instance.id, rdf_class.name,
                   session=session, api_name=api_name, path=path)
     if path is not None:
-        object_["@id"] = "/{}/{}".format(api_name, path)
+        object_["@id"] = f"/{api_name}/{path}"
     else:
-        object_["@id"] = "/{}/{}".format(api_name, type_)
+        object_["@id"] = f"/{api_name}/{type_}"
     return object_
 
 
