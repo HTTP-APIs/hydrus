@@ -1,5 +1,6 @@
 import random
 import string
+import uuid
 from base64 import b64encode
 
 import pytest
@@ -9,12 +10,13 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 from hydrus.app_factory import app_factory
-from hydrus.data import doc_parse
+from hydrus.data import crud, doc_parse
 from hydrus.data.db_models import Base
 from hydrus.data.user import add_user
 from hydrus.samples import doc_writer_sample, hydra_doc_sample
+from hydrus.socketio_factory import create_socket
 from hydrus.utils import (set_api_name, set_authentication, set_doc,
-                          set_session, set_token)
+                          set_page_size, set_session, set_token)
 
 
 def get_doc_classes_and_properties(doc):
@@ -62,12 +64,13 @@ def constants():
     """
     return {
         'API_NAME': 'demoapi',
-        'HYDRUS_SERVER_URL': 'http://hydrus.com/'
+        'HYDRUS_SERVER_URL': 'http://hydrus.com/',
+        'PAGE_SIZE': 1
     }
 
 
 @pytest.fixture(scope='module', name='doc')
-def auth_test_doc(constants):
+def test_doc(constants):
     """
     Generate a test HydraDoc object from a Api Documentation
     """
@@ -147,12 +150,11 @@ def collection_names(doc):
 
 
 @pytest.fixture(scope='module', name='test_client')
-def test_client_for_auth_tests(constants, session, doc, init_db_for_auth_tests):
+def test_client_for_auth_tests(constants, session, doc, init_db_for_auth_tests, app):
     """
     Get a test flask app for testing
     """
     API_NAME = constants['API_NAME']
-    app = app_factory(API_NAME)
     with set_authentication(app, True):
         with set_token(app, False):
             with set_api_name(app, API_NAME):
@@ -186,5 +188,110 @@ def init_db_for_crud_tests(drone_doc, session):
     Drone Api test HydraDoc object.
     """
     test_classes, test_properties = get_doc_classes_and_properties(drone_doc)
+    doc_parse.insert_classes(test_classes, session)
+    doc_parse.insert_properties(test_properties, session)
+
+
+@pytest.fixture(scope='module')
+def app(constants):
+    """
+    Get a test flask app for testing in test
+    """
+    API_NAME = constants['API_NAME']
+    app = app_factory(API_NAME)
+    return app
+
+
+@pytest.fixture(scope='module', name='test_app_client')
+def test_client_for_app_tests(app, session, constants, doc):
+    API_NAME = constants['API_NAME']
+    PAGE_SIZE = constants['PAGE_SIZE']
+    with set_api_name(app, API_NAME):
+        with set_session(app, session):
+            with set_doc(app, doc):
+                with set_page_size(app, PAGE_SIZE):
+                    testing_client = app.test_client()
+                    # Establish an application context before running the tests.
+                    ctx = app.app_context()
+                    ctx.push()
+                    yield testing_client
+                    ctx.pop()
+
+
+@pytest.fixture()
+def init_db_for_app_tests(doc, constants, session, add_doc_classes_and_properties_to_db):
+    """
+    Initalze the database for testing app in
+    tests/functional/test_app.py.
+    """
+    API_NAME = constants['API_NAME']
+    for class_ in doc.parsed_classes:
+        link_props = {}
+        class_title = doc.parsed_classes[class_]['class'].title
+        dummy_obj = gen_dummy_object(class_title, doc)
+        for supportedProp in doc.parsed_classes[class_]['class'].supportedProperty:
+            if isinstance(supportedProp.prop, HydraLink):
+                class_name = supportedProp.prop.range.replace('vocab:', '')
+                for collection_path in doc.collections:
+                    coll_class = doc.collections[collection_path]['collection'].class_.title
+                    if class_name == coll_class:
+                        id_ = str(uuid.uuid4())
+                        crud.insert(
+                            gen_dummy_object(class_name, doc),
+                            id_=id_,
+                            session=session)
+                        link_props[supportedProp.title] = id_
+                        dummy_obj[supportedProp.title] = f'{API_NAME}/{collection_path}/{id_}'
+        crud.insert(dummy_obj, id_=str(uuid.uuid4()), link_props=link_props, session=session)
+        # If it's a collection class then add an extra object so
+        # we can test pagination thoroughly.
+        if class_ in doc.collections:
+            crud.insert(dummy_obj, id_=str(uuid.uuid4()), session=session)
+
+
+@pytest.fixture()
+def init_db_for_socket_tests(doc, add_doc_classes_and_properties_to_db, session):
+    """
+    Initalze the database for testing app in
+    tests/functional/test_socket.py.
+    """
+    for class_ in doc.parsed_classes:
+        class_title = doc.parsed_classes[class_]["class"].title
+        dummy_obj = gen_dummy_object(class_title, doc)
+        crud.insert(dummy_obj, id_=str(uuid.uuid4()), session=session)
+        # If it's a collection class then add an extra object so
+        # we can test pagination thoroughly.
+        if class_ in doc.collections:
+            crud.insert(dummy_obj, id_=str(uuid.uuid4()), session=session)
+    # Add two dummy modification records
+    crud.insert_modification_record(method="POST", resource_url="", session=session)
+    crud.insert_modification_record(method="DELETE", resource_url="", session=session)
+
+
+@pytest.fixture(scope='module')
+def socketio(app, session):
+    socket = create_socket(app, session)
+    return socket
+
+@pytest.fixture(scope='module')
+def socketio_client(app, session, constants, doc, socketio):
+    API_NAME = constants['API_NAME']
+    PAGE_SIZE = constants['PAGE_SIZE']
+    with set_api_name(app, API_NAME):
+        with set_session(app, session):
+            with set_doc(app, doc):
+                with set_page_size(app, PAGE_SIZE):
+                    socketio_client = socketio.test_client(app, namespace='/sync')
+                    return socketio_client
+
+
+@pytest.fixture(scope='module')
+def add_doc_classes_and_properties_to_db(doc, session):
+    """
+    Add the doc classes and properties to database
+    for testing in /functional/test_app.py and
+    /functional/test_socket.py
+    """
+    test_classes, test_properties = get_doc_classes_and_properties(doc)
     doc_parse.insert_classes(test_classes, session)
     doc_parse.insert_properties(test_properties, session)
