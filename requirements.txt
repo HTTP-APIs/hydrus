@@ -19,6 +19,7 @@ pep8==1.7.1
 persisting-theory==0.2.1
 psycopg2==2.7.5
 pyparsing
+pytest==5.4.1
 python-dateutil
 pytz
 PyYAML
