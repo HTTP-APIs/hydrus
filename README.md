@@ -45,7 +45,7 @@ The system is built over the following standards and tools:
 
 Apart from this, there are also various Python packages that hydrus uses. Using `python setup.py install` installs all the required dependencies.
 
-**NOTE:** You'll need to use `python3` not `python2`.
+**NOTE:** You'll need to use `python3` not `python2`. Hydrus does not support python < 3.6
 
 <a name="demo"></a>
 Demo

@@ -1,4 +1,4 @@
-FROM tiangolo/uwsgi-nginx-flask:flask-python3.5-index-upload
+FROM tiangolo/uwsgi-nginx-flask
 # maybe we want to move to:
 # FROM tiangolo/meinheld-gunicorn-flask:python3.6
 

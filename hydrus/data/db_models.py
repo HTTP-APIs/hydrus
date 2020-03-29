@@ -34,7 +34,7 @@ class RDFClass(Base):
 
     def __repr__(self) -> str:
         """Verbose object name."""
-        return "<id='%s', name='%s'>" % (self.id, self.name)
+        return f"<id='{self.id}', name='{self.name}'>"
 
 
 class Instance(Base):
@@ -88,8 +88,7 @@ class InstanceProperty(BaseProperty):
 
     def __repr__(self) -> str:
         """Verbose object name."""
-        return "<id='%s', name='%s', type='%s'>" % (
-            self.id, self.name, self.type_)
+        return f"<id='{self.id}', name='{self.name}', type='{self.type_}'>"
 
 
 class AbstractProperty(BaseProperty):
@@ -107,8 +106,7 @@ class AbstractProperty(BaseProperty):
 
     def __repr__(self) -> str:
         """Verbose object name."""
-        return "<id='%s', name='%s', type='%s'>" % (
-            self.id, self.name, self.type_)
+        return f"<id='{self.id}', name='{self.name}', type='{self.type_}'>"
 
 
 class Terminal(Base):
@@ -132,8 +130,7 @@ class Terminal(Base):
 
     def __repr__(self) -> str:
         """Verbose object name."""
-        return "<id='%s', value='%s', unit='%s'>" % (
-            self.id, self.value, self.unit)
+        return f"<id='{self.id}', value='{self.value}', unit='{self.unit}'>"
 
 
 class Graph(Base):
@@ -171,8 +168,7 @@ class GraphCAC(Graph):
 
     def __repr__(self) -> str:
         """Verbose object name."""
-        return "<subject='%s', predicate='%s', object_='%s'>" % (
-            self.subject, self.predicate, self.object_)
+        return f"<subject='{self.subject}', predicate='{self.predicate}', object_='{self.object_}'>"
 
 
 class GraphIAC(Graph):
@@ -191,8 +187,7 @@ class GraphIAC(Graph):
 
     def __repr__(self) -> str:
         """Verbose object name."""
-        return "<subject='%s', predicate='%s', object_='%s'>" % (
-            self.subject, self.predicate, self.object_)
+        return f"<subject='{self.subject}', predicate='{self.predicate}', object_='{self.object_}'>"
 
 
 class GraphIII(Graph):
@@ -211,8 +206,7 @@ class GraphIII(Graph):
 
     def __repr__(self) -> str:
         """Verbose object name."""
-        return "<subject='%s', predicate='%s', object_='%s'>" % (
-            self.subject, self.predicate, self.object_)
+        return f"<subject='{self.subject}', predicate='{self.predicate}', object_='{self.object_}'>"
 
 
 class GraphIIT(Graph):
@@ -231,8 +225,7 @@ class GraphIIT(Graph):
 
     def __repr__(self) -> str:
         """Verbose object name."""
-        return "<subject='%s', predicate='%s', object_='%s'>" % (
-            self.subject, self.predicate, self.object_)
+        return f"<subject='{self.subject}', predicate='{self.predicate}', object_='{self.object_}'>"
 
 
 class Modification(Base):

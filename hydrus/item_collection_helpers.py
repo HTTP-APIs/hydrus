@@ -83,8 +83,7 @@ def item_collection_get_response(path: str) -> Response:
             return error_response(error)
 
     # If endpoint and GET method is supported in the API and class is supported
-    if path in parsed_classes and "{}Collection".format(
-            path) not in collections:
+    if path in parsed_classes and f"{path}Collection" not in collections:
         try:
             class_type = parsed_classes[path]['class'].title
             response = crud.get_single(
@@ -125,11 +124,8 @@ def item_collection_put_response(path: str) -> Response:
                 # Insert object and return location in Header
                 object_id = crud.insert(object_=object_, session=get_session())
                 headers_ = [
-                    {"Location": "{}{}/{}/{}".format(
-                        get_hydrus_server_url(), get_api_name(), path,
-                        object_id)}]
-                status_description = "Object with ID {} successfully added".format(
-                    object_id)
+                    {"Location": f"{get_hydrus_server_url()}{get_api_name()}/{path}/{object_id}"}]
+                status_description = f"Object with ID {object_id} successfully added"
                 status = HydraStatus(code=201,
                                      title="Object successfully added",
                                      desc=status_description)
@@ -144,7 +140,7 @@ def item_collection_put_response(path: str) -> Response:
             return error_response(error)
 
     if (path in parsed_classes and
-            "{}Collection".format(path) not in collections):
+            f"{path}Collection" not in collections):
         # If path is in parsed_classes but is not a collection
         obj_type = getType(path, "PUT")
         link_props, link_type_check = get_link_props(path, object_)
@@ -152,8 +148,7 @@ def item_collection_put_response(path: str) -> Response:
             try:
                 object_id = crud.insert(object_=object_, link_props=link_props,
                                         session=get_session())
-                headers_ = [{"Location": "{}{}/{}/".format(
-                    get_hydrus_server_url(), get_api_name(), path)}]
+                headers_ = [{"Location": f"{get_hydrus_server_url()}{get_api_name()}/{path}/"}]
                 status = HydraStatus(
                     code=201, title="Object successfully added")
                 return set_response_headers(
@@ -178,7 +173,7 @@ def item_collection_post_response(path: str) -> Response:
     """
     object_ = json.loads(request.data.decode('utf-8'))
     collections, parsed_classes = get_collections_and_parsed_classes()
-    if path in parsed_classes and "{}Collection".format(path) not in collections:
+    if path in parsed_classes and f"{path}Collection" not in collections:
         obj_type = getType(path, "POST")
         link_props, link_type_check = get_link_props(path, object_)
         if check_writeable_props(path, object_):
@@ -192,8 +187,7 @@ def item_collection_post_response(path: str) -> Response:
                         path=path)
                     send_update("POST", path)
                     headers_ = [
-                        {"Location": "{}/{}/".format(
-                            get_hydrus_server_url(), get_api_name(), path)}]
+                        {"Location": f"{get_hydrus_server_url()}{get_api_name()}/{path}/"}]
                     status = HydraStatus(
                         code=200, title="Object successfully added")
                     return set_response_headers(
@@ -219,8 +213,7 @@ def item_collection_delete_response(path: str) -> Response:
     :rtype: Response
     """
     collections, parsed_classes = get_collections_and_parsed_classes()
-    if path in parsed_classes and "{}Collection".format(
-            path) not in collections:
+    if path in parsed_classes and f"{path}Collection" not in collections:
         # No Delete Operation for collections
         try:
             class_type = parsed_classes[path]['class'].title

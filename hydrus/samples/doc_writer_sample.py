@@ -165,8 +165,10 @@ if __name__ == "__main__":
     import json
 
     dump = json.dumps(doc, indent=4, sort_keys=True)
-    doc = '''"""Generated API Documentation sample using doc_writer_sample.py."""
-    \ndoc = {}\n'''.format(dump)
+    doc = f'''""\"Generated API Documentation sample using doc_writer_sample.py.""\"
+    
+doc = {dump}
+'''
     # Python does not recognise null, true and false in JSON format, convert
     # them to string
     doc = doc.replace('true', '"true"')

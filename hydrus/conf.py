@@ -75,11 +75,11 @@ def load_apidoc(path):
                 "Error - hydradoc format not supported."
                 "The supported formats are .py, .jsonld and .yaml")
 
-        logger.info('APIDOC path loaded from: {}'.format(path))
+        logger.info(f'APIDOC path loaded from: {path}')
         return api_doc
     except FileNotFoundError:
-        logger.critical('No Hydra ApiDoc file to load has been found at {}. '
-                        'Cannot set APIDOC_OBJ'.format(path))
+        logger.critical(f'No Hydra ApiDoc file to load has been found'
+                        f' at {path}. Cannot set APIDOC_OBJ')
         raise
     except BaseException:
         logger.critical("Problem parsing specified hydradoc file")
@@ -88,4 +88,4 @@ def load_apidoc(path):
 
 (path, FOUND_DOC) = get_apidoc_path()
 APIDOC_OBJ = load_apidoc(path)
-HYDRUS_SERVER_URL = 'http://localhost:{}/'.format(PORT)
+HYDRUS_SERVER_URL = f'http://localhost:{PORT}/'
