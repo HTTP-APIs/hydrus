@@ -138,7 +138,8 @@ def test_correct_auth_get(operation, test_client, constants, collection_names,
     for endpoint in endpoints:
         if endpoint in collection_names:
             response = test_client.get(endpoints[endpoint])
-            headers_with_correct_pass_and_id['X-Authentication'] = response.headers['X-Authentication']
+            x_auth = 'X-Authentication'
+            headers_with_correct_pass_and_id[x_auth] = response.headers[x_auth]
             # get the response for the required operation
             response_op = getattr(test_client, operation)(endpoints[endpoint],
                                                           headers=headers_with_correct_pass_and_id)
