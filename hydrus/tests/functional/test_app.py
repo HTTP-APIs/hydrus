@@ -62,7 +62,8 @@ class TestApp():
         response_put = test_app_client.put(f'/{API_NAME}/vocab#', data=json.dumps(dict(foo='bar')))
         assert response_put.status_code == 405
 
-        response_post = test_app_client.post(f'/{API_NAME}/vocab#', data=json.dumps(dict(foo='bar')))
+        response_post = test_app_client.post(f'/{API_NAME}/vocab#',
+                                             data=json.dumps(dict(foo='bar')))
         assert response_post.status_code == 405
 
     def test_Collections_GET(self, test_app_client, constants, doc, init_db_for_app_tests):
@@ -113,7 +114,8 @@ class TestApp():
                 assert 'hydra:first' in response_get_data['hydra:view']
                 assert 'hydra:last' in response_get_data['hydra:view']
                 if 'hydra:next' in response_get_data['hydra:view']:
-                    response_next = test_app_client.get(response_get_data['hydra:view']['hydra:next'])
+                    response_next = test_app_client.get(
+                        response_get_data['hydra:view']['hydra:next'])
                     assert response_next.status_code == 200
                     response_next_data = json.loads(response_next.data.decode('utf-8'))
                     assert 'hydra:previous' in response_next_data['hydra:view']
@@ -178,7 +180,7 @@ class TestApp():
                 class_methods = [x.method for x in class_.supportedOperation]
                 dummy_object = gen_dummy_object(collection.class_.title, doc)
                 initial_put_response = test_app_client.put(endpoints[endpoint],
-                                                        data=json.dumps(dummy_object))
+                                                           data=json.dumps(dummy_object))
                 assert initial_put_response.status_code == 201
                 response = json.loads(initial_put_response.data.decode('utf-8'))
                 regex = r'(.*)ID (.{36})* (.*)'
@@ -206,7 +208,7 @@ class TestApp():
                 if 'PUT' in class_methods:
                     dummy_object = gen_dummy_object(collection.class_.title, doc)
                     put_response = test_app_client.put(f'{endpoints[endpoint]}/{uuid.uuid4()}',
-                                                    data=json.dumps(dummy_object))
+                                                       data=json.dumps(dummy_object))
                     assert put_response.status_code == 201
 
     def test_object_PUT_at_ids(self, test_app_client, constants, doc):
@@ -230,7 +232,7 @@ class TestApp():
                 data_['data'] = objects
                 if 'PUT' in class_methods:
                     put_response = test_app_client.put(f'{endpoints[endpoint]}/add/{ids}',
-                                                    data=json.dumps(data_))
+                                                       data=json.dumps(data_))
                     assert put_response.status_code == 201
 
     def test_endpointClass_PUT(self, test_app_client, constants, doc):
@@ -250,7 +252,7 @@ class TestApp():
                     if 'PUT' in class_methods:
                         dummy_object = gen_dummy_object(class_.title, doc)
                         put_response = test_app_client.put(endpoints[endpoint],
-                                                        data=json.dumps(dummy_object))
+                                                           data=json.dumps(dummy_object))
                         assert put_response.status_code == 201
 
     def test_endpointClass_POST(self, test_app_client, constants, doc):
@@ -268,7 +270,7 @@ class TestApp():
                     if 'POST' in class_methods:
                         dummy_object = gen_dummy_object(class_.title, doc)
                         post_response = test_app_client.post(endpoints[endpoint],
-                                                            data=json.dumps(dummy_object))
+                                                             data=json.dumps(dummy_object))
                         assert post_response.status_code == 200
 
     def test_endpointClass_DELETE(self, test_app_client, constants, doc):

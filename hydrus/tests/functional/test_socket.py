@@ -51,7 +51,7 @@ class TestSocket:
         new_latest_job_id = crud.insert_modification_record(method='POST',
                                                             resource_url='', session=session)
         socketio_client.emit('get_modification_table_diff',
-                            {'agent_job_id': agent_job_id}, namespace='/sync')
+                             {'agent_job_id': agent_job_id}, namespace='/sync')
         data = socketio_client.get_received('/sync')
         assert len(data) > 0
         event = data[0]

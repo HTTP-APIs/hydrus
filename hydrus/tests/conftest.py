@@ -21,7 +21,7 @@ from hydrus.utils import (set_api_name, set_authentication, set_doc,
 
 def get_doc_classes_and_properties(doc):
     """
-    Extract classes and properties from a given HydraDoc object 
+    Extract classes and properties from a given HydraDoc object
 
     :param doc: HydraDoc object whose classes and properties have to extracted
     :type doc: HydraDoc
@@ -272,6 +272,7 @@ def init_db_for_socket_tests(doc, add_doc_classes_and_properties_to_db, session)
 def socketio(app, session):
     socket = create_socket(app, session)
     return socket
+
 
 @pytest.fixture(scope='module')
 def socketio_client(app, session, constants, doc, socketio):

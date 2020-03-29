@@ -263,7 +263,7 @@ def test_delete_multiple_id(drone_doc_collection_classes, drone_doc, session):
     for index in range(len(ids.split(','))):
         object = gen_dummy_object(random.choice(drone_doc_collection_classes), drone_doc)
         objects.append(object)
-    insert_response = crud.insert_multiple(objects_=objects,session=session, id_=ids)
+    insert_response = crud.insert_multiple(objects_=objects, session=session, id_=ids)
     delete_response = crud.delete_multiple(id_=ids, type_=objects[0]['@type'], session=session)
 
     response_code = None

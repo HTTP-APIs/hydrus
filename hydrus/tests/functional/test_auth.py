@@ -40,8 +40,9 @@ def test_wrong_id_post(test_client, constants, collection_names, headers_with_wr
         if endpoint in collection_names:
             response = test_client.get(endpoints[endpoint])
             headers_with_wrong_id['X-Authentication'] = response.headers['X-Authentication']
-            response_post = test_client.post(
-                endpoints[endpoint], headers=headers_with_wrong_id, data=json.dumps(dict(foo="bar")))
+            response_post = test_client.post(endpoints[endpoint],
+                                             headers=headers_with_wrong_id,
+                                             data=json.dumps(dict(foo="bar")))
             assert response_post.status_code == 401 or response_post.status_code == 400
 
 
@@ -76,8 +77,9 @@ def test_wrong_pass_post(test_client, constants, collection_names, headers_with_
         if endpoint in collection_names:
             response = test_client.get(endpoints[endpoint])
             headers_with_wrong_pass['X-Authentication'] = response.headers['X-Authentication']
-            response_post = test_client.post(
-                endpoints[endpoint], headers=headers_with_wrong_pass, data=json.dumps(dict(foo="bar")))
+            response_post = test_client.post(endpoints[endpoint],
+                                             headers=headers_with_wrong_pass,
+                                             data=json.dumps(dict(foo="bar")))
             assert response_post.status_code == 401
 
 
@@ -112,8 +114,9 @@ def test_wrong_nonce_post(test_client, constants, collection_names,
     for endpoint in endpoints:
         if endpoint in collection_names:
             headers_with_correct_pass_and_id['X-authentication'] = "random-string"
-            response_post = test_client.post(
-                endpoints[endpoint], headers=headers_with_correct_pass_and_id, data=json.dumps(dict(foo="bar")))
+            response_post = test_client.post(endpoints[endpoint],
+                                             headers=headers_with_correct_pass_and_id,
+                                             data=json.dumps(dict(foo="bar")))
             assert response_post.status_code == 401
 
 
@@ -137,8 +140,8 @@ def test_correct_auth_get(operation, test_client, constants, collection_names,
             response = test_client.get(endpoints[endpoint])
             headers_with_correct_pass_and_id['X-Authentication'] = response.headers['X-Authentication']
             # get the response for the required operation
-            response_op = getattr(test_client, operation)(
-                endpoints[endpoint], headers=headers_with_correct_pass_and_id)
+            response_op = getattr(test_client, operation)(endpoints[endpoint],
+                                                          headers=headers_with_correct_pass_and_id)
             assert response_op.status_code != 401
 
 
@@ -160,7 +163,9 @@ def test_correct_auth_post(operation, test_client, constants, collection_names,
     for endpoint in endpoints:
         if endpoint in collection_names:
             response = test_client.get(endpoints[endpoint])
-            headers_with_correct_pass_and_id['X-Authentication'] = response.headers['X-Authentication']
-            response_op = getattr(test_client, operation)(
-                endpoints[endpoint], headers=headers_with_correct_pass_and_id, data=json.dumps(dict(foo="bar")))
+            x_auth = 'X-Authentication'
+            headers_with_correct_pass_and_id[x_auth] = response.headers[x_auth]
+            response_op = getattr(test_client, operation)(endpoints[endpoint],
+                                                          headers=headers_with_correct_pass_and_id,
+                                                          data=json.dumps(dict(foo="bar")))
             assert response_op.status_code != 401
