@@ -54,12 +54,14 @@ def startserver():
               help="Toggle token based user authentication.")
 @click.option("--serverurl", default="http://localhost",
               help="Set server url", type=str)
+@click.option("--use-db/--no-use-db", default=False,
+              help="Use previously existing database")
 @click.option("--stale_records_removal_interval", default=900,
               help="Interval period between removal of stale modification records.",
               type=int)
 def serve(adduser: tuple, api: str, auth: bool, dburl: str, pagination: bool,
           hydradoc: str, port: int, pagesize: int, serverurl: str, token: bool,
-          stale_records_removal_interval: int) -> None:
+          use_db: bool, stale_records_removal_interval: int) -> None:
     """
     Starts up the server.
     \f
@@ -99,11 +101,13 @@ def serve(adduser: tuple, api: str, auth: bool, dburl: str, pagination: bool,
     click.echo("Setting up the database")
     # Create a connection to the database you want to use
     engine = create_engine(DB_URL, connect_args={'check_same_thread': False})
-    Base.metadata.drop_all(engine)
-    click.echo("Creating models")
     # Add the required Models to the database
-    Base.metadata.create_all(engine)
 
+
+    if use_db==False:
+        click.echo("Creating models")
+        Base.metadata.drop_all(engine)
+        Base.metadata.create_all(engine)
     # Define the Hydra API Documentation
     # NOTE: You can use your own API Documentation and create a HydraDoc object
     # using doc_maker or you may create your own HydraDoc Documentation using
@@ -157,7 +161,6 @@ def serve(adduser: tuple, api: str, auth: bool, dburl: str, pagination: bool,
     # Start a session with the DB and create all classes needed by the APIDoc
     session = scoped_session(sessionmaker(bind=engine))
 
-    click.echo("Adding Classes and Properties")
     # Get all the classes from the doc
     # You can also pass dictionary defined in
     # hydra_python_core/doc_writer_sample_output.py
@@ -167,8 +170,10 @@ def serve(adduser: tuple, api: str, auth: bool, dburl: str, pagination: bool,
     properties = doc_parse.get_all_properties(classes)
 
     # Insert them into the database
-    doc_parse.insert_classes(classes, session)
-    doc_parse.insert_properties(properties, session)
+    if use_db==False:
+        click.echo("Adding Classes and Properties")
+        doc_parse.insert_classes(classes, session)
+        doc_parse.insert_properties(properties, session)
 
     # Add authorized users and pass if they already exist
     click.echo("Adding authorized users")
@@ -178,8 +183,6 @@ def serve(adduser: tuple, api: str, auth: bool, dburl: str, pagination: bool,
         pass
 
     # Insert them into the database
-    doc_parse.insert_classes(classes, session)
-    doc_parse.insert_properties(properties, session)
 
     click.echo("Creating the application")
     # Create a Hydrus app with the API name you want, default will be "api"
