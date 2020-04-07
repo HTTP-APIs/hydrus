@@ -103,8 +103,7 @@ def serve(adduser: tuple, api: str, auth: bool, dburl: str, pagination: bool,
     engine = create_engine(DB_URL, connect_args={'check_same_thread': False})
     # Add the required Models to the database
 
-
-    if use_db==False:
+    if use_db is False:
         click.echo("Creating models")
         Base.metadata.drop_all(engine)
         Base.metadata.create_all(engine)
@@ -170,7 +169,7 @@ def serve(adduser: tuple, api: str, auth: bool, dburl: str, pagination: bool,
     properties = doc_parse.get_all_properties(classes)
 
     # Insert them into the database
-    if use_db==False:
+    if use_db is False:
         click.echo("Adding Classes and Properties")
         doc_parse.insert_classes(classes, session)
         doc_parse.insert_properties(properties, session)
