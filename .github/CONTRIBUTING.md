@@ -12,7 +12,7 @@
 
 * **PRs on develop**: any change should be PRed first in `develop`, `master` can only receive merge from develop.
 
-* **testing**:  everything should work and be tested for Python 3.5.2 and above.
+* **testing**:  everything should work and be tested for Python 3.6.0 and above.
     
 * **free PR**: no permission is needed to work on the code. Fork `master`, submit a PR and ask for reviewing. PR is the natural place for code comparison and corrections. If many contributors have something ready in a PR, we can consider opening a branch in which different people working on the same part of the application can collaborate.
 
