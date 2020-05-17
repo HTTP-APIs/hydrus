@@ -62,14 +62,17 @@ doc = {
                 {
                     "@type": "http://schema.org/UpdateAction",
                     "expects": "vocab:Drone",
-                    "expectsHeader": [
+                    "expectsHeader": [],
+                    "method": "POST",
+                    "possibleStatus": [
                         {
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
                             "description": "Drone updated",
-                            "statusCode": 200
+                            "statusCode": 200,
+                            "title": ""
                         }
                     ],
-                    "method": "POST",
-                    "possibleStatus": [],
                     "returns": "null",
                     "returnsHeader": [],
                     "title": "SubmitDrone"
@@ -77,14 +80,17 @@ doc = {
                 {
                     "@type": "http://schema.org/AddAction",
                     "expects": "vocab:Drone",
-                    "expectsHeader": [
+                    "expectsHeader": [],
+                    "method": "PUT",
+                    "possibleStatus": [
                         {
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
                             "description": "Drone added",
-                            "statusCode": 200
+                            "statusCode": 200,
+                            "title": ""
                         }
                     ],
-                    "method": "PUT",
-                    "possibleStatus": [],
                     "returns": "null",
                     "returnsHeader": [],
                     "title": "CreateDrone"
@@ -92,18 +98,24 @@ doc = {
                 {
                     "@type": "http://schema.org/FindAction",
                     "expects": "null",
-                    "expectsHeader": [
+                    "expectsHeader": [],
+                    "method": "GET",
+                    "possibleStatus": [
                         {
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
                             "description": "Drone not found",
-                            "statusCode": 404
+                            "statusCode": 404,
+                            "title": ""
                         },
                         {
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
                             "description": "Drone Returned",
-                            "statusCode": 200
+                            "statusCode": 200,
+                            "title": ""
                         }
                     ],
-                    "method": "GET",
-                    "possibleStatus": [],
                     "returns": "vocab:Drone",
                     "returnsHeader": [],
                     "title": "GetDrone"
@@ -161,18 +173,24 @@ doc = {
                 {
                     "@type": "http://schema.org/FindAction",
                     "expects": "null",
-                    "expectsHeader": [
+                    "expectsHeader": [],
+                    "method": "GET",
+                    "possibleStatus": [
                         {
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
                             "description": "State not found",
-                            "statusCode": 404
+                            "statusCode": 404,
+                            "title": ""
                         },
                         {
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
                             "description": "State Returned",
-                            "statusCode": 200
+                            "statusCode": 200,
+                            "title": ""
                         }
                     ],
-                    "method": "GET",
-                    "possibleStatus": [],
                     "returns": "vocab:State",
                     "returnsHeader": [],
                     "title": "GetState"
@@ -238,18 +256,24 @@ doc = {
                 {
                     "@type": "http://schema.org/FindAction",
                     "expects": "null",
-                    "expectsHeader": [
+                    "expectsHeader": [],
+                    "method": "GET",
+                    "possibleStatus": [
                         {
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
                             "description": "Data not found",
-                            "statusCode": 404
+                            "statusCode": 404,
+                            "title": ""
                         },
                         {
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
                             "description": "Data returned",
-                            "statusCode": 200
+                            "statusCode": 200,
+                            "title": ""
                         }
                     ],
-                    "method": "GET",
-                    "possibleStatus": [],
                     "returns": "vocab:Datastream",
                     "returnsHeader": [],
                     "title": "ReadDatastream"
@@ -257,14 +281,17 @@ doc = {
                 {
                     "@type": "http://schema.org/UpdateAction",
                     "expects": "vocab:Datastream",
-                    "expectsHeader": [
+                    "expectsHeader": [],
+                    "method": "POST",
+                    "possibleStatus": [
                         {
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
                             "description": "Data updated",
-                            "statusCode": 200
+                            "statusCode": 200,
+                            "title": ""
                         }
                     ],
-                    "method": "POST",
-                    "possibleStatus": [],
                     "returns": "null",
                     "returnsHeader": [],
                     "title": "UpdateDatastream"
@@ -272,14 +299,17 @@ doc = {
                 {
                     "@type": "http://schema.org/DeleteAction",
                     "expects": "null",
-                    "expectsHeader": [
+                    "expectsHeader": [],
+                    "method": "DELETE",
+                    "possibleStatus": [
                         {
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
                             "description": "Data deleted",
-                            "statusCode": 200
+                            "statusCode": 200,
+                            "title": ""
                         }
                     ],
-                    "method": "DELETE",
-                    "possibleStatus": [],
                     "returns": "null",
                     "returnsHeader": [],
                     "title": "DeleteDatastream"
@@ -321,18 +351,24 @@ doc = {
                 {
                     "@type": "http://schema.org/FindAction",
                     "expects": "null",
-                    "expectsHeader": [
+                    "expectsHeader": [],
+                    "method": "GET",
+                    "possibleStatus": [
                         {
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
                             "description": "Log entry not found",
-                            "statusCode": 404
+                            "statusCode": 404,
+                            "title": ""
                         },
                         {
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
                             "description": "Log entry returned",
-                            "statusCode": 200
+                            "statusCode": 200,
+                            "title": ""
                         }
                     ],
-                    "method": "GET",
-                    "possibleStatus": [],
                     "returns": "vocab:LogEntry",
                     "returnsHeader": [],
                     "title": "GetLog"
@@ -340,14 +376,17 @@ doc = {
                 {
                     "@type": "http://schema.org/AddAction",
                     "expects": "vocab:LogEntry",
-                    "expectsHeader": [
+                    "expectsHeader": [],
+                    "method": "PUT",
+                    "possibleStatus": [
                         {
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
                             "description": "Log entry created",
-                            "statusCode": 201
+                            "statusCode": 201,
+                            "title": ""
                         }
                     ],
-                    "method": "PUT",
-                    "possibleStatus": [],
                     "returns": "null",
                     "returnsHeader": [],
                     "title": "AddLog"
@@ -421,14 +460,17 @@ doc = {
                 {
                     "@type": "http://schema.org/UpdateAction",
                     "expects": "vocab:Area",
-                    "expectsHeader": [
+                    "expectsHeader": [],
+                    "method": "POST",
+                    "possibleStatus": [
                         {
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
                             "description": "Area of interest changed",
-                            "statusCode": 200
+                            "statusCode": 200,
+                            "title": ""
                         }
                     ],
-                    "method": "POST",
-                    "possibleStatus": [],
                     "returns": "null",
                     "returnsHeader": [],
                     "title": "UpdateArea"
@@ -436,18 +478,24 @@ doc = {
                 {
                     "@type": "http://schema.org/FindAction",
                     "expects": "null",
-                    "expectsHeader": [
+                    "expectsHeader": [],
+                    "method": "GET",
+                    "possibleStatus": [
                         {
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
                             "description": "Area of interest not found",
-                            "statusCode": 404
+                            "statusCode": 200,
+                            "title": ""
                         },
                         {
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
                             "description": "Area of interest returned",
-                            "statusCode": 200
+                            "statusCode": 200,
+                            "title": ""
                         }
                     ],
-                    "method": "GET",
-                    "possibleStatus": [],
                     "returns": "vocab:Area",
                     "returnsHeader": [],
                     "title": "GetArea"
@@ -481,18 +529,24 @@ doc = {
                 {
                     "@type": "http://schema.org/FindAction",
                     "expects": "null",
-                    "expectsHeader": [
+                    "expectsHeader": [],
+                    "method": "GET",
+                    "possibleStatus": [
                         {
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
                             "description": "Command not found",
-                            "statusCode": 404
+                            "statusCode": 404,
+                            "title": ""
                         },
                         {
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
                             "description": "Command Returned",
-                            "statusCode": 200
+                            "statusCode": 200,
+                            "title": ""
                         }
                     ],
-                    "method": "GET",
-                    "possibleStatus": [],
                     "returns": "vocab:Command",
                     "returnsHeader": [],
                     "title": "GetCommand"
@@ -500,14 +554,17 @@ doc = {
                 {
                     "@type": "http://schema.org/AddAction",
                     "expects": "vocab:Command",
-                    "expectsHeader": [
+                    "expectsHeader": [],
+                    "method": "PUT",
+                    "possibleStatus": [
                         {
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
                             "description": "Command added",
-                            "statusCode": 201
+                            "statusCode": 201,
+                            "title": ""
                         }
                     ],
-                    "method": "PUT",
-                    "possibleStatus": [],
                     "returns": "null",
                     "returnsHeader": [],
                     "title": "AddCommand"
@@ -515,14 +572,17 @@ doc = {
                 {
                     "@type": "http://schema.org/DeleteAction",
                     "expects": "null",
-                    "expectsHeader": [
+                    "expectsHeader": [],
+                    "method": "DELETE",
+                    "possibleStatus": [
                         {
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
                             "description": "Command deleted",
-                            "statusCode": 201
+                            "statusCode": 201,
+                            "title": ""
                         }
                     ],
-                    "method": "DELETE",
-                    "possibleStatus": [],
                     "returns": "null",
                     "returnsHeader": [],
                     "title": "DeleteCommand"
@@ -556,18 +616,24 @@ doc = {
                 {
                     "@type": "http://schema.org/FindAction",
                     "expects": "null",
-                    "expectsHeader": [
+                    "expectsHeader": [],
+                    "method": "GET",
+                    "possibleStatus": [
                         {
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
                             "description": "Message not found",
-                            "statusCode": 404
+                            "statusCode": 200,
+                            "title": ""
                         },
                         {
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
                             "description": "Message returned",
-                            "statusCode": 200
+                            "statusCode": 200,
+                            "title": ""
                         }
                     ],
-                    "method": "GET",
-                    "possibleStatus": [],
                     "returns": "vocab:Message",
                     "returnsHeader": [],
                     "title": "GetMessage"
@@ -575,14 +641,17 @@ doc = {
                 {
                     "@type": "http://schema.org/DeleteAction",
                     "expects": "null",
-                    "expectsHeader": [
+                    "expectsHeader": [],
+                    "method": "DELETE",
+                    "possibleStatus": [
                         {
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
                             "description": "Message deleted",
-                            "statusCode": 200
+                            "statusCode": 200,
+                            "title": ""
                         }
                     ],
-                    "method": "DELETE",
-                    "possibleStatus": [],
                     "returns": "null",
                     "returnsHeader": [],
                     "title": "DeleteMessage"
@@ -959,15 +1028,18 @@ doc = {
                                 "@type": "http://schema.org/UpdateAction",
                                 "description": "null",
                                 "expects": "vocab:Area",
-                                "expectsHeader": [
-                                    {
-                                        "description": "Area of interest changed",
-                                        "statusCode": 200
-                                    }
-                                ],
+                                "expectsHeader": [],
                                 "label": "UpdateArea",
                                 "method": "POST",
-                                "possibleStatus": [],
+                                "possibleStatus": [
+                                    {
+                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                                        "@type": "Status",
+                                        "description": "Area of interest changed",
+                                        "statusCode": 200,
+                                        "title": ""
+                                    }
+                                ],
                                 "returns": "null",
                                 "returnsHeader": []
                             },
@@ -976,19 +1048,25 @@ doc = {
                                 "@type": "http://schema.org/FindAction",
                                 "description": "null",
                                 "expects": "null",
-                                "expectsHeader": [
-                                    {
-                                        "description": "Area of interest not found",
-                                        "statusCode": 404
-                                    },
-                                    {
-                                        "description": "Area of interest returned",
-                                        "statusCode": 200
-                                    }
-                                ],
+                                "expectsHeader": [],
                                 "label": "GetArea",
                                 "method": "GET",
-                                "possibleStatus": [],
+                                "possibleStatus": [
+                                    {
+                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                                        "@type": "Status",
+                                        "description": "Area of interest not found",
+                                        "statusCode": 200,
+                                        "title": ""
+                                    },
+                                    {
+                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                                        "@type": "Status",
+                                        "description": "Area of interest returned",
+                                        "statusCode": 200,
+                                        "title": ""
+                                    }
+                                ],
                                 "returns": "vocab:Area",
                                 "returnsHeader": []
                             }

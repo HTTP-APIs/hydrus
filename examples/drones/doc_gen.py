@@ -1,7 +1,10 @@
 """API Doc generator for the server side API."""
 
-from hydra_python_core.doc_writer import HydraDoc, HydraClass, HydraClassProp, HydraClassOp
 import json
+
+from hydra_python_core.doc_writer import (HydraClass, HydraClassOp,
+                                          HydraClassProp, HydraDoc,
+                                          HydraStatus)
 
 
 def doc_gen(API: str, BASE_URL: str) -> HydraDoc:
@@ -33,8 +36,8 @@ def doc_gen(API: str, BASE_URL: str) -> HydraDoc:
                                         "GET",
                                         None,
                                         "vocab:State",
-                                        [{"statusCode": 404, "description": "State not found"},
-                                         {"statusCode": 200, "description": "State Returned"}]))
+                                        possible_status=[HydraStatus(code=404, desc="State not found"),
+                                                         HydraStatus(code=200, desc="State Returned")]))
 
     # Drone Class
     drone = HydraClass("Drone", "Drone", "Class for a drone")
@@ -56,18 +59,18 @@ def doc_gen(API: str, BASE_URL: str) -> HydraDoc:
                                         "POST",
                                         "vocab:Drone",
                                         None,
-                                        [{"statusCode": 200, "description": "Drone updated"}]))
+                                        possible_status=[HydraStatus(code=200, desc="Drone updated")]))
     drone.add_supported_op(HydraClassOp("CreateDrone",
                                         "PUT",
                                         "vocab:Drone",
                                         None,
-                                        [{"statusCode": 200, "description": "Drone added"}]))
+                                        possible_status=[HydraStatus(code=200, desc="Drone added")]))
     drone.add_supported_op(HydraClassOp("GetDrone",
                                         "GET",
                                         None,
                                         "vocab:Drone",
-                                        [{"statusCode": 404, "description": "Drone not found"},
-                                         {"statusCode": 200, "description": "Drone Returned"}]))
+                                        possible_status=[HydraStatus(code=404, desc="Drone not found"),
+                                                         HydraStatus(code=200, desc="Drone Returned")]))
 
     # NOTE: Commands are stored in a collection. You may GET a command or you
     # may DELETE it, there is not UPDATE.
@@ -81,20 +84,20 @@ def doc_gen(API: str, BASE_URL: str) -> HydraDoc:
                                           "GET",
                                           None,
                                           "vocab:Command",
-                                          [{"statusCode": 404, "description": "Command not found"},
-                                           {"statusCode": 200, "description": "Command Returned"}]))
+                                          possible_status=[HydraStatus(code=404, desc="Command not found"),
+                                                           HydraStatus(code=200, desc="Command Returned")]))
     # Used by server to add new commands
     command.add_supported_op(HydraClassOp("AddCommand",
                                           "PUT",
                                           "vocab:Command",
                                           None,
-                                          [{"statusCode": 201, "description": "Command added"}]))
+                                          possible_status=[HydraStatus(code=201, desc="Command added")]))
 
     command.add_supported_op(HydraClassOp("DeleteCommand",
                                           "DELETE",
                                           None,
                                           None,
-                                          [{"statusCode": 201, "description": "Command deleted"}]))
+                                          possible_status=[HydraStatus(code=201, desc="Command deleted")]))
 
     # Logs to be accessed mostly by the GUI. Mechanics should add logs for
     # every event.
@@ -121,13 +124,13 @@ def doc_gen(API: str, BASE_URL: str) -> HydraDoc:
                                       "GET",
                                       None,
                                       "vocab:LogEntry",
-                                      [{"statusCode": 404, "description": "Log entry not found"},
-                                       {"statusCode": 200, "description": "Log entry returned"}]))
+                                      possible_status=[HydraStatus(code=404, desc="Log entry not found"),
+                                                       HydraStatus(code=200, desc="Log entry returned")]))
     log.add_supported_op(HydraClassOp("AddLog",
                                       "PUT",
                                       "vocab:LogEntry",
                                       None,
-                                      [{"statusCode": 201, "description": "Log entry created"}]))
+                                      possible_status=[HydraStatus(code=201, desc="Log entry created")]))
 
     # Data is stored as a collection. Each data object can be read.
     # New data added to the collection
@@ -143,18 +146,18 @@ def doc_gen(API: str, BASE_URL: str) -> HydraDoc:
                                              "GET",
                                              None,
                                              "vocab:Datastream",
-                                             [{"statusCode": 404, "description": "Data not found"},
-                                              {"statusCode": 200, "description": "Data returned"}]))
+                                             possible_status=[HydraStatus(code=404, desc="Data not found"),
+                                              HydraStatus(code=200, desc="Data returned")]))
     datastream.add_supported_op(HydraClassOp("UpdateDatastream",
                                              "POST",
                                              "vocab:Datastream",
                                              None,
-                                             [{"statusCode": 200, "description": "Data updated"}]))
+                                             possible_status=[HydraStatus(code=200, desc="Data updated")]))
     datastream.add_supported_op(HydraClassOp("DeleteDatastream",
                                              "DELETE",
                                              None,
                                              None,
-                                             [{"statusCode": 200, "description": "Data deleted"}]))
+                                             possible_status=[HydraStatus(code=200, desc="Data deleted")]))
 
     # Single object representing the area of interest. No collections.
     area = HydraClass(
@@ -169,13 +172,14 @@ def doc_gen(API: str, BASE_URL: str) -> HydraDoc:
                                        "POST",
                                        "vocab:Area",
                                        None,
-                                       [{"statusCode": 200, "description": "Area of interest changed"}]))
+                                       possible_status=[HydraStatus(code=200,
+                                                                    desc="Area of interest changed")]))
     area.add_supported_op(HydraClassOp("GetArea",
                                        "GET",
                                        None,
                                        "vocab:Area",
-                                       [{"statusCode": 404, "description": "Area of interest not found"},
-                                        {"statusCode": 200, "description": "Area of interest returned"}]))
+                                       possible_status=[HydraStatus(code=200, desc="Area of interest not found"),
+                                                        HydraStatus(code=200, desc="Area of interest returned")]))
 
     message = HydraClass("Message", "Message",
                          "Class for messages received by the GUI interface")
@@ -185,13 +189,13 @@ def doc_gen(API: str, BASE_URL: str) -> HydraDoc:
                                           "GET",
                                           None,
                                           "vocab:Message",
-                                          [{"statusCode": 404, "description": "Message not found"},
-                                           {"statusCode": 200, "description": "Message returned"}]))
+                                          possible_status=[HydraStatus(code=200, desc="Message not found"),
+                                                           HydraStatus(code=200, desc="Message returned")]))
     message.add_supported_op(HydraClassOp("DeleteMessage",
                                           "DELETE",
                                           None,
                                           None,
-                                          [{"statusCode": 200, "description": "Message deleted"}]))
+                                          possible_status=[HydraStatus(code=200, desc="Message deleted")]))
 
     api_doc.add_supported_class(drone, collection=True)
     api_doc.add_supported_class(state, collection=True)
