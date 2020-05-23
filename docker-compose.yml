@@ -5,12 +5,12 @@ services:
     restart: always
     build: ./
     ports:
-      - "8000:8080"
+      - "8080:8080"
     environment:
       # - HYDRUS_SERVER_URL=http://192.168.99.100:8081/ ## For windows 10
       # - HYDRUS_SERVER_URL=http://54.169.232.177:8080/
       - DEBUG=1
-      - API_NAME=api
+      - API_NAME=serverapi
       # relative path to the ApiDoc, from the project root
       - APIDOC_REL_PATH=examples/drones/doc.py
       - DB_URL=sqlite:///database.db
