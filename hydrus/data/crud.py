@@ -53,7 +53,8 @@ from hydrus.data.crud_helpers import (
     recreate_iri,
     attach_hydra_view,
     pre_process_pagination_parameters,
-    parse_search_params)
+    parse_search_params,
+    get_rdf_class)
 # from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.scoping import scoped_session
 from typing import Dict, Optional, Any, List
@@ -81,11 +82,7 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
     object_template = {
         "@type": "",
     }  # type: Dict[str, Any]
-    try:
-        rdf_class = session.query(RDFClass).filter(
-            RDFClass.name == type_).one()
-    except NoResultFound:
-        raise ClassNotFound(type_=type_)
+    rdf_class = get_rdf_class(session, type_)
 
     try:
         instance = session.query(Instance).filter(
@@ -159,12 +156,9 @@ def insert(object_: Dict[str, Any], session: scoped_session, link_props: Dict[st
     """
     rdf_class = None
     instance = None
-    # Check for class in the begging
-    try:
-        rdf_class = session.query(RDFClass).filter(
-            RDFClass.name == object_["@type"]).one()
-    except NoResultFound:
-        raise ClassNotFound(type_=object_["@type"])
+    type_ = object_["@type"]
+    # Check for class in the beginning
+    rdf_class = get_rdf_class(session, type_)
     if id_ is not None and session.query(exists().where(Instance.id == id_)).scalar():
         raise InstanceExists(type_=rdf_class.name, id_=id_)
     elif id_ is not None:
@@ -254,11 +248,8 @@ def insert_multiple(objects_: List[Dict[str,
 
     # the number of objects would be the same as number of instances
     for index in range(len(objects_)):
-        try:
-            rdf_class = session.query(RDFClass).filter(
-                RDFClass.name == objects_[index]["@type"]).one()
-        except NoResultFound:
-            raise ClassNotFound(type_=objects_[index]["@type"])
+        type_ = objects_[index]["@type"]
+        rdf_class = get_rdf_class(session, type_)
         if index in range(len(id_list)) and id_list[index] != "":
             if session.query(
                     exists().where(
@@ -354,11 +345,7 @@ def delete(id_: str, type_: str, session: scoped_session) -> None:
         InstanceNotFound: If no instace of type `type_` with id `id_` exists.
 
     """
-    try:
-        rdf_class = session.query(RDFClass).filter(
-            RDFClass.name == type_).one()
-    except NoResultFound:
-        raise ClassNotFound(type_=type_)
+    rdf_class = get_rdf_class(session, type_)
     try:
         instance = session.query(Instance).filter(
             Instance.id == id_ and type_ == rdf_class.id).one()
@@ -410,11 +397,7 @@ def delete_multiple(
 
     """
     id_ = id_.split(',')
-    try:
-        rdf_class = session.query(RDFClass).filter(
-            RDFClass.name == type_).one()
-    except NoResultFound:
-        raise ClassNotFound(type_=type_)
+    rdf_class = get_rdf_class(session, type_)
 
     instances = list()
     data_III = list()
@@ -526,11 +509,7 @@ def get_collection(API_NAME: str,
         "members": list()
     }  # type: Dict[str, Any]
 
-    try:
-        rdf_class = session.query(RDFClass).filter(
-            RDFClass.name == type_).one()
-    except NoResultFound:
-        raise ClassNotFound(type_=type_)
+    rdf_class = get_rdf_class(session, type_)
 
     try:
         instances = session.query(Instance).filter(
@@ -605,11 +584,7 @@ def get_single(type_: str, api_name: str, session: scoped_session,
         InstanceNotFound: If no Instance with type `type_` exists.
 
     """
-    try:
-        rdf_class = session.query(RDFClass).filter(
-            RDFClass.name == type_).one()
-    except NoResultFound:
-        raise ClassNotFound(type_=type_)
+    rdf_class = get_rdf_class(session, type_)
 
     try:
         instance = session.query(Instance).filter(
@@ -636,11 +611,8 @@ def insert_single(object_: Dict[str, Any], session: scoped_session) -> Any:
         Instance: If an Instance of type `type_` already exists.
 
     """
-    try:
-        rdf_class = session.query(RDFClass).filter(
-            RDFClass.name == object_["@type"]).one()
-    except NoResultFound:
-        raise ClassNotFound(type_=object_["@type"])
+    type_ = object_["@type"]
+    rdf_class = get_rdf_class(session, type_)
 
     try:
         session.query(Instance).filter(
@@ -670,11 +642,8 @@ def update_single(object_: Dict[str,
         InstanceNotFound: If no Instance of the class exists.
 
     """
-    try:
-        rdf_class = session.query(RDFClass).filter(
-            RDFClass.name == object_["@type"]).one()
-    except NoResultFound:
-        raise ClassNotFound(type_=object_["@type"])
+    type_ = object_["@type"]
+    rdf_class = get_rdf_class(session, type_)
 
     try:
         instance = session.query(Instance).filter(
@@ -703,11 +672,7 @@ def delete_single(type_: str, session: scoped_session) -> None:
         InstanceNotFound: If no Instance of the class exists.
 
     """
-    try:
-        rdf_class = session.query(RDFClass).filter(
-            RDFClass.name == type_).one()
-    except NoResultFound:
-        raise ClassNotFound(type_=type_)
+    rdf_class = get_rdf_class(session, type_)
 
     try:
         instance = session.query(Instance).filter(

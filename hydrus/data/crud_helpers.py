@@ -6,6 +6,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from hydrus.data.db_models import (Graph, BaseProperty, RDFClass, Instance,
                                    Terminal)
 from hydrus.data.exceptions import (
+    ClassNotFound,
     PageNotFound,
     InvalidSearchParameter,
     IncompatibleParameters,
@@ -204,3 +205,12 @@ def attach_hydra_view(collection_template: Dict[str, Any], paginate_param: str,
         if page != last:
             collection_template["hydra:view"]["hydra:next"] = (
                f"{iri}{paginate_param}={page + 1}")
+
+
+def get_rdf_class(session, type_):
+    try:
+        rdf_class = session.query(RDFClass).filter(
+            RDFClass.name == type_).one()
+        return rdf_class
+    except NoResultFound:
+        raise ClassNotFound(type_=type_)
