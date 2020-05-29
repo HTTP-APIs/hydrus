@@ -54,7 +54,9 @@ from hydrus.data.crud_helpers import (
     attach_hydra_view,
     pre_process_pagination_parameters,
     parse_search_params,
-    get_rdf_class)
+    get_rdf_class,
+    get_single_instance,
+    get_data_iac_iii_iit)
 # from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.scoping import scoped_session
 from typing import Dict, Optional, Any, List
@@ -83,21 +85,8 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
         "@type": "",
     }  # type: Dict[str, Any]
     rdf_class = get_rdf_class(session, type_)
-
-    try:
-        instance = session.query(Instance).filter(
-            Instance.id == id_, Instance.type_ == rdf_class.id).one()
-    except NoResultFound:
-        raise InstanceNotFound(type_=rdf_class.name, id_=id_)
-
-    data_IAC = session.query(triples).filter(
-        triples.GraphIAC.subject == id_).all()
-
-    data_III = session.query(triples).filter(
-        triples.GraphIII.subject == id_).all()
-
-    data_IIT = session.query(triples).filter(
-        triples.GraphIIT.subject == id_).all()
+    instance = get_single_instance(session, id_, rdf_class)
+    data_IAC, data_III, data_IIT = get_data_iac_iii_iit(session, id_)
 
     for data in data_IAC:
         prop_name = session.query(properties).filter(

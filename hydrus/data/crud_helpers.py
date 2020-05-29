@@ -1,5 +1,7 @@
 # from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.scoping import scoped_session
+from sqlalchemy.orm import with_polymorphic
+
 from typing import Dict, Any, Tuple
 
 from sqlalchemy.orm.exc import NoResultFound
@@ -10,7 +12,10 @@ from hydrus.data.exceptions import (
     PageNotFound,
     InvalidSearchParameter,
     IncompatibleParameters,
-    OffsetOutOfRange)
+    OffsetOutOfRange,
+    InstanceNotFound)
+
+triples = with_polymorphic(Graph, '*')
 
 
 def apply_filter(object_id: str, search_props: Dict[str, Any],
@@ -214,3 +219,19 @@ def get_rdf_class(session, type_):
         return rdf_class
     except NoResultFound:
         raise ClassNotFound(type_=type_)
+
+
+def get_single_instance(session, id_, rdf_class):
+    try:
+        instance = session.query(Instance).filter(
+            Instance.id == id_, Instance.type_ == rdf_class.id).one()
+        return instance
+    except NoResultFound:
+        raise InstanceNotFound(type_=rdf_class.name, id_=id_)
+
+
+def get_data_iac_iii_iit(session, id_):
+    data_IAC = session.query(triples).filter(triples.GraphIAC.subject == id_).all()
+    data_III = session.query(triples).filter(triples.GraphIII.subject == id_).all()
+    data_IIT = session.query(triples).filter(triples.GraphIIT.subject == id_).all()
+    return (data_IAC, data_III, data_IIT)
