@@ -276,3 +276,33 @@ def get_instance_before_delete(session, id_, type_):
         return instance
     except NoResultFound:
         raise InstanceNotFound(type_=rdf_class.name, id_=id_)
+
+
+def get_search_props(session, search_params):
+    try:
+        # Reconstruct dict with property ids as keys
+        search_props = parse_search_params(search_params=search_params, properties=properties,
+                                           session=session)
+        return search_props
+    except InvalidSearchParameter:
+        raise
+
+
+def get_all_instances(session, type_):
+    rdf_class = get_rdf_class(session, type_)
+    try:
+        instances = session.query(Instance).filter(Instance.type_ == rdf_class.id).all()
+        return instances
+    except NoResultFound:
+        instances = list()
+        return instances
+
+
+def get_all_filtered_instances(session, search_params, type_):
+    instances = get_all_instances(session, type_)
+    search_props = get_search_props(session, search_params)
+    filtered_instances = list()
+    for instance_ in instances:
+        if apply_filter(instance_.id, search_props, triples, session) is True:
+            filtered_instances.append(instance_)
+    return filtered_instances

@@ -57,7 +57,10 @@ from hydrus.data.crud_helpers import (
     get_rdf_class,
     get_data_iac_iii_iit,
     add_prop_name_to_object,
-    get_instance_before_delete)
+    get_instance_before_delete,
+    get_search_props,
+    get_all_instances,
+    get_all_filtered_instances)
 # from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.scoping import scoped_session
 from typing import Dict, Optional, Any, List
@@ -438,31 +441,13 @@ def get_collection(API_NAME: str,
         ClassNotFound: If `type_` does not represent a valid/defined RDFClass.
 
     """
-    try:
-        # Reconstruct dict with property ids as keys
-        search_props = parse_search_params(search_params=search_params, properties=properties,
-                                           session=session)
-    except InvalidSearchParameter:
-        raise
-
     collection_template = {
         "@id": f"/{API_NAME}/{path}/",
         "@context": None,
         "@type": f"{type_}Collection",
         "members": list()
     }  # type: Dict[str, Any]
-
-    rdf_class = get_rdf_class(session, type_)
-
-    try:
-        instances = session.query(Instance).filter(
-            Instance.type_ == rdf_class.id).all()
-    except NoResultFound:
-        instances = list()
-    filtered_instances = list()
-    for instance_ in instances:
-        if apply_filter(instance_.id, search_props, triples, session) is True:
-            filtered_instances.append(instance_)
+    filtered_instances = get_all_filtered_instances(session, search_params, type_)
     result_length = len(filtered_instances)
     try:
         # To paginate, calculate offset and page_limit values for pagination of search results
