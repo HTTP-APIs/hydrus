@@ -214,6 +214,14 @@ def attach_hydra_view(collection_template: Dict[str, Any], paginate_param: str,
 
 
 def get_rdf_class(session, type_):
+    """Retrieve the RDFClass with given type_ from the database.
+    :param session: sqlalchemy scoped session
+    :param type_: type of object
+    :return: appropriate RDFClass
+
+    Raises:
+        ClassNotFound: If the `type_` is not a valid/defined RDFClass.
+    """
     try:
         rdf_class = session.query(RDFClass).filter(
             RDFClass.name == type_).one()
@@ -223,6 +231,14 @@ def get_rdf_class(session, type_):
 
 
 def get_single_instance(session, id_, rdf_class):
+    """Retrieve an instance object with given ID from the database.
+    :param session: sqlalchemy scoped session
+    :param id_: id of object to be fetched
+    :return: instance object with given id_
+
+    Raises:
+        InstanceNotFound: If no Instance of the 'type_` class if found.
+    """
     try:
         instance = session.query(Instance).filter(
             Instance.id == id_, Instance.type_ == rdf_class.id).one()
@@ -232,6 +248,11 @@ def get_single_instance(session, id_, rdf_class):
 
 
 def get_data_iac_iii_iit(session, id_):
+    """Get the IAC, III and IIT data from DB of a single instance given id.
+    :param session: sqlalchemy scoped session
+    :param id_: id of object to be deleted
+    :return: tuple of IAC, III and IIT data
+    """
     data_IAC = session.query(triples).filter(triples.GraphIAC.subject == id_).all()
     data_III = session.query(triples).filter(triples.GraphIII.subject == id_).all()
     data_IIT = session.query(triples).filter(triples.GraphIIT.subject == id_).all()
@@ -239,6 +260,13 @@ def get_data_iac_iii_iit(session, id_):
 
 
 def add_prop_name_to_object(session, id_, object_template, rdf_class):
+    """Add the property name to the object template.
+    :param session: sqlalchemy scoped session
+    :param id_: id of object to be fetched
+    :param object_template: a template of a the instance(dict)
+    :param rdf_class: the RDFClass of that instance
+    :return: response to the request
+    """
     instance = get_single_instance(session, id_, rdf_class)
     data_IAC, data_III, data_IIT = get_data_iac_iii_iit(session, id_)
     for data in data_IAC:
@@ -269,6 +297,15 @@ def add_prop_name_to_object(session, id_, object_template, rdf_class):
 
 
 def get_instance_before_delete(session, id_, type_):
+    """Get the instance to be deleted from the database which is
+    used to delete it's IAC, III and IIT data.
+    :param session: sqlalchemy scoped session
+    :param id_: id of object to be deleted
+    :param type_: type of object to be deleted
+    :returns instance: the object instance in the database
+    Raises:
+        InstanceNotFound: If no instance of type `type_` with id `id_` exists.
+    """
     rdf_class = get_rdf_class(session, type_)
     try:
         instance = session.query(Instance).filter(
@@ -279,6 +316,11 @@ def get_instance_before_delete(session, id_, type_):
 
 
 def get_search_props(session, search_params):
+    """Retrieve a type of collection from the database.
+    :param session: sqlalchemy scoped session
+    :param search_params: Query parameters
+    :return: search properties(dict)
+    """
     try:
         # Reconstruct dict with property ids as keys
         search_props = parse_search_params(search_params=search_params, properties=properties,
@@ -289,6 +331,12 @@ def get_search_props(session, search_params):
 
 
 def get_all_instances(session, type_):
+    """Get all the instances to be deleted from the database which is
+    used to delete their IAC, III and IIT data.
+    :param session: sqlalchemy scoped session
+    :param type_: type of object to be deleted
+    :returns instances: all the object instances in the database with given type
+    """
     rdf_class = get_rdf_class(session, type_)
     try:
         instances = session.query(Instance).filter(Instance.type_ == rdf_class.id).all()
@@ -299,6 +347,13 @@ def get_all_instances(session, type_):
 
 
 def get_all_filtered_instances(session, search_params, type_):
+    """Get all the filtered instances of from the database
+    based on given query parameters.
+    :param session: sqlalchemy scoped session
+    :param search_params: Query parameters
+    :param type_: type of object to be deleted
+    :return: filtered instances
+    """
     instances = get_all_instances(session, type_)
     search_props = get_search_props(session, search_params)
     filtered_instances = list()

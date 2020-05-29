@@ -45,21 +45,16 @@ from hydrus.data.exceptions import (
     NotAbstractProperty,
     InstanceNotFound,
     PageNotFound,
-    InvalidSearchParameter,
     IncompatibleParameters,
     OffsetOutOfRange)
 from hydrus.data.crud_helpers import (
-    apply_filter,
     recreate_iri,
     attach_hydra_view,
     pre_process_pagination_parameters,
-    parse_search_params,
     get_rdf_class,
     get_data_iac_iii_iit,
     add_prop_name_to_object,
     get_instance_before_delete,
-    get_search_props,
-    get_all_instances,
     get_all_filtered_instances)
 # from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.scoping import scoped_session
