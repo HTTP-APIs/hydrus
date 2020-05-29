@@ -266,3 +266,13 @@ def add_prop_name_to_object(session, id_, object_template, rdf_class):
             # If terminal is none
             object_template[prop_name] = ""
     return object_template
+
+
+def get_instance_before_delete(session, id_, type_):
+    rdf_class = get_rdf_class(session, type_)
+    try:
+        instance = session.query(Instance).filter(
+            Instance.id == id_ and type_ == rdf_class.id).one()
+        return instance
+    except NoResultFound:
+        raise InstanceNotFound(type_=rdf_class.name, id_=id_)

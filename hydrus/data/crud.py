@@ -55,9 +55,9 @@ from hydrus.data.crud_helpers import (
     pre_process_pagination_parameters,
     parse_search_params,
     get_rdf_class,
-    get_single_instance,
     get_data_iac_iii_iit,
-    add_prop_name_to_object)
+    add_prop_name_to_object,
+    get_instance_before_delete)
 # from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.scoping import scoped_session
 from typing import Dict, Optional, Any, List
@@ -308,13 +308,7 @@ def delete(id_: str, type_: str, session: scoped_session) -> None:
         InstanceNotFound: If no instace of type `type_` with id `id_` exists.
 
     """
-    rdf_class = get_rdf_class(session, type_)
-    try:
-        instance = session.query(Instance).filter(
-            Instance.id == id_ and type_ == rdf_class.id).one()
-    except NoResultFound:
-        raise InstanceNotFound(type_=rdf_class.name, id_=id_)
-
+    instance = get_instance_before_delete(session, id_, type_)
     data_IAC, data_III, data_IIT = get_data_iac_iii_iit(session, id_)
     data = data_III + data_IIT + data_IAC
     for item in data:
@@ -354,26 +348,18 @@ def delete_multiple(
 
     """
     id_ = id_.split(',')
-    rdf_class = get_rdf_class(session, type_)
-
     instances = list()
     data_III = list()
     data_IAC = list()
     data_IIT = list()
 
     for index in id_:
-        try:
-            instance = session.query(Instance).filter(
-                Instance.id == index and type_ == rdf_class.id).one()
-            instances.append(instance)
-        except NoResultFound:
-            raise InstanceNotFound(type_=rdf_class.name, id_=index)
-        data_IIT += session.query(triples).filter(
-            triples.GraphIIT.subject == index).all()
-        data_IAC += session.query(triples).filter(
-            triples.GraphIAC.subject == index).all()
-        data_III += session.query(triples).filter(
-            triples.GraphIII.subject == index).all()
+        instance = get_instance_before_delete(session, index, type_)
+        instances.append(instance)
+        data_IAC_index, data_III_index, data_IIT_index = get_data_iac_iii_iit(session, index)
+        data_IIT += data_IAC_index
+        data_IAC += data_IAC_index
+        data_III += data_III_index
 
     data = data_III + data_IIT + data_IAC
     for item in data:
