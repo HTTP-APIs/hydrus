@@ -16,6 +16,7 @@ from hydrus.data.exceptions import (
     InstanceNotFound)
 
 triples = with_polymorphic(Graph, '*')
+properties = with_polymorphic(BaseProperty, "*")
 
 
 def apply_filter(object_id: str, search_props: Dict[str, Any],
@@ -235,3 +236,33 @@ def get_data_iac_iii_iit(session, id_):
     data_III = session.query(triples).filter(triples.GraphIII.subject == id_).all()
     data_IIT = session.query(triples).filter(triples.GraphIIT.subject == id_).all()
     return (data_IAC, data_III, data_IIT)
+
+
+def add_prop_name_to_object(session, id_, object_template, rdf_class):
+    instance = get_single_instance(session, id_, rdf_class)
+    data_IAC, data_III, data_IIT = get_data_iac_iii_iit(session, id_)
+    for data in data_IAC:
+        prop_name = session.query(properties).filter(
+            properties.id == data.predicate).one().name
+        class_name = session.query(RDFClass).filter(
+            RDFClass.id == data.object_).one().name
+        object_template[prop_name] = class_name
+
+    for data in data_III:
+        prop_name = session.query(properties).filter(
+            properties.id == data.predicate).one().name
+        instance = session.query(Instance).filter(
+            Instance.id == data.object_).one()
+        object_template[prop_name] = instance.id
+
+    for data in data_IIT:
+        prop_name = session.query(properties).filter(
+            properties.id == data.predicate).one().name
+        terminal = session.query(Terminal).filter(
+            Terminal.id == data.object_).one()
+        try:
+            object_template[prop_name] = terminal.value
+        except BaseException:
+            # If terminal is none
+            object_template[prop_name] = ""
+    return object_template

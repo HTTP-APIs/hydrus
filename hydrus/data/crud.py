@@ -56,7 +56,8 @@ from hydrus.data.crud_helpers import (
     parse_search_params,
     get_rdf_class,
     get_single_instance,
-    get_data_iac_iii_iit)
+    get_data_iac_iii_iit,
+    add_prop_name_to_object)
 # from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.scoping import scoped_session
 from typing import Dict, Optional, Any, List
@@ -85,35 +86,8 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
         "@type": "",
     }  # type: Dict[str, Any]
     rdf_class = get_rdf_class(session, type_)
-    instance = get_single_instance(session, id_, rdf_class)
-    data_IAC, data_III, data_IIT = get_data_iac_iii_iit(session, id_)
-
-    for data in data_IAC:
-        prop_name = session.query(properties).filter(
-            properties.id == data.predicate).one().name
-        class_name = session.query(RDFClass).filter(
-            RDFClass.id == data.object_).one().name
-        object_template[prop_name] = class_name
-
-    for data in data_III:
-        prop_name = session.query(properties).filter(
-            properties.id == data.predicate).one().name
-        instance = session.query(Instance).filter(
-            Instance.id == data.object_).one()
-        object_template[prop_name] = instance.id
-
-    for data in data_IIT:
-        prop_name = session.query(properties).filter(
-            properties.id == data.predicate).one().name
-        terminal = session.query(Terminal).filter(
-            Terminal.id == data.object_).one()
-        try:
-            object_template[prop_name] = terminal.value
-        except BaseException:
-            # If terminal is none
-            object_template[prop_name] = ""
+    object_template = add_prop_name_to_object(session, id_, object_template, rdf_class)
     object_template["@type"] = rdf_class.name
-
     if path is not None:
         object_template["@id"] = f"/{api_name}/{path}Collection/{id_}"
     else:
@@ -341,13 +315,7 @@ def delete(id_: str, type_: str, session: scoped_session) -> None:
     except NoResultFound:
         raise InstanceNotFound(type_=rdf_class.name, id_=id_)
 
-    data_IIT = session.query(triples).filter(
-        triples.GraphIIT.subject == id_).all()
-    data_IAC = session.query(triples).filter(
-        triples.GraphIAC.subject == id_).all()
-    data_III = session.query(triples).filter(
-        triples.GraphIII.subject == id_).all()
-
+    data_IAC, data_III, data_IIT = get_data_iac_iii_iit(session, id_)
     data = data_III + data_IIT + data_IAC
     for item in data:
         session.delete(item)
