@@ -199,14 +199,16 @@ def insert_multiple(objects_: List[Dict[str,
             valid/defined RDFClass but is not a dictionary neither an Abstract Property
 
     """
+    # import pdb;pdb.set_trace()
+
     id_list = id_.split(',')
 
     # list to hold all the ids of inserted objects
     instance_id_list = list()
-    link_props_of_object_ = dict()
-    id_of_object_ = None
 
     for index in range(len(objects_)):
+        link_props_of_object_ = dict()
+        id_of_object_ = None
         object_ = objects_[index]
         # check if link_props exist for object at that index
         try:
