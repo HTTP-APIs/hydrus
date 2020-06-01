@@ -200,11 +200,12 @@ def insert_multiple(objects_: List[Dict[str,
 
     """
     id_list = id_.split(',')
+
     # list to hold all the ids of inserted objects
     instance_id_list = list()
-
     link_props_of_object_ = dict()
     id_of_object_ = None
+
     for index in range(len(objects_)):
         object_ = objects_[index]
         # check if link_props exist for object at that index
@@ -273,39 +274,9 @@ def delete_multiple(
             does not exist.
 
     """
-    id_ = id_.split(',')
-    instances = list()
-    data_III = list()
-    data_IAC = list()
-    data_IIT = list()
-
-    for index in id_:
-        instance = get_instance_before_delete(session, index, type_)
-        instances.append(instance)
-        data_IAC_index, data_III_index, data_IIT_index = get_data_iac_iii_iit(session, index)
-        data_IIT += data_IAC_index
-        data_IAC += data_IAC_index
-        data_III += data_III_index
-
-    data = data_III + data_IIT + data_IAC
-    for item in data:
-        session.delete(item)
-
-    for data in data_IIT:
-        terminal = session.query(Terminal).filter(
-            Terminal.id == data.object_).one()
-        session.delete(terminal)
-
-    for data in data_III:
-        III_instance = session.query(Instance).filter(
-            Instance.id == data.object_).one()
-        III_instance_type = session.query(RDFClass).filter(
-            RDFClass.id == III_instance.type_).one()
-        # Get the III object type_
-        delete(III_instance.id, III_instance_type.name, session=session)
-    for instance in instances:
-        session.delete(instance)
-    session.commit()
+    id_list = id_.split(',')
+    for object_id_ in id_list:
+        delete(object_id_, type_, session)
 
 
 def update(id_: str,
