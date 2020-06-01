@@ -199,99 +199,27 @@ def insert_multiple(objects_: List[Dict[str,
             valid/defined RDFClass but is not a dictionary neither an Abstract Property
 
     """
-    # instance list to store instances
-    instance_list = list()
-    triples_list = list()
-    properties_list = list()
-    instances = list()
     id_list = id_.split(',')
+    # list to hold all the ids of inserted objects
     instance_id_list = list()
 
-    # the number of objects would be the same as number of instances
+    link_props_of_object_ = dict()
+    id_of_object_ = None
     for index in range(len(objects_)):
-        type_ = objects_[index]["@type"]
-        rdf_class = get_rdf_class(session, type_)
-        if index in range(len(id_list)) and id_list[index] != "":
-            if session.query(
-                    exists().where(
-                        Instance.id == id_list[index])).scalar():
-                print(session.query(
-                    exists().where(
-                        Instance.id == id_list[index])))
-                # TODO handle where intance already exists , if instance is
-                # fetched later anyways remove this
-                raise InstanceExists(type_=rdf_class.name, id_=id_list[index])
-            else:
-                instance = Instance(id=id_list[index], type_=rdf_class.id)
-                instances.append(instance)
-        else:
-            instance = Instance(type_=rdf_class.id)
-            instances.append(instance)
+        object_ = objects_[index]
+        # check if link_props exist for object at that index
+        try:
+            link_props_of_object_ = link_props_list[index]
+        except IndexError:
+            pass
+        # check if id_ exist for object at that index
+        try:
+            id_of_object_ = id_list[index]
+        except IndexError:
+            pass
+        inserted_object_id = insert(object_, session, link_props_of_object_, id_of_object_)
+        instance_id_list.append(inserted_object_id)
 
-    session.add_all(instances)
-    session.flush()
-    for i in range(len(instances)):
-        instance_id_list.append(instances[i].id)
-
-    for index in range(len(objects_)):
-        for prop_name in objects_[index]:
-            if prop_name not in ["@type", "@context"]:
-                try:
-                    property_ = session.query(properties).filter(
-                        properties.name == prop_name).one()
-                except NoResultFound:
-                    # Adds new Property
-                    session.close()
-                    raise PropertyNotFound(type_=prop_name)
-                if len(link_props_list) > 0:
-                    # For insertion in III through link
-                    if prop_name in link_props_list[index]:
-                        try:
-                            triple = insert_iii_with_link(instances[index].id,
-                                                          property_,
-                                                          link_props_list[index][prop_name],
-                                                          session)
-                            triples_list.append(triple)
-                            properties_list.append(property_)
-                        except (NotInstanceProperty, InstanceNotFound, ClassNotFound):
-                            raise
-                        continue
-                # For insertion in III
-                if isinstance(objects_[index][prop_name], dict):
-                    try:
-                        triple = insert_iii(object_=objects_[index], prop_name=prop_name,
-                                            instance=instances[index], property_=property_,
-                                            session=session)
-                        triples_list.append(triple)
-                        properties_list.append(property_)
-                    except NotInstanceProperty:
-                        raise
-
-                # For insertion in IAC
-                elif session.query(
-                        exists().where(RDFClass.name == str(objects_[index][prop_name]))).scalar():
-                    try:
-                        triple = insert_iac(object_=objects_[index], prop_name=prop_name,
-                                            instance=instances[index], property_=property_,
-                                            session=session)
-                        triples_list.append(triple)
-                        properties_list.append(property_)
-                    except NotAbstractProperty:
-                        raise
-
-                # For insertion in IIT
-                else:
-                    try:
-                        triple = insert_iit(object_=objects_[index], prop_name=prop_name,
-                                            instance=instances[index], property_=property_,
-                                            session=session)
-                        triples_list.append(triple)
-                        properties_list.append(property_)
-                    except NotInstanceProperty:
-                        raise
-    session.bulk_save_objects(properties_list)
-    session.bulk_save_objects(triples_list)
-    session.commit()
     return instance_id_list
 
 
