@@ -45,15 +45,17 @@ from hydrus.data.exceptions import (
     NotAbstractProperty,
     InstanceNotFound,
     PageNotFound,
-    InvalidSearchParameter,
     IncompatibleParameters,
     OffsetOutOfRange)
 from hydrus.data.crud_helpers import (
-    apply_filter,
     recreate_iri,
     attach_hydra_view,
     pre_process_pagination_parameters,
-    parse_search_params)
+    get_rdf_class,
+    get_data_iac_iii_iit,
+    add_prop_name_to_object,
+    get_instance_before_delete,
+    get_all_filtered_instances)
 # from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.scoping import scoped_session
 from typing import Dict, Optional, Any, List
@@ -81,53 +83,9 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
     object_template = {
         "@type": "",
     }  # type: Dict[str, Any]
-    try:
-        rdf_class = session.query(RDFClass).filter(
-            RDFClass.name == type_).one()
-    except NoResultFound:
-        raise ClassNotFound(type_=type_)
-
-    try:
-        instance = session.query(Instance).filter(
-            Instance.id == id_, Instance.type_ == rdf_class.id).one()
-    except NoResultFound:
-        raise InstanceNotFound(type_=rdf_class.name, id_=id_)
-
-    data_IAC = session.query(triples).filter(
-        triples.GraphIAC.subject == id_).all()
-
-    data_III = session.query(triples).filter(
-        triples.GraphIII.subject == id_).all()
-
-    data_IIT = session.query(triples).filter(
-        triples.GraphIIT.subject == id_).all()
-
-    for data in data_IAC:
-        prop_name = session.query(properties).filter(
-            properties.id == data.predicate).one().name
-        class_name = session.query(RDFClass).filter(
-            RDFClass.id == data.object_).one().name
-        object_template[prop_name] = class_name
-
-    for data in data_III:
-        prop_name = session.query(properties).filter(
-            properties.id == data.predicate).one().name
-        instance = session.query(Instance).filter(
-            Instance.id == data.object_).one()
-        object_template[prop_name] = instance.id
-
-    for data in data_IIT:
-        prop_name = session.query(properties).filter(
-            properties.id == data.predicate).one().name
-        terminal = session.query(Terminal).filter(
-            Terminal.id == data.object_).one()
-        try:
-            object_template[prop_name] = terminal.value
-        except BaseException:
-            # If terminal is none
-            object_template[prop_name] = ""
+    rdf_class = get_rdf_class(session, type_)
+    object_template = add_prop_name_to_object(session, id_, object_template, rdf_class)
     object_template["@type"] = rdf_class.name
-
     if path is not None:
         object_template["@id"] = f"/{api_name}/{path}Collection/{id_}"
     else:
@@ -159,12 +117,9 @@ def insert(object_: Dict[str, Any], session: scoped_session, link_props: Dict[st
     """
     rdf_class = None
     instance = None
-    # Check for class in the begging
-    try:
-        rdf_class = session.query(RDFClass).filter(
-            RDFClass.name == object_["@type"]).one()
-    except NoResultFound:
-        raise ClassNotFound(type_=object_["@type"])
+    type_ = object_["@type"]
+    # Check for class in the beginning
+    rdf_class = get_rdf_class(session, type_)
     if id_ is not None and session.query(exists().where(Instance.id == id_)).scalar():
         raise InstanceExists(type_=rdf_class.name, id_=id_)
     elif id_ is not None:
@@ -244,102 +199,30 @@ def insert_multiple(objects_: List[Dict[str,
             valid/defined RDFClass but is not a dictionary neither an Abstract Property
 
     """
-    # instance list to store instances
-    instance_list = list()
-    triples_list = list()
-    properties_list = list()
-    instances = list()
+    # import pdb;pdb.set_trace()
+
     id_list = id_.split(',')
+
+    # list to hold all the ids of inserted objects
     instance_id_list = list()
 
-    # the number of objects would be the same as number of instances
     for index in range(len(objects_)):
+        link_props_of_object_ = dict()
+        id_of_object_ = None
+        object_ = objects_[index]
+        # check if link_props exist for object at that index
         try:
-            rdf_class = session.query(RDFClass).filter(
-                RDFClass.name == objects_[index]["@type"]).one()
-        except NoResultFound:
-            raise ClassNotFound(type_=objects_[index]["@type"])
-        if index in range(len(id_list)) and id_list[index] != "":
-            if session.query(
-                    exists().where(
-                        Instance.id == id_list[index])).scalar():
-                print(session.query(
-                    exists().where(
-                        Instance.id == id_list[index])))
-                # TODO handle where intance already exists , if instance is
-                # fetched later anyways remove this
-                raise InstanceExists(type_=rdf_class.name, id_=id_list[index])
-            else:
-                instance = Instance(id=id_list[index], type_=rdf_class.id)
-                instances.append(instance)
-        else:
-            instance = Instance(type_=rdf_class.id)
-            instances.append(instance)
+            link_props_of_object_ = link_props_list[index]
+        except IndexError:
+            pass
+        # check if id_ exist for object at that index
+        try:
+            id_of_object_ = id_list[index]
+        except IndexError:
+            pass
+        inserted_object_id = insert(object_, session, link_props_of_object_, id_of_object_)
+        instance_id_list.append(inserted_object_id)
 
-    session.add_all(instances)
-    session.flush()
-    for i in range(len(instances)):
-        instance_id_list.append(instances[i].id)
-
-    for index in range(len(objects_)):
-        for prop_name in objects_[index]:
-            if prop_name not in ["@type", "@context"]:
-                try:
-                    property_ = session.query(properties).filter(
-                        properties.name == prop_name).one()
-                except NoResultFound:
-                    # Adds new Property
-                    session.close()
-                    raise PropertyNotFound(type_=prop_name)
-                if len(link_props_list) > 0:
-                    # For insertion in III through link
-                    if prop_name in link_props_list[index]:
-                        try:
-                            triple = insert_iii_with_link(instances[index].id,
-                                                          property_,
-                                                          link_props_list[index][prop_name],
-                                                          session)
-                            triples_list.append(triple)
-                            properties_list.append(property_)
-                        except (NotInstanceProperty, InstanceNotFound, ClassNotFound):
-                            raise
-                        continue
-                # For insertion in III
-                if isinstance(objects_[index][prop_name], dict):
-                    try:
-                        triple = insert_iii(object_=objects_[index], prop_name=prop_name,
-                                            instance=instances[index], property_=property_,
-                                            session=session)
-                        triples_list.append(triple)
-                        properties_list.append(property_)
-                    except NotInstanceProperty:
-                        raise
-
-                # For insertion in IAC
-                elif session.query(
-                        exists().where(RDFClass.name == str(objects_[index][prop_name]))).scalar():
-                    try:
-                        triple = insert_iac(object_=objects_[index], prop_name=prop_name,
-                                            instance=instances[index], property_=property_,
-                                            session=session)
-                        triples_list.append(triple)
-                        properties_list.append(property_)
-                    except NotAbstractProperty:
-                        raise
-
-                # For insertion in IIT
-                else:
-                    try:
-                        triple = insert_iit(object_=objects_[index], prop_name=prop_name,
-                                            instance=instances[index], property_=property_,
-                                            session=session)
-                        triples_list.append(triple)
-                        properties_list.append(property_)
-                    except NotInstanceProperty:
-                        raise
-    session.bulk_save_objects(properties_list)
-    session.bulk_save_objects(triples_list)
-    session.commit()
     return instance_id_list
 
 
@@ -354,24 +237,8 @@ def delete(id_: str, type_: str, session: scoped_session) -> None:
         InstanceNotFound: If no instace of type `type_` with id `id_` exists.
 
     """
-    try:
-        rdf_class = session.query(RDFClass).filter(
-            RDFClass.name == type_).one()
-    except NoResultFound:
-        raise ClassNotFound(type_=type_)
-    try:
-        instance = session.query(Instance).filter(
-            Instance.id == id_ and type_ == rdf_class.id).one()
-    except NoResultFound:
-        raise InstanceNotFound(type_=rdf_class.name, id_=id_)
-
-    data_IIT = session.query(triples).filter(
-        triples.GraphIIT.subject == id_).all()
-    data_IAC = session.query(triples).filter(
-        triples.GraphIAC.subject == id_).all()
-    data_III = session.query(triples).filter(
-        triples.GraphIII.subject == id_).all()
-
+    instance = get_instance_before_delete(session, id_, type_)
+    data_IAC, data_III, data_IIT = get_data_iac_iii_iit(session, id_)
     data = data_III + data_IIT + data_IAC
     for item in data:
         session.delete(item)
@@ -409,51 +276,9 @@ def delete_multiple(
             does not exist.
 
     """
-    id_ = id_.split(',')
-    try:
-        rdf_class = session.query(RDFClass).filter(
-            RDFClass.name == type_).one()
-    except NoResultFound:
-        raise ClassNotFound(type_=type_)
-
-    instances = list()
-    data_III = list()
-    data_IAC = list()
-    data_IIT = list()
-
-    for index in id_:
-        try:
-            instance = session.query(Instance).filter(
-                Instance.id == index and type_ == rdf_class.id).one()
-            instances.append(instance)
-        except NoResultFound:
-            raise InstanceNotFound(type_=rdf_class.name, id_=index)
-        data_IIT += session.query(triples).filter(
-            triples.GraphIIT.subject == index).all()
-        data_IAC += session.query(triples).filter(
-            triples.GraphIAC.subject == index).all()
-        data_III += session.query(triples).filter(
-            triples.GraphIII.subject == index).all()
-
-    data = data_III + data_IIT + data_IAC
-    for item in data:
-        session.delete(item)
-
-    for data in data_IIT:
-        terminal = session.query(Terminal).filter(
-            Terminal.id == data.object_).one()
-        session.delete(terminal)
-
-    for data in data_III:
-        III_instance = session.query(Instance).filter(
-            Instance.id == data.object_).one()
-        III_instance_type = session.query(RDFClass).filter(
-            RDFClass.id == III_instance.type_).one()
-        # Get the III object type_
-        delete(III_instance.id, III_instance_type.name, session=session)
-    for instance in instances:
-        session.delete(instance)
-    session.commit()
+    id_list = id_.split(',')
+    for object_id_ in id_list:
+        delete(object_id_, type_, session)
 
 
 def update(id_: str,
@@ -512,35 +337,13 @@ def get_collection(API_NAME: str,
         ClassNotFound: If `type_` does not represent a valid/defined RDFClass.
 
     """
-    try:
-        # Reconstruct dict with property ids as keys
-        search_props = parse_search_params(search_params=search_params, properties=properties,
-                                           session=session)
-    except InvalidSearchParameter:
-        raise
-
     collection_template = {
         "@id": f"/{API_NAME}/{path}/",
         "@context": None,
         "@type": f"{type_}Collection",
         "members": list()
     }  # type: Dict[str, Any]
-
-    try:
-        rdf_class = session.query(RDFClass).filter(
-            RDFClass.name == type_).one()
-    except NoResultFound:
-        raise ClassNotFound(type_=type_)
-
-    try:
-        instances = session.query(Instance).filter(
-            Instance.type_ == rdf_class.id).all()
-    except NoResultFound:
-        instances = list()
-    filtered_instances = list()
-    for instance_ in instances:
-        if apply_filter(instance_.id, search_props, triples, session) is True:
-            filtered_instances.append(instance_)
+    filtered_instances = get_all_filtered_instances(session, search_params, type_)
     result_length = len(filtered_instances)
     try:
         # To paginate, calculate offset and page_limit values for pagination of search results
@@ -605,11 +408,7 @@ def get_single(type_: str, api_name: str, session: scoped_session,
         InstanceNotFound: If no Instance with type `type_` exists.
 
     """
-    try:
-        rdf_class = session.query(RDFClass).filter(
-            RDFClass.name == type_).one()
-    except NoResultFound:
-        raise ClassNotFound(type_=type_)
+    rdf_class = get_rdf_class(session, type_)
 
     try:
         instance = session.query(Instance).filter(
@@ -636,11 +435,8 @@ def insert_single(object_: Dict[str, Any], session: scoped_session) -> Any:
         Instance: If an Instance of type `type_` already exists.
 
     """
-    try:
-        rdf_class = session.query(RDFClass).filter(
-            RDFClass.name == object_["@type"]).one()
-    except NoResultFound:
-        raise ClassNotFound(type_=object_["@type"])
+    type_ = object_["@type"]
+    rdf_class = get_rdf_class(session, type_)
 
     try:
         session.query(Instance).filter(
@@ -670,11 +466,8 @@ def update_single(object_: Dict[str,
         InstanceNotFound: If no Instance of the class exists.
 
     """
-    try:
-        rdf_class = session.query(RDFClass).filter(
-            RDFClass.name == object_["@type"]).one()
-    except NoResultFound:
-        raise ClassNotFound(type_=object_["@type"])
+    type_ = object_["@type"]
+    rdf_class = get_rdf_class(session, type_)
 
     try:
         instance = session.query(Instance).filter(
@@ -703,11 +496,7 @@ def delete_single(type_: str, session: scoped_session) -> None:
         InstanceNotFound: If no Instance of the class exists.
 
     """
-    try:
-        rdf_class = session.query(RDFClass).filter(
-            RDFClass.name == type_).one()
-    except NoResultFound:
-        raise ClassNotFound(type_=type_)
+    rdf_class = get_rdf_class(session, type_)
 
     try:
         instance = session.query(Instance).filter(
