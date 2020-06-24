@@ -9,8 +9,11 @@ from sqlite3 import Connection as SQLite3Connection
 from hydra_python_core import doc_maker
 from hydrus.conf import APIDOC_OBJ
 from hydrus.data.doc_parse import get_classes
-from hydrus.data.exceptions import (ClassNotFound, InstanceNotFound,
-                                    PropertyNotFound)
+from hydrus.data.exceptions import (
+    ClassNotFound,
+    InstanceNotFound,
+    PropertyNotFound,
+)
 from sqlalchemy import Column, ForeignKey, String, create_engine, event
 from sqlalchemy.engine import Engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -144,11 +147,6 @@ class Resource:
         Resource.all_database_classes[self.name] = self.table_class
 
 
-# single_class = classes[6]
-# resource = Resource(single_class)
-# a = resource.get_attr_dict()
-
-
 def get_type(object_):
     """Return the @type of that given object"""
     return object_["@type"]
@@ -250,35 +248,3 @@ print("Creating models....")
 Base.metadata.drop_all(engine)
 Base.metadata.create_all(engine)
 print("Done")
-
-# object_ = {
-#     "@type": "State",
-#     "Speed": "100",
-#     "Position": "101",
-#     "Direction": "102",
-#     "Battery": "103",
-#     "SensorStatus": "104",
-#     "DroneID": "105",
-# }
-
-# object_ = {
-#     "@type": "Command",
-#     "State": "3e1d8fb4-df1a-41b6-a9b4-ded0f94dc196",
-#     "DroneID": "5",
-# }
-# d = insert_object(object_)
-# query_info = {
-#     "@type": "Command",
-#     "id_": "9a57ab7-46b2-495c-9e67-644cd048efd8",
-# }
-# # d = get_object(query_info)
-# # print(d)
-# delete_object(query_info)
-# object_ = {
-#     "@type": "Command",
-#     "State": "3e1d8fb4-df1a-41b6-a9b4-ded0f94dc196",
-#     "DroneID": "18",
-# }
-# d = update_object(object_, query_info)
-
-# print(d)
