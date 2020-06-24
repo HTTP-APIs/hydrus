@@ -9,12 +9,8 @@ from sqlite3 import Connection as SQLite3Connection
 from hydra_python_core import doc_maker
 from hydrus.conf import APIDOC_OBJ
 from hydrus.data.doc_parse import get_classes
-from hydrus.data.exceptions import (
-    ClassNotFound,
-    PropertyNotFound,
-    InstanceNotFound,
-    DatabaseConstraintError,
-)
+from hydrus.data.exceptions import (ClassNotFound, InstanceNotFound,
+                                    PropertyNotFound)
 from sqlalchemy import Column, ForeignKey, String, create_engine, event
 from sqlalchemy.engine import Engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -30,7 +26,7 @@ apidoc = doc_maker.create_doc(APIDOC_OBJ, HYDRUS_SERVER_URL, API_NAME)
 classes = get_classes(apidoc.generate())
 class_names = []
 
-
+# required for enforcing foreign key constraints through SQLite
 @event.listens_for(Engine, "connect")
 def _set_sqlite_pragma(dbapi_connection, connection_record):
     if isinstance(dbapi_connection, SQLite3Connection):
@@ -49,6 +45,10 @@ session = Session()
 
 
 class Resource:
+    """
+    Class for interacting with any resource(class or collection) in the ApiDoc
+    """
+
     # TODO: Look for a better way to store the sql alchemy class for each resource
     all_database_classes = {}
 
@@ -57,18 +57,31 @@ class Resource:
 
     @property
     def name(self):
+        """Return the name of the resource from it's "@id"""
         # split the classname at "vocab:" to get the class name
         return self._resource["@id"].split("vocab:")[1]
 
     @property
     def resource(self):
+        """Return the resource dict"""
         return self._resource
 
     @property
     def supported_properties(self):
+        """
+        Return all the properties in "supportedProperty" property
+        of that resource.
+        """
         return self._resource["supportedProperty"]
 
     def get_attr_dict(self):
+        """
+        Return the attribute dictionary necessary for
+        creating that resource's table at runtime
+        """
+        # initialize the attribute dict with "__tablename__"
+        # and a "id" column which will act as primary key
+        # for instances of that table
         attr_dict = {
             "__tablename__": self.name,
             "id": Column(
@@ -87,30 +100,47 @@ class Resource:
                     # another resource in the same ApiDoc, hence make it a Foreign Key
                     # to that resource table
                     foreign_table_name = link.split("vocab:")[1]
-                    attr_dict[title] = Column(
-                        String,
-                        ForeignKey(
-                            f"{foreign_table_name}.id",
-                            ondelete="CASCADE",
-                            onupdate="CASCADE",
-                        ),
+                    attr_dict[title] = Resource.foreign_key_column(
+                        foreign_table_name
                     )
+
                 else:
                     attr_dict[title] = Column(String)
             else:
-                foreign_table_name = link["range"].split("vocab:")[1]
-                attr_dict[title] = Column(
-                    String,
-                    ForeignKey(
-                        f"{foreign_table_name}.id",
-                        ondelete="CASCADE",
-                        onupdate="CASCADE",
-                    ),
-                )
+                # if the supported property has "property" attribute of @type "hydra:link"
+                if "vocab:" in link["range"]:
+                    # if vocab: is in the link["range"], it implies that the link is pointing to
+                    # another resource in the same ApiDoc, hence make it a Foreign Key
+                    # to that resource table
+                    foreign_table_name = link["range"].split("vocab:")[1]
+                    attr_dict[title] = Resource.foreign_key_column(
+                        foreign_table_name
+                    )
+                else:
+                    attr_dict[title] = Column(String)
+
         return attr_dict
 
+    @staticmethod
+    def foreign_key_column(foreign_table_name):
+        """
+        Return a sqlalchemy column which will act as
+        a foreign key to given tablename.
+        """
+
+        return Column(
+            String,
+            ForeignKey(
+                f"{foreign_table_name}.id",
+                ondelete="CASCADE",
+                onupdate="CASCADE",
+            ),
+        )
+
     def make_db_table(self):
+        """Generate the sqlalchemy table class for that resource"""
         self.table_class = type(self.name, (Base,), self.get_attr_dict())
+        # add that class to dict for future lookups
         Resource.all_database_classes[self.name] = self.table_class
 
 
@@ -120,12 +150,24 @@ class Resource:
 
 
 def get_type(object_):
+    """Return the @type of that given object"""
     return object_["@type"]
 
 
+def get_database_class(type_):
+    """Get the sqlalchemy class object from given classname"""
+    database_class = Resource.all_database_classes.get(type_, None)
+    if database_class is None:
+        raise ClassNotFound(type_)
+    return database_class
+
+
 def insert_object(object_):
+    """Insert the object in the database"""
     type_ = get_type(object_)
     database_class = get_database_class(type_)
+    # remove the @type from object before using the object to make a
+    # instance of it using sqlalchemy class
     object_.pop("@type")
     try:
         inserted_object = database_class(**object_)
@@ -143,14 +185,8 @@ def insert_object(object_):
     return inserted_object.id
 
 
-def get_database_class(type_):
-    database_class = Resource.all_database_classes.get(type_, None)
-    if database_class is None:
-        raise ClassNotFound(type_)
-    return database_class
-
-
 def get_object(query_info):
+    """Get the object from the database"""
     type_ = query_info["@type"]
     id_ = query_info["id_"]
     database_class = get_database_class(type_)
@@ -162,6 +198,7 @@ def get_object(query_info):
         ).__dict__
     except NoResultFound:
         raise InstanceNotFound(type_=type_, id_=id_)
+    # Remove the unnecessary keys from the object retrieved from database
     object_.pop("_sa_instance_state")
     object_.pop("id")
     object_["@type"] = query_info["@type"]
@@ -209,10 +246,10 @@ for single_class in classes:
     resource = Resource(single_class)
     resource.make_db_table()
 
-# print("Creating models....")
-# Base.metadata.drop_all(engine)
-# Base.metadata.create_all(engine)
-# print("Done")
+print("Creating models....")
+Base.metadata.drop_all(engine)
+Base.metadata.create_all(engine)
+print("Done")
 
 # object_ = {
 #     "@type": "State",
@@ -230,12 +267,12 @@ for single_class in classes:
 #     "DroneID": "5",
 # }
 # d = insert_object(object_)
-query_info = {
-    "@type": "Command",
-    "id_": "16e7b9de-241f-432b-9b59-ac12a4279ce0",
-}
-d = get_object(query_info)
-print(d)
+# query_info = {
+#     "@type": "Command",
+#     "id_": "9a57ab7-46b2-495c-9e67-644cd048efd8",
+# }
+# # d = get_object(query_info)
+# # print(d)
 # delete_object(query_info)
 # object_ = {
 #     "@type": "Command",
