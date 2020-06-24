@@ -2,17 +2,24 @@
 Script to generate the tables in hydrus database based on
 resources in the provided API Doc.
 """
+import sqlite3
 import uuid
 from sqlite3 import Connection as SQLite3Connection
 
 from hydra_python_core import doc_maker
 from hydrus.conf import APIDOC_OBJ
 from hydrus.data.doc_parse import get_classes
-from hydrus.data.exceptions import ClassNotFound
+from hydrus.data.exceptions import (
+    ClassNotFound,
+    PropertyNotFound,
+    InstanceNotFound,
+    DatabaseConstraintError,
+)
 from sqlalchemy import Column, ForeignKey, String, create_engine, event
 from sqlalchemy.engine import Engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm.exc import NoResultFound
 
 serverurl = "http://localhost"
 port = 8080
@@ -112,25 +119,28 @@ class Resource:
 # a = resource.get_attr_dict()
 
 
-class Object:
-    def __init__(self, object_):
-        self.object_ = object_
-        self.type_ = self.get_type()
-        self.database_class = get_database_class(self.type_)
+def get_type(object_):
+    return object_["@type"]
 
-    def get_type(self):
-        return self.object_["@type"]
 
-    def insert(self):
-        self.object_.pop("@type")
-        try:
-            inserted_object = self.database_class(**self.object_)
-        except TypeError as e:
-            # TODO: Raise PropertyNotFound exception
-            return print(e.args)
+def insert_object(object_):
+    type_ = get_type(object_)
+    database_class = get_database_class(type_)
+    object_.pop("@type")
+    try:
+        inserted_object = database_class(**object_)
+    except TypeError as e:
+        # extract the wrong property name from TypeError object
+        wrong_propery = e.args[0].split("'")[1]
+        raise PropertyNotFound(type_=wrong_propery)
+    try:
         session.add(inserted_object)
         session.commit()
-        return inserted_object.id
+    except Exception as e:
+        # catching any database contraint errors
+        contraint_error = e.orig
+        raise DatabaseConstraintError(contraint_error)
+    return inserted_object.id
 
 
 def get_database_class(type_):
@@ -140,44 +150,57 @@ def get_database_class(type_):
     return database_class
 
 
-def get_object_from_db(query_info):
-    database_class = get_database_class(query_info["@type"])
+def get_object(query_info):
+    type_ = query_info["@type"]
     id_ = query_info["id_"]
-    object_ = (
-        session.query(database_class).filter(database_class.id == id_).one()
-    ).__dict__
+    database_class = get_database_class(type_)
+    try:
+        object_ = (
+            session.query(database_class)
+            .filter(database_class.id == id_)
+            .one()
+        ).__dict__
+    except NoResultFound:
+        raise InstanceNotFound(type_=type_, id_=id_)
     object_.pop("_sa_instance_state")
     object_.pop("id")
     object_["@type"] = query_info["@type"]
     return object_
 
 
-def delete_object_from_db(query_info):
-    database_class = get_database_class(query_info["@type"])
+def delete_object(query_info):
+    """Delete the object from the database"""
+    type_ = query_info["@type"]
     id_ = query_info["id_"]
-    object_ = (
-        session.query(database_class).filter(database_class.id == id_).one()
-    )
+    database_class = get_database_class(type_)
+    id_ = query_info["id_"]
+    try:
+        object_ = (
+            session.query(database_class)
+            .filter(database_class.id == id_)
+            .one()
+        )
+    except NoResultFound:
+        raise InstanceNotFound(type_=type_, id_=id_)
     session.delete(object_)
     session.commit()
 
 
-def update_object_from_db(object_, query_info):
+def update_object(object_, query_info):
+    """Update the object from the database"""
     # Keep the object as fail safe
-    old_object = get_object_from_db(query_info)
+    old_object = get_object(query_info)
     # Delete the old object
-    delete_object_from_db(query_info)
+    delete_object(query_info)
     id_ = query_info["id_"]
     # Try inserting new object
     try:
         object_["id"] = id_
-        data = Object(object_)
-        d = data.insert()
-    except (TypeError) as e:
+        d = insert_object(object_)
+    except Exception as e:
         # Put old object back
         old_object["id"] = id_
-        data = Object(old_object)
-        d = data.insert()
+        d = insert_object(old_object)
         raise e
     return id_
 
@@ -199,24 +222,26 @@ for single_class in classes:
 #     "Battery": "103",
 #     "SensorStatus": "104",
 #     "DroneID": "105",
-
 # }
-# data = Object(object_)
-# d = data.insert()
-object_ = {
+
+# object_ = {
+#     "@type": "Command",
+#     "State": "3e1d8fb4-df1a-41b6-a9b4-ded0f94dc196",
+#     "DroneID": "5",
+# }
+# d = insert_object(object_)
+query_info = {
     "@type": "Command",
-    "State": "3e1d8fb4-df1a-41b6-a9b4-ded0f94dc196",
-    "DroneID": "96",
+    "id_": "16e7b9de-241f-432b-9b59-ac12a4279ce0",
 }
-data = Object(object_)
-d = data.insert()
-# query_info = {
-#     "@type": "Message",
-#     "id_": "007a98aa-2009-4a6b-9bc1-15bfa31027ae",
+d = get_object(query_info)
+print(d)
+# delete_object(query_info)
+# object_ = {
+#     "@type": "Command",
+#     "State": "3e1d8fb4-df1a-41b6-a9b4-ded0f94dc196",
+#     "DroneID": "18",
 # }
-
-# # d = get_object_from_db(query_info)
-# # delete_object_from_db(query_info)
-# d = update_object_from_db(object_, query_info)
+# d = update_object(object_, query_info)
 
 # print(d)
