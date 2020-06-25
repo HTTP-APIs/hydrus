@@ -5,8 +5,6 @@ from sqlalchemy.orm import with_polymorphic
 from typing import Dict, Any, Tuple
 
 from sqlalchemy.orm.exc import NoResultFound
-from hydrus.data.db_models import (Graph, BaseProperty, RDFClass, Instance,
-                                   Terminal)
 from hydrus.data.exceptions import (
     ClassNotFound,
     PageNotFound,
@@ -14,13 +12,10 @@ from hydrus.data.exceptions import (
     IncompatibleParameters,
     OffsetOutOfRange,
     InstanceNotFound)
-
-triples = with_polymorphic(Graph, '*')
-properties = with_polymorphic(BaseProperty, "*")
-
+from hydrus.data.resource_based_classes import all_instances
 
 def apply_filter(object_id: str, search_props: Dict[str, Any],
-                 triples: Graph, session: scoped_session) -> bool:
+                 triples, session: scoped_session) -> bool:
     """Check whether objects has properties with query values or not.
     :param object_id: Id of the instance.
     :param search_props: Dictionary of query parameters with property id and values.
@@ -63,7 +58,7 @@ def recreate_iri(API_NAME: str, path: str, search_params: Dict[str, Any]) -> str
 
 
 def parse_search_params(search_params: Dict[str, Any],
-                        properties: BaseProperty,
+                        properties,
                         session: scoped_session) -> Dict[str, Any]:
     """Parse search parameters and create a dict with id of parameters as keys.
     :param search_params: Dictionary having input search parameters.
@@ -337,27 +332,4 @@ def get_all_instances(session, type_):
     :param type_: type of object to be deleted
     :returns instances: all the object instances in the database with given type
     """
-    rdf_class = get_rdf_class(session, type_)
-    try:
-        instances = session.query(Instance).filter(Instance.type_ == rdf_class.id).all()
-        return instances
-    except NoResultFound:
-        instances = list()
-        return instances
-
-
-def get_all_filtered_instances(session, search_params, type_):
-    """Get all the filtered instances of from the database
-    based on given query parameters.
-    :param session: sqlalchemy scoped session
-    :param search_params: Query parameters
-    :param type_: type of object to be deleted
-    :return: filtered instances
-    """
-    instances = get_all_instances(session, type_)
-    search_props = get_search_props(session, search_params)
-    filtered_instances = list()
-    for instance_ in instances:
-        if apply_filter(instance_.id, search_props, triples, session) is True:
-            filtered_instances.append(instance_)
-    return filtered_instances
+    return all_instances(session, type_)
