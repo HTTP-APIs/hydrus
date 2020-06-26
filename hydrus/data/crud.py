@@ -32,6 +32,7 @@
 
 """  # nopep8
 import re
+import copy
 from sqlalchemy.orm import with_polymorphic
 from sqlalchemy import exists
 from sqlalchemy.orm.exc import NoResultFound
@@ -116,9 +117,10 @@ def insert(object_: Dict[str, Any], session: scoped_session, link_props: Dict[st
         NotAbstractProperty: If any property of `object_` is a
             valid/defined RDFClass but is not a dictionary neither an Abstract Property
     """
+    object_template = copy.deepcopy(object_)
     if id_ is not None:
-        object_['id'] = id_
-    inserted_object_id = insert_object(object_, session)
+        object_template['id'] = id_
+    inserted_object_id = insert_object(object_template, session)
     return inserted_object_id
 
 
