@@ -93,7 +93,7 @@ class Resource:
                     # to that resource table
                     foreign_table_name = link.split("vocab:")[1]
                     attr_dict[title] = Resource.foreign_key_column(
-                        foreign_table_name
+                        foreign_table_name, title
                     )
 
                 else:
@@ -106,7 +106,7 @@ class Resource:
                     # to that resource table
                     foreign_table_name = link["range"].split("vocab:")[1]
                     attr_dict[title] = Resource.foreign_key_column(
-                        foreign_table_name
+                        foreign_table_name, title
                     )
                 else:
                     attr_dict[title] = Column(String)
@@ -114,18 +114,19 @@ class Resource:
         return attr_dict
 
     @staticmethod
-    def foreign_key_column(foreign_table_name):
+    def foreign_key_column(foreign_table_name, title):
         """
         Return a sqlalchemy column which will act as
         a foreign key to given tablename.
         """
-
+        # title is to dereference the column name later
         return Column(
             String,
             ForeignKey(
                 f"{foreign_table_name}.id",
                 ondelete="CASCADE",
                 onupdate="CASCADE",
+                info={"column_name": title},
             ),
         )
 

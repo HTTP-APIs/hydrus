@@ -15,7 +15,9 @@ from hydrus.data.exceptions import (
     PageNotFound,
     InvalidSearchParameter,
     OffsetOutOfRange,
-    DatabaseConstraintError)
+    DatabaseConstraintError,
+    PropertyNotGiven
+)
 
 from hydrus.helpers import (
     set_response_headers,
@@ -133,7 +135,7 @@ def item_collection_put_response(path: str) -> Response:
                 return set_response_headers(
                     jsonify(status.generate()), headers=headers_,
                     status_code=status.code)
-            except (ClassNotFound, InstanceExists, PropertyNotFound, DatabaseConstraintError) as e:
+            except (ClassNotFound, InstanceExists, PropertyNotFound, DatabaseConstraintError, PropertyNotGiven) as e:
                 error = e.get_HTTP()
                 return error_response(error)
         else:

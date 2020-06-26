@@ -3,9 +3,15 @@ Script to generate the tables in hydrus database based on
 resources in the provided API Doc.
 """
 from hydrus.data.db_models import Resource
-from hydrus.data.exceptions import (ClassNotFound, DatabaseConstraintError,
-                                    InstanceExists, InstanceNotFound,
-                                    InvalidSearchParameter, PropertyNotFound)
+from hydrus.data.exceptions import (
+    ClassNotFound,
+    DatabaseConstraintError,
+    InstanceExists,
+    InstanceNotFound,
+    InvalidSearchParameter,
+    PropertyNotFound,
+    PropertyNotGiven,
+)
 from sqlalchemy import exists
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -28,20 +34,34 @@ def insert_object(object_, session):
     type_ = get_type(object_)
     database_class = get_database_class(type_)
     id_ = object_.get("id", None)
-    # remove the @type from object before using the object to make a
-    # instance of it using sqlalchemy class
-    object_.pop("@type")
     if (
         id_ is not None
         and session.query(exists().where(database_class.id == id_)).scalar()
     ):
         raise InstanceExists(type_, id_)
+    foreign_keys = database_class.__table__.foreign_keys
+    for fk in foreign_keys:
+        # the name of the column through which this foreign key relationship
+        # is being established
+        fk_column = fk.info["column_name"]
+        try:
+            fk_object = object_[fk_column]
+        except KeyError as e:
+            wrong_property = e.args[0]
+            raise PropertyNotGiven(type_=wrong_property)
+        # insert the foreign key object
+        fk_object_id = insert_object(fk_object, session)
+        # put the id of the foreign instance in this table's column
+        object_[fk_column] = fk_object_id
     try:
+        # remove the @type from object before using the object to make a
+        # instance of it using sqlalchemy class
+        object_.pop("@type")
         inserted_object = database_class(**object_)
     except TypeError as e:
         # extract the wrong property name from TypeError object
-        wrong_propery = e.args[0].split("'")[1]
-        raise PropertyNotFound(type_=wrong_propery)
+        wrong_property = e.args[0].split("'")[1]
+        raise PropertyNotFound(type_=wrong_property)
     try:
         session.add(inserted_object)
         session.commit()

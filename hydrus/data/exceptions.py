@@ -185,3 +185,16 @@ class DatabaseConstraintError(Exception):
         """Return the HTTP response for the Exception."""
         description = f"{self.contraint_error}"
         return HydraError(code=400, title="Database constraint failed", desc=description)
+
+
+class PropertyNotGiven(Exception):
+    """Error when a Property is not given."""
+
+    def __init__(self, type_: str) -> None:
+        """Constructor."""
+        self.type_ = type_
+
+    def get_HTTP(self) -> HydraError:
+        """Return the HTTP response for the Exception."""
+        description = f"The property {self.type_} is not given."
+        return HydraError(code=400, title="Property not given", desc=description)
