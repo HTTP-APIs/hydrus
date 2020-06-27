@@ -11,7 +11,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 
 from hydrus.app_factory import app_factory
 from hydrus.data import crud, doc_parse
-from hydrus.data.db_models import Base
+from hydrus.data.db_models import Base, create_database_tables
 from hydrus.data.user import add_user
 from hydrus.samples import doc_writer_sample, hydra_doc_sample
 from hydrus.socketio_factory import create_socket
@@ -84,15 +84,22 @@ def test_doc(constants):
 
 
 @pytest.fixture(scope='module')
-def session():
+def session(engine):
     """
     Initialize a flask scoped session binded with a database
     """
-    engine = create_engine('sqlite:///:memory:')
-    Base.metadata.create_all(engine)
     session = scoped_session(sessionmaker(bind=engine))
     yield session
     session.close()
+
+
+@pytest.fixture(scope='module')
+def engine():
+    """
+    Initialize a sqlalchemy engine binded with a database
+    """
+    engine = create_engine('sqlite:///:memory:')
+    return engine
 
 
 @pytest.fixture(scope='module')
@@ -102,8 +109,7 @@ def init_db_for_auth_tests(doc, session):
     test HydraDoc object and adding a user to the database
     """
     test_classes, test_properties = get_doc_classes_and_properties(doc)
-    doc_parse.insert_classes(test_classes, session)
-    doc_parse.insert_properties(test_properties, session)
+    create_database_tables(test_classes)
     add_user(1, 'test', session)
 
 
@@ -182,14 +188,15 @@ def drone_doc_collection_classes(drone_doc):
 
 
 @pytest.fixture(scope='module')
-def init_db_for_crud_tests(drone_doc, session):
+def init_db_for_crud_tests(drone_doc, session, engine):
     """
     Initialize the database by adding the classes and properties of
     Drone Api test HydraDoc object.
     """
     test_classes, test_properties = get_doc_classes_and_properties(drone_doc)
-    doc_parse.insert_classes(test_classes, session)
-    doc_parse.insert_properties(test_properties, session)
+    create_database_tables(test_classes)
+    Base.metadata.create_all(engine)
+
 
 
 @pytest.fixture(scope='module')
