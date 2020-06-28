@@ -107,13 +107,14 @@ def engine():
 
 
 @pytest.fixture(scope='module')
-def init_db_for_auth_tests(doc, session):
+def init_db_for_auth_tests(doc, session, engine):
     """
     Initialize the database by adding the classes and properties of
     test HydraDoc object and adding a user to the database
     """
     test_classes, test_properties = get_doc_classes_and_properties(doc)
     create_database_tables(test_classes)
+    Base.metadata.create_all(engine)
     add_user(1, 'test', session)
 
 
