@@ -98,7 +98,6 @@ def delete_object(query_info, session):
     type_ = query_info["@type"]
     id_ = query_info["id_"]
     database_class = get_database_class(type_)
-    id_ = query_info["id_"]
     try:
         object_ = (
             session.query(database_class)
