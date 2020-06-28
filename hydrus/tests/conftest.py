@@ -236,29 +236,18 @@ def init_db_for_app_tests(doc, constants, session, add_doc_classes_and_propertie
     Initalze the database for testing app in
     tests/functional/test_app.py.
     """
-    API_NAME = constants['API_NAME']
     for class_ in doc.parsed_classes:
         link_props = {}
         class_title = doc.parsed_classes[class_]['class'].title
-        dummy_obj = gen_dummy_object(class_title, doc)
         for supportedProp in doc.parsed_classes[class_]['class'].supportedProperty:
             if isinstance(supportedProp.prop, HydraLink):
-                class_name = supportedProp.prop.range.replace('vocab:', '')
-                for collection_path in doc.collections:
-                    coll_class = doc.collections[collection_path]['collection'].class_.title
-                    if class_name == coll_class:
-                        id_ = str(uuid.uuid4())
-                        crud.insert(
-                            gen_dummy_object(class_name, doc),
-                            id_=id_,
-                            session=session)
-                        link_props[supportedProp.title] = id_
-                        dummy_obj[supportedProp.title] = f'{API_NAME}/{collection_path}/{id_}'
-        crud.insert(dummy_obj, id_=str(uuid.uuid4()), link_props=link_props, session=session)
-        # If it's a collection class then add an extra object so
-        # we can test pagination thoroughly.
-        if class_ in doc.collections:
-            crud.insert(dummy_obj, id_=str(uuid.uuid4()), session=session)
+                dummy_obj = gen_dummy_object(class_title, doc)
+                crud.insert(dummy_obj, id_=str(uuid.uuid4()),
+                            link_props=link_props, session=session)
+                # If it's a collection class then add an extra object so
+                # we can test pagination thoroughly.
+                if class_ in doc.collections:
+                    crud.insert(dummy_obj, id_=str(uuid.uuid4()), session=session)
 
 
 @pytest.fixture()
