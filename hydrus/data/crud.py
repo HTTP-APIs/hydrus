@@ -64,7 +64,9 @@ from hydrus.data.resource_based_classes import (
     insert_object,
     update_object,
     delete_object,
-    get_all_filtered_instances
+    get_all_filtered_instances,
+    get_single_response,
+    get_database_class
 )
 
 
@@ -332,15 +334,8 @@ def get_single(type_: str, api_name: str, session: scoped_session,
         InstanceNotFound: If no Instance with type `type_` exists.
 
     """
-    rdf_class = get_rdf_class(session, type_)
-
-    try:
-        instance = session.query(Instance).filter(
-            Instance.type_ == rdf_class.id).all()[-1]
-    except (NoResultFound, IndexError, ValueError):
-        raise InstanceNotFound(type_=rdf_class.name)
-    object_ = get(instance.id, rdf_class.name,
-                  session=session, api_name=api_name, path=path)
+    instance = get_single_response(session, type_)
+    object_ = get(instance.id, type_, session=session, api_name=api_name, path=path)
     if path is not None:
         object_["@id"] = f"/{api_name}/{path}"
     else:
@@ -360,15 +355,14 @@ def insert_single(object_: Dict[str, Any], session: scoped_session) -> Any:
 
     """
     type_ = object_["@type"]
-    rdf_class = get_rdf_class(session, type_)
+    database_class = get_database_class(type_)
 
     try:
-        session.query(Instance).filter(
-            Instance.type_ == rdf_class.id).all()[-1]
+        session.query(database_class).all()[-1]
     except (NoResultFound, IndexError, ValueError):
         return insert(object_, session=session)
 
-    raise InstanceExists(type_=rdf_class.name)
+    raise InstanceExists(type_)
 
 
 def update_single(object_: Dict[str,
@@ -391,17 +385,11 @@ def update_single(object_: Dict[str,
 
     """
     type_ = object_["@type"]
-    rdf_class = get_rdf_class(session, type_)
-
-    try:
-        instance = session.query(Instance).filter(
-            Instance.type_ == rdf_class.id).all()[-1]
-    except (NoResultFound, IndexError, ValueError):
-        raise InstanceNotFound(type_=rdf_class.name)
+    instance = get_single_response(session, type_)
 
     return update(
         id_=instance.id,
-        type_=object_["@type"],
+        type_=type_,
         object_=object_,
         session=session,
         api_name=api_name,
@@ -420,13 +408,7 @@ def delete_single(type_: str, session: scoped_session) -> None:
         InstanceNotFound: If no Instance of the class exists.
 
     """
-    rdf_class = get_rdf_class(session, type_)
-
-    try:
-        instance = session.query(Instance).filter(
-            Instance.type_ == rdf_class.id).all()[-1]
-    except (NoResultFound, IndexError, ValueError):
-        raise InstanceNotFound(type_=rdf_class.name)
+    instance = get_single_response(session, type_)
 
     return delete(instance.id, type_, session=session)
 

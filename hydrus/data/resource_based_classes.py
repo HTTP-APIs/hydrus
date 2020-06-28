@@ -2,6 +2,7 @@
 Script to generate the tables in hydrus database based on
 resources in the provided API Doc.
 """
+import copy
 from hydrus.data.db_models import Resource
 from hydrus.data.exceptions import (
     ClassNotFound,
@@ -87,10 +88,11 @@ def get_object(query_info, session):
     except NoResultFound:
         raise InstanceNotFound(type_=type_, id_=id_)
     # Remove the unnecessary keys from the object retrieved from database
-    object_.pop("_sa_instance_state")
-    object_.pop("id")
-    object_["@type"] = query_info["@type"]
-    return object_
+    object_template = copy.deepcopy(object_)
+    object_template.pop("_sa_instance_state")
+    object_template.pop("id")
+    object_template["@type"] = query_info["@type"]
+    return object_template
 
 
 def delete_object(query_info, session):
@@ -163,3 +165,13 @@ def get_all_filtered_instances(session, search_params, type_):
         wrong_query_param = e.args[0].split()[-1]
         raise InvalidSearchParameter(wrong_query_param.strip("'"))
     return filtered_instances
+
+
+def get_single_response(session, type_):
+    database_class = get_database_class(type_)
+    try:
+        instance = session.query(database_class).all()[-1]
+    except (NoResultFound, IndexError, ValueError):
+        raise InstanceNotFound(type_)
+
+    return instance
