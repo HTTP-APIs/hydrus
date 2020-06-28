@@ -269,7 +269,15 @@ def get_collection(API_NAME: str,
         "@type": f"{type_}Collection",
         "members": list()
     }  # type: Dict[str, Any]
-    filtered_instances = get_all_filtered_instances(session, search_params, type_)
+    database_search_params = copy.deepcopy(search_params)
+    pagination_parameters = ["page", "pageIndex", "limit", "offset"]
+
+    # remove pagination params before filtering in the database
+    for param in database_search_params.copy():
+        if param in pagination_parameters:
+            database_search_params.pop(param)
+
+    filtered_instances = get_all_filtered_instances(session, database_search_params, type_)
     result_length = len(filtered_instances)
     try:
         # To paginate, calculate offset and page_limit values for pagination of search results
