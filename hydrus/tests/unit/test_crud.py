@@ -41,18 +41,6 @@ def test_get_for_nested_obj(drone_doc_collection_classes, drone_doc, session, co
                 dummy_obj = gen_dummy_object(class_, drone_doc)
                 if isinstance(prop.prop, HydraLink):
                     nested_class = prop.prop.range.replace('vocab:', '')
-                    for collection_path in drone_doc.collections:
-                        coll_class = drone_doc.collections[
-                            collection_path]['collection'].class_.title
-                        if nested_class == coll_class:
-                            id_ = str(uuid.uuid4())
-                            crud.insert(
-                                gen_dummy_object(nested_class, drone_doc),
-                                id_=id_,
-                                session=session)
-                            link_props[prop.title] = id_
-                            dummy_obj[prop.title] = '{}/{}/{}'.format(
-                                API_NAME, collection_path, id_)
                 else:
                     nested_class = prop.prop.replace('vocab:', '')
                 obj_id = str(uuid.uuid4())
@@ -260,11 +248,12 @@ def test_delete_multiple_id(drone_doc_collection_classes, drone_doc, session):
     """Test CRUD insert when multiple ID's are given """
     objects = list()
     ids = '{},{}'.format(str(uuid.uuid4()), str(uuid.uuid4()))
+    random_class = random.choice(drone_doc_collection_classes)
     for index in range(len(ids.split(','))):
-        object = gen_dummy_object(random.choice(drone_doc_collection_classes), drone_doc)
+        object = gen_dummy_object(random_class, drone_doc)
         objects.append(object)
     insert_response = crud.insert_multiple(objects_=objects, session=session, id_=ids)
-    delete_response = crud.delete_multiple(id_=ids, type_=objects[0]['@type'], session=session)
+    delete_response = crud.delete_multiple(id_=ids, type_=random_class, session=session)
 
     response_code = None
     id_list = ids.split(',')
