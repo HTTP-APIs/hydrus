@@ -159,9 +159,6 @@ def get_all_filtered_instances(session, search_params, type_):
         )
     except Exception as e:
         # extract the wrong query parameter
-        import pdb
-
-        pdb.set_trace()
         wrong_query_param = e.args[0].split()[-1]
         raise InvalidSearchParameter(wrong_query_param.strip("'"))
     return filtered_instances
