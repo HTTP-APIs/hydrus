@@ -31,30 +31,19 @@
     typing : Module which provides support for type hints .
 
 """  # nopep8
-import re
 import copy
-from sqlalchemy.orm import with_polymorphic
-from sqlalchemy import exists
 from sqlalchemy.orm.exc import NoResultFound
 from hydrus.data.db_models import Modification
 from hydrus.data.exceptions import (
-    ClassNotFound,
     InstanceExists,
-    PropertyNotFound,
-    NotInstanceProperty,
-    NotAbstractProperty,
-    InstanceNotFound,
     PageNotFound,
     IncompatibleParameters,
     OffsetOutOfRange)
 from hydrus.data.crud_helpers import (
     recreate_iri,
     attach_hydra_view,
-    pre_process_pagination_parameters,
-    get_rdf_class,
-    get_data_iac_iii_iit,
-    add_prop_name_to_object,
-    get_instance_before_delete)
+    pre_process_pagination_parameters
+)
 # from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.scoping import scoped_session
 from typing import Dict, Optional, Any, List

@@ -65,32 +65,6 @@ class InstanceExists(Exception):
             return HydraError(code=400, title="Instance already exists.", desc=description)
 
 
-class NotInstanceProperty(Exception):
-    """Error when the property is not an Instance property."""
-
-    def __init__(self, type_: str) -> None:
-        """Constructor."""
-        self.type_ = type_
-
-    def get_HTTP(self) -> HydraError:
-        """Return the HTTP response for the Exception."""
-        description = f"The property {self.type_} is not an Instance property"
-        return HydraError(code=400, title="Not an Instance property", desc=description)
-
-
-class NotAbstractProperty(Exception):
-    """Error when the property is not an Abstract property."""
-
-    def __init__(self, type_: str) -> None:
-        """Constructor."""
-        self.type_ = type_
-
-    def get_HTTP(self) -> HydraError:
-        """Return the HTTP response for the Exception."""
-        description = f"The property {self.type_} is not an Abstract property"
-        return HydraError(code=400, title="Not an Abstract property", desc=description)
-
-
 class UserExists(Exception):
     """Error when the User already exitst."""
 
