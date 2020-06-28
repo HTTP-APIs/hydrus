@@ -298,12 +298,12 @@ def socketio_client(app, session, constants, doc, socketio):
 
 
 @pytest.fixture(scope='module')
-def add_doc_classes_and_properties_to_db(doc, session):
+def add_doc_classes_and_properties_to_db(doc, session, engine):
     """
     Add the doc classes and properties to database
     for testing in /functional/test_app.py and
     /functional/test_socket.py
     """
     test_classes, test_properties = get_doc_classes_and_properties(doc)
-    doc_parse.insert_classes(test_classes, session)
-    doc_parse.insert_properties(test_properties, session)
+    create_database_tables(test_classes)
+    Base.metadata.create_all(engine)
