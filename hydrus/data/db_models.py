@@ -171,8 +171,7 @@ class Token(Base):
     expiry = Column(
         "expiry",
         DateTime,
-        default=datetime.datetime.utcnow()
-        + datetime.timedelta(seconds=EXPIRY_TIME),
+        default=datetime.datetime.utcnow() + datetime.timedelta(seconds=EXPIRY_TIME),
     )
 
     def is_valid(self):

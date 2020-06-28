@@ -203,7 +203,6 @@ def init_db_for_crud_tests(drone_doc, session, engine):
     Base.metadata.create_all(engine)
 
 
-
 @pytest.fixture(scope='module')
 def app(constants):
     """

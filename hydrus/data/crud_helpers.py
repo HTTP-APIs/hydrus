@@ -14,6 +14,7 @@ from hydrus.data.exceptions import (
     InstanceNotFound)
 from hydrus.data.resource_based_classes import all_instances
 
+
 def apply_filter(object_id: str, search_props: Dict[str, Any],
                  triples, session: scoped_session) -> bool:
     """Check whether objects has properties with query values or not.
