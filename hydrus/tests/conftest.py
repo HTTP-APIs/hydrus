@@ -46,9 +46,13 @@ def gen_dummy_object(class_title, doc):
     for class_path in doc.parsed_classes:
         if class_title == doc.parsed_classes[class_path]["class"].title:
             for prop in doc.parsed_classes[class_path]["class"].supportedProperty:
-                if isinstance(prop.prop, HydraLink) or prop.write is False:
+                if prop.write is False:
                     continue
-                if "vocab:" in prop.prop:
+                if isinstance(prop.prop, HydraLink):
+                    prop_class = prop.prop.range.replace("vocab:", "")
+                    object_[prop.title] = gen_dummy_object(prop_class, doc)
+                    pass
+                elif "vocab:" in prop.prop:
                     prop_class = prop.prop.replace("vocab:", "")
                     object_[prop.title] = gen_dummy_object(prop_class, doc)
                 else:
