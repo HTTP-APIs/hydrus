@@ -52,8 +52,8 @@ def insert_object(object_: Dict[str, Any], session: scoped_session) -> str:
     database_class = get_database_class(type_)
     id_ = object_.get("id", None)
     if (
-        id_ is not None
-        and session.query(exists().where(database_class.id == id_)).scalar()
+        id_ is not None and
+        session.query(exists().where(database_class.id == id_)).scalar()
     ):
         raise InstanceExists(type_, id_)
     foreign_keys = database_class.__table__.foreign_keys
