@@ -118,6 +118,10 @@ class Resource:
         """
         Return a sqlalchemy column which will act as
         a foreign key to given tablename.
+        :param foreign_table_name: The table name to which the foreign key
+        relationship has to established
+        :param title: The name of this foreign key column
+        :return: A SQL-Alchemy column with correct foreign key attached
         """
         # title is to dereference the column name later
         return Column(
