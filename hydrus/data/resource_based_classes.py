@@ -18,12 +18,20 @@ from sqlalchemy.orm.exc import NoResultFound
 
 
 def get_type(object_):
-    """Return the @type of that given object"""
+    """
+    Return the @type of that given object.
+    :param object_: Dict containing object properties
+    :return: The @type of that object
+    """
     return object_["@type"]
 
 
 def get_database_class(type_):
-    """Get the sqlalchemy class object from given classname"""
+    """
+    Get the sqlalchemy class object from given classname
+    :param type_: The @type of a object
+    :return: The SQL-Alchemy database class object for that type_
+    """
     database_class = Resource.all_database_classes.get(type_, None)
     if database_class is None:
         raise ClassNotFound(type_)
@@ -31,7 +39,12 @@ def get_database_class(type_):
 
 
 def insert_object(object_, session):
-    """Insert the object in the database"""
+    """
+    Insert the object in the database
+    :param object_: Dict containing object properties
+    :param session: sqlalchemy session
+    :return: The ID of the inserted object
+    """
     type_ = get_type(object_)
     database_class = get_database_class(type_)
     id_ = object_.get("id", None)
@@ -75,7 +88,12 @@ def insert_object(object_, session):
 
 
 def get_object(query_info, session):
-    """Get the object from the database"""
+    """
+    Get the object from the database
+    :param query_info: Dict containing the id and @type of object that has to retrieved
+    :param session: sqlalchemy session
+    :return: dict of object with its properties
+    """
     type_ = query_info["@type"]
     id_ = query_info["id_"]
     database_class = get_database_class(type_)
@@ -96,7 +114,11 @@ def get_object(query_info, session):
 
 
 def delete_object(query_info, session):
-    """Delete the object from the database"""
+    """
+    Delete the object from the database
+    :param query_info: Dict containing the id and @type of object that has to retrieved
+    :param session: sqlalchemy session
+    """
     type_ = query_info["@type"]
     id_ = query_info["id_"]
     database_class = get_database_class(type_)
@@ -116,7 +138,13 @@ def delete_object(query_info, session):
 
 
 def update_object(object_, query_info, session):
-    """Update the object from the database"""
+    """
+    Update the object from the database
+    :param object_: Dict containing updated object properties
+    :param query_info: Dict containing the id and @type of object that has to retrieved
+    :param session: sqlalchemy session
+    :return: the ID of the updated object
+    """
     # Keep the object as fail safe
     old_object = get_object(query_info, session)
     # Delete the old object
@@ -149,7 +177,7 @@ def get_all_filtered_instances(session, search_params, type_):
     based on given query parameters.
     :param session: sqlalchemy scoped session
     :param search_params: Query parameters
-    :param type_: type of object to be deleted
+    :param type_: @type of object to be deleted
     :return: filtered instances
     """
     database_class = get_database_class(type_)
@@ -165,6 +193,12 @@ def get_all_filtered_instances(session, search_params, type_):
 
 
 def get_single_response(session, type_):
+    """
+    Get instance of classes with single objects.
+    :param session: sqlalchemy scoped session
+    :param type_: @type of object to be deleted
+    :return: instance
+    """
     database_class = get_database_class(type_)
     try:
         instance = session.query(database_class).all()[-1]
