@@ -162,16 +162,6 @@ def update_object(object_, query_info, session):
     return id_
 
 
-def all_instances(session, type_):
-    database_class = get_database_class(type_)
-    try:
-        instances = session.query(database_class).all()
-        return instances
-    except NoResultFound:
-        instances = list()
-        return instances
-
-
 def get_all_filtered_instances(session, search_params, type_):
     """Get all the filtered instances of from the database
     based on given query parameters.
