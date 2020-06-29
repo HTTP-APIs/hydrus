@@ -14,10 +14,13 @@ from hydrus.data.exceptions import (
     PropertyNotGiven,
 )
 from sqlalchemy import exists
+from sqlalchemy.orm.scoping import scoped_session
 from sqlalchemy.orm.exc import NoResultFound
 
+from typing import Dict, Any
 
-def get_type(object_):
+
+def get_type(object_: Dict[str, Any]) -> str:
     """
     Return the @type of that given object.
     :param object_: Dict containing object properties
@@ -26,7 +29,7 @@ def get_type(object_):
     return object_["@type"]
 
 
-def get_database_class(type_):
+def get_database_class(type_: str):
     """
     Get the sqlalchemy class object from given classname
     :param type_: The @type of a object
@@ -38,7 +41,7 @@ def get_database_class(type_):
     return database_class
 
 
-def insert_object(object_, session):
+def insert_object(object_: Dict[str, Any], session: scoped_session) -> str:
     """
     Insert the object in the database
     :param object_: Dict containing object properties
@@ -49,8 +52,8 @@ def insert_object(object_, session):
     database_class = get_database_class(type_)
     id_ = object_.get("id", None)
     if (
-        id_ is not None and session.query(
-            exists().where(database_class.id == id_)).scalar()
+        id_ is not None
+        and session.query(exists().where(database_class.id == id_)).scalar()
     ):
         raise InstanceExists(type_, id_)
     foreign_keys = database_class.__table__.foreign_keys
@@ -87,7 +90,9 @@ def insert_object(object_, session):
     return inserted_object.id
 
 
-def get_object(query_info, session):
+def get_object(
+    query_info: Dict[str, str], session: scoped_session
+) -> Dict[str, str]:
     """
     Get the object from the database
     :param query_info: Dict containing the id and @type of object that has to retrieved
@@ -113,7 +118,7 @@ def get_object(query_info, session):
     return object_template
 
 
-def delete_object(query_info, session):
+def delete_object(query_info: Dict[str, str], session: scoped_session) -> None:
     """
     Delete the object from the database
     :param query_info: Dict containing the id and @type of object that has to retrieved
@@ -137,7 +142,11 @@ def delete_object(query_info, session):
         session.rollback()
 
 
-def update_object(object_, query_info, session):
+def update_object(
+    object_: Dict[str, Any],
+    query_info: Dict[str, str],
+    session: scoped_session,
+) -> str:
     """
     Update the object from the database
     :param object_: Dict containing updated object properties
@@ -162,7 +171,9 @@ def update_object(object_, query_info, session):
     return id_
 
 
-def get_all_filtered_instances(session, search_params, type_):
+def get_all_filtered_instances(
+    session: scoped_session, search_params: Dict[str, Any], type_: str
+):
     """Get all the filtered instances of from the database
     based on given query parameters.
     :param session: sqlalchemy scoped session
@@ -182,7 +193,7 @@ def get_all_filtered_instances(session, search_params, type_):
     return filtered_instances
 
 
-def get_single_response(session, type_):
+def get_single_response(session: scoped_session, type_: str):
     """
     Get instance of classes with single objects.
     :param session: sqlalchemy scoped session
