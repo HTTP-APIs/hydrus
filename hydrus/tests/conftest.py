@@ -235,13 +235,11 @@ def init_db_for_app_tests(doc, constants, session, add_doc_classes_and_propertie
     tests/functional/test_app.py.
     """
     for class_ in doc.parsed_classes:
-        link_props = {}
         class_title = doc.parsed_classes[class_]['class'].title
         for supportedProp in doc.parsed_classes[class_]['class'].supportedProperty:
             if isinstance(supportedProp.prop, HydraLink):
                 dummy_obj = gen_dummy_object(class_title, doc)
-                crud.insert(dummy_obj, id_=str(uuid.uuid4()),
-                            link_props=link_props, session=session)
+                crud.insert(dummy_obj, id_=str(uuid.uuid4()), session=session)
                 # If it's a collection class then add an extra object so
                 # we can test pagination thoroughly.
                 if class_ in doc.collections:

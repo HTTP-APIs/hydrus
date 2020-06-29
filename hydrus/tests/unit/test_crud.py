@@ -33,19 +33,16 @@ def test_crud_get_returns_correct_object(drone_doc_collection_classes, drone_doc
 
 def test_get_for_nested_obj(drone_doc_collection_classes, drone_doc, session, constants):
     """Test CRUD get operation for object that can contain other objects."""
-    API_NAME = constants['API_NAME']
     for class_ in drone_doc_collection_classes:
         for prop in drone_doc.parsed_classes[class_]['class'].supportedProperty:
             if isinstance(prop.prop, HydraLink) or 'vocab:' in prop.prop:
-                link_props = {}
                 dummy_obj = gen_dummy_object(class_, drone_doc)
                 if isinstance(prop.prop, HydraLink):
                     nested_class = prop.prop.range.replace('vocab:', '')
                 else:
                     nested_class = prop.prop.replace('vocab:', '')
                 obj_id = str(uuid.uuid4())
-                response = crud.insert(object_=dummy_obj, id_=obj_id,
-                                       link_props=link_props, session=session)
+                response = crud.insert(object_=dummy_obj, id_=obj_id, session=session)
                 object_ = crud.get(id_=obj_id, type_=class_, session=session,
                                    api_name='api')
                 assert prop.title in object_

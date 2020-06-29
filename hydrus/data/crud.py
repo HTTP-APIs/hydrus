@@ -88,11 +88,9 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
     return object_template
 
 
-def insert(object_: Dict[str, Any], session: scoped_session, link_props: Dict[str, Any]={},
-           id_: Optional[str] = None) -> str:
+def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[str] = None) -> str:
     """Insert an object to database [POST] and returns the inserted object.
     :param object_: object to be inserted
-    :param link_props: Hydra link properties in the object.
     :param session: sqlalchemy scoped session
     :param id_: id of the object to be inserted (optional param)
     :return: ID of object inserted
@@ -118,13 +116,11 @@ def insert(object_: Dict[str, Any], session: scoped_session, link_props: Dict[st
 def insert_multiple(objects_: List[Dict[str,
                                         Any]],
                     session: scoped_session,
-                    link_props_list: List[Dict[str, Any]]=[],
                     id_: Optional[str] = "") -> List[str]:
     """
     Adds a list of object with given ids to the database
     :param objects_: List of dict's to be added to the database
     :param session: scoped session from getSession in utils
-    :param link_props_list: List of link properties for each object being inserted.
     :param id_: optional parameter containing the ids of objects that have to be inserted
     :return: Ids that have been inserted
 
@@ -147,20 +143,14 @@ def insert_multiple(objects_: List[Dict[str,
     instance_id_list = list()
 
     for index in range(len(objects_)):
-        link_props_of_object_ = dict()
         id_of_object_ = None
         object_ = objects_[index]
-        # check if link_props exist for object at that index
-        try:
-            link_props_of_object_ = link_props_list[index]
-        except IndexError:
-            pass
         # check if id_ exist for object at that index
         try:
             id_of_object_ = id_list[index]
         except IndexError:
             pass
-        inserted_object_id = insert(object_, session, link_props_of_object_, id_of_object_)
+        inserted_object_id = insert(object_, session, id_of_object_)
         instance_id_list.append(inserted_object_id)
 
     return instance_id_list
@@ -211,7 +201,6 @@ def update(id_: str,
                          str],
            session: scoped_session,
            api_name: str,
-           link_props: Dict[str, Any]={},
            path: str = None) -> str:
     """Update an object properties based on the given object [PUT].
     :param id_: if of object to be updated
@@ -219,7 +208,6 @@ def update(id_: str,
     :param object_: object that has to be inserted
     :param session: sqlalchemy scoped session
     :param api_name: api name specified while starting server
-    :param link_props: Link properties of the object being updated.
     :param path: endpoint
     :return: id of updated object
     """
@@ -366,13 +354,11 @@ def update_single(object_: Dict[str,
                                 Any],
                   session: scoped_session,
                   api_name: str,
-                  link_props: Dict[str, Any],
                   path: str = None) -> int:
     """Update instance of classes with single objects.
     :param object_: new object
     :param session: sqlalchemy scoped session
     :param api_name: api name specified while starting server
-    :param link_props: Link properties of the object being updated
     :param path: endpoint
     :return: id of the updated object
 
@@ -390,7 +376,6 @@ def update_single(object_: Dict[str,
         object_=object_,
         session=session,
         api_name=api_name,
-        link_props=link_props,
         path=path)
 
 
