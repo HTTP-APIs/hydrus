@@ -195,16 +195,18 @@ def get_all_filtered_instances(
             # build query
             for attr, value in param_value.items():
                 query = query.join(nested_param_db_class)
-                query = query.filter(getattr(nested_param_db_class, attr) == value)
+                try:
+                    query = query.filter(getattr(nested_param_db_class, attr) == value)
+                except AttributeError:
+                    raise InvalidSearchParameter(f'{param}[{attr}]')
         else:
             value = search_params[param]
-            query = query.filter(getattr(database_class, param) == value)
-    try:
-        filtered_instances = query.all()
-    except Exception as e:
-        # extract the wrong query parameter
-        wrong_query_param = e.args[0].split()[-1]
-        raise InvalidSearchParameter(wrong_query_param.strip("'"))
+            try:
+                query = query.filter(getattr(database_class, param) == value)
+            except AttributeError:
+                raise InvalidSearchParameter(f'{param}')
+
+    filtered_instances = query.all()
     return filtered_instances
 
 
