@@ -42,11 +42,11 @@ def test_get_for_nested_obj(drone_doc_collection_classes, drone_doc, session, co
                     obj_id = str(uuid.uuid4())
                     response = crud.insert(object_=dummy_obj, id_=obj_id, session=session)
                     object_ = crud.get(id_=obj_id, type_=class_, session=session,
-                                    api_name='api')
+                                       api_name='api')
                     assert prop.title in object_
                     nested_obj_id = object_[prop.title]
                     nested_obj = crud.get(id_=nested_obj_id, type_=nested_class,
-                                        session=session, api_name='api')
+                                          session=session, api_name='api')
                     assert nested_obj['@id'].split('/')[-1] == nested_obj_id
                     break
 
