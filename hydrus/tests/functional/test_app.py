@@ -409,15 +409,9 @@ class TestApp():
                         assert '@type' in response_get_data
                         class_props = [x for x in class_.supportedProperty]
                         for prop_name in class_props:
-                            if isinstance(prop_name.prop, HydraLink) and prop_name.read is True:
-                                nested_obj_resp = test_app_client.get(
-                                    response_get_data[prop_name.title])
-                                assert nested_obj_resp.status_code == 200
-                                nested_obj = json.loads(
-                                    nested_obj_resp.data.decode('utf-8'))
-                                assert '@type' in nested_obj
-                            elif 'vocab:' in prop_name.prop:
-                                assert '@type' in response_get_data[prop_name.title]
+                            if not isinstance(prop_name.prop, HydraLink):
+                                if 'vocab:' in prop_name.prop:
+                                    assert '@type' in response_get_data[prop_name.title]
 
     def test_required_props(self, test_app_client, constants, doc):
         API_NAME = constants['API_NAME']

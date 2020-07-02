@@ -35,22 +35,20 @@ def test_get_for_nested_obj(drone_doc_collection_classes, drone_doc, session, co
     """Test CRUD get operation for object that can contain other objects."""
     for class_ in drone_doc_collection_classes:
         for prop in drone_doc.parsed_classes[class_]['class'].supportedProperty:
-            if isinstance(prop.prop, HydraLink) or 'vocab:' in prop.prop:
-                dummy_obj = gen_dummy_object(class_, drone_doc)
-                if isinstance(prop.prop, HydraLink):
-                    nested_class = prop.prop.range.replace('vocab:', '')
-                else:
+            if not isinstance(prop.prop, HydraLink):
+                if 'vocab:' in prop.prop:
+                    dummy_obj = gen_dummy_object(class_, drone_doc)
                     nested_class = prop.prop.replace('vocab:', '')
-                obj_id = str(uuid.uuid4())
-                response = crud.insert(object_=dummy_obj, id_=obj_id, session=session)
-                object_ = crud.get(id_=obj_id, type_=class_, session=session,
-                                   api_name='api')
-                assert prop.title in object_
-                nested_obj_id = object_[prop.title]
-                nested_obj = crud.get(id_=nested_obj_id, type_=nested_class,
-                                      session=session, api_name='api')
-                assert nested_obj['@id'].split('/')[-1] == nested_obj_id
-                break
+                    obj_id = str(uuid.uuid4())
+                    response = crud.insert(object_=dummy_obj, id_=obj_id, session=session)
+                    object_ = crud.get(id_=obj_id, type_=class_, session=session,
+                                    api_name='api')
+                    assert prop.title in object_
+                    nested_obj_id = object_[prop.title]
+                    nested_obj = crud.get(id_=nested_obj_id, type_=nested_class,
+                                        session=session, api_name='api')
+                    assert nested_obj['@id'].split('/')[-1] == nested_obj_id
+                    break
 
 
 def test_searching_over_collection_elements(drone_doc_collection_classes, drone_doc, session):

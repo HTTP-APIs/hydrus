@@ -86,30 +86,16 @@ class Resource:
         for supported_property in self.supported_properties:
             title = supported_property["title"]
             link = supported_property["property"]
-            if type(link) is not dict:
-                if "vocab:" in link:
-                    # if vocab: is in the link, it implies that the link is pointing to
-                    # another resource in the same ApiDoc, hence make it a Foreign Key
-                    # to that resource table
-                    foreign_table_name = link.split("vocab:")[1]
-                    attr_dict[title] = Resource.foreign_key_column(
-                        foreign_table_name, title
-                    )
-
-                else:
-                    attr_dict[title] = Column(String)
+            if "vocab:" in link:
+                # if vocab: is in the link, it implies that the link is pointing to
+                # another resource in the same ApiDoc, hence make it a Foreign Key
+                # to that resource table
+                foreign_table_name = link.split("vocab:")[1]
+                attr_dict[title] = Resource.foreign_key_column(
+                    foreign_table_name, title
+                )
             else:
-                # if the supported property has "property" attribute of @type "hydra:link"
-                if "vocab:" in link["range"]:
-                    # if vocab: is in the link["range"], it implies that the link is pointing to
-                    # another resource in the same ApiDoc, hence make it a Foreign Key
-                    # to that resource table
-                    foreign_table_name = link["range"].split("vocab:")[1]
-                    attr_dict[title] = Resource.foreign_key_column(
-                        foreign_table_name, title
-                    )
-                else:
-                    attr_dict[title] = Column(String)
+                attr_dict[title] = Column(String)
 
         return attr_dict
 
