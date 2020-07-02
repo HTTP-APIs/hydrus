@@ -29,43 +29,27 @@ def recreate_iri(API_NAME: str, path: str, search_params: Dict[str, Any]) -> str
     return iri
 
 
-def parse_search_params(search_params: Dict[str, Any],
-                        properties,
-                        session: scoped_session) -> Dict[str, Any]:
-    """Parse search parameters and create a dict with id of parameters as keys.
+def parse_search_params(search_params: Dict[str, Any]) -> Dict[str, Any]:
+    """Parse nested search parameters and add them in the form of nested dict.
     :param search_params: Dictionary having input search parameters.
-    :param properties: All properties.
-    :param session: sqlalchemy session.
-    :return: A dictionary having property ids as keys.
+    :return: A dictionary having keys as nested dictionaries for each nested search param
     """
-    search_props = dict()
-    pagination_parameters = ["page", "pageIndex", "limit", "offset"]
-    for param in search_params:
-        # Skip if the parameter is a pagination parameter
-        if param in pagination_parameters:
-            continue
+    for param in search_params.copy():
         # For one level deep nested parameters
         if "[" in param and "]" in param:
-            prop_name = param.split('[')[0]
-            try:
-                prop_id = session.query(properties).filter(
-                    properties.name == prop_name).one().id
-                if prop_id not in search_props:
-                    search_props[prop_id] = {}
-                nested_prop_id = session.query(properties).filter(
-                    properties.name == param[param.find('[') + 1:param.find(']')]).one().id
-                search_props[prop_id][nested_prop_id] = search_params[param]
-            except NoResultFound:
-                raise InvalidSearchParameter(param)
+            value = search_params[param]
+            split_param_list = param.split('[')
+            prop_name = split_param_list[0]
+            nested_prop_name = split_param_list[1].split(']')[0]
+            if prop_name not in search_params:
+                search_params[prop_name] = dict()
+            search_params[prop_name][nested_prop_name] = value
+            search_params.pop(param)
         # For normal parameters
         else:
-            try:
-                prop_id = session.query(properties).filter(
-                    properties.name == param).one().id
-                search_props[prop_id] = search_params[param]
-            except NoResultFound:
-                raise InvalidSearchParameter(param)
-    return search_props
+            # Skip if the parameter is not nested
+            continue
+    return search_params
 
 
 def calculate_page_limit_and_offset(paginate: bool, page_size: int, page: int, result_length: int,

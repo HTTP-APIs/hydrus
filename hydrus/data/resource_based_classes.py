@@ -182,10 +182,25 @@ def get_all_filtered_instances(
     :return: filtered instances
     """
     database_class = get_database_class(type_)
+    query = session.query(database_class)
+    for param, param_value in search_params.items():
+        # nested param
+        if type(param_value) is dict:
+            foreign_keys = database_class.__table__.foreign_keys
+            for fk in foreign_keys:
+                if fk.info['column_name'] == param:
+                    fk_table_name = fk.column.table.name
+                    continue
+            nested_param_db_class = get_database_class(fk_table_name)
+            # build query
+            for attr, value in param_value.items():
+                query = query.join(nested_param_db_class)
+                query = query.filter(getattr(nested_param_db_class, attr) == value)
+        else:
+            value = search_params[param]
+            query = query.filter(getattr(database_class, param) == value)
     try:
-        filtered_instances = (
-            session.query(database_class).filter_by(**search_params).all()
-        )
+        filtered_instances = query.all()
     except Exception as e:
         # extract the wrong query parameter
         wrong_query_param = e.args[0].split()[-1]

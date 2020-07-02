@@ -42,7 +42,8 @@ from hydrus.data.exceptions import (
 from hydrus.data.crud_helpers import (
     recreate_iri,
     attach_hydra_view,
-    pre_process_pagination_parameters
+    pre_process_pagination_parameters,
+    parse_search_params
 )
 # from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.scoping import scoped_session
@@ -247,7 +248,7 @@ def get_collection(API_NAME: str,
     for param in database_search_params.copy():
         if param in pagination_parameters:
             database_search_params.pop(param)
-
+    database_search_params = parse_search_params(database_search_params)
     filtered_instances = get_all_filtered_instances(
         session, database_search_params, type_)
     collection_template = pagination(filtered_instances, path, type_, API_NAME,
