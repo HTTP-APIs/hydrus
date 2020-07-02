@@ -60,16 +60,6 @@ def insert_classes(classes: List[Dict[str, Any]],
     return None
 
 
-def insert_properties(properties: Set[str],
-                      session: scoped_session) -> Optional[Any]:
-    """Insert all the properties as defined in the APIDocumentation into DB."""
-    prop_list = [BaseProperty(name=prop) for prop in properties
-                 if not session.query(exists().where(BaseProperty.name == prop)).scalar()]
-    session.add_all(prop_list)
-    session.commit()
-    return None
-
-
 # if __name__ == "__main__":
 #     Session = sessionmaker(bind=engine)
 #     session = Session()
