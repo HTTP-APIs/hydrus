@@ -267,7 +267,8 @@ def test_delete_multiple_id(drone_doc_collection_classes, drone_doc, session):
     assert 404 == response_code
 
 
-def test_insert_when_property_not_given(drone_doc_collection_classes, drone_doc, session, constants):
+def test_insert_when_property_not_given(drone_doc_collection_classes, drone_doc,
+                                        session, constants):
     """Test CRUD insert operation when a required foreign key
     property of that resource(column in the table) not given"""
     for class_ in drone_doc_collection_classes:
