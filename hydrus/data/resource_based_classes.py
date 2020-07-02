@@ -26,7 +26,11 @@ def get_type(object_: Dict[str, Any]) -> str:
     :param object_: Dict containing object properties
     :return: The @type of that object
     """
-    return object_["@type"]
+    try:
+        type_ = object_["@type"]
+    except TypeError:
+        raise ClassNotFound(object_)
+    return type_
 
 
 def get_database_class(type_: str):
