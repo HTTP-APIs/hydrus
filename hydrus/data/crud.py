@@ -240,12 +240,6 @@ def get_collection(API_NAME: str,
         ClassNotFound: If `type_` does not represent a valid/defined RDFClass.
 
     """
-    collection_template = {
-        "@id": f"/{API_NAME}/{path}/",
-        "@context": None,
-        "@type": f"{type_}Collection",
-        "members": list()
-    }  # type: Dict[str, Any]
     database_search_params = copy.deepcopy(search_params)
     pagination_parameters = ["page", "pageIndex", "limit", "offset"]
 
@@ -254,54 +248,10 @@ def get_collection(API_NAME: str,
         if param in pagination_parameters:
             database_search_params.pop(param)
 
-    filtered_instances = get_all_filtered_instances(session, database_search_params, type_)
-    result_length = len(filtered_instances)
-    try:
-        # To paginate, calculate offset and page_limit values for pagination of search results
-        page, page_size, offset = pre_process_pagination_parameters(search_params=search_params,
-                                                                    paginate=paginate,
-                                                                    page_size=page_size,
-                                                                    result_length=result_length)
-    except (IncompatibleParameters, PageNotFound, OffsetOutOfRange):
-        raise
-    current_page_size = page_size
-    if result_length - offset < page_size:
-        current_page_size = result_length - offset
-    for i in range(offset, offset+current_page_size):
-        if path is not None:
-            object_template = {
-                "@id": f"/{API_NAME}/{path}/{filtered_instances[i].id}",
-                "@type": type_
-            }
-        else:
-            object_template = {
-                "@id": f"/{API_NAME}/{type_}Collection/{filtered_instances[i].id}",
-                "@type": type_
-            }
-        collection_template["members"].append(object_template)
-
-    # If pagination is disabled then stop and return the collection template
-    if paginate is False:
-        return collection_template
-    collection_template["hydra:totalItems"] = result_length
-    # Calculate last page number
-    if result_length != 0 and result_length % page_size == 0:
-        last = result_length // page_size
-    else:
-        last = result_length // page_size + 1
-    if page < 1 or page > last:
-        raise PageNotFound(str(page))
-    recreated_iri = recreate_iri(API_NAME, path, search_params=search_params)
-    # Decide which parameter to use to provide navigation
-    if "offset" in search_params:
-        paginate_param = "offset"
-    elif "pageIndex" in search_params:
-        paginate_param = "pageIndex"
-    else:
-        paginate_param = "page"
-    attach_hydra_view(collection_template=collection_template, paginate_param=paginate_param,
-                      result_length=result_length, iri=recreated_iri, page_size=page_size,
-                      offset=offset, page=page, last=last)
+    filtered_instances = get_all_filtered_instances(
+        session, database_search_params, type_)
+    collection_template = pagination(filtered_instances, path, type_, API_NAME,
+                                     search_params, paginate, page_size)
     return collection_template
 
 
@@ -458,3 +408,71 @@ def get_modification_table_diff(session: scoped_session,
         }
         list_of_modification_records.append(modification_record)
     return list_of_modification_records
+
+
+def pagination(filtered_instances, path, type_, API_NAME,
+               search_params, paginate, page_size):
+    """Add pagination to the response and return the response
+    :param filtered_instances: instances after filtered from the database query
+    :param path: endpoint
+    :param type_: type of object to be updated
+    :param API_NAME: api name specified while starting server
+    :param search_params: Query parameters
+    :param paginate: Enable/disable pagination
+    :param page_size: Number maximum elements showed in a page
+    :return: response containing a page of the objects of that particular type_
+    """
+    collection_template = {
+        "@id": f"/{API_NAME}/{path}/",
+        "@context": None,
+        "@type": f"{type_}Collection",
+        "members": list()
+    }  # type: Dict[str, Any]
+    result_length = len(filtered_instances)
+    try:
+        # To paginate, calculate offset and page_limit values for pagination of search results
+        page, page_size, offset = pre_process_pagination_parameters(search_params=search_params,
+                                                                    paginate=paginate,
+                                                                    page_size=page_size,
+                                                                    result_length=result_length)
+    except (IncompatibleParameters, PageNotFound, OffsetOutOfRange):
+        raise
+    current_page_size = page_size
+    if result_length - offset < page_size:
+        current_page_size = result_length - offset
+    for i in range(offset, offset+current_page_size):
+        if path is not None:
+            object_template = {
+                "@id": f"/{API_NAME}/{path}/{filtered_instances[i].id}",
+                "@type": type_
+            }
+        else:
+            object_template = {
+                "@id": f"/{API_NAME}/{type_}Collection/{filtered_instances[i].id}",
+                "@type": type_
+            }
+        collection_template["members"].append(object_template)
+
+    # If pagination is disabled then stop and return the collection template
+    if paginate is False:
+        return collection_template
+    collection_template["hydra:totalItems"] = result_length
+    # Calculate last page number
+    if result_length != 0 and result_length % page_size == 0:
+        last = result_length // page_size
+    else:
+        last = result_length // page_size + 1
+    if page < 1 or page > last:
+        raise PageNotFound(str(page))
+    recreated_iri = recreate_iri(API_NAME, path, search_params=search_params)
+    # Decide which parameter to use to provide navigation
+    if "offset" in search_params:
+        paginate_param = "offset"
+    elif "pageIndex" in search_params:
+        paginate_param = "pageIndex"
+    else:
+        paginate_param = "page"
+    attach_hydra_view(collection_template=collection_template, paginate_param=paginate_param,
+                      result_length=result_length, iri=recreated_iri, page_size=page_size,
+                      offset=offset, page=page, last=last)
+    return collection_template
