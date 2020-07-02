@@ -100,12 +100,6 @@ def serve(adduser: tuple, api: str, auth: bool, dburl: str, pagination: bool,
     click.echo("Setting up the database")
     # Create a connection to the database you want to use
     engine = create_engine(DB_URL, connect_args={'check_same_thread': False})
-    # Add the required Models to the database
-
-    # if use_db is False:
-    #     click.echo("Creating models")
-    #     Base.metadata.drop_all(engine)
-    #     Base.metadata.create_all(engine)
     # Define the Hydra API Documentation
     # NOTE: You can use your own API Documentation and create a HydraDoc object
     # using doc_maker or you may create your own HydraDoc Documentation using
@@ -163,9 +157,6 @@ def serve(adduser: tuple, api: str, auth: bool, dburl: str, pagination: bool,
     # You can also pass dictionary defined in
     # hydra_python_core/doc_writer_sample_output.py
     classes = doc_parse.get_classes(apidoc.generate())
-
-    # Get all the properties from the classes
-    properties = doc_parse.get_all_properties(classes)
     # Insert them into the database
     if use_db is False:
         Base.metadata.drop_all(engine)
@@ -173,8 +164,6 @@ def serve(adduser: tuple, api: str, auth: bool, dburl: str, pagination: bool,
         create_database_tables(classes)
         click.echo("Creating models")
         Base.metadata.create_all(engine)
-        # doc_parse.insert_classes(classes, session)
-        # doc_parse.insert_properties(properties, session)
 
     # Add authorized users and pass if they already exist
     click.echo("Adding authorized users")
