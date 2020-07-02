@@ -6,7 +6,6 @@ import copy
 from hydrus.data.db_models import Resource
 from hydrus.data.exceptions import (
     ClassNotFound,
-    DatabaseConstraintError,
     InstanceExists,
     InstanceNotFound,
     InvalidSearchParameter,
@@ -86,11 +85,9 @@ def insert_object(object_: Dict[str, Any], session: scoped_session) -> str:
     try:
         session.add(inserted_object)
         session.commit()
-    except Exception as e:
-        # catching any database contraint errors
+    except InvalidRequestError:
         session.rollback()
-        contraint_error = e.orig
-        raise DatabaseConstraintError(contraint_error)
+
     return inserted_object.id
 
 

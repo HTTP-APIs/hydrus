@@ -148,19 +148,6 @@ class OffsetOutOfRange(Exception):
         return HydraError(code=400, title="Page not found", desc=description)
 
 
-class DatabaseConstraintError(Exception):
-    """Error when the any constraint of database is failed. For eg: Foreign Key constraint"""
-
-    def __init__(self, contraint_error: str) -> None:
-        """Constructor."""
-        self.contraint_error = contraint_error
-
-    def get_HTTP(self) -> HydraError:
-        """Return the HTTP response for the Exception."""
-        description = f"{self.contraint_error}"
-        return HydraError(code=400, title="Database constraint failed", desc=description)
-
-
 class PropertyNotGiven(Exception):
     """Error when a Property is not given."""
 
