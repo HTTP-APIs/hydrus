@@ -14,9 +14,9 @@ from hydrus.data.exceptions import (
     PropertyNotGiven,
 )
 from sqlalchemy import exists
+from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.orm.scoping import scoped_session
 from sqlalchemy.orm.exc import NoResultFound
-
 from typing import Dict, Any
 
 
@@ -138,7 +138,7 @@ def delete_object(query_info: Dict[str, str], session: scoped_session) -> None:
     session.delete(object_)
     try:
         session.commit()
-    except Exception:
+    except InvalidRequestError:
         session.rollback()
 
 
