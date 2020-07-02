@@ -265,3 +265,26 @@ def test_delete_multiple_id(drone_doc_collection_classes, drone_doc, session):
         error = e.get_HTTP()
         response_code = error.code
     assert 404 == response_code
+
+
+def test_insert_when_property_not_given(drone_doc_collection_classes, drone_doc, session, constants):
+    """Test CRUD insert operation when a required foreign key
+    property of that resource(column in the table) not given"""
+    for class_ in drone_doc_collection_classes:
+        for prop in drone_doc.parsed_classes[class_]['class'].supportedProperty:
+            if isinstance(prop.prop, HydraLink) or 'vocab:' in prop.prop:
+                dummy_obj = gen_dummy_object(class_, drone_doc)
+                if isinstance(prop.prop, HydraLink):
+                    nested_class = prop.prop.range.replace('vocab:', '')
+                else:
+                    nested_class = prop.prop.replace('vocab:', '')
+                continue
+    # remove the foreign key resource on purpose for testing
+    dummy_obj.pop(nested_class)
+    id_ = str(uuid.uuid4())
+    try:
+        insert_response = crud.insert(object_=dummy_obj, id_=id_, session=session)
+    except Exception as e:
+        error = e.get_HTTP()
+        response_code = error.code
+        assert 400 == response_code
