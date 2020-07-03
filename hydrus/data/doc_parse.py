@@ -1,7 +1,6 @@
 """Parser for Hydra APIDocumentation creates Classes and Properties."""
 from sqlalchemy import exists
 
-from hydrus.data.db_models import RDFClass, BaseProperty
 from typing import Any, Dict, List, Set, Optional
 from sqlalchemy.orm.session import Session
 from sqlalchemy.orm import scoped_session
@@ -57,16 +56,6 @@ def insert_classes(classes: List[Dict[str, Any]],
                                                                 .strip('.'))).scalar()])
     # print(class_list)
     session.add_all(class_list)
-    session.commit()
-    return None
-
-
-def insert_properties(properties: Set[str],
-                      session: scoped_session) -> Optional[Any]:
-    """Insert all the properties as defined in the APIDocumentation into DB."""
-    prop_list = [BaseProperty(name=prop) for prop in properties
-                 if not session.query(exists().where(BaseProperty.name == prop)).scalar()]
-    session.add_all(prop_list)
     session.commit()
     return None
 

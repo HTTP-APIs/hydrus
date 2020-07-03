@@ -59,7 +59,6 @@ def items_post_check_support(id_, object_, class_path, path):
             object_id = crud.update(
                 object_=object_,
                 id_=id_,
-                link_props=link_props,
                 type_=object_["@type"],
                 session=get_session(),
                 api_name=get_api_name())
@@ -102,7 +101,6 @@ def items_put_check_support(id_, class_path, path):
         try:
             # Add the object with given ID
             object_id = crud.insert(object_=object_, id_=id_,
-                                    link_props=link_props,
                                     session=get_session())
             headers_ = [{"Location": f"{get_hydrus_server_url()}"
                                      f"{get_api_name()}/{path}/{object_id}"}]

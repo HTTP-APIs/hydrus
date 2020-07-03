@@ -1,48 +1,15 @@
 # from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.scoping import scoped_session
-from sqlalchemy.orm import with_polymorphic
 
 from typing import Dict, Any, Tuple
 
 from sqlalchemy.orm.exc import NoResultFound
-from hydrus.data.db_models import (Graph, BaseProperty, RDFClass, Instance,
-                                   Terminal)
 from hydrus.data.exceptions import (
-    ClassNotFound,
     PageNotFound,
     InvalidSearchParameter,
     IncompatibleParameters,
     OffsetOutOfRange,
-    InstanceNotFound)
-
-triples = with_polymorphic(Graph, '*')
-properties = with_polymorphic(BaseProperty, "*")
-
-
-def apply_filter(object_id: str, search_props: Dict[str, Any],
-                 triples: Graph, session: scoped_session) -> bool:
-    """Check whether objects has properties with query values or not.
-    :param object_id: Id of the instance.
-    :param search_props: Dictionary of query parameters with property id and values.
-    :param triples: All triples.
-    :param session: sqlalchemy scoped session.
-    :return: True if the instance has properties with given values, False otherwise.
-    """
-    for prop in search_props:
-        # For nested properties
-        if isinstance(search_props[prop], dict):
-            data = session.query(triples).filter(
-                triples.GraphIII.subject == object_id, triples.GraphIII.predicate == prop).one()
-            if apply_filter(data.object_, search_props[prop], triples, session) is False:
-                return False
-        else:
-            data = session.query(triples).filter(
-                triples.GraphIIT.subject == object_id, triples.GraphIIT.predicate == prop).one()
-            terminal = session.query(Terminal).filter(
-                Terminal.id == data.object_).one()
-            if terminal.value != search_props[prop]:
-                return False
-    return True
+)
 
 
 def recreate_iri(API_NAME: str, path: str, search_params: Dict[str, Any]) -> str:
@@ -62,43 +29,27 @@ def recreate_iri(API_NAME: str, path: str, search_params: Dict[str, Any]) -> str
     return iri
 
 
-def parse_search_params(search_params: Dict[str, Any],
-                        properties: BaseProperty,
-                        session: scoped_session) -> Dict[str, Any]:
-    """Parse search parameters and create a dict with id of parameters as keys.
+def parse_search_params(search_params: Dict[str, Any]) -> Dict[str, Any]:
+    """Parse nested search parameters and add them in the form of nested dict.
     :param search_params: Dictionary having input search parameters.
-    :param properties: All properties.
-    :param session: sqlalchemy session.
-    :return: A dictionary having property ids as keys.
+    :return: A dictionary having keys as nested dictionaries for each nested search param
     """
-    search_props = dict()
-    pagination_parameters = ["page", "pageIndex", "limit", "offset"]
-    for param in search_params:
-        # Skip if the parameter is a pagination parameter
-        if param in pagination_parameters:
-            continue
+    for param in search_params.copy():
         # For one level deep nested parameters
         if "[" in param and "]" in param:
-            prop_name = param.split('[')[0]
-            try:
-                prop_id = session.query(properties).filter(
-                    properties.name == prop_name).one().id
-                if prop_id not in search_props:
-                    search_props[prop_id] = {}
-                nested_prop_id = session.query(properties).filter(
-                    properties.name == param[param.find('[') + 1:param.find(']')]).one().id
-                search_props[prop_id][nested_prop_id] = search_params[param]
-            except NoResultFound:
-                raise InvalidSearchParameter(param)
+            value = search_params[param]
+            split_param_list = param.split('[')
+            prop_name = split_param_list[0]
+            nested_prop_name = split_param_list[1].split(']')[0]
+            if prop_name not in search_params:
+                search_params[prop_name] = dict()
+            search_params[prop_name][nested_prop_name] = value
+            search_params.pop(param)
         # For normal parameters
         else:
-            try:
-                prop_id = session.query(properties).filter(
-                    properties.name == param).one().id
-                search_props[prop_id] = search_params[param]
-            except NoResultFound:
-                raise InvalidSearchParameter(param)
-    return search_props
+            # Skip if the parameter is not nested
+            continue
+    return search_params
 
 
 def calculate_page_limit_and_offset(paginate: bool, page_size: int, page: int, result_length: int,
@@ -211,153 +162,3 @@ def attach_hydra_view(collection_template: Dict[str, Any], paginate_param: str,
         if page != last:
             collection_template["hydra:view"]["hydra:next"] = (
                f"{iri}{paginate_param}={page + 1}")
-
-
-def get_rdf_class(session, type_):
-    """Retrieve the RDFClass with given type_ from the database.
-    :param session: sqlalchemy scoped session
-    :param type_: type of object
-    :return: appropriate RDFClass
-
-    Raises:
-        ClassNotFound: If the `type_` is not a valid/defined RDFClass.
-    """
-    try:
-        rdf_class = session.query(RDFClass).filter(
-            RDFClass.name == type_).one()
-        return rdf_class
-    except NoResultFound:
-        raise ClassNotFound(type_=type_)
-
-
-def get_single_instance(session, id_, rdf_class):
-    """Retrieve an instance object with given ID from the database.
-    :param session: sqlalchemy scoped session
-    :param id_: id of object to be fetched
-    :return: instance object with given id_
-
-    Raises:
-        InstanceNotFound: If no Instance of the 'type_` class if found.
-    """
-    try:
-        instance = session.query(Instance).filter(
-            Instance.id == id_, Instance.type_ == rdf_class.id).one()
-        return instance
-    except NoResultFound:
-        raise InstanceNotFound(type_=rdf_class.name, id_=id_)
-
-
-def get_data_iac_iii_iit(session, id_):
-    """Get the IAC, III and IIT data from DB of a single instance given id.
-    :param session: sqlalchemy scoped session
-    :param id_: id of object to be deleted
-    :return: tuple of IAC, III and IIT data
-    """
-    data_IAC = session.query(triples).filter(triples.GraphIAC.subject == id_).all()
-    data_III = session.query(triples).filter(triples.GraphIII.subject == id_).all()
-    data_IIT = session.query(triples).filter(triples.GraphIIT.subject == id_).all()
-    return (data_IAC, data_III, data_IIT)
-
-
-def add_prop_name_to_object(session, id_, object_template, rdf_class):
-    """Add the property name to the object template.
-    :param session: sqlalchemy scoped session
-    :param id_: id of object to be fetched
-    :param object_template: a template of a the instance(dict)
-    :param rdf_class: the RDFClass of that instance
-    :return: response to the request
-    """
-    instance = get_single_instance(session, id_, rdf_class)
-    data_IAC, data_III, data_IIT = get_data_iac_iii_iit(session, id_)
-    for data in data_IAC:
-        prop_name = session.query(properties).filter(
-            properties.id == data.predicate).one().name
-        class_name = session.query(RDFClass).filter(
-            RDFClass.id == data.object_).one().name
-        object_template[prop_name] = class_name
-
-    for data in data_III:
-        prop_name = session.query(properties).filter(
-            properties.id == data.predicate).one().name
-        instance = session.query(Instance).filter(
-            Instance.id == data.object_).one()
-        object_template[prop_name] = instance.id
-
-    for data in data_IIT:
-        prop_name = session.query(properties).filter(
-            properties.id == data.predicate).one().name
-        terminal = session.query(Terminal).filter(
-            Terminal.id == data.object_).one()
-        try:
-            object_template[prop_name] = terminal.value
-        except BaseException:
-            # If terminal is none
-            object_template[prop_name] = ""
-    return object_template
-
-
-def get_instance_before_delete(session, id_, type_):
-    """Get the instance to be deleted from the database which is
-    used to delete it's IAC, III and IIT data.
-    :param session: sqlalchemy scoped session
-    :param id_: id of object to be deleted
-    :param type_: type of object to be deleted
-    :returns instance: the object instance in the database
-    Raises:
-        InstanceNotFound: If no instance of type `type_` with id `id_` exists.
-    """
-    rdf_class = get_rdf_class(session, type_)
-    try:
-        instance = session.query(Instance).filter(
-            Instance.id == id_ and type_ == rdf_class.id).one()
-        return instance
-    except NoResultFound:
-        raise InstanceNotFound(type_=rdf_class.name, id_=id_)
-
-
-def get_search_props(session, search_params):
-    """Retrieve a type of collection from the database.
-    :param session: sqlalchemy scoped session
-    :param search_params: Query parameters
-    :return: search properties(dict)
-    """
-    try:
-        # Reconstruct dict with property ids as keys
-        search_props = parse_search_params(search_params=search_params, properties=properties,
-                                           session=session)
-        return search_props
-    except InvalidSearchParameter:
-        raise
-
-
-def get_all_instances(session, type_):
-    """Get all the instances to be deleted from the database which is
-    used to delete their IAC, III and IIT data.
-    :param session: sqlalchemy scoped session
-    :param type_: type of object to be deleted
-    :returns instances: all the object instances in the database with given type
-    """
-    rdf_class = get_rdf_class(session, type_)
-    try:
-        instances = session.query(Instance).filter(Instance.type_ == rdf_class.id).all()
-        return instances
-    except NoResultFound:
-        instances = list()
-        return instances
-
-
-def get_all_filtered_instances(session, search_params, type_):
-    """Get all the filtered instances of from the database
-    based on given query parameters.
-    :param session: sqlalchemy scoped session
-    :param search_params: Query parameters
-    :param type_: type of object to be deleted
-    :return: filtered instances
-    """
-    instances = get_all_instances(session, type_)
-    search_props = get_search_props(session, search_params)
-    filtered_instances = list()
-    for instance_ in instances:
-        if apply_filter(instance_.id, search_props, triples, session) is True:
-            filtered_instances.append(instance_)
-    return filtered_instances

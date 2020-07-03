@@ -14,7 +14,9 @@ from hydrus.data.exceptions import (
     InstanceNotFound,
     PageNotFound,
     InvalidSearchParameter,
-    OffsetOutOfRange)
+    OffsetOutOfRange,
+    PropertyNotGiven
+)
 
 from hydrus.helpers import (
     set_response_headers,
@@ -132,7 +134,8 @@ def item_collection_put_response(path: str) -> Response:
                 return set_response_headers(
                     jsonify(status.generate()), headers=headers_,
                     status_code=status.code)
-            except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
+            except (ClassNotFound, InstanceExists, PropertyNotFound,
+                    PropertyNotGiven) as e:
                 error = e.get_HTTP()
                 return error_response(error)
         else:
@@ -146,7 +149,7 @@ def item_collection_put_response(path: str) -> Response:
         link_props, link_type_check = get_link_props(path, object_)
         if validate_object(object_, obj_type, path) and link_type_check:
             try:
-                object_id = crud.insert(object_=object_, link_props=link_props,
+                object_id = crud.insert(object_=object_,
                                         session=get_session())
                 headers_ = [{"Location": f"{get_hydrus_server_url()}{get_api_name()}/{path}/"}]
                 status = HydraStatus(
@@ -183,7 +186,6 @@ def item_collection_post_response(path: str) -> Response:
                         object_=object_,
                         session=get_session(),
                         api_name=get_api_name(),
-                        link_props=link_props,
                         path=path)
                     send_update("POST", path)
                     headers_ = [

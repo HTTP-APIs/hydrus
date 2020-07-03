@@ -8,7 +8,7 @@ from hydrus.utils import (set_session, set_doc, set_hydrus_server_url,
                           set_page_size, set_pagination)
 from hydrus.data import doc_parse
 from hydra_python_core import doc_maker
-from hydrus.data.db_models import Base
+from hydrus.data.db_models import Base, create_database_tables
 from hydrus.data.user import add_user
 from hydrus.data.exceptions import UserExists
 from hydrus.data.stale_records_cleanup import remove_stale_modification_records
@@ -90,7 +90,6 @@ def serve(adduser: tuple, api: str, auth: bool, dburl: str, pagination: bool,
     # See http://docs.sqlalchemy.org/en/rel_1_0/core/engines.html for more info
     # DB_URL = 'sqlite:///database.db'
     DB_URL = dburl
-
     # Define the server URL, this is what will be displayed on the Doc
     HYDRUS_SERVER_URL = f"{serverurl}:{str(port)}/"
 
@@ -101,12 +100,6 @@ def serve(adduser: tuple, api: str, auth: bool, dburl: str, pagination: bool,
     click.echo("Setting up the database")
     # Create a connection to the database you want to use
     engine = create_engine(DB_URL, connect_args={'check_same_thread': False})
-    # Add the required Models to the database
-
-    if use_db is False:
-        click.echo("Creating models")
-        Base.metadata.drop_all(engine)
-        Base.metadata.create_all(engine)
     # Define the Hydra API Documentation
     # NOTE: You can use your own API Documentation and create a HydraDoc object
     # using doc_maker or you may create your own HydraDoc Documentation using
@@ -164,15 +157,13 @@ def serve(adduser: tuple, api: str, auth: bool, dburl: str, pagination: bool,
     # You can also pass dictionary defined in
     # hydra_python_core/doc_writer_sample_output.py
     classes = doc_parse.get_classes(apidoc.generate())
-
-    # Get all the properties from the classes
-    properties = doc_parse.get_all_properties(classes)
-
     # Insert them into the database
     if use_db is False:
+        Base.metadata.drop_all(engine)
         click.echo("Adding Classes and Properties")
-        doc_parse.insert_classes(classes, session)
-        doc_parse.insert_properties(properties, session)
+        create_database_tables(classes)
+        click.echo("Creating models")
+        Base.metadata.create_all(engine)
 
     # Add authorized users and pass if they already exist
     click.echo("Adding authorized users")

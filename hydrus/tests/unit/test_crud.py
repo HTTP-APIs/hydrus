@@ -8,6 +8,7 @@ import uuid
 from hydra_python_core.doc_writer import HydraLink
 
 import hydrus.data.crud as crud
+from hydrus.data.exceptions import PropertyNotGiven
 from hydrus.tests.conftest import gen_dummy_object
 
 
@@ -33,39 +34,22 @@ def test_crud_get_returns_correct_object(drone_doc_collection_classes, drone_doc
 
 def test_get_for_nested_obj(drone_doc_collection_classes, drone_doc, session, constants):
     """Test CRUD get operation for object that can contain other objects."""
-    API_NAME = constants['API_NAME']
     for class_ in drone_doc_collection_classes:
         for prop in drone_doc.parsed_classes[class_]['class'].supportedProperty:
-            if isinstance(prop.prop, HydraLink) or 'vocab:' in prop.prop:
-                link_props = {}
-                dummy_obj = gen_dummy_object(class_, drone_doc)
-                if isinstance(prop.prop, HydraLink):
-                    nested_class = prop.prop.range.replace('vocab:', '')
-                    for collection_path in drone_doc.collections:
-                        coll_class = drone_doc.collections[
-                            collection_path]['collection'].class_.title
-                        if nested_class == coll_class:
-                            id_ = str(uuid.uuid4())
-                            crud.insert(
-                                gen_dummy_object(nested_class, drone_doc),
-                                id_=id_,
-                                session=session)
-                            link_props[prop.title] = id_
-                            dummy_obj[prop.title] = '{}/{}/{}'.format(
-                                API_NAME, collection_path, id_)
-                else:
+            if not isinstance(prop.prop, HydraLink):
+                if 'vocab:' in prop.prop:
+                    dummy_obj = gen_dummy_object(class_, drone_doc)
                     nested_class = prop.prop.replace('vocab:', '')
-                obj_id = str(uuid.uuid4())
-                response = crud.insert(object_=dummy_obj, id_=obj_id,
-                                       link_props=link_props, session=session)
-                object_ = crud.get(id_=obj_id, type_=class_, session=session,
-                                   api_name='api')
-                assert prop.title in object_
-                nested_obj_id = object_[prop.title]
-                nested_obj = crud.get(id_=nested_obj_id, type_=nested_class,
-                                      session=session, api_name='api')
-                assert nested_obj['@id'].split('/')[-1] == nested_obj_id
-                break
+                    obj_id = str(uuid.uuid4())
+                    response = crud.insert(object_=dummy_obj, id_=obj_id, session=session)
+                    object_ = crud.get(id_=obj_id, type_=class_, session=session,
+                                       api_name='api')
+                    assert prop.title in object_
+                    nested_obj_id = object_[prop.title]
+                    nested_obj = crud.get(id_=nested_obj_id, type_=nested_class,
+                                          session=session, api_name='api')
+                    assert nested_obj['@id'].split('/')[-1] == nested_obj_id
+                    break
 
 
 def test_searching_over_collection_elements(drone_doc_collection_classes, drone_doc, session):
@@ -260,11 +244,12 @@ def test_delete_multiple_id(drone_doc_collection_classes, drone_doc, session):
     """Test CRUD insert when multiple ID's are given """
     objects = list()
     ids = '{},{}'.format(str(uuid.uuid4()), str(uuid.uuid4()))
+    random_class = random.choice(drone_doc_collection_classes)
     for index in range(len(ids.split(','))):
-        object = gen_dummy_object(random.choice(drone_doc_collection_classes), drone_doc)
+        object = gen_dummy_object(random_class, drone_doc)
         objects.append(object)
     insert_response = crud.insert_multiple(objects_=objects, session=session, id_=ids)
-    delete_response = crud.delete_multiple(id_=ids, type_=objects[0]['@type'], session=session)
+    delete_response = crud.delete_multiple(id_=ids, type_=random_class, session=session)
 
     response_code = None
     id_list = ids.split(',')
@@ -279,3 +264,27 @@ def test_delete_multiple_id(drone_doc_collection_classes, drone_doc, session):
         error = e.get_HTTP()
         response_code = error.code
     assert 404 == response_code
+
+
+def test_insert_when_property_not_given(drone_doc_collection_classes, drone_doc,
+                                        session, constants):
+    """Test CRUD insert operation when a required foreign key
+    property of that resource(column in the table) not given"""
+    for class_ in drone_doc_collection_classes:
+        for prop in drone_doc.parsed_classes[class_]['class'].supportedProperty:
+            if isinstance(prop.prop, HydraLink) or 'vocab:' in prop.prop:
+                dummy_obj = gen_dummy_object(class_, drone_doc)
+                if isinstance(prop.prop, HydraLink):
+                    nested_class = prop.prop.range.replace('vocab:', '')
+                else:
+                    nested_class = prop.prop.replace('vocab:', '')
+                continue
+    # remove the foreign key resource on purpose for testing
+    dummy_obj.pop(nested_class)
+    id_ = str(uuid.uuid4())
+    try:
+        insert_response = crud.insert(object_=dummy_obj, id_=id_, session=session)
+    except PropertyNotGiven as e:
+        error = e.get_HTTP()
+        response_code = error.code
+        assert 400 == response_code

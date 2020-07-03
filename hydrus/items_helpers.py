@@ -67,8 +67,7 @@ def items_put_response(path: str, int_list="") -> Response:
                 try:
                     # Insert object and return location in Header
                     object_id = crud.insert_multiple(
-                        objects_=object_, session=get_session(), id_=int_list,
-                        link_props_list=link_props_list)
+                        objects_=object_, session=get_session(), id_=int_list)
                     headers_ = [{"Location": f"{get_hydrus_server_url()}"
                                              f"{get_api_name()}/{path}/{object_id}"}]
                     if len(incomplete_objects) > 0:
