@@ -8,6 +8,7 @@ import uuid
 from hydra_python_core.doc_writer import HydraLink
 
 import hydrus.data.crud as crud
+from hydrus.data.exceptions import PropertyNotGiven
 from hydrus.tests.conftest import gen_dummy_object
 
 
@@ -283,7 +284,7 @@ def test_insert_when_property_not_given(drone_doc_collection_classes, drone_doc,
     id_ = str(uuid.uuid4())
     try:
         insert_response = crud.insert(object_=dummy_obj, id_=id_, session=session)
-    except Exception as e:
+    except PropertyNotGiven as e:
         error = e.get_HTTP()
         response_code = error.code
         assert 400 == response_code
