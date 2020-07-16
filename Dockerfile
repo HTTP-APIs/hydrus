@@ -1,4 +1,4 @@
-FROM tiangolo/uwsgi-nginx-flask:python3.6
+FROM tiangolo/uwsgi-nginx-flask:python3.7
 # maybe we want to move to:
 # FROM tiangolo/meinheld-gunicorn-flask:python3.6
 
