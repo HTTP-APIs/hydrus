@@ -85,7 +85,7 @@ def item_collection_get_response(path: str) -> Response:
             return error_response(error)
 
     # If endpoint and GET method is supported in the API and class is supported
-    if path in parsed_classes:
+    if path in parsed_classes and parsed_classes[path]['collection'] is False:
         try:
             class_type = parsed_classes[path]['class'].title
             response = crud.get_single(
