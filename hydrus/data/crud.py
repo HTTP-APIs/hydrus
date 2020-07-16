@@ -423,7 +423,7 @@ def pagination(filtered_instances, path, type_, API_NAME,
     collection_template = {
         "@id": f"/{API_NAME}/{path}/",
         "@context": None,
-        "@type": f"{type_}",
+        "@type": f"{path}",
         "members": list()
     }  # type: Dict[str, Any]
     result_length = len(filtered_instances)
