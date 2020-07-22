@@ -97,6 +97,14 @@ class Resource:
             else:
                 attr_dict[title] = Column(String)
 
+        if "manages" in self.resource:
+            # if the class is a collection, add an extra column for
+            # collection id
+            attr_dict['collection_id'] = Column(
+                String,
+                default=lambda: str(uuid.uuid4()),
+            )
+
         return attr_dict
 
     @staticmethod
