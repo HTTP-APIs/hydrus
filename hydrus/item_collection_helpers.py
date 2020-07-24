@@ -54,12 +54,31 @@ def item_collection_get_response(path: str) -> Response:
     collections, parsed_classes = get_collections_and_parsed_classes()
     api_name = get_api_name()
     if path in collections:
+        pass
+
+    # If endpoint and GET method is supported in the API and class is supported
+    if path in parsed_classes:
+        # try:
+        #     class_type = parsed_classes[path]['class'].title
+        #     response = crud.get_single(
+        #         class_type,
+        #         api_name=api_name,
+        #         session=get_session(),
+        #         path=path)
+        #     response = finalize_response(path, response)
+        #     return set_response_headers(jsonify(hydrafy(response, path=path)))
+        # except (ClassNotFound, InstanceNotFound) as e:
+        #     error = e.get_HTTP()
+        #     return error_response(error)
         # If endpoint and GET method is supported in the API
         # and collection name in document's collections
-        collection = collections[path]["collection"]
+        # collection = collections[path]["collection"]
         # get path of the collection class
-        class_path = collection.class_.path
-        class_type = collection.class_.title
+        # class_path = collection.class_.path
+        # class_type = collection.class_.title
+        # import pdb;pdb.set_trace()
+        class_path = path
+        class_type = parsed_classes[path]['class'].title
         try:
             # Get collection details from the database
             # create partial function for crud operation
@@ -84,21 +103,6 @@ def item_collection_get_response(path: str) -> Response:
             error = e.get_HTTP()
             return error_response(error)
 
-    # If endpoint and GET method is supported in the API and class is supported
-    if path in parsed_classes and f"{path}Collection" not in collections:
-        try:
-            class_type = parsed_classes[path]['class'].title
-            response = crud.get_single(
-                class_type,
-                api_name=api_name,
-                session=get_session(),
-                path=path)
-            response = finalize_response(path, response)
-            return set_response_headers(jsonify(hydrafy(response, path=path)))
-        except (ClassNotFound, InstanceNotFound) as e:
-            error = e.get_HTTP()
-            return error_response(error)
-
 
 def item_collection_put_response(path: str) -> Response:
     """
@@ -111,14 +115,15 @@ def item_collection_put_response(path: str) -> Response:
     """
     object_ = json.loads(request.data.decode('utf-8'))
     collections, parsed_classes = get_collections_and_parsed_classes()
-    if path in collections:
+    if path in parsed_classes:
         # If collection name in document's collections
-        collection = collections[path]["collection"]
+        # collection = collections[path]["collection"]
         # title of HydraClass object corresponding to collection
-        obj_type = collection.class_.title
+        # obj_type = collection.class_.title
         # get path of the collection class
-        class_path = collection.class_.path
-
+        # class_path = collection.class_.path
+        obj_type = getType(path, "PUT")
+        class_path = path
         if validate_object(object_, obj_type, class_path):
             # If Item in request's JSON is a valid object ie. @type is a key in object_
             # and the right Item type is being added to the collection
@@ -142,8 +147,7 @@ def item_collection_put_response(path: str) -> Response:
             error = HydraError(code=400, title="Data is not valid")
             return error_response(error)
 
-    if (path in parsed_classes and
-            f"{path}Collection" not in collections):
+    if path in collections:
         # If path is in parsed_classes but is not a collection
         obj_type = getType(path, "PUT")
         link_props, link_type_check = get_link_props(path, object_)
