@@ -33,7 +33,7 @@ from hydrus.helpers import (
     check_writeable_props,
     get_context
 )
-from hydrus.utils import get_doc
+from hydrus.utils import get_doc, get_collections_and_parsed_classes
 from hydrus.itemhelpers import (
     items_get_check_support,
     items_post_check_support,
@@ -89,10 +89,15 @@ class Item(Resource):
         :return : object with id=id_
         """
         id_ = str(id_)
-        item_class = get_doc().collections[path]["collection"].class_
-        class_type = item_class.title
-        # Get path of the collection-class
-        class_path = item_class.path
+        collections, parsed_classes = get_collections_and_parsed_classes()
+        if path in parsed_classes:
+            class_path = path
+            class_type = parsed_classes[path]['class'].title
+        if path in collections:
+            item_class = collections[path]["collection"].class_
+            class_type = item_class.title
+            # Get path of the collection-class
+            class_path = item_class.path
 
         if checkClassOp(class_path, "GET"):
             return items_get_check_support(id_, class_type, class_path, path)
@@ -106,9 +111,12 @@ class Item(Resource):
         :param path - Path for Item type( Specified in APIDoc @id)
         """
         id_ = str(id_)
-        item_class = get_doc().collections[path]["collection"].class_
-        # Get path of the collection-class
-        class_path = item_class.path
+        collections, parsed_classes = get_collections_and_parsed_classes()
+        if path in parsed_classes:
+            class_path = path
+        if path in collections:
+            item_class = collections[path]["collection"].class_
+            class_path = item_class.path
         object_ = json.loads(request.data.decode('utf-8'))
         if checkClassOp(class_path, "POST") and check_writeable_props(class_path, object_):
             return items_post_check_support(id_, object_, class_path, path)
@@ -122,9 +130,12 @@ class Item(Resource):
         :param path - Path for Item type( Specified in APIDoc @id) to be updated
         """
         id_ = str(id_)
-        item_class = get_doc().collections[path]["collection"].class_
-        # Get path of the collection-class
-        class_path = item_class.path
+        collections, parsed_classes = get_collections_and_parsed_classes()
+        if path in parsed_classes:
+            class_path = path
+        if path in collections:
+            item_class = collections[path]["collection"].class_
+            class_path = item_class.path
         if checkClassOp(class_path, "PUT"):
             return items_put_check_support(id_, class_path, path)
         abort(405)
@@ -137,10 +148,15 @@ class Item(Resource):
         :param path - Path for Item type( Specified in APIDoc @id) to be deleted
         """
         id_ = str(id_)
-        item_class = get_doc().collections[path]["collection"].class_
-        class_type = item_class.title
-        # Get path of the collection-class
-        class_path = item_class.path
+        collections, parsed_classes = get_collections_and_parsed_classes()
+        if path in parsed_classes:
+            class_path = path
+            class_type = parsed_classes[path]['class'].title
+        if path in collections:
+            item_class = collections[path]["collection"].class_
+            class_type = item_class.title
+            # Get path of the collection-class
+            class_path = item_class.path
 
         if checkClassOp(class_path, "DELETE"):
             return items_delete_check_support(id_, class_type, path)
@@ -169,7 +185,6 @@ class ItemCollection(Resource):
         Used to add an item to a collection
         :param path - Path for Item type ( Specified in APIDoc @id)
         """
-
         endpoint_ = checkEndpoint("PUT", path)
         if not endpoint_['method']:
             # If endpoint and PUT method is not supported in the API
