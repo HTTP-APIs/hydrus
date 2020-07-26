@@ -92,11 +92,10 @@ class Item(Resource):
             class_path = path
             class_type = parsed_classes[path]['class'].title
         if path in collections:
-            item_class = collections[path]["collection"].class_
-            class_type = item_class.title
+            item_class = collections[path]["collection"]
+            class_type = item_class.name
             # Get path of the collection-class
             class_path = item_class.path
-        import pdb;pdb.set_trace()
         if checkClassOp(class_path, "GET"):
             return items_get_check_support(id_, class_type, class_path, path)
         abort(405)
@@ -113,7 +112,7 @@ class Item(Resource):
         if path in parsed_classes:
             class_path = path
         if path in collections:
-            item_class = collections[path]["collection"].class_
+            item_class = collections[path]["collection"]
             class_path = item_class.path
         object_ = json.loads(request.data.decode('utf-8'))
         if checkClassOp(class_path, "POST") and check_writeable_props(class_path, object_):
@@ -132,7 +131,7 @@ class Item(Resource):
         if path in parsed_classes:
             class_path = path
         if path in collections:
-            item_class = collections[path]["collection"].class_
+            item_class = collections[path]["collection"]
             class_path = item_class.path
         if checkClassOp(class_path, "PUT"):
             return items_put_check_support(id_, class_path, path)
@@ -151,8 +150,8 @@ class Item(Resource):
             class_path = path
             class_type = parsed_classes[path]['class'].title
         if path in collections:
-            item_class = collections[path]["collection"].class_
-            class_type = item_class.title
+            item_class = collections[path]["collection"]
+            class_type = item_class.name
             # Get path of the collection-class
             class_path = item_class.path
 
