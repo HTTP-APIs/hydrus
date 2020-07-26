@@ -176,25 +176,3 @@ def item_collection_post_response(path: str) -> Response:
         else:
             abort(405)
 
-
-def item_collection_delete_response(path: str) -> Response:
-    """
-    Handles DELETE operation on item collection classes.
-
-    :param path: Path for Item Collection
-    :type path: str
-    :return: Appropriate response for the DELETE operation.
-    :rtype: Response
-    """
-    collections, parsed_classes = get_collections_and_parsed_classes()
-    if path in parsed_classes and f"{path}Collection" not in collections:
-        # No Delete Operation for collections
-        try:
-            class_type = parsed_classes[path]['class'].title
-            crud.delete_single(class_type, session=get_session())
-            send_update("DELETE", path)
-            status = HydraStatus(code=200, title="Object successfully added")
-            return set_response_headers(jsonify(status.generate()))
-        except (ClassNotFound, InstanceNotFound) as e:
-            error = e.get_HTTP()
-            return error_response(error)
