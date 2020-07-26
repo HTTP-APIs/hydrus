@@ -144,7 +144,14 @@ def check_required_props(path: str, obj: Dict[str, Any]) -> bool:
     :return: True if the object contains all required properties
              False otherwise.
     """
-    for prop in get_doc().parsed_classes[path]["class"].supportedProperty:
+    collections, parsed_classes = get_collections_and_parsed_classes()
+    if path in collections:
+        # path is of a collection class
+        supported_properties = get_doc().collections[path]["collection"].supportedProperty
+    else:
+        # path is of a non-collection class
+        supported_properties = get_doc().parsed_classes[path]["class"].supportedProperty
+    for prop in supported_properties:
         if prop.required:
             if prop.title not in obj:
                 return False

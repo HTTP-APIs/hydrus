@@ -89,11 +89,14 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
     return object_template
 
 
-def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[str] = None) -> str:
+def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[str] = None,
+           collection: bool = False) -> str:
     """Insert an object to database [POST] and returns the inserted object.
     :param object_: object to be inserted
     :param session: sqlalchemy scoped session
     :param id_: id of the object to be inserted (optional param)
+    :param collection: True if the type_ is of a collection, False for any other class
+
     :return: ID of object inserted
 
 
@@ -110,7 +113,7 @@ def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[str] 
     object_template = copy.deepcopy(object_)
     if id_ is not None:
         object_template['id'] = id_
-    inserted_object_id = insert_object(object_template, session)
+    inserted_object_id = insert_object(object_template, session, collection)
     return inserted_object_id
 
 

@@ -3,6 +3,7 @@ Script to generate the tables in hydrus database based on
 resources in the provided API Doc.
 """
 import copy
+import uuid
 from hydrus.data.db_models import Resource
 from hydrus.data.exceptions import (
     ClassNotFound,
@@ -44,7 +45,7 @@ def get_database_class(type_: str):
     return database_class
 
 
-def insert_object(object_: Dict[str, Any], session: scoped_session) -> str:
+def insert_object(object_: Dict[str, Any], session: scoped_session, collection) -> str:
     """
     Insert the object in the database
     :param object_: Dict containing object properties
@@ -54,41 +55,56 @@ def insert_object(object_: Dict[str, Any], session: scoped_session) -> str:
     type_ = get_type(object_)
     database_class = get_database_class(type_)
     id_ = object_.get("id", None)
-    if (
-        id_ is not None and
-        session.query(exists().where(database_class.id == id_)).scalar()
-    ):
-        raise InstanceExists(type_, id_)
-    foreign_keys = database_class.__table__.foreign_keys
-    for fk in foreign_keys:
-        # the name of the column through which this foreign key relationship
-        # is being established
-        fk_column = fk.info["column_name"]
+    if collection:
+        # if type_ is of a collection class
+        members = object_['members']
+        collection_id = str(uuid.uuid4())
+        for member in members:
+            # add all the members of that collection
+            inserted_object = database_class(members=member, collection_id=collection_id)
+            try:
+                session.add(inserted_object)
+                session.commit()
+            except InvalidRequestError:
+                session.rollback()
+        return collection_id
+    else:
+        # when type_ is of a non-collection class
+        if (
+            id_ is not None and
+            session.query(exists().where(database_class.id == id_)).scalar()
+        ):
+            raise InstanceExists(type_, id_)
+        foreign_keys = database_class.__table__.foreign_keys
+        for fk in foreign_keys:
+            # the name of the column through which this foreign key relationship
+            # is being established
+            fk_column = fk.info["column_name"]
+            try:
+                fk_object = object_[fk_column]
+            except KeyError as e:
+                wrong_property = e.args[0]
+                raise PropertyNotGiven(type_=wrong_property)
+            # insert the foreign key object
+            fk_object_id = insert_object(fk_object, session)
+            # put the id of the foreign instance in this table's column
+            object_[fk_column] = fk_object_id
         try:
-            fk_object = object_[fk_column]
-        except KeyError as e:
-            wrong_property = e.args[0]
-            raise PropertyNotGiven(type_=wrong_property)
-        # insert the foreign key object
-        fk_object_id = insert_object(fk_object, session)
-        # put the id of the foreign instance in this table's column
-        object_[fk_column] = fk_object_id
-    try:
-        # remove the @type from object before using the object to make a
-        # instance of it using sqlalchemy class
-        object_.pop("@type")
-        inserted_object = database_class(**object_)
-    except TypeError as e:
-        # extract the wrong property name from TypeError object
-        wrong_property = e.args[0].split("'")[1]
-        raise PropertyNotFound(type_=wrong_property)
-    try:
-        session.add(inserted_object)
-        session.commit()
-    except InvalidRequestError:
-        session.rollback()
+            # remove the @type from object before using the object to make a
+            # instance of it using sqlalchemy class
+            object_.pop("@type")
+            inserted_object = database_class(**object_)
+        except TypeError as e:
+            # extract the wrong property name from TypeError object
+            wrong_property = e.args[0].split("'")[1]
+            raise PropertyNotFound(type_=wrong_property)
+        try:
+            session.add(inserted_object)
+            session.commit()
+        except InvalidRequestError:
+            session.rollback()
 
-    return inserted_object.id
+        return inserted_object.id
 
 
 def get_object(
