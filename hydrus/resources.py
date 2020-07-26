@@ -42,9 +42,7 @@ from hydrus.itemhelpers import (
 )
 from hydrus.item_collection_helpers import (
     item_collection_get_response,
-    item_collection_put_response,
-    item_collection_post_response,
-    item_collection_delete_response
+    item_collection_put_response
 )
 from hydrus.items_helpers import (
     items_put_response,
@@ -98,7 +96,7 @@ class Item(Resource):
             class_type = item_class.title
             # Get path of the collection-class
             class_path = item_class.path
-
+        import pdb;pdb.set_trace()
         if checkClassOp(class_path, "GET"):
             return items_get_check_support(id_, class_type, class_path, path)
         abort(405)
@@ -190,32 +188,6 @@ class ItemCollection(Resource):
             # If endpoint and PUT method is not supported in the API
             abort(endpoint_['status'])
         return item_collection_put_response(path)
-
-    @authenticate
-    def post(self, path: str) -> Response:
-        """
-        Method executed for POST requests.
-        Used to update a non-collection class.
-        :param path - Path for Item type ( Specified in APIDoc @id)
-        """
-
-        endpoint_ = checkEndpoint("POST", path)
-        if not endpoint_['method']:
-            abort(endpoint_['status'])
-        return item_collection_post_response(path)
-
-    @authenticate
-    def delete(self, path: str) -> Response:
-        """
-        Method executed for DELETE requests.
-        Used to delete a non-collection class.
-        :param path - Path for Item ( Specified in APIDoc @id)
-        """
-
-        endpoint_ = checkEndpoint("DELETE", path)
-        if not endpoint_['method']:
-            abort(endpoint_['status'])
-        return item_collection_delete_response(path)
 
 
 class Items(Resource):
