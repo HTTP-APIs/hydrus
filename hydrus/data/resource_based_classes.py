@@ -45,7 +45,8 @@ def get_database_class(type_: str):
     return database_class
 
 
-def insert_object(object_: Dict[str, Any], session: scoped_session, collection) -> str:
+def insert_object(object_: Dict[str, Any], session: scoped_session,
+                  collection: bool = False) -> str:
     """
     Insert the object in the database
     :param object_: Dict containing object properties
@@ -150,7 +151,8 @@ def get_object(
         return object_template
 
 
-def delete_object(query_info: Dict[str, str], session: scoped_session, collection: bool) -> None:
+def delete_object(query_info: Dict[str, str], session: scoped_session,
+                  collection: bool = False) -> None:
     """
     Delete the object from the database
     :param query_info: Dict containing the id and @type of object that has to retrieved
@@ -190,7 +192,7 @@ def update_object(
     object_: Dict[str, Any],
     query_info: Dict[str, str],
     session: scoped_session,
-    collection: bool
+    collection: bool = False
 ) -> str:
     """
     Update the object from the database
