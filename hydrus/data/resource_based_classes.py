@@ -58,7 +58,7 @@ def insert_object(object_: Dict[str, Any], session: scoped_session, collection) 
     if collection:
         # if type_ is of a collection class
         members = object_['members']
-        collection_id = str(uuid.uuid4())
+        collection_id = id_ if id_ else str(uuid.uuid4())
         for member in members:
             # add all the members of that collection
             inserted_object = database_class(members=member, collection_id=collection_id)

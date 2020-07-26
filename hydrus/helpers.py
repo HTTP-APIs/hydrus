@@ -353,7 +353,14 @@ def get_link_props(path: str, object_) -> Tuple[Dict[str, Any], bool]:
              second element represents boolean representing validity of the link.
     """
     link_props = {}
-    for supportedProp in get_doc().parsed_classes[path]['class'].supportedProperty:
+    collections, parsed_classes = get_collections_and_parsed_classes()
+    if path in collections:
+        # path is of a collection class
+        supported_properties = get_doc().collections[path]["collection"].supportedProperty
+    else:
+        # path is of a non-collection class
+        supported_properties = get_doc().parsed_classes[path]["class"].supportedProperty
+    for supportedProp in supported_properties:
         if isinstance(supportedProp.prop, HydraLink) and supportedProp.title in object_:
             prop_range = supportedProp.prop.range
             range_class_name = prop_range.replace("vocab:", "")

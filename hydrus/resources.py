@@ -130,13 +130,15 @@ class Item(Resource):
         """
         id_ = str(id_)
         collections, parsed_classes = get_collections_and_parsed_classes()
+        is_collection = False
         if path in parsed_classes:
             class_path = path
         if path in collections:
             item_class = collections[path]["collection"]
             class_path = item_class.path
+        is_collection = True
         if checkClassOp(class_path, "PUT"):
-            return items_put_check_support(id_, class_path, path)
+            return items_put_check_support(id_, class_path, path, is_collection)
         abort(405)
 
     @authenticate

@@ -24,7 +24,8 @@ from hydrus.helpers import (
 from hydrus.utils import (
     get_session,
     get_api_name,
-    get_hydrus_server_url)
+    get_hydrus_server_url,
+    get_collections_and_parsed_classes)
 from hydrus.socketio_factory import socketio
 
 
@@ -91,17 +92,24 @@ def items_post_check_support(id_, object_, class_path, path):
         return error_response(error)
 
 
-def items_put_check_support(id_, class_path, path):
+def items_put_check_support(id_, class_path, path, collection):
     """Check if class_type supports PUT operation"""
     object_ = json.loads(request.data.decode('utf-8'))
-    obj_type = getType(class_path, "PUT")
+    collections, parsed_classes = get_collections_and_parsed_classes()
+    if path in parsed_classes:
+        class_path = path
+        obj_type = getType(path, "PUT")
+    elif path in collections:
+        collection = collections[path]["collection"]
+        class_path = collection.path
+        obj_type = collection.name
     link_props, link_type_check = get_link_props(class_path, object_)
     # Load new object and type
     if (validate_object(object_, obj_type, class_path) and link_type_check):
         try:
             # Add the object with given ID
             object_id = crud.insert(object_=object_, id_=id_,
-                                    session=get_session())
+                                    session=get_session(), collection=collection)
             headers_ = [{"Location": f"{get_hydrus_server_url()}"
                                      f"{get_api_name()}/{path}/{object_id}"}]
             status_description = f"Object with ID {object_id} successfully added"
