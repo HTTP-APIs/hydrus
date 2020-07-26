@@ -206,7 +206,8 @@ def update(id_: str,
                          str],
            session: scoped_session,
            api_name: str,
-           path: str = None) -> str:
+           path: str = None,
+           collection: bool = False) -> str:
     """Update an object properties based on the given object [PUT].
     :param id_: if of object to be updated
     :param type_: type of object to be updated
@@ -214,13 +215,14 @@ def update(id_: str,
     :param session: sqlalchemy scoped session
     :param api_name: api name specified while starting server
     :param path: endpoint
+    :param collection: True if the type_ is of a collection, False for any other class
     :return: id of updated object
     """
     query_info = {
         "@type": type_,
         "id_": id_
     }
-    updated_object_id = update_object(object_, query_info, session)
+    updated_object_id = update_object(object_, query_info, session, collection)
     return updated_object_id
 
 

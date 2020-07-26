@@ -48,9 +48,16 @@ def items_get_check_support(id_, class_type, class_path, path, collection=False)
         return error_response(error)
 
 
-def items_post_check_support(id_, object_, class_path, path):
+def items_post_check_support(id_, object_, class_path, path, collection):
     """Check if class_type supports POST operation"""
-    obj_type = getType(class_path, "POST")
+    collections, parsed_classes = get_collections_and_parsed_classes()
+    if path in parsed_classes:
+        class_path = path
+        obj_type = getType(path, "PUT")
+    elif path in collections:
+        collection = collections[path]["collection"]
+        class_path = collection.path
+        obj_type = collection.name
     link_props, link_type_check = get_link_props(class_path, object_)
     # Load new object and type
     if (validate_object(object_, obj_type, class_path) and link_type_check):
@@ -62,7 +69,8 @@ def items_post_check_support(id_, object_, class_path, path):
                 id_=id_,
                 type_=object_["@type"],
                 session=get_session(),
-                api_name=get_api_name())
+                api_name=get_api_name(),
+                collection=collection)
             method = "POST"
             resource_url = f"{get_hydrus_server_url()}{get_api_name()}/{path}/{object_id}"
             last_job_id = crud.get_last_modification_job_id(

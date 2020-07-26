@@ -111,14 +111,16 @@ class Item(Resource):
         """
         id_ = str(id_)
         collections, parsed_classes = get_collections_and_parsed_classes()
+        is_collection = False
         if path in parsed_classes:
             class_path = path
         if path in collections:
             item_class = collections[path]["collection"]
             class_path = item_class.path
+            is_collection = True
         object_ = json.loads(request.data.decode('utf-8'))
         if checkClassOp(class_path, "POST") and check_writeable_props(class_path, object_):
-            return items_post_check_support(id_, object_, class_path, path)
+            return items_post_check_support(id_, object_, class_path, path, is_collection)
         abort(405)
 
     @authenticate

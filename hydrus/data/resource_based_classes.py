@@ -190,6 +190,7 @@ def update_object(
     object_: Dict[str, Any],
     query_info: Dict[str, str],
     session: scoped_session,
+    collection: bool
 ) -> str:
     """
     Update the object from the database
@@ -199,18 +200,18 @@ def update_object(
     :return: the ID of the updated object
     """
     # Keep the object as fail safe
-    old_object = get_object(query_info, session)
+    old_object = get_object(query_info, session, collection)
     # Delete the old object
-    delete_object(query_info, session)
+    delete_object(query_info, session, collection)
     id_ = query_info["id_"]
     # Try inserting new object
     try:
         object_["id"] = id_
-        d = insert_object(object_, session)
+        d = insert_object(object_, session, collection)
     except Exception as e:
         # Put old object back
         old_object["id"] = id_
-        d = insert_object(old_object, session)
+        d = insert_object(old_object, session, collection)
         raise e
     return id_
 
