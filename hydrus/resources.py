@@ -136,7 +136,7 @@ class Item(Resource):
         if path in collections:
             item_class = collections[path]["collection"]
             class_path = item_class.path
-        is_collection = True
+            is_collection = True
         if checkClassOp(class_path, "PUT"):
             return items_put_check_support(id_, class_path, path, is_collection)
         abort(405)
