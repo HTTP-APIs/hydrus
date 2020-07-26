@@ -121,13 +121,12 @@ def get_object(
     id_ = query_info["id_"]
     database_class = get_database_class(type_)
     if collection:
-        try:
-            objects = (
-                session.query(database_class.members)
-                .filter(database_class.collection_id == id_)
-                .all()
-            )
-        except NoResultFound:
+        objects = (
+            session.query(database_class.members)
+            .filter(database_class.collection_id == id_)
+            .all()
+        )
+        if len(objects) == 0:
             raise InstanceNotFound(type_=type_, id_=id_)
         members = [object_.members for object_ in objects]
         object_template = dict()
