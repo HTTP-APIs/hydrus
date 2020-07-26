@@ -126,11 +126,13 @@ def items_put_check_support(id_, class_path, path, collection):
         return error_response(error)
 
 
-def items_delete_check_support(id_, class_type, path):
+def items_delete_check_support(id_, class_type, path, collection):
     """Check if class_type supports PUT operation"""
     try:
         # Delete the Item with ID == id_
-        crud.delete(id_, class_type, session=get_session())
+        # for colletions, id_ is corresponding to their collection_id and not the id_
+        # primary key
+        crud.delete(id_, class_type, session=get_session(), collection=collection)
         method = "DELETE"
         resource_url = f"{get_hydrus_server_url()}{get_api_name()}/{path}/{id_}"
         last_job_id = crud.get_last_modification_job_id(session=get_session())

@@ -114,6 +114,7 @@ def get_object(
     Get the object from the database
     :param query_info: Dict containing the id and @type of object that has to retrieved
     :param session: sqlalchemy session
+    :param collection: True if the type_ is of a collection, False for any other class
     :return: dict of object with its properties
     """
     type_ = query_info["@type"]
@@ -150,28 +151,40 @@ def get_object(
         return object_template
 
 
-def delete_object(query_info: Dict[str, str], session: scoped_session) -> None:
+def delete_object(query_info: Dict[str, str], session: scoped_session, collection: bool) -> None:
     """
     Delete the object from the database
     :param query_info: Dict containing the id and @type of object that has to retrieved
     :param session: sqlalchemy session
+    :param collection: True if the type_ is of a collection, False for any other class
     """
     type_ = query_info["@type"]
     id_ = query_info["id_"]
     database_class = get_database_class(type_)
-    try:
-        object_ = (
-            session.query(database_class)
-            .filter(database_class.id == id_)
-            .one()
-        )
-    except NoResultFound:
-        raise InstanceNotFound(type_=type_, id_=id_)
-    session.delete(object_)
-    try:
-        session.commit()
-    except InvalidRequestError:
-        session.rollback()
+    if collection:
+        try:
+            objects = session.query(database_class).filter_by(collection_id=id_).delete()
+        except NoResultFound:
+            raise InstanceNotFound(type_=type_, id_=id_)
+        try:
+            session.commit()
+        except InvalidRequestError:
+            session.rollback()
+        return id_
+    else:
+        try:
+            object_ = (
+                session.query(database_class)
+                .filter(database_class.id == id_)
+                .one()
+            )
+        except NoResultFound:
+            raise InstanceNotFound(type_=type_, id_=id_)
+        session.delete(object_)
+        try:
+            session.commit()
+        except InvalidRequestError:
+            session.rollback()
 
 
 def update_object(
@@ -211,6 +224,7 @@ def get_all_filtered_instances(
     :param session: sqlalchemy scoped session
     :param search_params: Query parameters
     :param type_: @type of object to be deleted
+    :param collection: True if the type_ is of a collection, False for any other class
     :return: filtered instances
     """
     database_class = get_database_class(type_)

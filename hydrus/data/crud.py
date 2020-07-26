@@ -161,7 +161,7 @@ def insert_multiple(objects_: List[Dict[str,
     return instance_id_list
 
 
-def delete(id_: str, type_: str, session: scoped_session) -> None:
+def delete(id_: str, type_: str, session: scoped_session, collection: bool = False) -> None:
     """Delete an Instance and all its relations from DB given id [DELETE].
     :param id_: id of object to be deleted
     :param type_: type of object to be deleted
@@ -176,7 +176,7 @@ def delete(id_: str, type_: str, session: scoped_session) -> None:
         "@type": type_,
         "id_": id_
     }
-    delete_object(query_info, session)
+    delete_object(query_info, session, collection)
 
 
 def delete_multiple(
