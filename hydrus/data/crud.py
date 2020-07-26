@@ -226,7 +226,8 @@ def get_collection(API_NAME: str,
                    paginate: bool,
                    page_size: int,
                    search_params: Dict[str, Any]=None,
-                   path: str = None) -> Dict[str, Any]:
+                   path: str = None,
+                   collection: bool = False) -> Dict[str, Any]:
     """Retrieve a type of collection from the database.
     :param API_NAME: api name specified while starting server
     :param type_: type of object to be updated
@@ -235,6 +236,7 @@ def get_collection(API_NAME: str,
     :param page_size: Number maximum elements showed in a page
     :param search_params: Query parameters
     :param path: endpoint
+    :param collection: True if the type_ is of a collection, False for any other class
     :return: response containing a page of the objects of that particular type_
 
     Raises:
@@ -250,7 +252,7 @@ def get_collection(API_NAME: str,
             database_search_params.pop(param)
     database_search_params = parse_search_params(database_search_params)
     filtered_instances = get_all_filtered_instances(
-        session, database_search_params, type_)
+        session, database_search_params, type_, collection)
     collection_template = pagination(filtered_instances, path, type_, API_NAME,
                                      search_params, paginate, page_size)
     return collection_template

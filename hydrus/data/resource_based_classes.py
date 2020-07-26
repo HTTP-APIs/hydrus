@@ -173,7 +173,7 @@ def update_object(
 
 
 def get_all_filtered_instances(
-    session: scoped_session, search_params: Dict[str, Any], type_: str
+    session: scoped_session, search_params: Dict[str, Any], type_: str, collection: bool = False
 ):
     """Get all the filtered instances of from the database
     based on given query parameters.
@@ -183,29 +183,32 @@ def get_all_filtered_instances(
     :return: filtered instances
     """
     database_class = get_database_class(type_)
-    query = session.query(database_class)
-    for param, param_value in search_params.items():
-        # nested param
-        if type(param_value) is dict:
-            foreign_keys = database_class.__table__.foreign_keys
-            for fk in foreign_keys:
-                if fk.info['column_name'] == param:
-                    fk_table_name = fk.column.table.name
-                    continue
-            nested_param_db_class = get_database_class(fk_table_name)
-            # build query
-            for attr, value in param_value.items():
-                query = query.join(nested_param_db_class)
+    if collection:
+        query = session.query(database_class.collection_id.label('id')).distinct()
+    else:
+        query = session.query(database_class)
+        for param, param_value in search_params.items():
+            # nested param
+            if type(param_value) is dict:
+                foreign_keys = database_class.__table__.foreign_keys
+                for fk in foreign_keys:
+                    if fk.info['column_name'] == param:
+                        fk_table_name = fk.column.table.name
+                        continue
+                nested_param_db_class = get_database_class(fk_table_name)
+                # build query
+                for attr, value in param_value.items():
+                    query = query.join(nested_param_db_class)
+                    try:
+                        query = query.filter(getattr(nested_param_db_class, attr) == value)
+                    except AttributeError:
+                        raise InvalidSearchParameter(f'{param}[{attr}]')
+            else:
+                value = search_params[param]
                 try:
-                    query = query.filter(getattr(nested_param_db_class, attr) == value)
+                    query = query.filter(getattr(database_class, param) == value)
                 except AttributeError:
-                    raise InvalidSearchParameter(f'{param}[{attr}]')
-        else:
-            value = search_params[param]
-            try:
-                query = query.filter(getattr(database_class, param) == value)
-            except AttributeError:
-                raise InvalidSearchParameter(f'{param}')
+                    raise InvalidSearchParameter(f'{param}')
 
     filtered_instances = query.all()
     return filtered_instances
