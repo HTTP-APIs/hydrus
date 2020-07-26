@@ -28,7 +28,7 @@ from hydrus.utils import (
 from hydrus.socketio_factory import socketio
 
 
-def items_get_check_support(id_, class_type, class_path, path):
+def items_get_check_support(id_, class_type, class_path, path, collection=False):
     """Check if class_type supports GET operation"""
     try:
         # Try getting the Item based on ID and Class type
@@ -36,8 +36,8 @@ def items_get_check_support(id_, class_type, class_path, path):
             id_,
             class_type,
             api_name=get_api_name(),
-            session=get_session())
-
+            session=get_session(),
+            collection=collection)
         response = finalize_response(class_path, response)
         return set_response_headers(
             jsonify(hydrafy(response, path=path)))

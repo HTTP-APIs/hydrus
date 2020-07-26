@@ -88,6 +88,7 @@ class Item(Resource):
         """
         id_ = str(id_)
         collections, parsed_classes = get_collections_and_parsed_classes()
+        is_collection = False
         if path in parsed_classes:
             class_path = path
             class_type = parsed_classes[path]['class'].title
@@ -96,8 +97,9 @@ class Item(Resource):
             class_type = item_class.name
             # Get path of the collection-class
             class_path = item_class.path
+            is_collection = True
         if checkClassOp(class_path, "GET"):
-            return items_get_check_support(id_, class_type, class_path, path)
+            return items_get_check_support(id_, class_type, class_path, path, is_collection)
         abort(405)
 
     @authenticate

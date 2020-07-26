@@ -61,13 +61,14 @@ from hydrus.data.resource_based_classes import (
 
 
 def get(id_: str, type_: str, api_name: str, session: scoped_session,
-        path: str = None) -> Dict[str, str]:
+        path: str = None, collection: bool = False) -> Dict[str, str]:
     """Retrieve an Instance with given ID from the database [GET].
     :param id_: id of object to be fetched
     :param type_: type of object
     :param api_name: name of api specified while starting server
     :param session: sqlalchemy scoped session
     :param path: endpoint
+    :param collection: True if the type_ is of a collection, False for any other class
     :return: response to the request
 
 
@@ -80,7 +81,7 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
         "@type": type_,
         "id_": id_
     }
-    object_template = get_object(query_info, session)
+    object_template = get_object(query_info, session, collection)
     if path is not None:
         object_template["@id"] = f"/{api_name}/{path}Collection/{id_}"
     else:

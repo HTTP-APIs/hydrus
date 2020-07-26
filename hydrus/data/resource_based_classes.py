@@ -108,7 +108,7 @@ def insert_object(object_: Dict[str, Any], session: scoped_session, collection) 
 
 
 def get_object(
-    query_info: Dict[str, str], session: scoped_session
+    query_info: Dict[str, str], session: scoped_session, collection: bool = False
 ) -> Dict[str, str]:
     """
     Get the object from the database
@@ -119,20 +119,35 @@ def get_object(
     type_ = query_info["@type"]
     id_ = query_info["id_"]
     database_class = get_database_class(type_)
-    try:
-        object_ = (
-            session.query(database_class)
-            .filter(database_class.id == id_)
-            .one()
-        ).__dict__
-    except NoResultFound:
-        raise InstanceNotFound(type_=type_, id_=id_)
-    # Remove the unnecessary keys from the object retrieved from database
-    object_template = copy.deepcopy(object_)
-    object_template.pop("_sa_instance_state")
-    object_template.pop("id")
-    object_template["@type"] = query_info["@type"]
-    return object_template
+    if collection:
+        try:
+            objects = (
+                session.query(database_class.members)
+                .filter(database_class.collection_id == id_)
+                .all()
+            )
+        except NoResultFound:
+            raise InstanceNotFound(type_=type_, id_=id_)
+        members = [object_.members for object_ in objects]
+        object_template = dict()
+        object_template["@type"] = query_info["@type"]
+        object_template["members"] = members
+        return object_template
+    else:
+        try:
+            object_ = (
+                session.query(database_class)
+                .filter(database_class.id == id_)
+                .one()
+            ).__dict__
+        except NoResultFound:
+            raise InstanceNotFound(type_=type_, id_=id_)
+        # Remove the unnecessary keys from the object retrieved from database
+        object_template = copy.deepcopy(object_)
+        object_template.pop("_sa_instance_state")
+        object_template.pop("id")
+        object_template["@type"] = query_info["@type"]
+        return object_template
 
 
 def delete_object(query_info: Dict[str, str], session: scoped_session) -> None:
