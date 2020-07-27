@@ -267,7 +267,7 @@ class TestApp():
                         # first insert a object which we will update later
                         dummy_object = gen_dummy_object(class_.title, doc)
                         initial_put_response = test_app_client.put(endpoints[endpoint],
-                                                                data=json.dumps(dummy_object))
+                                                                   data=json.dumps(dummy_object))
                         response = json.loads(
                             initial_put_response.data.decode('utf-8'))
                         regex = r'(.*)ID (.{36})* (.*)'
@@ -296,7 +296,7 @@ class TestApp():
                         # first insert a object which we will update later
                         dummy_object = gen_dummy_object(class_.title, doc)
                         initial_put_response = test_app_client.put(endpoints[endpoint],
-                                                                data=json.dumps(dummy_object))
+                                                                   data=json.dumps(dummy_object))
                         response = json.loads(
                             initial_put_response.data.decode('utf-8'))
                         regex = r'(.*)ID (.{36})* (.*)'
@@ -381,7 +381,8 @@ class TestApp():
                     assert 'hydra:first' in response_for_page_param_data['hydra:view']
                     assert 'hydra:last' in response_for_page_param_data['hydra:view']
                     if 'hydra:next' in response_for_page_param_data['hydra:view']:
-                        assert 'pageIndex=2' in response_for_page_param_data['hydra:view']['hydra:next']
+                        hydra_next = response_for_page_param_data['hydra:view']['hydra:next']
+                        assert 'pageIndex=2' in hydra_next
                         next_response = test_app_client.get(
                             response_for_page_param_data['hydra:view']['hydra:next'])
                         assert next_response.status_code == 200
@@ -424,7 +425,7 @@ class TestApp():
                     if 'GET' in class_methods:
                         response_get = test_app_client.get(endpoints[endpoint])
                         assert response_get.status_code == 200
-                        instance = response_get.json['members'][0]['@id']        
+                        instance = response_get.json['members'][0]['@id']
                         response_get_data = test_app_client.get(instance).json
                         assert '@context' in response_get_data
                         assert '@id' in response_get_data

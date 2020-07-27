@@ -78,8 +78,8 @@ def test_wrong_pass_put(test_client, constants, put_allowed_class_names, headers
             response = test_client.get(endpoints[endpoint])
             headers_with_wrong_pass['X-Authentication'] = response.headers['X-Authentication']
             response_put = test_client.put(endpoints[endpoint],
-                                             headers=headers_with_wrong_pass,
-                                             data=json.dumps(dict(foo="bar")))
+                                           headers=headers_with_wrong_pass,
+                                           data=json.dumps(dict(foo="bar")))
             assert response_put.status_code == 401
 
 
@@ -169,4 +169,3 @@ def test_correct_auth_post(operation, test_client, constants, put_allowed_class_
                                                           headers=headers_with_correct_pass_and_id,
                                                           data=json.dumps(dict(foo="bar")))
             assert response_op.status_code != 401
-
