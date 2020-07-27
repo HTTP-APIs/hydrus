@@ -159,6 +159,20 @@ def collection_names(doc):
             for collection_object in doc.collections.values()]
 
 
+@pytest.fixture(scope='module')
+def put_allowed_class_names(doc):
+    """
+    Get the names of all the parsed classes endpoints in a given HydraDoc object
+    """
+
+    allowed_classes = list()
+    for parsed_class in doc.parsed_classes.values():
+        for operation in parsed_class['class'].supportedOperation:
+            if operation.method == 'PUT':
+                allowed_classes.append(parsed_class['class'].title)
+    return allowed_classes
+
+
 @pytest.fixture(scope='module', name='test_client')
 def test_client_for_auth_tests(constants, session, doc, init_db_for_auth_tests, app):
     """
