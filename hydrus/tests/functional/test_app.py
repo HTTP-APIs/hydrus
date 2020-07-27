@@ -68,7 +68,6 @@ class TestApp():
 
     def test_Collections_GET(self, test_app_client, constants, doc, init_db_for_app_tests):
         """Test GET on collection endpoints."""
-        # import pdb;pdb.set_trace()
         API_NAME = constants['API_NAME']
         index = test_app_client.get(f'/{API_NAME}')
         assert index.status_code == 200
@@ -131,7 +130,7 @@ class TestApp():
             collection_name = '/'.join(endpoints[endpoint].split(f'/{API_NAME}/')[1:])
             if collection_name in doc.collections:
                 collection = doc.collections[collection_name]['collection']
-                dummy_object = gen_dummy_object(collection.class_.title, doc)
+                dummy_object = gen_dummy_object(collection.name, doc)
                 good_response_put = test_app_client.put(endpoints[endpoint],
                                                         data=json.dumps(dummy_object))
                 assert good_response_put.status_code == 201
@@ -147,9 +146,8 @@ class TestApp():
                 endpoints[endpoint].split(f'/{API_NAME}/')[1:])
             if collection_name in doc.collections:
                 collection = doc.collections[collection_name]['collection']
-                class_ = doc.parsed_classes[collection.class_.title]['class']
-                class_methods = [x.method for x in class_.supportedOperation]
-                dummy_object = gen_dummy_object(collection.class_.title, doc)
+                collection_methods = [x.method for x in collection.supportedOperation]
+                dummy_object = gen_dummy_object(collection.name, doc)
                 initial_put_response = test_app_client.put(
                     endpoints[endpoint], data=json.dumps(dummy_object))
                 assert initial_put_response.status_code == 201
@@ -158,9 +156,9 @@ class TestApp():
                 matchObj = re.match(regex, response['description'])
                 assert matchObj is not None
                 id_ = matchObj.group(2)
-                if 'POST' in class_methods:
+                if 'POST' in collection_methods:
                     dummy_object = gen_dummy_object(
-                        collection.class_.title, doc)
+                        collection.name, doc)
                     post_replace_response = test_app_client.post(
                         f'{endpoints[endpoint]}/{id_}', data=json.dumps(dummy_object))
                     assert post_replace_response.status_code == 200
@@ -176,9 +174,8 @@ class TestApp():
                 endpoints[endpoint].split(f'/{API_NAME}/')[1:])
             if collection_name in doc.collections:
                 collection = doc.collections[collection_name]['collection']
-                class_ = doc.parsed_classes[collection.class_.title]['class']
-                class_methods = [x.method for x in class_.supportedOperation]
-                dummy_object = gen_dummy_object(collection.class_.title, doc)
+                collection_methods = [x.method for x in collection.supportedOperation]
+                dummy_object = gen_dummy_object(collection.name, doc)
                 initial_put_response = test_app_client.put(endpoints[endpoint],
                                                            data=json.dumps(dummy_object))
                 assert initial_put_response.status_code == 201
@@ -187,7 +184,7 @@ class TestApp():
                 matchObj = re.match(regex, response['description'])
                 assert matchObj is not None
                 id_ = matchObj.group(2)
-                if 'DELETE' in class_methods:
+                if 'DELETE' in collection_methods:
                     delete_response = test_app_client.delete(f'{endpoints[endpoint]}/{id_}')
                     assert delete_response.status_code == 200
 
@@ -202,11 +199,10 @@ class TestApp():
                 endpoints[endpoint].split(f'/{API_NAME}/')[1:])
             if collection_name in doc.collections:
                 collection = doc.collections[collection_name]['collection']
-                class_ = doc.parsed_classes[collection.class_.title]['class']
-                class_methods = [x.method for x in class_.supportedOperation]
-                dummy_object = gen_dummy_object(collection.class_.title, doc)
-                if 'PUT' in class_methods:
-                    dummy_object = gen_dummy_object(collection.class_.title, doc)
+                collection_methods = [x.method for x in collection.supportedOperation]
+                dummy_object = gen_dummy_object(collection.name, doc)
+                if 'PUT' in collection_methods:
+                    dummy_object = gen_dummy_object(collection.name, doc)
                     put_response = test_app_client.put(f'{endpoints[endpoint]}/{uuid.uuid4()}',
                                                        data=json.dumps(dummy_object))
                     assert put_response.status_code == 201
@@ -267,11 +263,21 @@ class TestApp():
                 if class_name not in doc.collections:
                     class_ = doc.parsed_classes[class_name]['class']
                     class_methods = [x.method for x in class_.supportedOperation]
-                    if 'POST' in class_methods:
+                    if 'PUT' in class_methods:
+                        # first insert a object which we will update later
                         dummy_object = gen_dummy_object(class_.title, doc)
-                        post_response = test_app_client.post(endpoints[endpoint],
-                                                             data=json.dumps(dummy_object))
-                        assert post_response.status_code == 200
+                        initial_put_response = test_app_client.put(endpoints[endpoint],
+                                                                data=json.dumps(dummy_object))
+                        response = json.loads(
+                            initial_put_response.data.decode('utf-8'))
+                        regex = r'(.*)ID (.{36})* (.*)'
+                        matchObj = re.match(regex, response['description'])
+                        id_ = matchObj.group(2)
+                        if 'POST' in class_methods:
+                            dummy_object = gen_dummy_object(class_.title, doc)
+                            post_response = test_app_client.post(f'{endpoints[endpoint]}/{id_}',
+                                                                 data=json.dumps(dummy_object))
+                            assert post_response.status_code == 200
 
     def test_endpointClass_DELETE(self, test_app_client, constants, doc):
         """Check non collection Class DELETE."""
@@ -285,12 +291,21 @@ class TestApp():
                     endpoints[endpoint].split(f'/{API_NAME}/')[1:])
                 if class_name not in doc.collections:
                     class_ = doc.parsed_classes[class_name]['class']
-                    class_methods = [
-                        x.method for x in class_.supportedOperation]
-                    if 'DELETE' in class_methods:
-                        delete_response = test_app_client.delete(
-                            endpoints[endpoint])
-                        assert delete_response.status_code == 200
+                    class_methods = [x.method for x in class_.supportedOperation]
+                    if 'PUT' in class_methods:
+                        # first insert a object which we will update later
+                        dummy_object = gen_dummy_object(class_.title, doc)
+                        initial_put_response = test_app_client.put(endpoints[endpoint],
+                                                                data=json.dumps(dummy_object))
+                        response = json.loads(
+                            initial_put_response.data.decode('utf-8'))
+                        regex = r'(.*)ID (.{36})* (.*)'
+                        matchObj = re.match(regex, response['description'])
+                        id_ = matchObj.group(2)
+                        if 'DELETE' in class_methods:
+                            delete_response = test_app_client.delete(
+                                f'{endpoints[endpoint]}/{id_}')
+                            assert delete_response.status_code == 200
 
     def test_endpointClass_GET(self, test_app_client, constants, doc):
         """Check non collection Class GET."""
@@ -319,16 +334,19 @@ class TestApp():
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
         for endpoint in endpoints:
-            collection_name = '/'.join(endpoints[endpoint].split(f'/{API_NAME}/')[1:])
-            if collection_name in doc.collections:
+            if endpoint not in ['@context', '@id', '@type']:
+                class_name = '/'.join(endpoints[endpoint].split(f'/{API_NAME}/')[1:])
+                if class_name not in doc.collections:
+                    # collections are now just 'set of somehow related objects'
+                    # therefore IRI templates are now served at non-collection
+                    # class endpoints
                     response_get = test_app_client.get(endpoints[endpoint])
                     assert response_get.status_code == 200
                     response_get_data = json.loads(
                         response_get.data.decode('utf-8'))
                     assert 'search' in response_get_data
                     assert 'hydra:mapping' in response_get_data['search']
-                    collection = doc.collections[collection_name]['collection']
-                    class_ = doc.parsed_classes[collection.class_.title]['class']
+                    class_ = doc.parsed_classes[class_name]['class']
                     class_props = [x.prop for x in class_.supportedProperty]
                     for mapping in response_get_data['search']['hydra:mapping']:
                         if mapping['hydra:property'] not in ['limit', 'offset', 'pageIndex']:
@@ -342,49 +360,53 @@ class TestApp():
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
         for endpoint in endpoints:
-            collection_name = '/'.join(endpoints[endpoint].split(f'/{API_NAME}/')[1:])
-            if collection_name in doc.collections:
-                response_get = test_app_client.get(endpoints[endpoint])
-                assert response_get.status_code == 200
-                response_get_data = json.loads(response_get.data.decode('utf-8'))
-                assert 'search' in response_get_data
-                assert 'hydra:mapping' in response_get_data['search']
-                # Test with pageIndex and limit
-                params = {'pageIndex': 1, 'limit': 2}
-                response_for_page_param = test_app_client.get(
-                    endpoints[endpoint], query_string=params)
-                assert response_for_page_param.status_code == 200
-                response_for_page_param_data = json.loads(
-                    response_for_page_param.data.decode('utf-8'))
-                assert 'hydra:first' in response_for_page_param_data['hydra:view']
-                assert 'hydra:last' in response_for_page_param_data['hydra:view']
-                if 'hydra:next' in response_for_page_param_data['hydra:view']:
-                    assert 'pageIndex=2' in response_for_page_param_data['hydra:view']['hydra:next']
-                    next_response = test_app_client.get(
-                        response_for_page_param_data['hydra:view']['hydra:next'])
-                    assert next_response.status_code == 200
-                    next_response_data = json.loads(
-                        next_response.data.decode('utf-8'))
-                    assert 'hydra:previous' in next_response_data['hydra:view']
-                    data = next_response_data['hydra:view']['hydra:previous']
-                    assert 'pageIndex=1' in data
-                    # Test with offset and limit
-                    params = {'offset': 1, 'limit': 2}
-                    response_for_offset_param = test_app_client.get(endpoints[endpoint],
-                                                                    query_string=params)
-                    assert response_for_offset_param.status_code == 200
-                    response_for_offset_param_data = json.loads(
-                        response_for_offset_param.data.decode('utf-8'))
-                    data = response_for_offset_param_data['hydra:view']
-                    assert 'hydra:first' in data
-                    assert 'hydra:last' in data
-                    if 'hydra:next' in data:
-                        assert 'offset=3' in data['hydra:next']
-                        next_response = test_app_client.get(data['hydra:next'])
+            if endpoint not in ['@context', '@id', '@type']:
+                class_name = '/'.join(endpoints[endpoint].split(f'/{API_NAME}/')[1:])
+                if class_name not in doc.collections:
+                    # collections are now just 'set of somehow related objects'
+                    # therefore IRI templates are now served at non-collection
+                    # class endpoints
+                    response_get = test_app_client.get(endpoints[endpoint])
+                    assert response_get.status_code == 200
+                    response_get_data = json.loads(response_get.data.decode('utf-8'))
+                    assert 'search' in response_get_data
+                    assert 'hydra:mapping' in response_get_data['search']
+                    # Test with pageIndex and limit
+                    params = {'pageIndex': 1, 'limit': 2}
+                    response_for_page_param = test_app_client.get(
+                        endpoints[endpoint], query_string=params)
+                    assert response_for_page_param.status_code == 200
+                    response_for_page_param_data = json.loads(
+                        response_for_page_param.data.decode('utf-8'))
+                    assert 'hydra:first' in response_for_page_param_data['hydra:view']
+                    assert 'hydra:last' in response_for_page_param_data['hydra:view']
+                    if 'hydra:next' in response_for_page_param_data['hydra:view']:
+                        assert 'pageIndex=2' in response_for_page_param_data['hydra:view']['hydra:next']
+                        next_response = test_app_client.get(
+                            response_for_page_param_data['hydra:view']['hydra:next'])
                         assert next_response.status_code == 200
-                        next_response_data = json.loads(next_response.data.decode('utf-8'))
+                        next_response_data = json.loads(
+                            next_response.data.decode('utf-8'))
                         assert 'hydra:previous' in next_response_data['hydra:view']
-                        assert 'offset=1' in next_response_data['hydra:view']['hydra:previous']
+                        data = next_response_data['hydra:view']['hydra:previous']
+                        assert 'pageIndex=1' in data
+                        # Test with offset and limit
+                        params = {'offset': 1, 'limit': 2}
+                        response_for_offset_param = test_app_client.get(endpoints[endpoint],
+                                                                        query_string=params)
+                        assert response_for_offset_param.status_code == 200
+                        response_for_offset_param_data = json.loads(
+                            response_for_offset_param.data.decode('utf-8'))
+                        data = response_for_offset_param_data['hydra:view']
+                        assert 'hydra:first' in data
+                        assert 'hydra:last' in data
+                        if 'hydra:next' in data:
+                            assert 'offset=3' in data['hydra:next']
+                            next_response = test_app_client.get(data['hydra:next'])
+                            assert next_response.status_code == 200
+                            next_response_data = json.loads(next_response.data.decode('utf-8'))
+                            assert 'hydra:previous' in next_response_data['hydra:view']
+                            assert 'offset=1' in next_response_data['hydra:view']['hydra:previous']
 
     def test_GET_for_nested_class(self, test_app_client, constants, doc):
         API_NAME = constants['API_NAME']
@@ -402,8 +424,8 @@ class TestApp():
                     if 'GET' in class_methods:
                         response_get = test_app_client.get(endpoints[endpoint])
                         assert response_get.status_code == 200
-                        response_get_data = json.loads(
-                            response_get.data.decode('utf-8'))
+                        instance = response_get.json['members'][0]['@id']        
+                        response_get_data = test_app_client.get(instance).json
                         assert '@context' in response_get_data
                         assert '@id' in response_get_data
                         assert '@type' in response_get_data
@@ -448,23 +470,32 @@ class TestApp():
                 if class_name not in doc.collections:
                     class_ = doc.parsed_classes[class_name]['class']
                     class_methods = [x.method for x in class_.supportedOperation]
-                    if 'POST' in class_methods:
+                    if 'PUT' in class_methods:
+                        # first insert a object which we will update later
                         dummy_object = gen_dummy_object(class_.title, doc)
-                        # Test for writeable properties
-                        post_response = test_app_client.post(
-                            endpoints[endpoint], data=json.dumps(dummy_object))
-                        assert post_response.status_code == 200
-                        # Test for properties with writeable=False
-                        non_writeable_prop = ''
-                        for prop in class_.supportedProperty:
-                            if prop.write is False:
-                                non_writeable_prop = prop.title
-                                break
-                        if non_writeable_prop != '':
-                            dummy_object[non_writeable_prop] = 'xyz'
+                        initial_put_response = test_app_client.put(endpoints[endpoint],
+                                                                   data=json.dumps(dummy_object))
+                        response = json.loads(initial_put_response.data.decode('utf-8'))
+                        regex = r'(.*)ID (.{36})* (.*)'
+                        matchObj = re.match(regex, response['description'])
+                        id_ = matchObj.group(2)
+                        if 'POST' in class_methods:
+                            dummy_object = gen_dummy_object(class_.title, doc)
+                            # Test for writeable properties
                             post_response = test_app_client.post(
-                                endpoints[endpoint], data=json.dumps(dummy_object))
-                            assert post_response.status_code == 405
+                                f'{endpoints[endpoint]}/{id_}', data=json.dumps(dummy_object))
+                            assert post_response.status_code == 200
+                            # Test for properties with writeable=False
+                            non_writeable_prop = ''
+                            for prop in class_.supportedProperty:
+                                if prop.write is False:
+                                    non_writeable_prop = prop.title
+                                    break
+                            if non_writeable_prop != '':
+                                dummy_object[non_writeable_prop] = 'xyz'
+                                post_response = test_app_client.post(
+                                    endpoints[endpoint], data=json.dumps(dummy_object))
+                                assert post_response.status_code == 405
 
     def test_readable_props(self, test_app_client, constants, doc):
         API_NAME = constants['API_NAME']
@@ -513,30 +544,30 @@ class TestApp():
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
         for endpoint in endpoints:
-            collection_name = '/'.join(
-                endpoints[endpoint].split(f'/{API_NAME}/')[1:])
-            if collection_name in doc.collections:
-                collection = doc.collections[collection_name]['collection']
-                class_ = doc.parsed_classes[collection.class_.title]['class']
-                class_methods = [x.method for x in class_.supportedOperation]
-                dummy_object = gen_dummy_object(collection.class_.title, doc)
-                initial_put_response = test_app_client.put(
-                    endpoints[endpoint], data=json.dumps(dummy_object))
-                assert initial_put_response.status_code == 201
-                response = json.loads(initial_put_response.data.decode('utf-8'))
-                regex = r'(.*)ID (.{36})* (.*)'
-                matchObj = re.match(regex, response['description'])
-                assert matchObj is not None
-                id_ = matchObj.group(2)
-                if 'POST' not in class_methods:
-                    dummy_object = gen_dummy_object(collection.class_.title, doc)
-                    post_replace_response = test_app_client.post(
-                        f'{endpoints[endpoint]}/{id_}', data=json.dumps(dummy_object))
-                    assert post_replace_response.status_code == 405
-                if 'DELETE' not in class_methods:
-                    delete_response = test_app_client.delete(
-                        f'{endpoints[endpoint]}/{id_}')
-                    assert delete_response.status_code == 405
+            if endpoint not in ['@context', '@id', '@type']:
+                class_name = '/'.join(endpoints[endpoint].split(f'/{API_NAME}/')[1:])
+                if class_name not in doc.collections:
+                    class_ = doc.parsed_classes[class_name]['class']
+                    class_methods = [x.method for x in class_.supportedOperation]
+                    dummy_object = gen_dummy_object(class_.title, doc)
+                    if 'PUT' in class_methods:
+                        initial_put_response = test_app_client.put(
+                            endpoints[endpoint], data=json.dumps(dummy_object))
+                        assert initial_put_response.status_code == 201
+                        response = json.loads(initial_put_response.data.decode('utf-8'))
+                        regex = r'(.*)ID (.{36})* (.*)'
+                        matchObj = re.match(regex, response['description'])
+                        assert matchObj is not None
+                        id_ = matchObj.group(2)
+                        if 'POST' not in class_methods:
+                            dummy_object = gen_dummy_object(class_.title, doc)
+                            post_replace_response = test_app_client.post(
+                                f'{endpoints[endpoint]}/{id_}', data=json.dumps(dummy_object))
+                            assert post_replace_response.status_code == 405
+                        if 'DELETE' not in class_methods:
+                            delete_response = test_app_client.delete(
+                                f'{endpoints[endpoint]}/{id_}')
+                            assert delete_response.status_code == 405
 
     def test_Endpoints_Contexts(self, test_app_client, constants, doc):
         """Test all endpoints contexts are generated properly."""
