@@ -43,6 +43,11 @@ def gen_dummy_object(class_title, doc):
     object_ = {
         "@type": class_title
     }
+    for class_path in doc.collections:
+        if class_title == doc.collections[class_path]["collection"].name:
+            members = [str(uuid.uuid4()) for _ in range(3)]
+            object_['members'] = members
+            return object_
     for class_path in doc.parsed_classes:
         if class_title == doc.parsed_classes[class_path]["class"].title:
             for prop in doc.parsed_classes[class_path]["class"].supportedProperty:
@@ -303,6 +308,16 @@ def add_doc_classes_and_properties_to_db(doc, session, engine):
     /functional/test_socket.py
     """
     test_classes, test_properties = get_doc_classes_and_properties(doc)
+    # temporarily add manages block explicitly to collection-classes
+    # until appropriate changes take place in hydra-python-core library
+    manages = {
+        "object": "vocab:dummyClass",
+        "property": "rdf:type"
+    }
+    for class_ in test_classes:
+        if "Collection" in class_['@id']:
+            class_['manages'] = manages
+
     try:
         create_database_tables(test_classes)
     except Exception:
