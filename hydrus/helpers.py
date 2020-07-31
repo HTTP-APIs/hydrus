@@ -129,8 +129,12 @@ def checkClassOp(path: str, method: str) -> bool:
     :param method: Method name.
     :return: True if the method is defined, false otherwise.
     """
-    for supportedOp in get_doc(
-    ).parsed_classes[path]["class"].supportedOperation:
+    collections, parsed_classes = get_collections_and_parsed_classes()
+    if path in collections:
+        supported_operations = get_doc().collections[path]["collection"].supportedOperation
+    else:
+        supported_operations = get_doc().parsed_classes[path]["class"].supportedOperation
+    for supportedOp in supported_operations:
         if supportedOp.method == method:
             return True
     return False
@@ -144,7 +148,14 @@ def check_required_props(path: str, obj: Dict[str, Any]) -> bool:
     :return: True if the object contains all required properties
              False otherwise.
     """
-    for prop in get_doc().parsed_classes[path]["class"].supportedProperty:
+    collections, parsed_classes = get_collections_and_parsed_classes()
+    if path in collections:
+        # path is of a collection class
+        supported_properties = get_doc().collections[path]["collection"].supportedProperty
+    else:
+        # path is of a non-collection class
+        supported_properties = get_doc().parsed_classes[path]["class"].supportedProperty
+    for prop in supported_properties:
         if prop.required:
             if prop.title not in obj:
                 return False
@@ -191,26 +202,44 @@ def finalize_response(path: str, obj: Dict[str, Any]) -> Dict[str, Any]:
     :return: An object not containing any `readable=False` properties and having proper path
              of any nested object's url.
     """
-    for prop in get_doc().parsed_classes[path]["class"].supportedProperty:
-        # Skip not required properties which are not inserted yet.
-        if not prop.required and prop.title not in obj:
-            continue
-        if prop.read is False:
-            obj.pop(prop.title, None)
-        elif isinstance(prop.prop, HydraLink):
-            hydra_link = prop.prop
-            range_class = hydra_link.range.replace("vocab:", "")
-            nested_path, is_collection = get_nested_class_path(range_class)
-            if is_collection:
+    collections, parsed_classes = get_collections_and_parsed_classes()
+    if path in collections:
+        # path is of a collection class
+        collection = get_doc().collections[path]["collection"]
+        collection_class_type = collection.class_.title
+        collection_class_path = collection.class_.path
+        members = list()
+        for member_id in obj["members"]:
+            member = {
+                "@type": collection_class_type,
+                "@id": f"/{get_api_name()}/{collection_class_path}/{member_id}",
+            }
+            members.append(member)
+        obj['members'] = members
+        return obj
+    else:
+        # path is of a non-collection class
+        supported_properties = get_doc().parsed_classes[path]["class"].supportedProperty
+        for prop in supported_properties:
+            # Skip not required properties which are not inserted yet.
+            if not prop.required and prop.title not in obj:
+                continue
+            # if prop.read is False:
+            #     obj.pop(prop.title, None)
+            elif isinstance(prop.prop, HydraLink):
+                hydra_link = prop.prop
+                range_class = hydra_link.range.replace("vocab:", "")
+                nested_path, is_collection = get_nested_class_path(range_class)
+                if is_collection:
+                    id = obj[prop.title]
+                    obj[prop.title] = f"/{get_api_name()}/{nested_path}/{id}"
+                else:
+                    obj[prop.title] = f"/{get_api_name()}/{nested_path}"
+            elif 'vocab:' in prop.prop:
+                prop_class = prop.prop.replace("vocab:", "")
                 id = obj[prop.title]
-                obj[prop.title] = f"/{get_api_name()}/{nested_path}/{id}"
-            else:
-                obj[prop.title] = f"/{get_api_name()}/{nested_path}"
-        elif 'vocab:' in prop.prop:
-            prop_class = prop.prop.replace("vocab:", "")
-            id = obj[prop.title]
-            obj[prop.title] = crud.get(id, prop_class, get_api_name(), get_session())
-    return obj
+                obj[prop.title] = crud.get(id, prop_class, get_api_name(), get_session())
+        return obj
 
 
 def add_iri_template(path: str, API_NAME: str) -> Dict[str, Any]:
@@ -323,7 +352,14 @@ def get_link_props(path: str, object_) -> Tuple[Dict[str, Any], bool]:
              second element represents boolean representing validity of the link.
     """
     link_props = {}
-    for supportedProp in get_doc().parsed_classes[path]['class'].supportedProperty:
+    collections, parsed_classes = get_collections_and_parsed_classes()
+    if path in collections:
+        # path is of a collection class
+        supported_properties = get_doc().collections[path]["collection"].supportedProperty
+    else:
+        # path is of a non-collection class
+        supported_properties = get_doc().parsed_classes[path]["class"].supportedProperty
+    for supportedProp in supported_properties:
         if isinstance(supportedProp.prop, HydraLink) and supportedProp.title in object_:
             prop_range = supportedProp.prop.range
             range_class_name = prop_range.replace("vocab:", "")

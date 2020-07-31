@@ -74,17 +74,26 @@ class TestSocket:
                     class_ = doc.parsed_classes[class_name]['class']
                     class_methods = [x.method for x in class_.supportedOperation]
                     if 'POST' in class_methods:
+                        # insert a object to be updated later
                         dummy_object = gen_dummy_object(class_.title, doc)
+                        put_response = test_app_client.put(
+                            endpoints[endpoint], data=json.dumps(dummy_object))
+                        # extract id of the created object from the description of response
+                        desc = put_response.json['description']
+                        id_ = desc.split('ID ')[1].split(' successfully')[0]
                         # Flush old socketio updates
                         socketio_client.get_received('/sync')
+                        # POST object
+                        new_dummy_object = gen_dummy_object(class_.title, doc)
                         post_response = test_app_client.post(
-                            endpoints[endpoint], data=json.dumps(dummy_object))
+                            f'{endpoints[endpoint]}/{id_}',
+                            data=json.dumps(new_dummy_object))
                         assert post_response.status_code == 200
                         # Get new socketio update
                         update = socketio_client.get_received('/sync')
                         assert len(update) != 0
                         assert update[0]['args'][0]['method'] == 'POST'
-                        resource_name = update[0]['args'][0]['resource_url'].split('/')[-1]
+                        resource_name = update[0]['args'][0]['resource_url'].split('/')[-2]
                         assert resource_name == endpoints[endpoint].split('/')[-1]
 
     def test_socketio_DELETE_updates(self, socketio_client, test_app_client, constants, doc):
@@ -100,13 +109,20 @@ class TestSocket:
                     class_ = doc.parsed_classes[class_name]['class']
                     class_methods = [x.method for x in class_.supportedOperation]
                     if 'DELETE' in class_methods:
+                        # insert a object first to be deleted later
+                        dummy_object = gen_dummy_object(class_.title, doc)
+                        put_response = test_app_client.put(
+                            endpoints[endpoint], data=json.dumps(dummy_object))
+                        # extract id of the created object from the description of response
+                        desc = put_response.json['description']
+                        id_ = desc.split('ID ')[1].split(' successfully')[0]
                         # Flush old socketio updates
                         socketio_client.get_received('/sync')
-                        delete_response = test_app_client.delete(endpoints[endpoint])
+                        delete_response = test_app_client.delete(f'{endpoints[endpoint]}/{id_}')
                         assert delete_response.status_code == 200
                         # Get new update event
                         update = socketio_client.get_received('/sync')
                         assert len(update) != 0
                         assert update[0]['args'][0]['method'] == 'DELETE'
-                        resource_name = update[0]['args'][0]['resource_url'].split('/')[-1]
+                        resource_name = update[0]['args'][0]['resource_url'].split('/')[-2]
                         assert resource_name == endpoints[endpoint].split('/')[-1]

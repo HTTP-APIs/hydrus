@@ -61,13 +61,14 @@ from hydrus.data.resource_based_classes import (
 
 
 def get(id_: str, type_: str, api_name: str, session: scoped_session,
-        path: str = None) -> Dict[str, str]:
+        path: str = None, collection: bool = False) -> Dict[str, str]:
     """Retrieve an Instance with given ID from the database [GET].
     :param id_: id of object to be fetched
     :param type_: type of object
     :param api_name: name of api specified while starting server
     :param session: sqlalchemy scoped session
     :param path: endpoint
+    :param collection: True if the type_ is of a collection, False for any other class
     :return: response to the request
 
 
@@ -80,17 +81,21 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
         "@type": type_,
         "id_": id_
     }
-    object_template = get_object(query_info, session)
+
+    object_template = get_object(query_info, session, collection)
     object_template["@id"] = f"/{api_name}/{path}/{id_}"
 
     return object_template
 
 
-def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[str] = None) -> str:
+def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[str] = None,
+           collection: bool = False) -> str:
     """Insert an object to database [POST] and returns the inserted object.
     :param object_: object to be inserted
     :param session: sqlalchemy scoped session
     :param id_: id of the object to be inserted (optional param)
+    :param collection: True if the type_ is of a collection, False for any other class
+
     :return: ID of object inserted
 
 
@@ -107,7 +112,7 @@ def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[str] 
     object_template = copy.deepcopy(object_)
     if id_ is not None:
         object_template['id'] = id_
-    inserted_object_id = insert_object(object_template, session)
+    inserted_object_id = insert_object(object_template, session, collection)
     return inserted_object_id
 
 
@@ -154,7 +159,7 @@ def insert_multiple(objects_: List[Dict[str,
     return instance_id_list
 
 
-def delete(id_: str, type_: str, session: scoped_session) -> None:
+def delete(id_: str, type_: str, session: scoped_session, collection: bool = False) -> None:
     """Delete an Instance and all its relations from DB given id [DELETE].
     :param id_: id of object to be deleted
     :param type_: type of object to be deleted
@@ -169,7 +174,7 @@ def delete(id_: str, type_: str, session: scoped_session) -> None:
         "@type": type_,
         "id_": id_
     }
-    delete_object(query_info, session)
+    delete_object(query_info, session, collection)
 
 
 def delete_multiple(
@@ -199,7 +204,8 @@ def update(id_: str,
                          str],
            session: scoped_session,
            api_name: str,
-           path: str = None) -> str:
+           path: str = None,
+           collection: bool = False) -> str:
     """Update an object properties based on the given object [PUT].
     :param id_: if of object to be updated
     :param type_: type of object to be updated
@@ -207,13 +213,14 @@ def update(id_: str,
     :param session: sqlalchemy scoped session
     :param api_name: api name specified while starting server
     :param path: endpoint
+    :param collection: True if the type_ is of a collection, False for any other class
     :return: id of updated object
     """
     query_info = {
         "@type": type_,
         "id_": id_
     }
-    updated_object_id = update_object(object_, query_info, session)
+    updated_object_id = update_object(object_, query_info, session, collection)
     return updated_object_id
 
 
@@ -223,7 +230,8 @@ def get_collection(API_NAME: str,
                    paginate: bool,
                    page_size: int,
                    search_params: Dict[str, Any]=None,
-                   path: str = None) -> Dict[str, Any]:
+                   path: str = None,
+                   collection: bool = False) -> Dict[str, Any]:
     """Retrieve a type of collection from the database.
     :param API_NAME: api name specified while starting server
     :param type_: type of object to be updated
@@ -232,6 +240,7 @@ def get_collection(API_NAME: str,
     :param page_size: Number maximum elements showed in a page
     :param search_params: Query parameters
     :param path: endpoint
+    :param collection: True if the type_ is of a collection, False for any other class
     :return: response containing a page of the objects of that particular type_
 
     Raises:
@@ -247,7 +256,7 @@ def get_collection(API_NAME: str,
             database_search_params.pop(param)
     database_search_params = parse_search_params(database_search_params)
     filtered_instances = get_all_filtered_instances(
-        session, database_search_params, type_)
+        session, database_search_params, type_, collection)
     collection_template = pagination(filtered_instances, path, type_, API_NAME,
                                      search_params, paginate, page_size)
     return collection_template
