@@ -81,10 +81,7 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
         "id_": id_
     }
     object_template = get_object(query_info, session)
-    if path is not None:
-        object_template["@id"] = f"/{api_name}/{path}Collection/{id_}"
-    else:
-        object_template["@id"] = f"/{api_name}/{type_}Collection/{id_}"
+    object_template["@id"] = f"/{api_name}/{path}/{id_}"
 
     return object_template
 
@@ -426,7 +423,7 @@ def pagination(filtered_instances, path, type_, API_NAME,
     collection_template = {
         "@id": f"/{API_NAME}/{path}/",
         "@context": None,
-        "@type": f"{type_}Collection",
+        "@type": f"{path}",
         "members": list()
     }  # type: Dict[str, Any]
     result_length = len(filtered_instances)
@@ -442,16 +439,10 @@ def pagination(filtered_instances, path, type_, API_NAME,
     if result_length - offset < page_size:
         current_page_size = result_length - offset
     for i in range(offset, offset+current_page_size):
-        if path is not None:
-            object_template = {
-                "@id": f"/{API_NAME}/{path}/{filtered_instances[i].id}",
-                "@type": type_
-            }
-        else:
-            object_template = {
-                "@id": f"/{API_NAME}/{type_}Collection/{filtered_instances[i].id}",
-                "@type": type_
-            }
+        object_template = {
+            "@id": f"/{API_NAME}/{path}/{filtered_instances[i].id}",
+            "@type": type_
+        }
         collection_template["members"].append(object_template)
 
     # If pagination is disabled then stop and return the collection template
