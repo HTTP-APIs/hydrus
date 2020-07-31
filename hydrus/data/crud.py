@@ -82,7 +82,7 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
         "id_": id_
     }
 
-    object_template = get_object(query_info, session)
+    object_template = get_object(query_info, session, collection)
     object_template["@id"] = f"/{api_name}/{path}/{id_}"
 
     return object_template
