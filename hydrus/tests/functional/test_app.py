@@ -135,8 +135,51 @@ class TestApp():
                                                         data=json.dumps(dummy_object))
                 assert good_response_put.status_code == 201
 
-    def test_object_POST(self, test_app_client, constants, doc, socketio):
-        """Test replace of a given object using ID."""
+    def test_collection_object_GET(self, test_app_client, constants, doc):
+        """Test GET of a given collection object using ID."""
+        API_NAME = constants['API_NAME']
+        index = test_app_client.get(f'/{API_NAME}')
+        assert index.status_code == 200
+        endpoints = json.loads(index.data.decode('utf-8'))
+        for endpoint in endpoints:
+            collection_name = '/'.join(
+                endpoints[endpoint].split(f'/{API_NAME}/')[1:])
+            if collection_name in doc.collections:
+                collection = doc.collections[collection_name]['collection']
+                collection_methods = [x.method for x in collection.supportedOperation]
+                if 'PUT' in collection_methods:
+                    dummy_object = gen_dummy_object(collection.name, doc)
+                    initial_put_response = test_app_client.put(
+                        endpoints[endpoint], data=json.dumps(dummy_object))
+                    assert initial_put_response.status_code == 201
+                    response = json.loads(initial_put_response.data.decode('utf-8'))
+                    regex = r'(.*)ID (.{36})* (.*)'
+                    matchObj = re.match(regex, response['description'])
+                    assert matchObj is not None
+                    id_ = matchObj.group(2)
+                    if 'GET' in collection_methods:
+                        get_response = test_app_client.get(f'{endpoints[endpoint]}/{id_}')
+                        assert get_response.status_code == 200
+
+    def test_collection_object_PUT(self, test_app_client, constants, doc):
+        """Test PUT of a given collection object using ID."""
+        API_NAME = constants['API_NAME']
+        index = test_app_client.get(f'/{API_NAME}')
+        assert index.status_code == 200
+        endpoints = json.loads(index.data.decode('utf-8'))
+        for endpoint in endpoints:
+            collection_name = '/'.join(endpoints[endpoint].split(f'/{API_NAME}/')[1:])
+            if collection_name in doc.collections:
+                collection = doc.collections[collection_name]['collection']
+                collection_methods = [x.method for x in collection.supportedOperation]
+                if 'PUT' in collection_methods:
+                    dummy_object = gen_dummy_object(collection.name, doc)
+                    initial_put_response = test_app_client.put(
+                        endpoints[endpoint], data=json.dumps(dummy_object))
+                    assert initial_put_response.status_code == 201
+
+    def test_collection_object_POST(self, test_app_client, constants, doc, socketio):
+        """Test POST of a given collection object using ID."""
         API_NAME = constants['API_NAME']
         index = test_app_client.get(f'/{API_NAME}')
         assert index.status_code == 200
@@ -163,8 +206,8 @@ class TestApp():
                         f'{endpoints[endpoint]}/{id_}', data=json.dumps(dummy_object))
                     assert post_replace_response.status_code == 200
 
-    def test_object_DELETE(self, test_app_client, constants, doc):
-        """Test DELETE of a given object using ID."""
+    def test_collection_object_DELETE(self, test_app_client, constants, doc):
+        """Test DELETE of a given collection object using ID."""
         API_NAME = constants['API_NAME']
         index = test_app_client.get(f'/{API_NAME}')
         assert index.status_code == 200
