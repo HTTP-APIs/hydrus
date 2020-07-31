@@ -446,9 +446,9 @@ def pagination(filtered_instances, path, type_, API_NAME,
         collection_template["members"].append(object_template)
 
     # If pagination is disabled then stop and return the collection template
+    collection_template["hydra:totalItems"] = result_length
     if paginate is False:
         return collection_template
-    collection_template["hydra:totalItems"] = result_length
     # Calculate last page number
     if result_length != 0 and result_length % page_size == 0:
         last = result_length // page_size

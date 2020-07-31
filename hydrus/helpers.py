@@ -221,8 +221,7 @@ def add_iri_template(path: str, API_NAME: str) -> Dict[str, Any]:
     :return: Hydra IriTemplate .
     """
     template_mappings = list()
-    template = f"/{API_NAME}/{path}("
-    first = True
+    template = f"/{API_NAME}/{path}{{?"
     template, template_mappings = generate_iri_mappings(path, template,
                                                         template_mapping=template_mappings,)
 
@@ -287,7 +286,7 @@ def add_pagination_iri_mappings(template: str,
     for i in range(len(paginate_variables)):
         # If final variable then do not add space and comma and add the final parentheses
         if i == len(paginate_variables) - 1:
-            template += f"{paginate_variables[i]})"
+            template += f"{paginate_variables[i]}}}"
         else:
             template += f"{paginate_variables[i]}, "
         mapping = IriTemplateMapping(variable=paginate_variables[i], prop=paginate_variables[i])

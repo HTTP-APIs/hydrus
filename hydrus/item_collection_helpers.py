@@ -1,6 +1,7 @@
 """Helper functions for Item Collection"""
 
 import json
+import sys
 from functools import partial
 
 from flask import Response, jsonify, request, abort
@@ -72,7 +73,7 @@ def item_collection_get_response(path: str) -> Response:
                                          page_size=get_page_size())
             else:
                 # Get whole collection
-                response = crud_response(paginate=False)
+                response = crud_response(paginate=False, page_size=sys.maxsize)
 
             response["search"] = add_iri_template(path=class_path,
                                                   API_NAME=api_name)
