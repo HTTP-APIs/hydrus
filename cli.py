@@ -156,7 +156,7 @@ def serve(adduser: tuple, api: str, auth: bool, dburl: str, pagination: bool,
     # Get all the classes from the doc
     # You can also pass dictionary defined in
     # hydra_python_core/doc_writer_sample_output.py
-    classes = doc_parse.get_classes(apidoc.generate())
+    classes = doc_parse.get_classes(apidoc)
     # Insert them into the database
     if use_db is False:
         Base.metadata.drop_all(engine)

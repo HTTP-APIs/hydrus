@@ -48,7 +48,7 @@ if __name__ == "__main__":
     # Get all the classes from the doc
     # You can also pass dictionary defined in
     # hydrus/hydraspec/doc_writer_sample_output.py
-    classes = doc_parse.get_classes(apidoc.generate())
+    classes = doc_parse.get_classes(apidoc)
 
     # Get all the properties from the classes
     properties = doc_parse.get_all_properties(classes)

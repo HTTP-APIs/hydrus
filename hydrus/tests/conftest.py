@@ -28,7 +28,7 @@ def get_doc_classes_and_properties(doc):
     :return: classes and properties in the HydraDoc object in a tuple
     :rtype: tuple(list, set)
     """
-    test_classes = doc_parse.get_classes(doc.generate())
+    test_classes = doc_parse.get_classes(doc)
     test_properties = doc_parse.get_all_properties(test_classes)
     return (test_classes, test_properties)
 

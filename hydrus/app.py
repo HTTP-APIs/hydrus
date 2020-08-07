@@ -35,7 +35,7 @@ session = sessionmaker(bind=engine)()
 # Load ApiDoc with doc_maker
 #
 apidoc = doc_maker.create_doc(APIDOC_OBJ, HYDRUS_SERVER_URL, API_NAME)
-classes = doc_parse.get_classes(apidoc.generate())
+classes = doc_parse.get_classes(apidoc)
 # Get all the properties from the classes
 properties = doc_parse.get_all_properties(classes)
 # Insert them into the database
