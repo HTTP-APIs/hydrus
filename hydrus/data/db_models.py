@@ -17,7 +17,7 @@ from sqlalchemy import (
 from sqlalchemy.engine import Engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql import func
-
+from hydra_python_core.doc_writer import DocUrl
 # from hydrus.settings import DB_URL
 
 engine = create_engine("sqlite:///database.db")
@@ -50,8 +50,10 @@ class Resource:
     @property
     def name(self):
         """Return the name of the resource from it's "@id"""
-        # split the classname at "vocab:" to get the class name
-        return self._resource["@id"].split("vocab:")[1]
+        # get the base url which will be used to split the @id
+        # for eg, 'http://localhost:8080/serverapi/vocab#'
+        expanded_base_url = DocUrl.doc_url
+        return self._resource["@id"].split(expanded_base_url)[1]
 
     @property
     def resource(self):
