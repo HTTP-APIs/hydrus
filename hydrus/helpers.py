@@ -279,16 +279,17 @@ def generate_iri_mappings(path: str, template: str, skip_nested: bool = False,
     :return: Template string, list of template mappings and boolean showing whether
              to keep adding delimiter or not.
     """
+    expanded_base_url = DocUrl.doc_url
     for supportedProp in get_doc(
     ).parsed_classes[path]["class"].supportedProperty:
         prop_class = supportedProp.prop
         nested_class_prop = False
         if isinstance(supportedProp.prop, HydraLink):
             hydra_link = supportedProp.prop
-            prop_class = hydra_link.range.replace("vocab:", "")
+            prop_class = hydra_link.range.split(expanded_base_url)[1]
             nested_class_prop = True
-        elif "vocab:" in supportedProp.prop:
-            prop_class = supportedProp.prop.replace("vocab:", "")
+        elif expanded_base_url in supportedProp.prop:
+            prop_class = supportedProp.prop.split(expanded_base_url)[1]
             nested_class_prop = True
         if nested_class_prop and skip_nested is False:
             template, template_mapping = generate_iri_mappings(prop_class, template,
