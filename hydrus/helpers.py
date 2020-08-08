@@ -118,12 +118,12 @@ def getType(class_path: str, method: str) -> Any:
     :param class_path: path for the class
     :param method: Method name
     """
+    expanded_base_url = DocUrl.doc_url
     for supportedOp in get_doc(
     ).parsed_classes[class_path]["class"].supportedOperation:
         if supportedOp.method == method:
-            return supportedOp.expects.replace("vocab:", "")
-    # NOTE: Don't use split, if there are more than one substrings with
-    # 'vocab:' not everything will be returned.
+            class_type = supportedOp.expects.split(expanded_base_url)[1]
+            return class_type
 
 
 def checkClassOp(path: str, method: str) -> bool:
