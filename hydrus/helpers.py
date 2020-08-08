@@ -359,6 +359,7 @@ def get_link_props(path: str, object_) -> Tuple[Dict[str, Any], bool]:
     """
     link_props = {}
     collections, parsed_classes = get_collections_and_parsed_classes()
+    expanded_base_url = DocUrl.doc_url
     if path in collections:
         # path is of a collection class
         supported_properties = get_doc().collections[path]["collection"].supportedProperty
@@ -368,7 +369,7 @@ def get_link_props(path: str, object_) -> Tuple[Dict[str, Any], bool]:
     for supportedProp in supported_properties:
         if isinstance(supportedProp.prop, HydraLink) and supportedProp.title in object_:
             prop_range = supportedProp.prop.range
-            range_class_name = prop_range.replace("vocab:", "")
+            range_class_name = prop_range.split(expanded_base_url)[1]
             for collection_path in get_doc().collections:
                 if collection_path in object_[supportedProp.title]:
                     class_title = get_doc().collections[collection_path]['collection'].class_.title
