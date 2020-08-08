@@ -7,7 +7,7 @@ from hydrus.data import crud
 from hydrus.utils import get_doc, get_api_name, get_hydrus_server_url, get_session
 from hydrus.utils import get_collections_and_parsed_classes
 from hydra_python_core.doc_writer import HydraIriTemplate, IriTemplateMapping, HydraLink
-from hydra_python_core.doc_writer import HydraError
+from hydra_python_core.doc_writer import HydraError, DocUrl
 from hydrus.socketio_factory import socketio
 
 
@@ -96,11 +96,14 @@ def checkEndpoint(method: str, path: str) -> Dict[str, Union[bool, int]]:
     :return : Dict with 'method' and 'status' key
     """
     status_val = 404
-    if path == 'vocab':
+    vocab_route = get_doc().doc_name
+    if path == vocab_route:
         return {'method': False, 'status': 405}
-
+    expanded_base_url = DocUrl.doc_url
     for endpoint in get_doc().entrypoint.entrypoint.supportedProperty:
-        if path == "/".join(endpoint.id_.split("/")[1:]):
+        expanded_endpoint_id = endpoint.id_.replace("EntryPoint/", "")
+        endpoint_id = expanded_endpoint_id.split(expanded_base_url)[1]
+        if path == endpoint_id:
             status_val = 405
             for operation in endpoint.supportedOperation:
                 if operation.method == method:
