@@ -87,12 +87,13 @@ class Resource:
         }
         for supported_property in self.supported_properties:
             title = supported_property["title"]
-            link = supported_property["property"]
-            if "vocab:" in link:
-                # if vocab: is in the link, it implies that the link is pointing to
-                # another resource in the same ApiDoc, hence make it a Foreign Key
-                # to that resource table
-                foreign_table_name = link.split("vocab:")[1]
+            property_ = supported_property["property"]
+            expanded_base_url = DocUrl.doc_url
+            if expanded_base_url in property_:
+                # if expanded_base_url is in the property_, it implies that the property_
+                # is pointing to another resource in the same ApiDoc, hence make
+                # it a Foreign Key to that resource table
+                foreign_table_name = property_.split(expanded_base_url)[1]
                 attr_dict[title] = Resource.foreign_key_column(
                     foreign_table_name, title
                 )
