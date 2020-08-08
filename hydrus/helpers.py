@@ -224,6 +224,7 @@ def finalize_response(path: str, obj: Dict[str, Any]) -> Dict[str, Any]:
     else:
         # path is of a non-collection class
         supported_properties = get_doc().parsed_classes[path]["class"].supportedProperty
+        expanded_base_url = DocUrl.doc_url
         for prop in supported_properties:
             # Skip not required properties which are not inserted yet.
             if not prop.required and prop.title not in obj:
@@ -232,15 +233,15 @@ def finalize_response(path: str, obj: Dict[str, Any]) -> Dict[str, Any]:
             #     obj.pop(prop.title, None)
             elif isinstance(prop.prop, HydraLink):
                 hydra_link = prop.prop
-                range_class = hydra_link.range.replace("vocab:", "")
+                range_class = hydra_link.range.split(expanded_base_url)[1]
                 nested_path, is_collection = get_nested_class_path(range_class)
                 if is_collection:
                     id = obj[prop.title]
                     obj[prop.title] = f"/{get_api_name()}/{nested_path}/{id}"
                 else:
                     obj[prop.title] = f"/{get_api_name()}/{nested_path}"
-            elif 'vocab:' in prop.prop:
-                prop_class = prop.prop.replace("vocab:", "")
+            elif expanded_base_url in prop.prop:
+                prop_class = prop.prop.split(expanded_base_url)[1]
                 id = obj[prop.title]
                 obj[prop.title] = crud.get(id, prop_class, get_api_name(), get_session())
         return obj
