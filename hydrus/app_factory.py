@@ -6,10 +6,11 @@ from hydrus.resources import (Index, Vocab, Contexts, Entrypoint,
                               ItemCollection, Item, Items)
 
 
-def app_factory(api_name: str = "api") -> Flask:
+def app_factory(api_name: str = "api", vocab_route: str = "vocab") -> Flask:
     """
     Create an app object
     :param api_name : Name of the api
+    :param vocab_route : The route at which the vocab of the apidoc is present
     :return : API with all routes directed at /[api_name].
     """
 
@@ -20,7 +21,7 @@ def app_factory(api_name: str = "api") -> Flask:
     api = Api(app)
 
     api.add_resource(Index, f"/{api_name}/", endpoint="api")
-    api.add_resource(Vocab, f"/{api_name}/vocab", endpoint="vocab")
+    api.add_resource(Vocab, f"/{api_name}/{vocab_route}", endpoint="vocab")
     api.add_resource(
         Contexts,
         f"/{api_name}/contexts/<string:category>.jsonld",
