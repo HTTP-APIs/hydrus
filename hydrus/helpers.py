@@ -67,7 +67,8 @@ def set_response_headers(resp: Response,
         resp.headers[list(header.keys())[0]] = header[list(header.keys())[0]]
     resp.headers['Content-type'] = ct
     link = "http://www.w3.org/ns/hydra/core#apiDocumentation"
-    resp.headers['Link'] = f'<{get_hydrus_server_url()}{get_api_name()}/vocab>; rel="{link}"'
+    vocab_route = get_doc().doc_name
+    resp.headers['Link'] = f'<{get_hydrus_server_url()}{get_api_name()}/{vocab_route}>; rel="{link}"'
     return resp
 
 
