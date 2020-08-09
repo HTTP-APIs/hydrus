@@ -207,8 +207,8 @@ def drone_doc(constants):
 
 
 @pytest.fixture(scope='module')
-def drone_doc_collection_classes(drone_doc):
-    return [drone_doc.collections[i]['collection'].class_.title for i in drone_doc.collections]
+def drone_doc_parsed_classes(drone_doc):
+    return [drone_doc.parsed_classes[i]['class'].title for i in drone_doc.parsed_classes]
 
 
 @pytest.fixture(scope='module')
