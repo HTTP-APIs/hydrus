@@ -5,7 +5,7 @@ from base64 import b64encode
 
 import pytest
 from hydra_python_core import doc_maker
-from hydra_python_core.doc_writer import HydraLink
+from hydra_python_core.doc_writer import HydraLink, DocUrl
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
@@ -43,6 +43,7 @@ def gen_dummy_object(class_title, doc):
     object_ = {
         "@type": class_title
     }
+    expanded_base_url = DocUrl.doc_url
     for class_path in doc.collections:
         if class_title == doc.collections[class_path]["collection"].name:
             members = [str(uuid.uuid4()) for _ in range(3)]
@@ -57,8 +58,8 @@ def gen_dummy_object(class_title, doc):
                     object_[prop.title] = ''.join(random.choice(
                         string.ascii_uppercase + string.digits) for _ in range(6))
                     pass
-                elif "vocab:" in prop.prop:
-                    prop_class = prop.prop.replace("vocab:", "")
+                elif expanded_base_url in prop.prop:
+                    prop_class = prop.prop.split(expanded_base_url)[1]
                     object_[prop.title] = gen_dummy_object(prop_class, doc)
                 else:
                     object_[prop.title] = ''.join(random.choice(
