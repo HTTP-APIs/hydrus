@@ -5,7 +5,7 @@ CRUD operations in hydrus.data.crud.
 import random
 import uuid
 
-from hydra_python_core.doc_writer import HydraLink
+from hydra_python_core.doc_writer import HydraLink, DocUrl
 
 import hydrus.data.crud as crud
 from hydrus.data.exceptions import PropertyNotGiven
@@ -34,12 +34,13 @@ def test_crud_get_returns_correct_object(drone_doc_collection_classes, drone_doc
 
 def test_get_for_nested_obj(drone_doc_collection_classes, drone_doc, session, constants):
     """Test CRUD get operation for object that can contain other objects."""
+    expanded_base_url = DocUrl.doc_url
     for class_ in drone_doc_collection_classes:
         for prop in drone_doc.parsed_classes[class_]['class'].supportedProperty:
             if not isinstance(prop.prop, HydraLink):
-                if 'vocab:' in prop.prop:
+                if expanded_base_url in prop.prop:
                     dummy_obj = gen_dummy_object(class_, drone_doc)
-                    nested_class = prop.prop.replace('vocab:', '')
+                    nested_class = prop.prop.split(expanded_base_url)[1]
                     obj_id = str(uuid.uuid4())
                     response = crud.insert(object_=dummy_obj, id_=obj_id, session=session)
                     object_ = crud.get(id_=obj_id, type_=class_, session=session,
@@ -54,6 +55,7 @@ def test_get_for_nested_obj(drone_doc_collection_classes, drone_doc, session, co
 
 def test_searching_over_collection_elements(drone_doc_collection_classes, drone_doc, session):
     """Test searching over collection elements."""
+    expanded_base_url = DocUrl.doc_url
     for class_ in drone_doc_collection_classes:
         target_property_1 = ''
         target_property_2 = ''
@@ -62,7 +64,7 @@ def test_searching_over_collection_elements(drone_doc_collection_classes, drone_
                 continue
             # Find nested object so we can test searching of elements by
             # properties of nested objects.
-            if 'vocab:' in prop.prop:
+            if expanded_base_url in prop.prop:
                 object_ = gen_dummy_object(class_, drone_doc)
                 # Setting property of a nested object as target
                 for property_ in object_[prop.title]:
@@ -270,14 +272,15 @@ def test_insert_when_property_not_given(drone_doc_collection_classes, drone_doc,
                                         session, constants):
     """Test CRUD insert operation when a required foreign key
     property of that resource(column in the table) not given"""
+    expanded_base_url = DocUrl.doc_url
     for class_ in drone_doc_collection_classes:
         for prop in drone_doc.parsed_classes[class_]['class'].supportedProperty:
-            if isinstance(prop.prop, HydraLink) or 'vocab:' in prop.prop:
+            if isinstance(prop.prop, HydraLink) or expanded_base_url in prop.prop:
                 dummy_obj = gen_dummy_object(class_, drone_doc)
                 if isinstance(prop.prop, HydraLink):
-                    nested_class = prop.prop.range.replace('vocab:', '')
+                    nested_class = prop.prop.range.split(expanded_base_url)[1]
                 else:
-                    nested_class = prop.prop.replace('vocab:', '')
+                    nested_class = prop.prop.split(expanded_base_url)[1]
                 continue
     # remove the foreign key resource on purpose for testing
     dummy_obj.pop(nested_class)
