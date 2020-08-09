@@ -8,9 +8,10 @@ import re
 import uuid
 
 import pytest
-from hydra_python_core.doc_writer import HydraLink
+from hydra_python_core.doc_writer import HydraLink, DocUrl
 
 from hydrus.tests.conftest import gen_dummy_object
+from hydrus.utils import get_doc
 
 
 # specify common fixture for all tests
@@ -48,21 +49,23 @@ class TestApp():
         """Test the vocab."""
         API_NAME = constants['API_NAME']
         HYDRUS_SERVER_URL = constants['HYDRUS_SERVER_URL']
-        response_get = test_app_client.get(f'/{API_NAME}/vocab#')
+        vocab_route = get_doc().doc_name
+        response_get = test_app_client.get(f'/{API_NAME}/{vocab_route}#')
         response_get_data = json.loads(response_get.data.decode('utf-8'))
 
         assert '@context' in response_get_data
         assert response_get_data['@type'] == 'ApiDocumentation'
-        assert response_get_data['@id'] == f'{HYDRUS_SERVER_URL}{API_NAME}/vocab'
+        assert response_get_data['@id'] == f'{HYDRUS_SERVER_URL}{API_NAME}/{vocab_route}'
         assert response_get.status_code == 200
 
-        response_delete = test_app_client.delete(f'/{API_NAME}/vocab#')
+        response_delete = test_app_client.delete(f'/{API_NAME}/{vocab_route}#')
         assert response_delete.status_code == 405
 
-        response_put = test_app_client.put(f'/{API_NAME}/vocab#', data=json.dumps(dict(foo='bar')))
+        response_put = test_app_client.put(
+            f'/{API_NAME}/{vocab_route}#', data=json.dumps(dict(foo='bar')))
         assert response_put.status_code == 405
 
-        response_post = test_app_client.post(f'/{API_NAME}/vocab#',
+        response_post = test_app_client.post(f'/{API_NAME}/{vocab_route}#',
                                              data=json.dumps(dict(foo='bar')))
         assert response_post.status_code == 405
 
@@ -474,9 +477,10 @@ class TestApp():
                         assert '@id' in response_get_data
                         assert '@type' in response_get_data
                         class_props = [x for x in class_.supportedProperty]
+                        expanded_base_url = DocUrl.doc_url
                         for prop_name in class_props:
                             if not isinstance(prop_name.prop, HydraLink):
-                                if 'vocab:' in prop_name.prop:
+                                if expanded_base_url in prop_name.prop:
                                     assert '@type' in response_get_data[prop_name.title]
 
     def test_required_props(self, test_app_client, constants, doc):
