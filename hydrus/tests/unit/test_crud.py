@@ -276,7 +276,6 @@ def test_insert_when_property_not_given(drone_doc_parsed_classes, drone_doc,
     for class_ in drone_doc_parsed_classes:
         for prop in drone_doc.parsed_classes[class_]['class'].supportedProperty:
             if isinstance(prop.prop, HydraLink) or expanded_base_url in prop.prop:
-                import pdb;pdb.set_trace()
                 dummy_obj = gen_dummy_object(class_, drone_doc)
                 if isinstance(prop.prop, HydraLink):
                     nested_class = prop.prop.range.split(expanded_base_url)[1]
