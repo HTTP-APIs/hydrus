@@ -275,15 +275,12 @@ def test_insert_when_property_not_given(drone_doc_parsed_classes, drone_doc,
     expanded_base_url = DocUrl.doc_url
     for class_ in drone_doc_parsed_classes:
         for prop in drone_doc.parsed_classes[class_]['class'].supportedProperty:
-            if isinstance(prop.prop, HydraLink) or expanded_base_url in prop.prop:
+            if not isinstance(prop.prop, HydraLink) and expanded_base_url in prop.prop:
                 dummy_obj = gen_dummy_object(class_, drone_doc)
-                if isinstance(prop.prop, HydraLink):
-                    nested_class = prop.prop.range.split(expanded_base_url)[1]
-                else:
-                    nested_class = prop.prop.split(expanded_base_url)[1]
+                nested_prop_title = prop.title
                 continue
     # remove the foreign key resource on purpose for testing
-    dummy_obj.pop(nested_class)
+    dummy_obj.pop(nested_prop_title)
     id_ = str(uuid.uuid4())
     try:
         insert_response = crud.insert(object_=dummy_obj, id_=id_, session=session)
