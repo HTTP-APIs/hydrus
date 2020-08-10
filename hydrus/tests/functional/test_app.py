@@ -374,21 +374,26 @@ class TestApp():
         for endpoint in endpoints:
             if endpoint not in ['@context', '@id', '@type', 'collections']:
                 class_name = '/'.join(endpoints[endpoint].split(f'/{API_NAME}/')[1:])
-                if class_name not in doc.collections:
-                    # collections are now just 'set of somehow related objects'
-                    # therefore IRI templates are now served at non-collection
-                    # class endpoints
-                    response_get = test_app_client.get(endpoints[endpoint])
-                    assert response_get.status_code == 200
-                    response_get_data = json.loads(
-                        response_get.data.decode('utf-8'))
-                    assert 'search' in response_get_data
-                    assert 'hydra:mapping' in response_get_data['search']
-                    class_ = doc.parsed_classes[class_name]['class']
-                    class_props = [x.prop for x in class_.supportedProperty]
-                    for mapping in response_get_data['search']['hydra:mapping']:
-                        if mapping['hydra:property'] not in ['limit', 'offset', 'pageIndex']:
-                            assert mapping['hydra:property'] in class_props
+                # collections are now just 'set of somehow related objects'
+                # therefore IRI templates are now served at non-collection
+                # class endpoints
+                response_get = test_app_client.get(endpoints[endpoint])
+                assert response_get.status_code == 200
+                response_get_data = json.loads(
+                    response_get.data.decode('utf-8'))
+                assert 'search' in response_get_data
+                assert 'hydra:mapping' in response_get_data['search']
+                class_ = doc.parsed_classes[class_name]['class']
+                class_props = [x.prop for x in class_.supportedProperty]
+                for mapping in response_get_data['search']['hydra:mapping']:
+                    prop = mapping['hydra:property']
+                    prop_name = mapping['hydra:variable']
+                    is_valid_class_prop = prop not in ['limit', 'offset', 'pageIndex']
+                    # check if IRI property is for searching through a nested_class
+                    # and not this class_
+                    is_nested_class_prop = "[" in prop_name and "]" in prop_name
+                    if is_valid_class_prop and not is_nested_class_prop:
+                        assert prop in class_props
 
     def test_client_controlled_pagination(self, test_app_client, constants, doc):
         """Test pagination controlled by test_app_client with help of pageIndex,
