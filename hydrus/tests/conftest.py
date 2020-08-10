@@ -218,15 +218,7 @@ def init_db_for_crud_tests(drone_doc, session, engine):
     Drone Api test HydraDoc object.
     """
     test_classes, test_properties = get_doc_classes_and_properties(drone_doc)
-    try:
-        create_database_tables(test_classes)
-    except Exception:
-        # catch error when the tables have been already defined.
-        # happens when /test_socket.py is run after /test_app.py
-        # in the same session
-        # in that case, no need to create the tables again on the
-        # same sqlalchemy.ext.declarative.declarative_base instance
-        pass
+    create_database_tables(test_classes)
     Base.metadata.create_all(engine)
 
 
