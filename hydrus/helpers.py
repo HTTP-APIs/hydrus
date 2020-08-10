@@ -174,7 +174,14 @@ def check_writeable_props(path: str, obj: Dict[str, Any]) -> bool:
     :return: True if the object only contains writeable properties
              False otherwise.
     """
-    for prop in get_doc().parsed_classes[path]["class"].supportedProperty:
+    collections, parsed_classes = get_collections_and_parsed_classes()
+    if path in collections:
+        # path is of a collection class
+        supported_properties = get_doc().collections[path]["collection"].supportedProperty
+    else:
+        # path is of a non-collection class
+        supported_properties = get_doc().parsed_classes[path]["class"].supportedProperty
+    for prop in supported_properties:
         if prop.write is False:
             if prop.title in obj:
                 return False
@@ -189,11 +196,18 @@ def get_nested_class_path(class_type: str) -> Tuple[str, bool]:
              the second element is a boolean, True if the class is a collection class
              False otherwise.
     """
-    for collection in get_doc().collections:
-        if get_doc().collections[collection]["collection"].class_.title == class_type:
-            return get_doc().collections[collection]["collection"].path, True
-    for class_path in get_doc().parsed_classes:
-        if class_type == get_doc().parsed_classes[class_path]["class"].title:
+    expanded_base_url = DocUrl.doc_url
+    collections, parsed_classes = get_collections_and_parsed_classes()
+    for path in collections:
+        collection = collections[path]["collection"]
+        class_name = collection.manages["object"].split(expanded_base_url)[1]
+        collection_manages_class = parsed_classes[class_name]["class"]
+        collection_manages_class_type = collection_manages_class.title
+        collection_manages_class_path = collection_manages_class.path
+        if collection_manages_class_type == class_type:
+            return collection_manages_class_path, True
+    for class_path in parsed_classes:
+        if class_type == parsed_classes[class_path]["class"].title:
             return class_path, False
 
 
@@ -207,16 +221,19 @@ def finalize_response(path: str, obj: Dict[str, Any]) -> Dict[str, Any]:
              of any nested object's url.
     """
     collections, parsed_classes = get_collections_and_parsed_classes()
+    expanded_base_url = DocUrl.doc_url
     if path in collections:
         # path is of a collection class
         collection = get_doc().collections[path]["collection"]
-        collection_class_type = collection.class_.title
-        collection_class_path = collection.class_.path
+        class_name = collection.manages["object"].split(expanded_base_url)[1]
+        collection_manages_class = get_doc().parsed_classes[class_name]["class"]
+        collection_manages_class_type = collection_manages_class.title
+        collection_manages_class_path = collection_manages_class.path
         members = list()
         for member_id in obj["members"]:
             member = {
-                "@type": collection_class_type,
-                "@id": f"/{get_api_name()}/{collection_class_path}/{member_id}",
+                "@type": collection_manages_class_type,
+                "@id": f"/{get_api_name()}/{collection_manages_class_path}/{member_id}",
             }
             members.append(member)
         obj['members'] = members
