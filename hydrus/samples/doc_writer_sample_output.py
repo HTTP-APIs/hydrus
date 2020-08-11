@@ -1,5 +1,5 @@
 """Generated API Documentation sample using doc_writer_sample.py."""
-    
+
 doc = {
     "@context": {
         "ApiDocumentation": "hydra:ApiDocumentation",

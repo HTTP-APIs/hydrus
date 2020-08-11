@@ -1,6 +1,6 @@
 """
 Generated API Documentation for Server API using server_doc_gen.py."""
-
+ 
 doc = {
     "@context": {
         "ApiDocumentation": "hydra:ApiDocumentation",
@@ -125,42 +125,42 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "vocab:State",
-                    "readable": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "DroneState",
-                    "writeable": "false"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/name",
-                    "readable": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "name",
-                    "writeable": "false"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/model",
-                    "readable": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "model",
-                    "writeable": "false"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "http://auto.schema.org/speed",
-                    "readable": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "MaxSpeed",
-                    "writeable": "false"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/device",
-                    "readable": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "Sensor",
-                    "writeable": "false"
+                    "writeable": "true"
                 }
             ],
             "title": "Drone"
@@ -200,50 +200,50 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "http://auto.schema.org/speed",
-                    "readable": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "Speed",
-                    "writeable": "false"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/geo",
-                    "readable": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "Position",
-                    "writeable": "false"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/Property",
-                    "readable": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "Direction",
-                    "writeable": "false"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/fuelCapacity",
-                    "readable": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "Battery",
-                    "writeable": "false"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "https://schema.org/status",
-                    "readable": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "SensorStatus",
-                    "writeable": "false"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/identifier",
-                    "readable": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "DroneID",
-                    "writeable": "false"
+                    "writeable": "true"
                 }
             ],
             "title": "State"
@@ -319,26 +319,26 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/QuantitativeValue",
-                    "readable": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "Temperature",
-                    "writeable": "false"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/identifier",
-                    "readable": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "DroneID",
-                    "writeable": "false"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/geo",
-                    "readable": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "Position",
-                    "writeable": "false"
+                    "writeable": "true"
                 }
             ],
             "title": "Datastream"
@@ -404,7 +404,7 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/UpdateAction",
-                    "readable": "false",
+                    "readable": "true",
                     "required": "false",
                     "title": "Update",
                     "writeable": "true"
@@ -412,7 +412,7 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/ReplyAction",
-                    "readable": "false",
+                    "readable": "true",
                     "required": "false",
                     "title": "Get",
                     "writeable": "true"
@@ -420,7 +420,7 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/SendAction",
-                    "readable": "false",
+                    "readable": "true",
                     "required": "false",
                     "title": "Send",
                     "writeable": "true"
@@ -428,7 +428,7 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "vocab:State",
-                    "readable": "false",
+                    "readable": "true",
                     "required": "false",
                     "title": "State",
                     "writeable": "true"
@@ -436,7 +436,7 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "vocab:Datastream",
-                    "readable": "false",
+                    "readable": "true",
                     "required": "false",
                     "title": "Data",
                     "writeable": "true"
@@ -444,7 +444,7 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "vocab:Command",
-                    "readable": "false",
+                    "readable": "true",
                     "required": "false",
                     "title": "Command",
                     "writeable": "true"
@@ -505,18 +505,18 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/geo",
-                    "readable": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "TopLeft",
-                    "writeable": "false"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/geo",
-                    "readable": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "BottomRight",
-                    "writeable": "false"
+                    "writeable": "true"
                 }
             ],
             "title": "Area"
@@ -592,18 +592,18 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/identifier",
-                    "readable": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "DroneID",
-                    "writeable": "false"
+                    "writeable": "true"
                 },
                 {
                     "@type": "SupportedProperty",
                     "property": "vocab:State",
-                    "readable": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "State",
-                    "writeable": "false"
+                    "writeable": "true"
                 }
             ],
             "title": "Command"
@@ -661,10 +661,10 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "http://schema.org/Text",
-                    "readable": "false",
+                    "readable": "true",
                     "required": "true",
                     "title": "MessageString",
-                    "writeable": "false"
+                    "writeable": "true"
                 }
             ],
             "title": "Message"
@@ -698,6 +698,10 @@ doc = {
             "@id": "vocab:DroneCollection",
             "@type": "hydra:Class",
             "description": "A collection of drone",
+            "manages": {
+                "object": "vocab:dummyClass",
+                "property": "rdf:type"
+            },
             "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
             "supportedOperation": [
                 {
@@ -748,6 +752,10 @@ doc = {
             "@id": "vocab:StateCollection",
             "@type": "hydra:Class",
             "description": "A collection of state",
+            "manages": {
+                "object": "vocab:dummyClass",
+                "property": "rdf:type"
+            },
             "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
             "supportedOperation": [
                 {
@@ -798,6 +806,10 @@ doc = {
             "@id": "vocab:DatastreamCollection",
             "@type": "hydra:Class",
             "description": "A collection of datastream",
+            "manages": {
+                "object": "vocab:dummyClass",
+                "property": "rdf:type"
+            },
             "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
             "supportedOperation": [
                 {
@@ -848,6 +860,10 @@ doc = {
             "@id": "vocab:LogEntryCollection",
             "@type": "hydra:Class",
             "description": "A collection of logentry",
+            "manages": {
+                "object": "vocab:dummyClass",
+                "property": "rdf:type"
+            },
             "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
             "supportedOperation": [
                 {
@@ -898,6 +914,10 @@ doc = {
             "@id": "vocab:CommandCollection",
             "@type": "hydra:Class",
             "description": "A collection of command",
+            "manages": {
+                "object": "vocab:dummyClass",
+                "property": "rdf:type"
+            },
             "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
             "supportedOperation": [
                 {
@@ -948,6 +968,10 @@ doc = {
             "@id": "vocab:MessageCollection",
             "@type": "hydra:Class",
             "description": "A collection of message",
+            "manages": {
+                "object": "vocab:dummyClass",
+                "property": "rdf:type"
+            },
             "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
             "supportedOperation": [
                 {
@@ -1013,6 +1037,282 @@ doc = {
             ],
             "supportedProperty": [
                 {
+                    "hydra:description": "The Drone Class",
+                    "hydra:title": "drone",
+                    "property": {
+                        "@id": "vocab:EntryPoint/Drone",
+                        "@type": "hydra:Link",
+                        "description": "Class for a drone",
+                        "domain": "vocab:EntryPoint",
+                        "label": "Drone",
+                        "range": "vocab:Drone",
+                        "supportedOperation": [
+                            {
+                                "@id": "submitdrone",
+                                "@type": "http://schema.org/UpdateAction",
+                                "description": "null",
+                                "expects": "vocab:Drone",
+                                "expectsHeader": [],
+                                "label": "SubmitDrone",
+                                "method": "POST",
+                                "possibleStatus": [
+                                    {
+                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                                        "@type": "Status",
+                                        "description": "Drone updated",
+                                        "statusCode": 200,
+                                        "title": ""
+                                    }
+                                ],
+                                "returns": "null",
+                                "returnsHeader": []
+                            },
+                            {
+                                "@id": "createdrone",
+                                "@type": "http://schema.org/AddAction",
+                                "description": "null",
+                                "expects": "vocab:Drone",
+                                "expectsHeader": [],
+                                "label": "CreateDrone",
+                                "method": "PUT",
+                                "possibleStatus": [
+                                    {
+                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                                        "@type": "Status",
+                                        "description": "Drone added",
+                                        "statusCode": 200,
+                                        "title": ""
+                                    }
+                                ],
+                                "returns": "null",
+                                "returnsHeader": []
+                            },
+                            {
+                                "@id": "getdrone",
+                                "@type": "http://schema.org/FindAction",
+                                "description": "null",
+                                "expects": "null",
+                                "expectsHeader": [],
+                                "label": "GetDrone",
+                                "method": "GET",
+                                "possibleStatus": [
+                                    {
+                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                                        "@type": "Status",
+                                        "description": "Drone not found",
+                                        "statusCode": 404,
+                                        "title": ""
+                                    },
+                                    {
+                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                                        "@type": "Status",
+                                        "description": "Drone Returned",
+                                        "statusCode": 200,
+                                        "title": ""
+                                    }
+                                ],
+                                "returns": "vocab:Drone",
+                                "returnsHeader": []
+                            }
+                        ]
+                    },
+                    "readable": "true",
+                    "required": "null",
+                    "writeable": "false"
+                },
+                {
+                    "hydra:description": "The State Class",
+                    "hydra:title": "state",
+                    "property": {
+                        "@id": "vocab:EntryPoint/State",
+                        "@type": "hydra:Link",
+                        "description": "Class for drone state objects",
+                        "domain": "vocab:EntryPoint",
+                        "label": "State",
+                        "range": "vocab:State",
+                        "supportedOperation": [
+                            {
+                                "@id": "getstate",
+                                "@type": "http://schema.org/FindAction",
+                                "description": "null",
+                                "expects": "null",
+                                "expectsHeader": [],
+                                "label": "GetState",
+                                "method": "GET",
+                                "possibleStatus": [
+                                    {
+                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                                        "@type": "Status",
+                                        "description": "State not found",
+                                        "statusCode": 404,
+                                        "title": ""
+                                    },
+                                    {
+                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                                        "@type": "Status",
+                                        "description": "State Returned",
+                                        "statusCode": 200,
+                                        "title": ""
+                                    }
+                                ],
+                                "returns": "vocab:State",
+                                "returnsHeader": []
+                            }
+                        ]
+                    },
+                    "readable": "true",
+                    "required": "null",
+                    "writeable": "false"
+                },
+                {
+                    "hydra:description": "The Datastream Class",
+                    "hydra:title": "datastream",
+                    "property": {
+                        "@id": "vocab:EntryPoint/Datastream",
+                        "@type": "hydra:Link",
+                        "description": "Class for a datastream entry",
+                        "domain": "vocab:EntryPoint",
+                        "label": "Datastream",
+                        "range": "vocab:Datastream",
+                        "supportedOperation": [
+                            {
+                                "@id": "readdatastream",
+                                "@type": "http://schema.org/FindAction",
+                                "description": "null",
+                                "expects": "null",
+                                "expectsHeader": [],
+                                "label": "ReadDatastream",
+                                "method": "GET",
+                                "possibleStatus": [
+                                    {
+                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                                        "@type": "Status",
+                                        "description": "Data not found",
+                                        "statusCode": 404,
+                                        "title": ""
+                                    },
+                                    {
+                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                                        "@type": "Status",
+                                        "description": "Data returned",
+                                        "statusCode": 200,
+                                        "title": ""
+                                    }
+                                ],
+                                "returns": "vocab:Datastream",
+                                "returnsHeader": []
+                            },
+                            {
+                                "@id": "updatedatastream",
+                                "@type": "http://schema.org/UpdateAction",
+                                "description": "null",
+                                "expects": "vocab:Datastream",
+                                "expectsHeader": [],
+                                "label": "UpdateDatastream",
+                                "method": "POST",
+                                "possibleStatus": [
+                                    {
+                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                                        "@type": "Status",
+                                        "description": "Data updated",
+                                        "statusCode": 200,
+                                        "title": ""
+                                    }
+                                ],
+                                "returns": "null",
+                                "returnsHeader": []
+                            },
+                            {
+                                "@id": "deletedatastream",
+                                "@type": "http://schema.org/DeleteAction",
+                                "description": "null",
+                                "expects": "null",
+                                "expectsHeader": [],
+                                "label": "DeleteDatastream",
+                                "method": "DELETE",
+                                "possibleStatus": [
+                                    {
+                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                                        "@type": "Status",
+                                        "description": "Data deleted",
+                                        "statusCode": 200,
+                                        "title": ""
+                                    }
+                                ],
+                                "returns": "null",
+                                "returnsHeader": []
+                            }
+                        ]
+                    },
+                    "readable": "true",
+                    "required": "null",
+                    "writeable": "false"
+                },
+                {
+                    "hydra:description": "The LogEntry Class",
+                    "hydra:title": "logentry",
+                    "property": {
+                        "@id": "vocab:EntryPoint/LogEntry",
+                        "@type": "hydra:Link",
+                        "description": "Class for a log entry",
+                        "domain": "vocab:EntryPoint",
+                        "label": "LogEntry",
+                        "range": "vocab:LogEntry",
+                        "supportedOperation": [
+                            {
+                                "@id": "getlog",
+                                "@type": "http://schema.org/FindAction",
+                                "description": "null",
+                                "expects": "null",
+                                "expectsHeader": [],
+                                "label": "GetLog",
+                                "method": "GET",
+                                "possibleStatus": [
+                                    {
+                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                                        "@type": "Status",
+                                        "description": "Log entry not found",
+                                        "statusCode": 404,
+                                        "title": ""
+                                    },
+                                    {
+                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                                        "@type": "Status",
+                                        "description": "Log entry returned",
+                                        "statusCode": 200,
+                                        "title": ""
+                                    }
+                                ],
+                                "returns": "vocab:LogEntry",
+                                "returnsHeader": []
+                            },
+                            {
+                                "@id": "addlog",
+                                "@type": "http://schema.org/AddAction",
+                                "description": "null",
+                                "expects": "vocab:LogEntry",
+                                "expectsHeader": [],
+                                "label": "AddLog",
+                                "method": "PUT",
+                                "possibleStatus": [
+                                    {
+                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                                        "@type": "Status",
+                                        "description": "Log entry created",
+                                        "statusCode": 201,
+                                        "title": ""
+                                    }
+                                ],
+                                "returns": "null",
+                                "returnsHeader": []
+                            }
+                        ]
+                    },
+                    "readable": "true",
+                    "required": "null",
+                    "writeable": "false"
+                },
+                {
                     "hydra:description": "The Area Class",
                     "hydra:title": "area",
                     "property": {
@@ -1068,6 +1368,154 @@ doc = {
                                     }
                                 ],
                                 "returns": "vocab:Area",
+                                "returnsHeader": []
+                            }
+                        ]
+                    },
+                    "readable": "true",
+                    "required": "null",
+                    "writeable": "false"
+                },
+                {
+                    "hydra:description": "The Command Class",
+                    "hydra:title": "command",
+                    "property": {
+                        "@id": "vocab:EntryPoint/Command",
+                        "@type": "hydra:Link",
+                        "description": "Class for drone commands",
+                        "domain": "vocab:EntryPoint",
+                        "label": "Command",
+                        "range": "vocab:Command",
+                        "supportedOperation": [
+                            {
+                                "@id": "getcommand",
+                                "@type": "http://schema.org/FindAction",
+                                "description": "null",
+                                "expects": "null",
+                                "expectsHeader": [],
+                                "label": "GetCommand",
+                                "method": "GET",
+                                "possibleStatus": [
+                                    {
+                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                                        "@type": "Status",
+                                        "description": "Command not found",
+                                        "statusCode": 404,
+                                        "title": ""
+                                    },
+                                    {
+                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                                        "@type": "Status",
+                                        "description": "Command Returned",
+                                        "statusCode": 200,
+                                        "title": ""
+                                    }
+                                ],
+                                "returns": "vocab:Command",
+                                "returnsHeader": []
+                            },
+                            {
+                                "@id": "addcommand",
+                                "@type": "http://schema.org/AddAction",
+                                "description": "null",
+                                "expects": "vocab:Command",
+                                "expectsHeader": [],
+                                "label": "AddCommand",
+                                "method": "PUT",
+                                "possibleStatus": [
+                                    {
+                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                                        "@type": "Status",
+                                        "description": "Command added",
+                                        "statusCode": 201,
+                                        "title": ""
+                                    }
+                                ],
+                                "returns": "null",
+                                "returnsHeader": []
+                            },
+                            {
+                                "@id": "deletecommand",
+                                "@type": "http://schema.org/DeleteAction",
+                                "description": "null",
+                                "expects": "null",
+                                "expectsHeader": [],
+                                "label": "DeleteCommand",
+                                "method": "DELETE",
+                                "possibleStatus": [
+                                    {
+                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                                        "@type": "Status",
+                                        "description": "Command deleted",
+                                        "statusCode": 201,
+                                        "title": ""
+                                    }
+                                ],
+                                "returns": "null",
+                                "returnsHeader": []
+                            }
+                        ]
+                    },
+                    "readable": "true",
+                    "required": "null",
+                    "writeable": "false"
+                },
+                {
+                    "hydra:description": "The Message Class",
+                    "hydra:title": "message",
+                    "property": {
+                        "@id": "vocab:EntryPoint/Message",
+                        "@type": "hydra:Link",
+                        "description": "Class for messages received by the GUI interface",
+                        "domain": "vocab:EntryPoint",
+                        "label": "Message",
+                        "range": "vocab:Message",
+                        "supportedOperation": [
+                            {
+                                "@id": "getmessage",
+                                "@type": "http://schema.org/FindAction",
+                                "description": "null",
+                                "expects": "null",
+                                "expectsHeader": [],
+                                "label": "GetMessage",
+                                "method": "GET",
+                                "possibleStatus": [
+                                    {
+                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                                        "@type": "Status",
+                                        "description": "Message not found",
+                                        "statusCode": 200,
+                                        "title": ""
+                                    },
+                                    {
+                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                                        "@type": "Status",
+                                        "description": "Message returned",
+                                        "statusCode": 200,
+                                        "title": ""
+                                    }
+                                ],
+                                "returns": "vocab:Message",
+                                "returnsHeader": []
+                            },
+                            {
+                                "@id": "deletemessage",
+                                "@type": "http://schema.org/DeleteAction",
+                                "description": "null",
+                                "expects": "null",
+                                "expectsHeader": [],
+                                "label": "DeleteMessage",
+                                "method": "DELETE",
+                                "possibleStatus": [
+                                    {
+                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                                        "@type": "Status",
+                                        "description": "Message deleted",
+                                        "statusCode": 200,
+                                        "title": ""
+                                    }
+                                ],
+                                "returns": "null",
                                 "returnsHeader": []
                             }
                         ]
