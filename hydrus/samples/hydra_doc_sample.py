@@ -203,7 +203,7 @@ doc = {
                             "title": ""
                         }
                     ],
-                    "returns": "vocab:State",
+                    "returns": "http://localhost:8080/api/vocab#State",
                     "returnsHeader": [],
                     "title": "GetState"
                 }
@@ -623,7 +623,7 @@ doc = {
         {
             "@id": "http://localhost:8080/api/vocab#Message",
             "@type": "hydra:Class",
-            "description": "Message",
+            "description": "Class for messages received by the GUI interface",
             "supportedOperation": [
                 {
                     "@type": "http://schema.org/FindAction",
@@ -1303,7 +1303,7 @@ doc = {
                                         "title": ""
                                     }
                                 ],
-                                "returns": "vocab:State",
+                                "returns": "http://localhost:8080/api/vocab#State",
                                 "returnsHeader": []
                             }
                         ]
@@ -1612,9 +1612,9 @@ doc = {
                     "hydra:description": "The Message Class",
                     "hydra:title": "message",
                     "property": {
-                        "@id": "http://localhost:8080/api/vocab#EntryPoint/Class for messages received by the GUI interface",
+                        "@id": "http://localhost:8080/api/vocab#EntryPoint/Message",
                         "@type": "hydra:Link",
-                        "description": "Message",
+                        "description": "Class for messages received by the GUI interface",
                         "domain": "http://localhost:8080/api/vocab#EntryPoint",
                         "label": "Message",
                         "range": "http://localhost:8080/api/vocab#Message",
