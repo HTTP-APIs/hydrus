@@ -68,22 +68,22 @@ class TestSocket:
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
         for endpoint in endpoints:
-            if endpoint not in ['@context', '@id', '@type']:
+            if endpoint not in ['@context', '@id', '@type', 'collections']:
                 class_name = '/'.join(endpoints[endpoint].split(f'/{API_NAME}/')[1:])
-                if class_name not in doc.collections:
-                    class_ = doc.parsed_classes[class_name]['class']
-                    class_methods = [x.method for x in class_.supportedOperation]
+                class_ = doc.parsed_classes[class_name]['class']
+                class_methods = [x.method for x in class_.supportedOperation]
+                if 'PUT' in class_methods:
+                    # insert a object to be updated later
+                    dummy_object = gen_dummy_object(class_.title, doc)
+                    put_response = test_app_client.put(
+                        endpoints[endpoint], data=json.dumps(dummy_object))
+                    # extract id of the created object from the description of response
+                    desc = put_response.json['description']
+                    id_ = desc.split('ID ')[1].split(' successfully')[0]
+                    # Flush old socketio updates
+                    socketio_client.get_received('/sync')
+                    # POST object
                     if 'POST' in class_methods:
-                        # insert a object to be updated later
-                        dummy_object = gen_dummy_object(class_.title, doc)
-                        put_response = test_app_client.put(
-                            endpoints[endpoint], data=json.dumps(dummy_object))
-                        # extract id of the created object from the description of response
-                        desc = put_response.json['description']
-                        id_ = desc.split('ID ')[1].split(' successfully')[0]
-                        # Flush old socketio updates
-                        socketio_client.get_received('/sync')
-                        # POST object
                         new_dummy_object = gen_dummy_object(class_.title, doc)
                         post_response = test_app_client.post(
                             f'{endpoints[endpoint]}/{id_}',
@@ -103,21 +103,21 @@ class TestSocket:
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
         for endpoint in endpoints:
-            if endpoint not in ['@context', '@id', '@type']:
+            if endpoint not in ['@context', '@id', '@type', 'collections']:
                 class_name = '/'.join(endpoints[endpoint].split(f'/{API_NAME}/')[1:])
-                if class_name not in doc.collections:
-                    class_ = doc.parsed_classes[class_name]['class']
-                    class_methods = [x.method for x in class_.supportedOperation]
+                class_ = doc.parsed_classes[class_name]['class']
+                class_methods = [x.method for x in class_.supportedOperation]
+                if 'PUT' in class_methods:
+                    # insert a object first to be deleted later
+                    dummy_object = gen_dummy_object(class_.title, doc)
+                    put_response = test_app_client.put(
+                        endpoints[endpoint], data=json.dumps(dummy_object))
+                    # extract id of the created object from the description of response
+                    desc = put_response.json['description']
+                    id_ = desc.split('ID ')[1].split(' successfully')[0]
+                    # Flush old socketio updates
+                    socketio_client.get_received('/sync')
                     if 'DELETE' in class_methods:
-                        # insert a object first to be deleted later
-                        dummy_object = gen_dummy_object(class_.title, doc)
-                        put_response = test_app_client.put(
-                            endpoints[endpoint], data=json.dumps(dummy_object))
-                        # extract id of the created object from the description of response
-                        desc = put_response.json['description']
-                        id_ = desc.split('ID ')[1].split(' successfully')[0]
-                        # Flush old socketio updates
-                        socketio_client.get_received('/sync')
                         delete_response = test_app_client.delete(f'{endpoints[endpoint]}/{id_}')
                         assert delete_response.status_code == 200
                         # Get new update event

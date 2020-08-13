@@ -7,7 +7,7 @@ from hydrus.data import crud
 from hydrus.utils import get_doc, get_api_name, get_hydrus_server_url, get_session
 from hydrus.utils import get_collections_and_parsed_classes
 from hydra_python_core.doc_writer import HydraIriTemplate, IriTemplateMapping, HydraLink
-from hydra_python_core.doc_writer import HydraError
+from hydra_python_core.doc_writer import HydraError, DocUrl
 from hydrus.socketio_factory import socketio
 
 
@@ -67,7 +67,9 @@ def set_response_headers(resp: Response,
         resp.headers[list(header.keys())[0]] = header[list(header.keys())[0]]
     resp.headers['Content-type'] = ct
     link = "http://www.w3.org/ns/hydra/core#apiDocumentation"
-    resp.headers['Link'] = f'<{get_hydrus_server_url()}{get_api_name()}/vocab>; rel="{link}"'
+    vocab_route = get_doc().doc_name
+    link_header = f'<{get_hydrus_server_url()}{get_api_name()}/{vocab_route}>; rel="{link}"'
+    resp.headers['Link'] = link_header
     return resp
 
 
@@ -95,11 +97,14 @@ def checkEndpoint(method: str, path: str) -> Dict[str, Union[bool, int]]:
     :return : Dict with 'method' and 'status' key
     """
     status_val = 404
-    if path == 'vocab':
+    vocab_route = get_doc().doc_name
+    if path == vocab_route:
         return {'method': False, 'status': 405}
-
+    expanded_base_url = DocUrl.doc_url
     for endpoint in get_doc().entrypoint.entrypoint.supportedProperty:
-        if path == "/".join(endpoint.id_.split("/")[1:]):
+        expanded_endpoint_id = endpoint.id_.replace("EntryPoint/", "")
+        endpoint_id = expanded_endpoint_id.split(expanded_base_url)[1]
+        if path == endpoint_id:
             status_val = 405
             for operation in endpoint.supportedOperation:
                 if operation.method == method:
@@ -114,12 +119,12 @@ def getType(class_path: str, method: str) -> Any:
     :param class_path: path for the class
     :param method: Method name
     """
+    expanded_base_url = DocUrl.doc_url
     for supportedOp in get_doc(
     ).parsed_classes[class_path]["class"].supportedOperation:
         if supportedOp.method == method:
-            return supportedOp.expects.replace("vocab:", "")
-    # NOTE: Don't use split, if there are more than one substrings with
-    # 'vocab:' not everything will be returned.
+            class_type = supportedOp.expects.split(expanded_base_url)[1]
+            return class_type
 
 
 def checkClassOp(path: str, method: str) -> bool:
@@ -170,7 +175,14 @@ def check_writeable_props(path: str, obj: Dict[str, Any]) -> bool:
     :return: True if the object only contains writeable properties
              False otherwise.
     """
-    for prop in get_doc().parsed_classes[path]["class"].supportedProperty:
+    collections, parsed_classes = get_collections_and_parsed_classes()
+    if path in collections:
+        # path is of a collection class
+        supported_properties = get_doc().collections[path]["collection"].supportedProperty
+    else:
+        # path is of a non-collection class
+        supported_properties = get_doc().parsed_classes[path]["class"].supportedProperty
+    for prop in supported_properties:
         if prop.write is False:
             if prop.title in obj:
                 return False
@@ -185,11 +197,18 @@ def get_nested_class_path(class_type: str) -> Tuple[str, bool]:
              the second element is a boolean, True if the class is a collection class
              False otherwise.
     """
-    for collection in get_doc().collections:
-        if get_doc().collections[collection]["collection"].class_.title == class_type:
-            return get_doc().collections[collection]["collection"].path, True
-    for class_path in get_doc().parsed_classes:
-        if class_type == get_doc().parsed_classes[class_path]["class"].title:
+    expanded_base_url = DocUrl.doc_url
+    collections, parsed_classes = get_collections_and_parsed_classes()
+    for path in collections:
+        collection = collections[path]["collection"]
+        class_name = collection.manages["object"].split(expanded_base_url)[1]
+        collection_manages_class = parsed_classes[class_name]["class"]
+        collection_manages_class_type = collection_manages_class.title
+        collection_manages_class_path = collection_manages_class.path
+        if collection_manages_class_type == class_type:
+            return collection_manages_class_path, True
+    for class_path in parsed_classes:
+        if class_type == parsed_classes[class_path]["class"].title:
             return class_path, False
 
 
@@ -203,16 +222,19 @@ def finalize_response(path: str, obj: Dict[str, Any]) -> Dict[str, Any]:
              of any nested object's url.
     """
     collections, parsed_classes = get_collections_and_parsed_classes()
+    expanded_base_url = DocUrl.doc_url
     if path in collections:
         # path is of a collection class
         collection = get_doc().collections[path]["collection"]
-        collection_class_type = collection.class_.title
-        collection_class_path = collection.class_.path
+        class_name = collection.manages["object"].split(expanded_base_url)[1]
+        collection_manages_class = get_doc().parsed_classes[class_name]["class"]
+        collection_manages_class_type = collection_manages_class.title
+        collection_manages_class_path = collection_manages_class.path
         members = list()
         for member_id in obj["members"]:
             member = {
-                "@type": collection_class_type,
-                "@id": f"/{get_api_name()}/{collection_class_path}/{member_id}",
+                "@type": collection_manages_class_type,
+                "@id": f"/{get_api_name()}/{collection_manages_class_path}/{member_id}",
             }
             members.append(member)
         obj['members'] = members
@@ -220,6 +242,7 @@ def finalize_response(path: str, obj: Dict[str, Any]) -> Dict[str, Any]:
     else:
         # path is of a non-collection class
         supported_properties = get_doc().parsed_classes[path]["class"].supportedProperty
+        expanded_base_url = DocUrl.doc_url
         for prop in supported_properties:
             # Skip not required properties which are not inserted yet.
             if not prop.required and prop.title not in obj:
@@ -228,15 +251,15 @@ def finalize_response(path: str, obj: Dict[str, Any]) -> Dict[str, Any]:
             #     obj.pop(prop.title, None)
             elif isinstance(prop.prop, HydraLink):
                 hydra_link = prop.prop
-                range_class = hydra_link.range.replace("vocab:", "")
+                range_class = hydra_link.range.split(expanded_base_url)[1]
                 nested_path, is_collection = get_nested_class_path(range_class)
                 if is_collection:
                     id = obj[prop.title]
                     obj[prop.title] = f"/{get_api_name()}/{nested_path}/{id}"
                 else:
                     obj[prop.title] = f"/{get_api_name()}/{nested_path}"
-            elif 'vocab:' in prop.prop:
-                prop_class = prop.prop.replace("vocab:", "")
+            elif expanded_base_url in prop.prop:
+                prop_class = prop.prop.split(expanded_base_url)[1]
                 id = obj[prop.title]
                 obj[prop.title] = crud.get(id, prop_class, get_api_name(), get_session())
         return obj
@@ -274,16 +297,17 @@ def generate_iri_mappings(path: str, template: str, skip_nested: bool = False,
     :return: Template string, list of template mappings and boolean showing whether
              to keep adding delimiter or not.
     """
+    expanded_base_url = DocUrl.doc_url
     for supportedProp in get_doc(
     ).parsed_classes[path]["class"].supportedProperty:
         prop_class = supportedProp.prop
         nested_class_prop = False
         if isinstance(supportedProp.prop, HydraLink):
             hydra_link = supportedProp.prop
-            prop_class = hydra_link.range.replace("vocab:", "")
+            prop_class = hydra_link.range.split(expanded_base_url)[1]
             nested_class_prop = True
-        elif "vocab:" in supportedProp.prop:
-            prop_class = supportedProp.prop.replace("vocab:", "")
+        elif expanded_base_url in supportedProp.prop:
+            prop_class = supportedProp.prop.split(expanded_base_url)[1]
             nested_class_prop = True
         if nested_class_prop and skip_nested is False:
             template, template_mapping = generate_iri_mappings(prop_class, template,
@@ -353,6 +377,7 @@ def get_link_props(path: str, object_) -> Tuple[Dict[str, Any], bool]:
     """
     link_props = {}
     collections, parsed_classes = get_collections_and_parsed_classes()
+    expanded_base_url = DocUrl.doc_url
     if path in collections:
         # path is of a collection class
         supported_properties = get_doc().collections[path]["collection"].supportedProperty
@@ -362,7 +387,7 @@ def get_link_props(path: str, object_) -> Tuple[Dict[str, Any], bool]:
     for supportedProp in supported_properties:
         if isinstance(supportedProp.prop, HydraLink) and supportedProp.title in object_:
             prop_range = supportedProp.prop.range
-            range_class_name = prop_range.replace("vocab:", "")
+            range_class_name = prop_range.split(expanded_base_url)[1]
             for collection_path in get_doc().collections:
                 if collection_path in object_[supportedProp.title]:
                     class_title = get_doc().collections[collection_path]['collection'].class_.title

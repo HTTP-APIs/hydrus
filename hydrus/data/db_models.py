@@ -17,7 +17,7 @@ from sqlalchemy import (
 from sqlalchemy.engine import Engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql import func
-
+from hydra_python_core.doc_writer import DocUrl
 # from hydrus.settings import DB_URL
 
 engine = create_engine("sqlite:///database.db")
@@ -50,8 +50,10 @@ class Resource:
     @property
     def name(self):
         """Return the name of the resource from it's "@id"""
-        # split the classname at "vocab:" to get the class name
-        return self._resource["@id"].split("vocab:")[1]
+        # get the base url which will be used to split the @id
+        # for eg, 'http://localhost:8080/serverapi/vocab#'
+        expanded_base_url = DocUrl.doc_url
+        return self._resource["@id"].split(expanded_base_url)[1]
 
     @property
     def resource(self):
@@ -85,12 +87,13 @@ class Resource:
         }
         for supported_property in self.supported_properties:
             title = supported_property["title"]
-            link = supported_property["property"]
-            if "vocab:" in link:
-                # if vocab: is in the link, it implies that the link is pointing to
-                # another resource in the same ApiDoc, hence make it a Foreign Key
-                # to that resource table
-                foreign_table_name = link.split("vocab:")[1]
+            property_ = supported_property["property"]
+            expanded_base_url = DocUrl.doc_url
+            if expanded_base_url in property_:
+                # if expanded_base_url is in the property_, it implies that the property_
+                # is pointing to another resource in the same ApiDoc, hence make
+                # it a Foreign Key to that resource table
+                foreign_table_name = property_.split(expanded_base_url)[1]
                 attr_dict[title] = Resource.foreign_key_column(
                     foreign_table_name, title
                 )

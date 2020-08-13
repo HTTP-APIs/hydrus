@@ -5,26 +5,26 @@ CRUD operations in hydrus.data.crud.
 import random
 import uuid
 
-from hydra_python_core.doc_writer import HydraLink
+from hydra_python_core.doc_writer import HydraLink, DocUrl
 
 import hydrus.data.crud as crud
 from hydrus.data.exceptions import PropertyNotGiven
 from hydrus.tests.conftest import gen_dummy_object
 
 
-def test_crud_insert_response_is_str(drone_doc_collection_classes, drone_doc, session,
+def test_crud_insert_response_is_str(drone_doc_parsed_classes, drone_doc, session,
                                      init_db_for_crud_tests):
     """Test CRUD insert response is string"""
-    object_ = gen_dummy_object(random.choice(drone_doc_collection_classes), drone_doc)
+    object_ = gen_dummy_object(random.choice(drone_doc_parsed_classes), drone_doc)
     id_ = str(uuid.uuid4())
     response = crud.insert(object_=object_, id_=id_, session=session)
 
     assert isinstance(response, str)
 
 
-def test_crud_get_returns_correct_object(drone_doc_collection_classes, drone_doc, session):
+def test_crud_get_returns_correct_object(drone_doc_parsed_classes, drone_doc, session):
     """Test CRUD get returns correct object"""
-    object_ = gen_dummy_object(random.choice(drone_doc_collection_classes), drone_doc)
+    object_ = gen_dummy_object(random.choice(drone_doc_parsed_classes), drone_doc)
     id_ = str(uuid.uuid4())
     response = crud.insert(object_=object_, id_=id_, session=session)
     object_ = crud.get(id_=id_, type_=object_['@type'], session=session, api_name='api')
@@ -32,14 +32,15 @@ def test_crud_get_returns_correct_object(drone_doc_collection_classes, drone_doc
     assert object_['@id'].split('/')[-1] == id_
 
 
-def test_get_for_nested_obj(drone_doc_collection_classes, drone_doc, session, constants):
+def test_get_for_nested_obj(drone_doc_parsed_classes, drone_doc, session, constants):
     """Test CRUD get operation for object that can contain other objects."""
-    for class_ in drone_doc_collection_classes:
+    expanded_base_url = DocUrl.doc_url
+    for class_ in drone_doc_parsed_classes:
         for prop in drone_doc.parsed_classes[class_]['class'].supportedProperty:
             if not isinstance(prop.prop, HydraLink):
-                if 'vocab:' in prop.prop:
+                if expanded_base_url in prop.prop:
                     dummy_obj = gen_dummy_object(class_, drone_doc)
-                    nested_class = prop.prop.replace('vocab:', '')
+                    nested_class = prop.prop.split(expanded_base_url)[1]
                     obj_id = str(uuid.uuid4())
                     response = crud.insert(object_=dummy_obj, id_=obj_id, session=session)
                     object_ = crud.get(id_=obj_id, type_=class_, session=session,
@@ -52,9 +53,10 @@ def test_get_for_nested_obj(drone_doc_collection_classes, drone_doc, session, co
                     break
 
 
-def test_searching_over_collection_elements(drone_doc_collection_classes, drone_doc, session):
+def test_searching_over_collection_elements(drone_doc_parsed_classes, drone_doc, session):
     """Test searching over collection elements."""
-    for class_ in drone_doc_collection_classes:
+    expanded_base_url = DocUrl.doc_url
+    for class_ in drone_doc_parsed_classes:
         target_property_1 = ''
         target_property_2 = ''
         for prop in drone_doc.parsed_classes[class_]['class'].supportedProperty:
@@ -62,7 +64,7 @@ def test_searching_over_collection_elements(drone_doc_collection_classes, drone_
                 continue
             # Find nested object so we can test searching of elements by
             # properties of nested objects.
-            if 'vocab:' in prop.prop:
+            if expanded_base_url in prop.prop:
                 object_ = gen_dummy_object(class_, drone_doc)
                 # Setting property of a nested object as target
                 for property_ in object_[prop.title]:
@@ -100,9 +102,9 @@ def test_searching_over_collection_elements(drone_doc_collection_classes, drone_
                 break
 
 
-def test_update_on_object(drone_doc_collection_classes, drone_doc, session):
+def test_update_on_object(drone_doc_parsed_classes, drone_doc, session):
     """Test CRUD update on object"""
-    random_class = random.choice(drone_doc_collection_classes)
+    random_class = random.choice(drone_doc_parsed_classes)
     object_ = gen_dummy_object(random_class, drone_doc)
     new_object = gen_dummy_object(random_class, drone_doc)
     id_ = str(uuid.uuid4())
@@ -120,9 +122,9 @@ def test_update_on_object(drone_doc_collection_classes, drone_doc, session):
     assert test_object['@id'].split('/')[-1] == id_
 
 
-def test_delete_on_object(drone_doc_collection_classes, drone_doc, session):
+def test_delete_on_object(drone_doc_parsed_classes, drone_doc, session):
     """Test CRUD delete on object"""
-    object_ = gen_dummy_object(random.choice(drone_doc_collection_classes), drone_doc)
+    object_ = gen_dummy_object(random.choice(drone_doc_parsed_classes), drone_doc)
     id_ = str(uuid.uuid4())
     insert_response = crud.insert(object_=object_, id_=id_, session=session)
     assert isinstance(insert_response, str)
@@ -140,10 +142,10 @@ def test_delete_on_object(drone_doc_collection_classes, drone_doc, session):
     assert 404 == response_code
 
 
-def test_get_on_wrong_id(drone_doc_collection_classes, drone_doc, session):
+def test_get_on_wrong_id(drone_doc_parsed_classes, drone_doc, session):
     """Test CRUD get when wrong/undefined ID is given."""
     id_ = str(uuid.uuid4())
-    type_ = random.choice(drone_doc_collection_classes)
+    type_ = random.choice(drone_doc_parsed_classes)
     response_code = None
     try:
         get_response = crud.get(id_=id_, type_=type_, session=session, api_name='api')
@@ -153,10 +155,10 @@ def test_get_on_wrong_id(drone_doc_collection_classes, drone_doc, session):
     assert 404 == response_code
 
 
-def test_delete_on_wrong_id(drone_doc_collection_classes, drone_doc, session):
+def test_delete_on_wrong_id(drone_doc_parsed_classes, drone_doc, session):
     """Test CRUD delete when wrong/undefined ID is given."""
     object_ = gen_dummy_object(random.choice(
-        drone_doc_collection_classes), drone_doc)
+        drone_doc_parsed_classes), drone_doc)
     id_ = str(uuid.uuid4())
     insert_response = crud.insert(object_=object_, id_=id_, session=session)
     response_code = None
@@ -170,9 +172,9 @@ def test_delete_on_wrong_id(drone_doc_collection_classes, drone_doc, session):
     assert insert_response == id_
 
 
-def test_insert_used_id(drone_doc_collection_classes, drone_doc, session):
+def test_insert_used_id(drone_doc_parsed_classes, drone_doc, session):
     """Test CRUD insert when used ID is given."""
-    object_ = gen_dummy_object(random.choice(drone_doc_collection_classes), drone_doc)
+    object_ = gen_dummy_object(random.choice(drone_doc_parsed_classes), drone_doc)
     id_ = str(uuid.uuid4())
     insert_response = crud.insert(object_=object_, id_=id_, session=session)
     response_code = None
@@ -197,9 +199,9 @@ def test_get_on_wrong_type(session):
     assert 400 == error.code
 
 
-def test_delete_on_wrong_type(drone_doc_collection_classes, drone_doc, session):
+def test_delete_on_wrong_type(drone_doc_parsed_classes, drone_doc, session):
     """Test CRUD delete when wrong/undefined class is given."""
-    object_ = gen_dummy_object(random.choice(drone_doc_collection_classes), drone_doc)
+    object_ = gen_dummy_object(random.choice(drone_doc_parsed_classes), drone_doc)
     id_ = str(uuid.uuid4())
     insert_response = crud.insert(object_=object_, id_=id_, session=session)
     assert isinstance(insert_response, str)
@@ -213,9 +215,9 @@ def test_delete_on_wrong_type(drone_doc_collection_classes, drone_doc, session):
     assert 400 == response_code
 
 
-def test_insert_on_wrong_type(drone_doc_collection_classes, drone_doc, session):
+def test_insert_on_wrong_type(drone_doc_parsed_classes, drone_doc, session):
     """Test CRUD insert when wrong/undefined class is given."""
-    object_ = gen_dummy_object(random.choice(drone_doc_collection_classes), drone_doc)
+    object_ = gen_dummy_object(random.choice(drone_doc_parsed_classes), drone_doc)
     id_ = str(uuid.uuid4())
     object_['@type'] = 'otherClass'
     response_code = None
@@ -227,24 +229,24 @@ def test_insert_on_wrong_type(drone_doc_collection_classes, drone_doc, session):
     assert 400 == response_code
 
 
-def test_insert_multiple_id(drone_doc_collection_classes, drone_doc, session):
+def test_insert_multiple_id(drone_doc_parsed_classes, drone_doc, session):
     """Test CRUD insert when multiple ID's are given """
     objects = list()
     ids = '{},{}'.format(str(uuid.uuid4()), str(uuid.uuid4()))
     ids_list = ids.split(',')
     for index in range(len(ids_list)):
-        object = gen_dummy_object(random.choice(drone_doc_collection_classes), drone_doc)
+        object = gen_dummy_object(random.choice(drone_doc_parsed_classes), drone_doc)
         objects.append(object)
     insert_response = crud.insert_multiple(objects_=objects, session=session, id_=ids)
     for id_ in ids_list:
         assert id_ in insert_response
 
 
-def test_delete_multiple_id(drone_doc_collection_classes, drone_doc, session):
+def test_delete_multiple_id(drone_doc_parsed_classes, drone_doc, session):
     """Test CRUD insert when multiple ID's are given """
     objects = list()
     ids = '{},{}'.format(str(uuid.uuid4()), str(uuid.uuid4()))
-    random_class = random.choice(drone_doc_collection_classes)
+    random_class = random.choice(drone_doc_parsed_classes)
     for index in range(len(ids.split(','))):
         object = gen_dummy_object(random_class, drone_doc)
         objects.append(object)
@@ -266,21 +268,19 @@ def test_delete_multiple_id(drone_doc_collection_classes, drone_doc, session):
     assert 404 == response_code
 
 
-def test_insert_when_property_not_given(drone_doc_collection_classes, drone_doc,
+def test_insert_when_property_not_given(drone_doc_parsed_classes, drone_doc,
                                         session, constants):
     """Test CRUD insert operation when a required foreign key
     property of that resource(column in the table) not given"""
-    for class_ in drone_doc_collection_classes:
+    expanded_base_url = DocUrl.doc_url
+    for class_ in drone_doc_parsed_classes:
         for prop in drone_doc.parsed_classes[class_]['class'].supportedProperty:
-            if isinstance(prop.prop, HydraLink) or 'vocab:' in prop.prop:
+            if not isinstance(prop.prop, HydraLink) and expanded_base_url in prop.prop:
                 dummy_obj = gen_dummy_object(class_, drone_doc)
-                if isinstance(prop.prop, HydraLink):
-                    nested_class = prop.prop.range.replace('vocab:', '')
-                else:
-                    nested_class = prop.prop.replace('vocab:', '')
+                nested_prop_title = prop.title
                 continue
     # remove the foreign key resource on purpose for testing
-    dummy_obj.pop(nested_class)
+    dummy_obj.pop(nested_prop_title)
     id_ = str(uuid.uuid4())
     try:
         insert_response = crud.insert(object_=dummy_obj, id_=id_, session=session)

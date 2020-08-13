@@ -96,7 +96,6 @@ def serve(adduser: tuple, api: str, auth: bool, dburl: str, pagination: bool,
     # The name of the API or the EntryPoint, the api will be at
     # http://localhost/<API_NAME>
     API_NAME = api
-
     click.echo("Setting up the database")
     # Create a connection to the database you want to use
     engine = create_engine(DB_URL, connect_args={'check_same_thread': False})
@@ -105,7 +104,6 @@ def serve(adduser: tuple, api: str, auth: bool, dburl: str, pagination: bool,
     # using doc_maker or you may create your own HydraDoc Documentation using
     # doc_writer [see hydra_python_core/doc_writer_sample]
     click.echo("Creating the API Documentation")
-
     if hydradoc:
         # Getting hydradoc format
         # Currently supported formats [.jsonld, .py, .yaml]
@@ -156,7 +154,7 @@ def serve(adduser: tuple, api: str, auth: bool, dburl: str, pagination: bool,
     # Get all the classes from the doc
     # You can also pass dictionary defined in
     # hydra_python_core/doc_writer_sample_output.py
-    classes = doc_parse.get_classes(apidoc.generate())
+    classes = doc_parse.get_classes(apidoc)
     # Insert them into the database
     if use_db is False:
         Base.metadata.drop_all(engine)
@@ -176,7 +174,7 @@ def serve(adduser: tuple, api: str, auth: bool, dburl: str, pagination: bool,
 
     click.echo("Creating the application")
     # Create a Hydrus app with the API name you want, default will be "api"
-    app = app_factory(API_NAME)
+    app = app_factory(API_NAME, apidoc.doc_name)
     # Set the name of the API
     # Create a socket for the app
     socketio = create_socket(app, session)

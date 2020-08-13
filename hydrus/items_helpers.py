@@ -17,7 +17,8 @@ from hydrus.helpers import (
     check_required_props,
     send_sync_update,
     get_link_props_for_multiple_objects,
-    error_response
+    error_response,
+    getType,
 )
 from hydrus.utils import (
     get_session,
@@ -42,14 +43,10 @@ def items_put_response(path: str, int_list="") -> Response:
     """
     object_ = json.loads(request.data.decode('utf-8'))
     object_ = object_["data"]
-    collections, _ = get_collections_and_parsed_classes()
-    if path in collections:
-        # If collection name in document's collections
-        collection = collections[path]["collection"]
-        # title of HydraClass object corresponding to collection
-        obj_type = collection.class_.title
-        # get path of the collection class
-        class_path = collection.class_.path
+    _, parsed_classes = get_collections_and_parsed_classes()
+    if path in parsed_classes:
+        class_path = path
+        obj_type = getType(path, "PUT")
         incomplete_objects = list()
         for obj in object_:
             if not check_required_props(class_path, obj):
@@ -104,7 +101,9 @@ def items_delete_response(path: str, int_list="") -> Response:
     :return: Appropriate response for the DELETE operation on multiple items.
     :rtype: Response
     """
-    class_type = get_doc().collections[path]["collection"].class_.title
+    _, parsed_classes = get_collections_and_parsed_classes()
+    if path in parsed_classes:
+        class_type = getType(path, "DELETE")
 
     if checkClassOp(class_type, "DELETE"):
         # Check if class_type supports PUT operation

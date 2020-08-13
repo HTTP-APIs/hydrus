@@ -5,7 +5,7 @@ from base64 import b64encode
 
 import pytest
 from hydra_python_core import doc_maker
-from hydra_python_core.doc_writer import HydraLink
+from hydra_python_core.doc_writer import HydraLink, DocUrl
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
@@ -28,7 +28,7 @@ def get_doc_classes_and_properties(doc):
     :return: classes and properties in the HydraDoc object in a tuple
     :rtype: tuple(list, set)
     """
-    test_classes = doc_parse.get_classes(doc.generate())
+    test_classes = doc_parse.get_classes(doc)
     test_properties = doc_parse.get_all_properties(test_classes)
     return (test_classes, test_properties)
 
@@ -43,6 +43,7 @@ def gen_dummy_object(class_title, doc):
     object_ = {
         "@type": class_title
     }
+    expanded_base_url = DocUrl.doc_url
     for class_path in doc.collections:
         if class_title == doc.collections[class_path]["collection"].name:
             members = [str(uuid.uuid4()) for _ in range(3)]
@@ -57,8 +58,8 @@ def gen_dummy_object(class_title, doc):
                     object_[prop.title] = ''.join(random.choice(
                         string.ascii_uppercase + string.digits) for _ in range(6))
                     pass
-                elif "vocab:" in prop.prop:
-                    prop_class = prop.prop.replace("vocab:", "")
+                elif expanded_base_url in prop.prop:
+                    prop_class = prop.prop.split(expanded_base_url)[1]
                     object_[prop.title] = gen_dummy_object(prop_class, doc)
                 else:
                     object_[prop.title] = ''.join(random.choice(
@@ -206,8 +207,8 @@ def drone_doc(constants):
 
 
 @pytest.fixture(scope='module')
-def drone_doc_collection_classes(drone_doc):
-    return [drone_doc.collections[i]['collection'].class_.title for i in drone_doc.collections]
+def drone_doc_parsed_classes(drone_doc):
+    return [drone_doc.parsed_classes[i]['class'].title for i in drone_doc.parsed_classes]
 
 
 @pytest.fixture(scope='module')
