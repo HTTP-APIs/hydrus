@@ -449,7 +449,7 @@ def pagination(filtered_instances, path, type_, API_NAME,
         current_page_size = result_length - offset
     for i in range(offset, offset+current_page_size):
         object_template = {
-            "@id": f"/{API_NAME}/{path}/{filtered_instances[i].id}",
+            "@id": f"/{API_NAME}/{type_}/{filtered_instances[i].id}",
             "@type": type_
         }
         collection_template["members"].append(object_template)

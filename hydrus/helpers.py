@@ -260,12 +260,15 @@ def finalize_response(path: str, obj: Dict[str, Any]) -> Dict[str, Any]:
                     obj[prop.title] = f"/{get_api_name()}/{nested_path}"
             elif expanded_base_url in prop.prop:
                 prop_class = prop.prop.split(expanded_base_url)[1]
+                prop_class_path = parsed_classes[prop_class]['class'].path
                 id = obj[prop.title]
-                obj[prop.title] = crud.get(id, prop_class, get_api_name(), get_session())
+                class_resp = crud.get(id, prop_class, get_api_name(), get_session(),
+                                      path=prop_class_path)
+                obj[prop.title] = finalize_response(prop_class_path, class_resp)
         return obj
 
 
-def add_iri_template(path: str, API_NAME: str) -> Dict[str, Any]:
+def add_iri_template(path: str, API_NAME: str, collection_path: str) -> Dict[str, Any]:
     """
     Creates an IriTemplate.
     :param path: Path of the collection or the non-collection class.
@@ -273,7 +276,7 @@ def add_iri_template(path: str, API_NAME: str) -> Dict[str, Any]:
     :return: Hydra IriTemplate .
     """
     template_mappings = list()
-    template = f"/{API_NAME}/{path}{{?"
+    template = f"/{API_NAME}/{collection_path}{{?"
     template, template_mappings = generate_iri_mappings(path, template,
                                                         template_mapping=template_mappings,)
 

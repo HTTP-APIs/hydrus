@@ -38,6 +38,7 @@ def items_get_check_support(id_, class_type, class_path, path, collection=False)
             class_type,
             api_name=get_api_name(),
             session=get_session(),
+            path=path,
             collection=collection)
         response = finalize_response(class_path, response)
         return set_response_headers(

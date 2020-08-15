@@ -359,11 +359,7 @@ class TestApp():
                     class_methods = [x.method for x in class_.supportedOperation]
                     if 'GET' in class_methods:
                         response_get = test_app_client.get(endpoints[endpoint])
-                        assert response_get.status_code == 200
-                        response_get_data = json.loads(response_get.data.decode('utf-8'))
-                        assert '@context' in response_get_data
-                        assert '@id' in response_get_data
-                        assert '@type' in response_get_data
+                        assert response_get.status_code == 405
 
     def test_IriTemplate(self, test_app_client, constants, doc):
         """Test structure of IriTemplates attached to parsed classes"""
@@ -371,29 +367,27 @@ class TestApp():
         index = test_app_client.get(f'/{API_NAME}')
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
-        for endpoint in endpoints:
-            if endpoint not in ['@context', '@id', '@type', 'collections']:
-                class_name = '/'.join(endpoints[endpoint].split(f'/{API_NAME}/')[1:])
-                # collections are now just 'set of somehow related objects'
-                # therefore IRI templates are now served at non-collection
-                # class endpoints
-                response_get = test_app_client.get(endpoints[endpoint])
-                assert response_get.status_code == 200
-                response_get_data = json.loads(
-                    response_get.data.decode('utf-8'))
-                assert 'search' in response_get_data
-                assert 'hydra:mapping' in response_get_data['search']
-                class_ = doc.parsed_classes[class_name]['class']
-                class_props = [x.prop for x in class_.supportedProperty]
-                for mapping in response_get_data['search']['hydra:mapping']:
-                    prop = mapping['hydra:property']
-                    prop_name = mapping['hydra:variable']
-                    is_valid_class_prop = prop not in ['limit', 'offset', 'pageIndex']
-                    # check if IRI property is for searching through a nested_class
-                    # and not this class_
-                    is_nested_class_prop = "[" in prop_name and "]" in prop_name
-                    if is_valid_class_prop and not is_nested_class_prop:
-                        assert prop in class_props
+        expanded_base_url = DocUrl.doc_url
+        for endpoint in endpoints['collections']:
+            collection_name = '/'.join(endpoint["@id"].split(f'/{API_NAME}/')[1:])
+            collection = doc.collections[collection_name]['collection']
+            class_name = collection.manages["object"].split(expanded_base_url)[1]
+            response_get = test_app_client.get(endpoint["@id"])
+            assert response_get.status_code == 200
+            response_get_data = json.loads(response_get.data.decode('utf-8'))
+            assert 'search' in response_get_data
+            assert 'hydra:mapping' in response_get_data['search']
+            class_ = doc.parsed_classes[class_name]['class']
+            class_props = [x.prop for x in class_.supportedProperty]
+            for mapping in response_get_data['search']['hydra:mapping']:
+                prop = mapping['hydra:property']
+                prop_name = mapping['hydra:variable']
+                is_valid_class_prop = prop not in ['limit', 'offset', 'pageIndex']
+                # check if IRI property is for searching through a nested_class
+                # and not this class_
+                is_nested_class_prop = "[" in prop_name and "]" in prop_name
+                if is_valid_class_prop and not is_nested_class_prop:
+                    assert prop in class_props
 
     def test_client_controlled_pagination(self, test_app_client, constants, doc):
         """Test pagination controlled by test_app_client with help of pageIndex,
@@ -402,83 +396,77 @@ class TestApp():
         index = test_app_client.get(f'/{API_NAME}')
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
-        for endpoint in endpoints:
-            if endpoint not in ['@context', '@id', '@type', 'collections']:
-                class_name = '/'.join(endpoints[endpoint].split(f'/{API_NAME}/')[1:])
-                if class_name not in doc.collections:
-                    # collections are now just 'set of somehow related objects'
-                    # therefore IRI templates are now served at non-collection
-                    # class endpoints
-                    response_get = test_app_client.get(endpoints[endpoint])
-                    assert response_get.status_code == 200
-                    response_get_data = json.loads(response_get.data.decode('utf-8'))
-                    assert 'search' in response_get_data
-                    assert 'hydra:mapping' in response_get_data['search']
-                    # Test with pageIndex and limit
-                    params = {'pageIndex': 1, 'limit': 2}
-                    response_for_page_param = test_app_client.get(
-                        endpoints[endpoint], query_string=params)
-                    assert response_for_page_param.status_code == 200
-                    response_for_page_param_data = json.loads(
-                        response_for_page_param.data.decode('utf-8'))
-                    assert 'hydra:first' in response_for_page_param_data['hydra:view']
-                    assert 'hydra:last' in response_for_page_param_data['hydra:view']
-                    if 'hydra:next' in response_for_page_param_data['hydra:view']:
-                        hydra_next = response_for_page_param_data['hydra:view']['hydra:next']
-                        assert 'pageIndex=2' in hydra_next
-                        next_response = test_app_client.get(
-                            response_for_page_param_data['hydra:view']['hydra:next'])
-                        assert next_response.status_code == 200
-                        next_response_data = json.loads(
-                            next_response.data.decode('utf-8'))
-                        assert 'hydra:previous' in next_response_data['hydra:view']
-                        data = next_response_data['hydra:view']['hydra:previous']
-                        assert 'pageIndex=1' in data
-                        # Test with offset and limit
-                        params = {'offset': 1, 'limit': 2}
-                        response_for_offset_param = test_app_client.get(endpoints[endpoint],
-                                                                        query_string=params)
-                        assert response_for_offset_param.status_code == 200
-                        response_for_offset_param_data = json.loads(
-                            response_for_offset_param.data.decode('utf-8'))
-                        data = response_for_offset_param_data['hydra:view']
-                        assert 'hydra:first' in data
-                        assert 'hydra:last' in data
-                        if 'hydra:next' in data:
-                            assert 'offset=3' in data['hydra:next']
-                            next_response = test_app_client.get(data['hydra:next'])
-                            assert next_response.status_code == 200
-                            next_response_data = json.loads(next_response.data.decode('utf-8'))
-                            assert 'hydra:previous' in next_response_data['hydra:view']
-                            assert 'offset=1' in next_response_data['hydra:view']['hydra:previous']
+        for endpoint in endpoints['collections']:
+            response_get = test_app_client.get(endpoint["@id"])
+            assert response_get.status_code == 200
+            response_get_data = json.loads(response_get.data.decode('utf-8'))
+            assert 'search' in response_get_data
+            assert 'hydra:mapping' in response_get_data['search']
+            # Test with pageIndex and limit
+            params = {'pageIndex': 1, 'limit': 2}
+            response_for_page_param = test_app_client.get(
+                endpoint["@id"], query_string=params)
+            assert response_for_page_param.status_code == 200
+            response_for_page_param_data = json.loads(
+                response_for_page_param.data.decode('utf-8'))
+            assert 'hydra:first' in response_for_page_param_data['hydra:view']
+            assert 'hydra:last' in response_for_page_param_data['hydra:view']
+            if 'hydra:next' in response_for_page_param_data['hydra:view']:
+                hydra_next = response_for_page_param_data['hydra:view']['hydra:next']
+                assert 'pageIndex=2' in hydra_next
+                next_response = test_app_client.get(
+                    response_for_page_param_data['hydra:view']['hydra:next'])
+                assert next_response.status_code == 200
+                next_response_data = json.loads(
+                    next_response.data.decode('utf-8'))
+                assert 'hydra:previous' in next_response_data['hydra:view']
+                data = next_response_data['hydra:view']['hydra:previous']
+                assert 'pageIndex=1' in data
+                # Test with offset and limit
+                params = {'offset': 1, 'limit': 2}
+                response_for_offset_param = test_app_client.get(endpoint["@id"],
+                                                                query_string=params)
+                assert response_for_offset_param.status_code == 200
+                response_for_offset_param_data = json.loads(
+                    response_for_offset_param.data.decode('utf-8'))
+                data = response_for_offset_param_data['hydra:view']
+                assert 'hydra:first' in data
+                assert 'hydra:last' in data
+                if 'hydra:next' in data:
+                    assert 'offset=3' in data['hydra:next']
+                    next_response = test_app_client.get(data['hydra:next'])
+                    assert next_response.status_code == 200
+                    next_response_data = json.loads(next_response.data.decode('utf-8'))
+                    assert 'hydra:previous' in next_response_data['hydra:view']
+                    assert 'offset=1' in next_response_data['hydra:view']['hydra:previous']
 
     def test_GET_for_nested_class(self, test_app_client, constants, doc):
         API_NAME = constants['API_NAME']
         index = test_app_client.get(f'/{API_NAME}')
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
-        for endpoint in endpoints:
-            if endpoint not in ['@context', '@id', '@type', 'collections']:
-                class_name = '/'.join(
-                    endpoints[endpoint].split(f'/{API_NAME}/')[1:])
-                if class_name not in doc.collections:
-                    class_ = doc.parsed_classes[class_name]['class']
-                    class_methods = [
-                        x.method for x in class_.supportedOperation]
-                    if 'GET' in class_methods:
-                        response_get = test_app_client.get(endpoints[endpoint])
-                        assert response_get.status_code == 200
-                        instance = response_get.json['members'][0]['@id']
-                        response_get_data = test_app_client.get(instance).json
-                        assert '@context' in response_get_data
-                        assert '@id' in response_get_data
-                        assert '@type' in response_get_data
-                        class_props = [x for x in class_.supportedProperty]
-                        expanded_base_url = DocUrl.doc_url
-                        for prop_name in class_props:
-                            if not isinstance(prop_name.prop, HydraLink):
-                                if expanded_base_url in prop_name.prop:
-                                    assert '@type' in response_get_data[prop_name.title]
+        for endpoint in endpoints['collections']:
+            collection_name = '/'.join(endpoint["@id"].split(f'/{API_NAME}/')[1:])
+            collection = doc.collections[collection_name]['collection']
+            class_methods = [x.method for x in collection.supportedOperation]
+            if 'GET' in class_methods:
+                response_get = test_app_client.get(endpoint["@id"])
+                assert response_get.status_code == 200
+                instance = response_get.json['members'][0]['@id']
+                instance_type = instance.split('/')[-2]
+                instance_class = doc.parsed_classes[instance_type]['class']
+                instance_methods = [x.method for x in instance_class.supportedOperation]
+                if 'GET' in instance_methods:
+                    response_get_data = test_app_client.get(instance).json
+                    assert '@context' in response_get_data
+                    assert '@id' in response_get_data
+                    assert '@type' in response_get_data
+                    class_props = [x for x in collection.supportedProperty]
+                    expanded_base_url = DocUrl.doc_url
+                    for prop_name in class_props:
+                        if not isinstance(prop_name.prop, HydraLink):
+                            if expanded_base_url in prop_name.prop:
+                                assert '@type' in response_get_data[prop_name.title]
 
     def test_required_props(self, test_app_client, constants, doc):
         API_NAME = constants['API_NAME']
@@ -626,13 +614,12 @@ class TestApp():
         index = test_app_client.get(f'/{API_NAME}')
         assert index.status_code == 200
         endpoints = json.loads(index.data.decode('utf-8'))
-        for endpoint in endpoints:
-            if endpoint not in ['@context', '@id', '@type', 'collections']:
-                response_get = test_app_client.get(endpoints[endpoint])
-                assert response_get.status_code == 200
-                context = json.loads(response_get.data.decode('utf-8'))['@context']
-                response_context = test_app_client.get(context)
-                response_context_data = json.loads(
-                    response_context.data.decode('utf-8'))
-                assert response_context.status_code == 200
-                assert '@context' in response_context_data
+        for endpoint in endpoints['collections']:
+            response_get = test_app_client.get(endpoints['@id'])
+            assert response_get.status_code == 200
+            context = json.loads(response_get.data.decode('utf-8'))['@context']
+            response_context = test_app_client.get(context)
+            response_context_data = json.loads(
+                response_context.data.decode('utf-8'))
+            assert response_context.status_code == 200
+            assert '@context' in response_context_data
