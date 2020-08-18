@@ -506,3 +506,31 @@ def get_path_from_type(type_: str) -> str:
         class_ = parsed_classes[class_name]['class']
         if type_ == class_.id_.split(expanded_base_url)[1]:
             return class_.path
+
+
+def parse_collection_members(object_: dict) -> dict:
+    """Parse the members of a collection to make it easier
+    to insert in database.
+
+    :param object_: The body of the request having object members
+    :type object_: dict
+    :return: Object with parsed members
+    :rtype: dict
+    """
+    members = list()
+    for member in object_['members']:
+        # eg member "/serverapi/LogEntry/7b51ac78-e917-4884-b52e-04e65d19b810"
+        member_components = member.split('/')
+        member_id = member_components[-1]
+        member_path = member_components[-2]
+        member_type = get_type_from_path(member_path)
+        if crud.item_exists(member_type, member_id, get_session()):
+            members.append({
+                "id_": member_id,
+                "@type": member_type
+            })
+        else:
+            error = HydraError(code=400, title="Data is not valid")
+            return error_response(error)
+    object_['members'] = members
+    return object_

@@ -30,6 +30,7 @@ from hydrus.helpers import (
     send_update,
     validate_object,
     get_type_from_path,
+    parse_collection_members,
 )
 
 from hydrus.utils import (
@@ -117,23 +118,7 @@ def item_collection_put_response(path: str) -> Response:
         # If Item in request's JSON is a valid object ie. @type is a key in object_
         # and the right Item type is being added to the collection
         if is_collection:
-            # parse object_ if collection
-            members = list()
-            for member in object_['members']:
-                # eg member "/serverapi/LogEntry/7b51ac78-e917-4884-b52e-04e65d19b810"
-                member_components = member.split('/')
-                member_id = member_components[-1]
-                member_path = member_components[-2]
-                member_type = get_type_from_path(member_path)
-                if crud.item_exists(member_type, member_id, get_session()):
-                    members.append({
-                        "id_": member_id,
-                        "@type": member_type
-                    })
-                else:
-                    error = HydraError(code=400, title="Data is not valid")
-                    return error_response(error)
-            object_['members'] = members
+            object_ = parse_collection_members(object_)
         try:
             # Insert object and return location in Header
             object_id = crud.insert(object_=object_, session=get_session(),
