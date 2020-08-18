@@ -51,7 +51,7 @@ def items_get_check_support(id_, class_type, class_path, path, collection=False)
         return error_response(error)
 
 
-def items_post_check_support(id_, object_, class_path, path, collection):
+def items_post_check_support(id_, object_, class_path, path, is_collection):
     """Check if class_type supports POST operation"""
     collections, parsed_classes = get_collections_and_parsed_classes()
     if path in parsed_classes:
@@ -64,6 +64,8 @@ def items_post_check_support(id_, object_, class_path, path, collection):
     link_props, link_type_check = get_link_props(class_path, object_)
     # Load new object and type
     if (validate_object(object_, obj_type, class_path) and link_type_check):
+        if is_collection:
+            object_ = parse_collection_members(object_)
         try:
             # Update the right ID if the object is valid and matches
             # type of Item
