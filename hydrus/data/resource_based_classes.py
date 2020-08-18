@@ -62,7 +62,10 @@ def insert_object(object_: Dict[str, Any], session: scoped_session,
         collection_id = id_ if id_ else str(uuid.uuid4())
         for member in members:
             # add all the members of that collection
-            inserted_object = database_class(members=member, collection_id=collection_id)
+            inserted_object = database_class(members=member['id_'],
+                                             collection_id=collection_id,
+                                             member_type=member['@type'],
+                                             )
             try:
                 session.add(inserted_object)
                 session.commit()
