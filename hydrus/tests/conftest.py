@@ -5,7 +5,7 @@ from base64 import b64encode
 
 import pytest
 from hydra_python_core import doc_maker
-from hydra_python_core.doc_writer import HydraLink, DocUrl
+from hydra_python_core.doc_writer import DocUrl, HydraLink
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
@@ -13,10 +13,12 @@ from hydrus.app_factory import app_factory
 from hydrus.data import crud, doc_parse
 from hydrus.data.db_models import Base, create_database_tables
 from hydrus.data.user import add_user
+from hydrus.helpers import get_path_from_type
 from hydrus.samples import doc_writer_sample, hydra_doc_sample
 from hydrus.socketio_factory import create_socket
-from hydrus.utils import (set_api_name, set_authentication, set_doc,
-                          set_page_size, set_session, set_token)
+from hydrus.utils import (get_api_name, get_session, set_api_name,
+                          set_authentication, set_doc, set_page_size,
+                          set_session, set_token)
 
 
 def get_doc_classes_and_properties(doc):
@@ -46,7 +48,16 @@ def gen_dummy_object(class_title, doc):
     expanded_base_url = DocUrl.doc_url
     for class_path in doc.collections:
         if class_title == doc.collections[class_path]["collection"].name:
-            members = [str(uuid.uuid4()) for _ in range(3)]
+            members = list()
+            for _ in range(3):
+                member_class = random.choice(list(doc.parsed_classes.values()))["class"].title
+                member = gen_dummy_object(member_class, doc)
+                member_id = crud.insert(object_=member,
+                                        session=get_session(),
+                                        collection=False)
+                member_class_path = get_path_from_type(member_class)
+                member_api_path = f'/{get_api_name()}/{member_class_path}/{member_id}'
+                members.append(member_api_path)
             object_['members'] = members
             return object_
     for class_path in doc.parsed_classes:
