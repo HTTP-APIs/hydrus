@@ -491,3 +491,12 @@ def send_update(method: str, path: str):
     last_job_id = crud.get_last_modification_job_id(session)
     new_job_id = crud.insert_modification_record(method, resource_url, session)
     send_sync_update(socketio, new_job_id, last_job_id, method, resource_url)
+
+
+def get_type_from_path(path: str) -> str:
+    _, parsed_classes = get_collections_and_parsed_classes()
+    expanded_base_url = DocUrl.doc_url
+    for class_name in parsed_classes:
+        class_ = parsed_classes[class_name]['class']
+        if path == class_.path:
+            return class_.id_.split(expanded_base_url)[1]
