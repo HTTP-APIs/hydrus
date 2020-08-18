@@ -125,10 +125,14 @@ def item_collection_put_response(path: str) -> Response:
                 member_id = member_components[-1]
                 member_path = member_components[-2]
                 member_type = get_type_from_path(member_path)
-                members.append({
-                    "id_": member_id,
-                    "@type": member_type
-                })
+                if crud.item_exists(member_type, member_id, get_session()):
+                    members.append({
+                        "id_": member_id,
+                        "@type": member_type
+                    })
+                else:
+                    error = HydraError(code=400, title="Data is not valid")
+                    return error_response(error)
             object_['members'] = members
         try:
             # Insert object and return location in Header
