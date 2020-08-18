@@ -20,7 +20,9 @@ from hydrus.helpers import (
     send_sync_update,
     get_link_props,
     error_response,
-    validate_object)
+    validate_object,
+    get_type_from_path,
+)
 from hydrus.utils import (
     get_session,
     get_api_name,
@@ -100,7 +102,7 @@ def items_post_check_support(id_, object_, class_path, path, collection):
         return error_response(error)
 
 
-def items_put_check_support(id_, class_path, path, collection):
+def items_put_check_support(id_, class_path, path, is_collection):
     """Check if class_type supports PUT operation"""
     object_ = json.loads(request.data.decode('utf-8'))
     collections, parsed_classes = get_collections_and_parsed_classes()
@@ -114,6 +116,24 @@ def items_put_check_support(id_, class_path, path, collection):
     link_props, link_type_check = get_link_props(class_path, object_)
     # Load new object and type
     if (validate_object(object_, obj_type, class_path) and link_type_check):
+        if is_collection:
+            # parse object_ if collection
+            members = list()
+            for member in object_['members']:
+                # eg member "/serverapi/LogEntry/7b51ac78-e917-4884-b52e-04e65d19b810"
+                member_components = member.split('/')
+                member_id = member_components[-1]
+                member_path = member_components[-2]
+                member_type = get_type_from_path(member_path)
+                if crud.item_exists(member_type, member_id, get_session()):
+                    members.append({
+                        "id_": member_id,
+                        "@type": member_type
+                    })
+                else:
+                    error = HydraError(code=400, title="Data is not valid")
+                    return error_response(error)
+            object_['members'] = members
         try:
             # Add the object with given ID
             object_id = crud.insert(object_=object_, id_=id_,
