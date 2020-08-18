@@ -224,17 +224,14 @@ def finalize_response(path: str, obj: Dict[str, Any]) -> Dict[str, Any]:
     collections, parsed_classes = get_collections_and_parsed_classes()
     expanded_base_url = DocUrl.doc_url
     if path in collections:
-        # path is of a collection class
-        collection = get_doc().collections[path]["collection"]
-        class_name = collection.manages["object"].split(expanded_base_url)[1]
-        collection_manages_class = get_doc().parsed_classes[class_name]["class"]
-        collection_manages_class_type = collection_manages_class.title
-        collection_manages_class_path = collection_manages_class.path
         members = list()
-        for member_id in obj["members"]:
+        for member in obj["members"]:
+            member_id = member[0]
+            member_type = member[1]
+            member_path = get_path_from_type(member_type)
             member = {
-                "@type": collection_manages_class_type,
-                "@id": f"/{get_api_name()}/{collection_manages_class_path}/{member_id}",
+                "@type": "hydra:Link",
+                "@id": f"/{get_api_name()}/{member_path}/{member_id}",
             }
             members.append(member)
         obj['members'] = members
@@ -500,3 +497,12 @@ def get_type_from_path(path: str) -> str:
         class_ = parsed_classes[class_name]['class']
         if path == class_.path:
             return class_.id_.split(expanded_base_url)[1]
+
+
+def get_path_from_type(type_: str) -> str:
+    _, parsed_classes = get_collections_and_parsed_classes()
+    expanded_base_url = DocUrl.doc_url
+    for class_name in parsed_classes:
+        class_ = parsed_classes[class_name]['class']
+        if type_ == class_.id_.split(expanded_base_url)[1]:
+            return class_.path

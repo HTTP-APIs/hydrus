@@ -126,16 +126,15 @@ def get_object(
     database_class = get_database_class(type_)
     if collection:
         objects = (
-            session.query(database_class.members)
+            session.query(database_class.members, database_class.member_type)
             .filter(database_class.collection_id == id_)
             .all()
         )
         if len(objects) == 0:
             raise InstanceNotFound(type_=type_, id_=id_)
-        members = [object_.members for object_ in objects]
         object_template = dict()
         object_template["@type"] = query_info["@type"]
-        object_template["members"] = members
+        object_template["members"] = objects
         return object_template
     else:
         try:
