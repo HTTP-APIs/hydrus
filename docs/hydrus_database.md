@@ -5,7 +5,7 @@
 We are going to see the main steps `hydrus` performs when it is given an API doc and has to start the server:
 
 1) As the given API doc is a python `dict`, `hydrus` uses the `hydra-python-core` library to parse it. Therefore all the heavy lifting of parsing the API doc is handled by the core library. The core library returns a convinent `apidoc` object which `hydrus` uses further.  The core library returns an expanded API doc.
-> The `apidoc` object exposes all the relevant details of the given API doc in a nice API. For example, we can get the all parsed classes by just doing `apidoc.parsed_classes` or we can get all collections by doing `apidoc.collections`.
+    > The `apidoc` object exposes all the relevant details of the given API doc in a nice API. For example, we can get the all parsed classes by just doing `apidoc.parsed_classes` or we can get all collections by doing `apidoc.collections`.
 2) After we have the `apidoc` object, the next big task for `hydrus` is to setup the database. The schema for the database of `hydrus` is specific to the given API doc. That means it convinently makes a database architecture which optimizes for the given API doc.
 The overview of the process of making a database from `apidoc` object is:
 -  Go through all the parsed classes (`apidoc.parsed_classes`) and all the collections (`apidoc.collections`) and make a table for each.
@@ -15,4 +15,4 @@ The overview of the process of making a database from `apidoc` object is:
 - The table for a collection is slightly different from a parsed_class. Any collection will have only 4 columns. Those are `id`(primary key), `members`(this is used for storing the `id` of the instance of the class that the collection *manages*), `collection_id` which is the id for any collection the user creates and `member_type` which is used to store the `@type` of the member.
 	> A collection is defined as a "set of somehow related resources".
 
-1) After the database is made,`hydrus` creates a Flask app. It enables required properties like authentication, pagination, etc and then starts the server.
+3) After the database is made,`hydrus` creates a Flask app. It enables required properties like authentication, pagination, etc and then starts the server.
