@@ -49,8 +49,19 @@ def gen_dummy_object(class_title, doc):
     for class_path in doc.collections:
         if class_title == doc.collections[class_path]["collection"].name:
             members = list()
+            manages_class_titles = list()
+            collection_manages = doc.collections[class_title]["collection"].manages
+            if type(collection_manages) is dict:
+                # only one manages block
+                manages_class = collection_manages['object'].split(expanded_base_url)[1]
+                manages_class_titles.append(manages_class)
+            elif type(collection_manages) is list:
+                # multiple manages block
+                for manages_block in collection_manages:
+                    manages_class = collection_manages['object'].split(expanded_base_url)[1]
+                    manages_class_titles.append(manages_class)
             for _ in range(3):
-                member_class = random.choice(list(doc.parsed_classes.values()))["class"].title
+                member_class = random.choice(manages_class_titles)
                 member = gen_dummy_object(member_class, doc)
                 member_id = crud.insert(object_=member,
                                         session=get_session(),
