@@ -21,7 +21,6 @@ from hydrus.helpers import (
     get_link_props,
     error_response,
     validate_object,
-    get_type_from_path,
     parse_collection_members,
 )
 from hydrus.utils import (

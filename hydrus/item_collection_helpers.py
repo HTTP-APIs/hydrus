@@ -29,7 +29,6 @@ from hydrus.helpers import (
     error_response,
     send_update,
     validate_object,
-    get_type_from_path,
     parse_collection_members,
 )
 

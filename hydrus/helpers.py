@@ -490,15 +490,6 @@ def send_update(method: str, path: str):
     send_sync_update(socketio, new_job_id, last_job_id, method, resource_url)
 
 
-def get_type_from_path(path: str) -> str:
-    _, parsed_classes = get_collections_and_parsed_classes()
-    expanded_base_url = DocUrl.doc_url
-    for class_name in parsed_classes:
-        class_ = parsed_classes[class_name]['class']
-        if path == class_.path:
-            return class_.id_.split(expanded_base_url)[1]
-
-
 def get_path_from_type(type_: str) -> str:
     _, parsed_classes = get_collections_and_parsed_classes()
     expanded_base_url = DocUrl.doc_url
@@ -519,15 +510,17 @@ def parse_collection_members(object_: dict) -> dict:
     """
     members = list()
     for member in object_['members']:
-        # eg member "/serverapi/LogEntry/7b51ac78-e917-4884-b52e-04e65d19b810"
-        member_components = member.split('/')
-        member_id = member_components[-1]
-        member_path = member_components[-2]
-        member_type = get_type_from_path(member_path)
+        # example member
+        # {
+        #     "@id": "/serverapi/LogEntry/aab38f9d-516a-4bb2-ae16-068c0c5345bd",
+        #     "@type": "LogEntry"
+        # }
+        member_id = member['@id'].split('/')[-1]
+        member_type = member['@type']
         if crud.item_exists(member_type, member_id, get_session()):
             members.append({
                 "id_": member_id,
-                "@type": member_type
+                "@type": member_type,
             })
         else:
             error = HydraError(code=400, title="Data is not valid")

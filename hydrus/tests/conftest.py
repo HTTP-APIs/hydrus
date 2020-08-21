@@ -57,7 +57,10 @@ def gen_dummy_object(class_title, doc):
                                         collection=False)
                 member_class_path = get_path_from_type(member_class)
                 member_api_path = f'/{get_api_name()}/{member_class_path}/{member_id}'
-                members.append(member_api_path)
+                members.append({
+                    "@id": member_api_path,
+                    "@type": member_class,
+                })
             object_['members'] = members
             return object_
     for class_path in doc.parsed_classes:
