@@ -31,37 +31,6 @@ def get_all_properties(classes: List[Dict[str, Any]]) -> Set[str]:
                 # properties.append(prop)
     return set(prop_names)
 
-
-def insert_classes(classes: List[Dict[str, Any]],
-                   session: scoped_session) -> Optional[Any]:
-    """Insert all the classes as defined in the APIDocumentation into DB.
-
-    Raises:
-        TypeError: If `session` is not an instance of `scoped_session` or `Session`.
-
-    """
-    # print(session.query(exists().where(RDFClass.name == "Datastream")).scalar())
-    if not isinstance(session, scoped_session) and not isinstance(
-            session, Session):
-        raise TypeError(
-            "session is not of type <sqlalchemy.orm.scoping.scoped_session>"
-            "or <sqlalchemy.orm.session.Session>"
-        )
-    class_list = [RDFClass(name=class_["label"].strip('.')) for class_ in classes
-                  if "label" in class_ and
-                  not session.query(exists().where(RDFClass.name == class_["label"]
-                                                   .strip('.'))).scalar()]
-
-    class_list.extend([RDFClass(name=class_["title"].strip('.')) for class_ in classes
-                       if "title" in class_ and
-                       not session.query(exists().where(RDFClass.name == class_["title"]
-                                                                .strip('.'))).scalar()])
-    # print(class_list)
-    session.add_all(class_list)
-    session.commit()
-    return None
-
-
 # if __name__ == "__main__":
 #     Session = sessionmaker(bind=engine)
 #     session = Session()
