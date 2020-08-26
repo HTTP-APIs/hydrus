@@ -16,3 +16,9 @@ The overview of the process of making a database from `apidoc` object is:
 	> A collection is defined as a "set of somehow related resources".
 
 3) After the database is made,`hydrus` creates a Flask app. It enables required properties like authentication, pagination, etc and then starts the server.
+
+
+### Example ER Diagram
+It might be easier to understand what we discussed above if we could see a ER diagram for a Hydra API Doc.
+So, let us take the sample [Drone API Doc](https://github.com/HTTP-APIs/hydrus/blob/develop/hydrus/samples/hydra_doc_sample.py) as our example.
+The ER diagram for the database generated for this Hydra doc can be found [here](er_diagram.pdf).
