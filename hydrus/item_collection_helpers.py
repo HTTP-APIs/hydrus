@@ -28,7 +28,8 @@ from hydrus.helpers import (
     get_link_props,
     error_response,
     send_update,
-    validate_object
+    validate_object,
+    parse_collection_members,
 )
 
 from hydrus.utils import (
@@ -115,6 +116,8 @@ def item_collection_put_response(path: str) -> Response:
     if validate_object(object_, obj_type, class_path):
         # If Item in request's JSON is a valid object ie. @type is a key in object_
         # and the right Item type is being added to the collection
+        if is_collection:
+            object_ = parse_collection_members(object_)
         try:
             # Insert object and return location in Header
             object_id = crud.insert(object_=object_, session=get_session(),

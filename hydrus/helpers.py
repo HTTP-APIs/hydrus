@@ -224,17 +224,14 @@ def finalize_response(path: str, obj: Dict[str, Any]) -> Dict[str, Any]:
     collections, parsed_classes = get_collections_and_parsed_classes()
     expanded_base_url = DocUrl.doc_url
     if path in collections:
-        # path is of a collection class
-        collection = get_doc().collections[path]["collection"]
-        class_name = collection.manages["object"].split(expanded_base_url)[1]
-        collection_manages_class = get_doc().parsed_classes[class_name]["class"]
-        collection_manages_class_type = collection_manages_class.title
-        collection_manages_class_path = collection_manages_class.path
         members = list()
-        for member_id in obj["members"]:
+        for member in obj["members"]:
+            member_id = member[0]
+            member_type = member[1]
+            member_path = get_path_from_type(member_type)
             member = {
-                "@type": collection_manages_class_type,
-                "@id": f"/{get_api_name()}/{collection_manages_class_path}/{member_id}",
+                "@type": "hydra:Link",
+                "@id": f"/{get_api_name()}/{member_path}/{member_id}",
             }
             members.append(member)
         obj['members'] = members
@@ -491,3 +488,42 @@ def send_update(method: str, path: str):
     last_job_id = crud.get_last_modification_job_id(session)
     new_job_id = crud.insert_modification_record(method, resource_url, session)
     send_sync_update(socketio, new_job_id, last_job_id, method, resource_url)
+
+
+def get_path_from_type(type_: str) -> str:
+    _, parsed_classes = get_collections_and_parsed_classes()
+    expanded_base_url = DocUrl.doc_url
+    for class_name in parsed_classes:
+        class_ = parsed_classes[class_name]['class']
+        if type_ == class_.id_.split(expanded_base_url)[1]:
+            return class_.path
+
+
+def parse_collection_members(object_: dict) -> dict:
+    """Parse the members of a collection to make it easier
+    to insert in database.
+
+    :param object_: The body of the request having object members
+    :type object_: dict
+    :return: Object with parsed members
+    :rtype: dict
+    """
+    members = list()
+    for member in object_['members']:
+        # example member
+        # {
+        #     "@id": "/serverapi/LogEntry/aab38f9d-516a-4bb2-ae16-068c0c5345bd",
+        #     "@type": "LogEntry"
+        # }
+        member_id = member['@id'].split('/')[-1]
+        member_type = member['@type']
+        if crud.item_exists(member_type, member_id, get_session()):
+            members.append({
+                "id_": member_id,
+                "@type": member_type,
+            })
+        else:
+            error = HydraError(code=400, title="Data is not valid")
+            return error_response(error)
+    object_['members'] = members
+    return object_
