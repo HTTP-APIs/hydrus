@@ -62,7 +62,10 @@ def insert_object(object_: Dict[str, Any], session: scoped_session,
         collection_id = id_ if id_ else str(uuid.uuid4())
         for member in members:
             # add all the members of that collection
-            inserted_object = database_class(members=member, collection_id=collection_id)
+            inserted_object = database_class(members=member['id_'],
+                                             collection_id=collection_id,
+                                             member_type=member['@type'],
+                                             )
             try:
                 session.add(inserted_object)
                 session.commit()
@@ -123,16 +126,15 @@ def get_object(
     database_class = get_database_class(type_)
     if collection:
         objects = (
-            session.query(database_class.members)
+            session.query(database_class.members, database_class.member_type)
             .filter(database_class.collection_id == id_)
             .all()
         )
         if len(objects) == 0:
             raise InstanceNotFound(type_=type_, id_=id_)
-        members = [object_.members for object_ in objects]
         object_template = dict()
         object_template["@type"] = query_info["@type"]
-        object_template["members"] = members
+        object_template["members"] = objects
         return object_template
     else:
         try:

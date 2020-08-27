@@ -20,7 +20,9 @@ from hydrus.helpers import (
     send_sync_update,
     get_link_props,
     error_response,
-    validate_object)
+    validate_object,
+    parse_collection_members,
+)
 from hydrus.utils import (
     get_session,
     get_api_name,
@@ -29,7 +31,7 @@ from hydrus.utils import (
 from hydrus.socketio_factory import socketio
 
 
-def items_get_check_support(id_, class_type, class_path, path, collection=False):
+def items_get_check_support(id_, class_type, class_path, path, is_collection=False):
     """Check if class_type supports GET operation"""
     try:
         # Try getting the Item based on ID and Class type
@@ -39,7 +41,8 @@ def items_get_check_support(id_, class_type, class_path, path, collection=False)
             api_name=get_api_name(),
             session=get_session(),
             path=path,
-            collection=collection)
+            collection=is_collection)
+
         response = finalize_response(class_path, response)
         return set_response_headers(
             jsonify(hydrafy(response, path=path)))
@@ -49,7 +52,7 @@ def items_get_check_support(id_, class_type, class_path, path, collection=False)
         return error_response(error)
 
 
-def items_post_check_support(id_, object_, class_path, path, collection):
+def items_post_check_support(id_, object_, class_path, path, is_collection):
     """Check if class_type supports POST operation"""
     collections, parsed_classes = get_collections_and_parsed_classes()
     if path in parsed_classes:
@@ -62,6 +65,8 @@ def items_post_check_support(id_, object_, class_path, path, collection):
     link_props, link_type_check = get_link_props(class_path, object_)
     # Load new object and type
     if (validate_object(object_, obj_type, class_path) and link_type_check):
+        if is_collection:
+            object_ = parse_collection_members(object_)
         try:
             # Update the right ID if the object is valid and matches
             # type of Item
@@ -71,7 +76,7 @@ def items_post_check_support(id_, object_, class_path, path, collection):
                 type_=object_["@type"],
                 session=get_session(),
                 api_name=get_api_name(),
-                collection=collection)
+                collection=is_collection)
             method = "POST"
             resource_url = f"{get_hydrus_server_url()}{get_api_name()}/{path}/{object_id}"
             last_job_id = crud.get_last_modification_job_id(
@@ -101,7 +106,7 @@ def items_post_check_support(id_, object_, class_path, path, collection):
         return error_response(error)
 
 
-def items_put_check_support(id_, class_path, path, collection):
+def items_put_check_support(id_, class_path, path, is_collection):
     """Check if class_type supports PUT operation"""
     object_ = json.loads(request.data.decode('utf-8'))
     collections, parsed_classes = get_collections_and_parsed_classes()
@@ -115,10 +120,12 @@ def items_put_check_support(id_, class_path, path, collection):
     link_props, link_type_check = get_link_props(class_path, object_)
     # Load new object and type
     if (validate_object(object_, obj_type, class_path) and link_type_check):
+        if is_collection:
+            object_ = parse_collection_members(object_)
         try:
             # Add the object with given ID
             object_id = crud.insert(object_=object_, id_=id_,
-                                    session=get_session(), collection=collection)
+                                    session=get_session(), collection=is_collection)
             headers_ = [{"Location": f"{get_hydrus_server_url()}"
                                      f"{get_api_name()}/{path}/{object_id}"}]
             status_description = f"Object with ID {object_id} successfully added"
@@ -135,13 +142,13 @@ def items_put_check_support(id_, class_path, path, collection):
         return error_response(error)
 
 
-def items_delete_check_support(id_, class_type, path, collection):
+def items_delete_check_support(id_, class_type, path, is_collection):
     """Check if class_type supports PUT operation"""
     try:
         # Delete the Item with ID == id_
         # for colletions, id_ is corresponding to their collection_id and not the id_
         # primary key
-        crud.delete(id_, class_type, session=get_session(), collection=collection)
+        crud.delete(id_, class_type, session=get_session(), collection=is_collection)
         method = "DELETE"
         resource_url = f"{get_hydrus_server_url()}{get_api_name()}/{path}/{id_}"
         last_job_id = crud.get_last_modification_job_id(session=get_session())

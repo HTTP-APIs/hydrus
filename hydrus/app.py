@@ -11,7 +11,7 @@ from hydrus.app_factory import app_factory
 from hydrus.conf import (
     HYDRUS_SERVER_URL, API_NAME, DB_URL, APIDOC_OBJ, PORT, DEBUG)
 from hydrus.data import doc_parse
-from hydrus.data.db_models import Base
+from hydrus.data.db_models import Base, create_database_tables
 from hydrus.data.exceptions import UserExists
 from hydrus.data.user import add_user
 from hydra_python_core import doc_maker
@@ -23,12 +23,6 @@ logger = logging.getLogger(__file__)
 
 # TODO: loading the engine and creating the tables should be handled better
 engine = create_engine(DB_URL)
-
-try:
-    Base.metadata.create_all(engine)
-except Exception:
-    pass
-
 session = sessionmaker(bind=engine)()
 
 #
@@ -36,11 +30,12 @@ session = sessionmaker(bind=engine)()
 #
 apidoc = doc_maker.create_doc(APIDOC_OBJ, HYDRUS_SERVER_URL, API_NAME)
 classes = doc_parse.get_classes(apidoc)
-# Get all the properties from the classes
-properties = doc_parse.get_all_properties(classes)
-# Insert them into the database
-doc_parse.insert_classes(classes, session)
-doc_parse.insert_properties(properties, session)
+try:
+    Base.metadata.drop_all(engine)
+    create_database_tables(classes)
+    Base.metadata.create_all(engine)
+except Exception:
+    pass
 
 AUTH = True
 TOKEN = True

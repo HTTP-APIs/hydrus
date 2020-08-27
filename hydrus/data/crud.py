@@ -477,3 +477,17 @@ def pagination(filtered_instances, path, type_, API_NAME,
                       result_length=result_length, iri=recreated_iri, page_size=page_size,
                       offset=offset, page=page, last=last)
     return collection_template
+
+
+def item_exists(item_type, item_id, session):
+    """Check if the instance with type 'item_type' and id 'item_id'
+    exists in the database. Returns True if exists else False
+
+    :param item_type: The @type of the instance
+    :type item_type: str
+    :param item_id: The id of the instance in the database
+    :type item_id: str
+    :param session: sqlalchemy scoped session
+    """
+    database_class = get_database_class(item_type)
+    return session.query(database_class.id).filter_by(id=item_id).scalar() is not None

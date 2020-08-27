@@ -107,7 +107,11 @@ class Resource:
                 String,
                 default=lambda: str(uuid.uuid4()),
             )
-
+            # if the class is a collection, add an extra column for
+            # member @type
+            attr_dict['member_type'] = Column(
+                String,
+            )
         return attr_dict
 
     @staticmethod
