@@ -4,7 +4,7 @@ import json
 from functools import partial
 
 from flask import Response, jsonify, request, abort
-from hydra_python_core.doc_writer import HydraStatus, HydraError
+from hydra_python_core.doc_writer import HydraStatus, HydraError, DocUrl
 
 from hydrus.data import crud
 from hydrus.data.exceptions import (
@@ -54,24 +54,23 @@ def item_collection_get_response(path: str) -> Response:
     search_params = request.args.to_dict()
     collections, parsed_classes = get_collections_and_parsed_classes()
     api_name = get_api_name()
-    is_collection = False
-    if path in collections:
-        collection = collections[path]["collection"]
-        class_path = collection.path
-        class_type = collection.name
-        is_collection = True
+    expanded_base_url = DocUrl.doc_url
     # If endpoint and GET method is supported in the API and class is supported
     if path in parsed_classes:
-        class_path = path
-        class_type = parsed_classes[path]['class'].title
-
+        abort(405)
+    if path in collections:
+        collection = collections[path]["collection"]
+        class_name = collection.manages["object"].split(expanded_base_url)[1]
+        collection_manages_class = parsed_classes[class_name]["class"]
+        class_type = collection_manages_class.title
+        class_path = collection_manages_class.path
     try:
         # Get collection details from the database
         # create partial function for crud operation
         crud_response = partial(crud.get_collection, api_name,
                                 class_type, session=get_session(),
                                 path=path, search_params=search_params,
-                                collection=is_collection)
+                                collection=False)
         if get_pagination():
             # Get paginated response
             response = crud_response(paginate=True,
@@ -79,10 +78,10 @@ def item_collection_get_response(path: str) -> Response:
         else:
             # Get whole collection
             response = crud_response(paginate=False)
-        if path in parsed_classes:
-            # no need of IRI templates for collections
-            response["search"] = add_iri_template(path=class_path,
-                                                  API_NAME=api_name)
+
+        response["search"] = add_iri_template(path=class_path,
+                                              API_NAME=api_name,
+                                              collection_path=path)
 
         return set_response_headers(jsonify(hydrafy(response, path=path)))
 

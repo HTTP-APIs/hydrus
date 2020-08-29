@@ -40,7 +40,9 @@ def items_get_check_support(id_, class_type, class_path, path, is_collection=Fal
             class_type,
             api_name=get_api_name(),
             session=get_session(),
+            path=path,
             collection=is_collection)
+
         response = finalize_response(class_path, response)
         return set_response_headers(
             jsonify(hydrafy(response, path=path)))
