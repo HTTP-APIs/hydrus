@@ -12,7 +12,7 @@ services:
       - DEBUG=1
       - API_NAME=serverapi
       # relative path to the ApiDoc, from the project root
-      - APIDOC_REL_PATH=examples/drones/doc.py
+      - APIDOC_REL_PATH=hydrus/samples/hydra_doc_sample.py
       - DB_URL=sqlite:///database.db
       #- DB_URL=postgresql://hydra:hailhydra@postgres_db:9001/hydrus
       - PORT=8080  # shall match with "ports" above
