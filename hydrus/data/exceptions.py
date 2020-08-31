@@ -12,7 +12,7 @@ class ClassNotFound(Exception):
 
     def get_HTTP(self) -> HydraError:
         """Return the HTTP response for the Exception."""
-        description = "The class {} is not a valid/defined RDFClass".format(self.type_)
+        description = f"The class {self.type_} is not a valid/defined RDFClass"
         return HydraError(code=400, title="Invalid class", desc=description)
 
 
@@ -27,11 +27,10 @@ class InstanceNotFound(Exception):
     def get_HTTP(self) -> HydraError:
         """Return the HTTP response for the Exception."""
         if str(self.id_) is None:
-            description = "Instance of type {} not found".format(self.type_)
+            description = f"Instance of type {self.type_} not found"
             return HydraError(code=404, title="Instance not found", desc=description)
         else:
-            description = "Instance of type {} with ID {} not found".format(
-                self.type_, str(self.id_))
+            description = f"Instance of type {self.type_} with ID {str(self.id_)} not found"
             return HydraError(code=404, title="Instance not found", desc=description)
 
 
@@ -44,7 +43,7 @@ class PropertyNotFound(Exception):
 
     def get_HTTP(self) -> HydraError:
         """Return the HTTP response for the Exception."""
-        description = "The property {} is not a valid/defined Property".format(self.type_)
+        description = f"The property {self.type_} is not a valid/defined Property"
         return HydraError(code=400, title="Property not found", desc=description)
 
 
@@ -59,38 +58,11 @@ class InstanceExists(Exception):
     def get_HTTP(self) -> HydraError:
         """Return the HTTP response for the Exception."""
         if str(self.id_) is None:
-            description = "Instance of type {} already exists".format(self.type_)
+            description = f"Instance of type {self.type_} already exists"
             return HydraError(code=400, title="Instance already exists.", desc=description)
         else:
-            description = "Instance of type {} with ID {} already exists".format(
-                self.type_, str(self.id_))
+            description = f"Instance of type {self.type_} with ID {str(self.id_)} already exists"
             return HydraError(code=400, title="Instance already exists.", desc=description)
-
-
-class NotInstanceProperty(Exception):
-    """Error when the property is not an Instance property."""
-
-    def __init__(self, type_: str) -> None:
-        """Constructor."""
-        self.type_ = type_
-
-    def get_HTTP(self) -> HydraError:
-        """Return the HTTP response for the Exception."""
-        description = "The property {} is not an Instance property".format(self.type_)
-        return HydraError(code=400, title="Not an Instance property", desc=description)
-
-
-class NotAbstractProperty(Exception):
-    """Error when the property is not an Abstract property."""
-
-    def __init__(self, type_: str) -> None:
-        """Constructor."""
-        self.type_ = type_
-
-    def get_HTTP(self) -> HydraError:
-        """Return the HTTP response for the Exception."""
-        description = "The property {} is not an Abstract property".format(self.type_)
-        return HydraError(code=400, title="Not an Abstract property", desc=description)
 
 
 class UserExists(Exception):
@@ -102,7 +74,7 @@ class UserExists(Exception):
 
     def get_HTTP(self) -> HydraError:
         """Return the HTTP response for the Exception."""
-        description = "The user with ID {} already exists".format(self.id_)
+        description = f"The user with ID {self.id_} already exists"
         return HydraError(code=400, title="User already exists.", desc=description)
 
 
@@ -115,7 +87,7 @@ class UserNotFound(Exception):
 
     def get_HTTP(self) -> HydraError:
         """Return the HTTP response for the Exception."""
-        description = "The User with ID {} is not a valid/defined User".format(self.id_)
+        description = f"The User with ID {self.id_} is not a valid/defined User"
         return HydraError(code=400, title="User not found", desc=description)
 
 
@@ -128,7 +100,7 @@ class PageNotFound(Exception):
 
     def get_HTTP(self) -> HydraError:
         """Return the HTTP response for the Exception."""
-        description = "The page with ID {} not found".format(self.page_id)
+        description = f"The page with ID {self.page_id} not found"
         return HydraError(code=400, title="Page not found", desc=description)
 
 
@@ -141,7 +113,7 @@ class InvalidSearchParameter(Exception):
 
     def get_HTTP(self) -> HydraError:
         """Return the HTTP response for the Exception."""
-        description = "Query parameter [{}] is invalid".format(self.param)
+        description = f"Query parameter [{self.param}] is invalid"
         return HydraError(code=400, title="Invalid query parameter", desc=description)
 
 
@@ -157,9 +129,9 @@ class IncompatibleParameters(Exception):
         description = "Following parameters are incompatible with each other: ["
         for i in range(len(self.params)):
             if i == len(self.params) - 1:
-                description += "{}]".format(self.params[i])
+                description += f"{self.params[i]}]"
             else:
-                description += "{}, ".format(self.params[i])
+                description += f"{self.params[i]}, "
         return HydraError(code=400, title="Incompatible parameters.", desc=description)
 
 
@@ -172,5 +144,18 @@ class OffsetOutOfRange(Exception):
 
     def get_HTTP(self) -> HydraError:
         """Return the HTTP response for the Exception."""
-        description = "Offset {} is out of range.".format(self.offset)
+        description = f"Offset {self.offset} is out of range."
         return HydraError(code=400, title="Page not found", desc=description)
+
+
+class PropertyNotGiven(Exception):
+    """Error when a Property is not given."""
+
+    def __init__(self, type_: str) -> None:
+        """Constructor."""
+        self.type_ = type_
+
+    def get_HTTP(self) -> HydraError:
+        """Return the HTTP response for the Exception."""
+        description = f"The property {self.type_} is not given."
+        return HydraError(code=400, title="Property not given", desc=description)

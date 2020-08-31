@@ -48,7 +48,7 @@ if __name__ == "__main__":
     # Get all the classes from the doc
     # You can also pass dictionary defined in
     # hydrus/hydraspec/doc_writer_sample_output.py
-    classes = doc_parse.get_classes(apidoc.generate())
+    classes = doc_parse.get_classes(apidoc)
 
     # Get all the properties from the classes
     properties = doc_parse.get_all_properties(classes)
@@ -78,7 +78,7 @@ if __name__ == "__main__":
                             # Start the Hydrus app
                             http_server = WSGIServer(('', 8080), app)
                             print("Server running at:")
-                            print("{}{}".format(HYDRUS_SERVER_URL, API_NAME))
+                            print(f"{HYDRUS_SERVER_URL}{API_NAME}")
                             try:
                                 http_server.serve_forever()
                             except KeyboardInterrupt:

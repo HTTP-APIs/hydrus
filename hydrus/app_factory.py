@@ -6,8 +6,13 @@ from hydrus.resources import (Index, Vocab, Contexts, Entrypoint,
                               ItemCollection, Item, Items)
 
 
-def app_factory(api_name: str = "api") -> Flask:
-    """Create an app object."""
+def app_factory(api_name: str = "api", vocab_route: str = "vocab") -> Flask:
+    """
+    Create an app object
+    :param api_name : Name of the api
+    :param vocab_route : The route at which the vocab of the apidoc is present
+    :return : API with all routes directed at /[api_name].
+    """
 
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'secret key'
@@ -15,28 +20,28 @@ def app_factory(api_name: str = "api") -> Flask:
     app.url_map.strict_slashes = False
     api = Api(app)
 
-    api.add_resource(Index, "/{}/".format(api_name), endpoint="api")
-    api.add_resource(Vocab, "/{}/vocab".format(api_name), endpoint="vocab")
+    api.add_resource(Index, f"/{api_name}/", endpoint="api")
+    api.add_resource(Vocab, f"/{api_name}/{vocab_route}", endpoint="vocab")
     api.add_resource(
         Contexts,
-        "/{}/contexts/<string:category>.jsonld".format(api_name),
+        f"/{api_name}/contexts/<string:category>.jsonld",
         endpoint="contexts")
     api.add_resource(
         Entrypoint,
-        "/{}/contexts/EntryPoint.jsonld".format(api_name),
+        f"/{api_name}/contexts/EntryPoint.jsonld",
         endpoint="main_entrypoint")
     api.add_resource(
         ItemCollection,
-        "/{}/<string:path>".format(api_name),
+        f"/{api_name}/<string:path>",
         endpoint="item_collection")
     api.add_resource(
         Item,
-        "/{}/<string:path>/<uuid:id_>".format(api_name),
+        f"/{api_name}/<string:path>/<uuid:id_>",
         endpoint="item")
     api.add_resource(
         Items,
-        "/{}/<string:path>/add/<int_list>".format(api_name),
-        "/{}/<string:path>/add".format(api_name),
-        "/{}/<string:path>/delete/<int_list>".format(api_name))
+        f"/{api_name}/<string:path>/add/<int_list>",
+        f"/{api_name}/<string:path>/add",
+        f"/{api_name}/<string:path>/delete/<int_list>")
 
     return app

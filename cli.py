@@ -8,7 +8,7 @@ from hydrus.utils import (set_session, set_doc, set_hydrus_server_url,
                           set_page_size, set_pagination)
 from hydrus.data import doc_parse
 from hydra_python_core import doc_maker
-from hydrus.data.db_models import Base
+from hydrus.data.db_models import Base, create_database_tables
 from hydrus.data.user import add_user
 from hydrus.data.exceptions import UserExists
 from hydrus.data.stale_records_cleanup import remove_stale_modification_records
@@ -20,9 +20,19 @@ from typing import Tuple
 import json
 import click
 import yaml
+from hydrus.conf import (
+    APIDOC_OBJ, FOUND_DOC)
 
 
-@click.command()
+@click.group()
+def startserver():
+    """
+    Python Hydrus CLI.
+    """
+    pass
+
+
+@startserver.command()
 @click.option("--adduser", "-u", default=tuple([1, "test"]),
               help="Adds a new user to the API.", nargs=2, type=(int, str))
 @click.option("--api", "-a", default="serverapi",
@@ -30,7 +40,7 @@ import yaml
 @click.option("--auth/--no-auth", default=True,
               help="Set authentication to True or False.")
 @click.option("--dburl", default="sqlite:///database.db",
-              help="Set database url", type=str)
+              help="Set database url.", type=str)
 @click.option("--hydradoc", "-d", default=None,
               help="Location to HydraDocumentation (JSON-LD) of server.",
               type=str)
@@ -44,30 +54,33 @@ import yaml
               help="Toggle token based user authentication.")
 @click.option("--serverurl", default="http://localhost",
               help="Set server url", type=str)
+@click.option("--use-db/--no-use-db", default=False,
+              help="Use previously existing database")
 @click.option("--stale_records_removal_interval", default=900,
               help="Interval period between removal of stale modification records.",
               type=int)
-@click.argument("serve", required=True)
-def startserver(adduser: Tuple, api: str, auth: bool, dburl: str, pagination: bool,
-                hydradoc: str, port: int, pagesize: int, serverurl: str, token: bool,
-                stale_records_removal_interval: int, serve: None) -> None:
+def serve(adduser: tuple, api: str, auth: bool, dburl: str, pagination: bool,
+          hydradoc: str, port: int, pagesize: int, serverurl: str, token: bool,
+          use_db: bool, stale_records_removal_interval: int) -> None:
     """
-    Python Hydrus CLI
+    Starts up the server.
+    \f
 
-    :param openapi:         : Sets the link to the Open Api Doc file.
     :param adduser <tuple>  : Contains the user credentials.
     :param api <str>        : Sets the API name for the server.
     :param auth <bool>      : Toggles the authentication.
     :param dburl <str>      : Sets the database URL.
+    :param pagination <bool>: Toggles the pagination.
     :param hydradoc <str>   : Sets the link to the HydraDoc file
-                            (Supported formats - [.py, .jsonld, .yaml])
+                              (Supported formats - [.py, .jsonld, .yaml])
     :param port <int>       : Sets the API server port.
+    :param pagesize <int>   : Sets maximum size of page(view).
     :param serverurl <str>  : Sets the API server url.
     :param token <bool>     : Toggle token based user auth.
-    :param serve            : Starts up the server.
+    :stable_records_removal_interval <int> : Interval period between removal
+                                             of stale modification records.
 
-    :return                 : None.
-
+    :return                 : None
 
     Raises:
         Error: If `hydradoc` is not of a supported format[.py, .jsonld, .yaml].
@@ -77,28 +90,20 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str, pagination: bo
     # See http://docs.sqlalchemy.org/en/rel_1_0/core/engines.html for more info
     # DB_URL = 'sqlite:///database.db'
     DB_URL = dburl
-
     # Define the server URL, this is what will be displayed on the Doc
-    HYDRUS_SERVER_URL = "{}:{}/".format(serverurl, str(port))
+    HYDRUS_SERVER_URL = f"{serverurl}:{str(port)}/"
 
     # The name of the API or the EntryPoint, the api will be at
     # http://localhost/<API_NAME>
     API_NAME = api
-
     click.echo("Setting up the database")
     # Create a connection to the database you want to use
     engine = create_engine(DB_URL, connect_args={'check_same_thread': False})
-    Base.metadata.drop_all(engine)
-    click.echo("Creating models")
-    # Add the required Models to the database
-    Base.metadata.create_all(engine)
-
     # Define the Hydra API Documentation
     # NOTE: You can use your own API Documentation and create a HydraDoc object
     # using doc_maker or you may create your own HydraDoc Documentation using
     # doc_writer [see hydra_python_core/doc_writer_sample]
     click.echo("Creating the API Documentation")
-
     if hydradoc:
         # Getting hydradoc format
         # Currently supported formats [.jsonld, .py, .yaml]
@@ -116,38 +121,47 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str, pagination: bo
             else:
                 raise("Error - hydradoc format not supported.")
 
-            click.echo("Using %s as hydradoc" % hydradoc)
+            click.echo(f"Using {hydradoc} as hydradoc")
             apidoc = doc_maker.create_doc(doc,
                                           HYDRUS_SERVER_URL, API_NAME)
 
         except BaseException:
-            click.echo("Problem parsing specified hydradoc file, "
-                       "using sample hydradoc as default.")
-            apidoc = doc_maker.create_doc(api_document,
+            if FOUND_DOC:
+                click.echo("Problem parsing specified hydradoc file"
+                           "Using hydradoc from environment variable")
+            else:
+                click.echo("Problem parsing specified hydradoc file, "
+                           "using sample hydradoc as default.")
+
+            apidoc = doc_maker.create_doc(APIDOC_OBJ,
                                           HYDRUS_SERVER_URL, API_NAME)
     else:
-        click.echo("No hydradoc specified, using sample hydradoc as default.\n"
-                   "For creating api documentation see this "
-                   "https://www.hydraecosystem.org/01-Usage.html#newdoc\n"
-                   "You can find the example used in hydrus/samples/hydra_doc_sample.py")
+        if FOUND_DOC:
+            click.echo(
+                "No hydradoc specified, using hydradoc from environment variable.")
+        else:
+            click.echo("No hydradoc specified, using sample hydradoc as default.\n"
+                       "For creating api documentation see this "
+                       "https://www.hydraecosystem.org/01-Usage.html#newdoc\n"
+                       "You can find the example used in hydrus/samples/hydra_doc_sample.py")
+
         apidoc = doc_maker.create_doc(
-            api_document, HYDRUS_SERVER_URL, API_NAME)
+            APIDOC_OBJ, HYDRUS_SERVER_URL, API_NAME)
 
     # Start a session with the DB and create all classes needed by the APIDoc
     session = scoped_session(sessionmaker(bind=engine))
 
-    click.echo("Adding Classes and Properties")
     # Get all the classes from the doc
     # You can also pass dictionary defined in
     # hydra_python_core/doc_writer_sample_output.py
-    classes = doc_parse.get_classes(apidoc.generate())
-
-    # Get all the properties from the classes
-    properties = doc_parse.get_all_properties(classes)
-
+    classes = doc_parse.get_classes(apidoc)
     # Insert them into the database
-    doc_parse.insert_classes(classes, session)
-    doc_parse.insert_properties(properties, session)
+    if use_db is False:
+        Base.metadata.drop_all(engine)
+        click.echo("Adding Classes and Properties")
+        create_database_tables(classes)
+        click.echo("Creating models")
+        Base.metadata.create_all(engine)
 
     # Add authorized users and pass if they already exist
     click.echo("Adding authorized users")
@@ -157,12 +171,10 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str, pagination: bo
         pass
 
     # Insert them into the database
-    doc_parse.insert_classes(classes, session)
-    doc_parse.insert_properties(properties, session)
 
     click.echo("Creating the application")
     # Create a Hydrus app with the API name you want, default will be "api"
-    app = app_factory(API_NAME)
+    app = app_factory(API_NAME, apidoc.doc_name)
     # Set the name of the API
     # Create a socket for the app
     socketio = create_socket(app, session)
@@ -189,9 +201,7 @@ def startserver(adduser: Tuple, api: str, auth: bool, dburl: str, pagination: bo
                                     socketio.run(app, port=port)
                                     click.echo("Server running at:")
                                     click.echo(
-                                        "{}{}".format(
-                                            HYDRUS_SERVER_URL,
-                                            API_NAME))
+                                        f"{HYDRUS_SERVER_URL}{API_NAME}")
 
 
 if __name__ == "__main__":

@@ -1,41 +1,15 @@
 # from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.scoping import scoped_session
+
 from typing import Dict, Any, Tuple
 
 from sqlalchemy.orm.exc import NoResultFound
-from hydrus.data.db_models import (Graph, BaseProperty, RDFClass, Instance,
-                                   Terminal)
 from hydrus.data.exceptions import (
     PageNotFound,
     InvalidSearchParameter,
     IncompatibleParameters,
-    OffsetOutOfRange)
-
-
-def apply_filter(object_id: str, search_props: Dict[str, Any],
-                 triples: Graph, session: scoped_session) -> bool:
-    """Check whether objects has properties with query values or not.
-    :param object_id: Id of the instance.
-    :param search_props: Dictionary of query parameters with property id and values.
-    :param triples: All triples.
-    :param session: sqlalchemy scoped session.
-    :return: True if the instance has properties with given values, False otherwise.
-    """
-    for prop in search_props:
-        # For nested properties
-        if isinstance(search_props[prop], dict):
-            data = session.query(triples).filter(
-                triples.GraphIII.subject == object_id, triples.GraphIII.predicate == prop).one()
-            if apply_filter(data.object_, search_props[prop], triples, session) is False:
-                return False
-        else:
-            data = session.query(triples).filter(
-                triples.GraphIIT.subject == object_id, triples.GraphIIT.predicate == prop).one()
-            terminal = session.query(Terminal).filter(
-                Terminal.id == data.object_).one()
-            if terminal.value != search_props[prop]:
-                return False
-    return True
+    OffsetOutOfRange,
+)
 
 
 def recreate_iri(API_NAME: str, path: str, search_params: Dict[str, Any]) -> str:
@@ -45,53 +19,37 @@ def recreate_iri(API_NAME: str, path: str, search_params: Dict[str, Any]) -> str
     :param search_params: List of query parameters.
     :return: Recreated IRI.
     """
-    iri = "/{}/{}?".format(API_NAME, path)
+    iri = f"/{API_NAME}/{path}?"
     for param in search_params:
         # Skip page, pageIndex or offset parameters as they will be updated to point to
         # next, previous and last page
         if param == "page" or param == "pageIndex" or param == "offset":
             continue
-        iri += "{}={}&".format(param, search_params[param])
+        iri += f"{param}={search_params[param]}&"
     return iri
 
 
-def parse_search_params(search_params: Dict[str, Any],
-                        properties: BaseProperty,
-                        session: scoped_session) -> Dict[str, Any]:
-    """Parse search parameters and create a dict with id of parameters as keys.
+def parse_search_params(search_params: Dict[str, Any]) -> Dict[str, Any]:
+    """Parse nested search parameters and add them in the form of nested dict.
     :param search_params: Dictionary having input search parameters.
-    :param properties: All properties.
-    :param session: sqlalchemy session.
-    :return: A dictionary having property ids as keys.
+    :return: A dictionary having keys as nested dictionaries for each nested search param
     """
-    search_props = dict()
-    pagination_parameters = ["page", "pageIndex", "limit", "offset"]
-    for param in search_params:
-        # Skip if the parameter is a pagination parameter
-        if param in pagination_parameters:
-            continue
+    for param in search_params.copy():
         # For one level deep nested parameters
         if "[" in param and "]" in param:
-            prop_name = param.split('[')[0]
-            try:
-                prop_id = session.query(properties).filter(
-                    properties.name == prop_name).one().id
-                if prop_id not in search_props:
-                    search_props[prop_id] = {}
-                nested_prop_id = session.query(properties).filter(
-                    properties.name == param[param.find('[') + 1:param.find(']')]).one().id
-                search_props[prop_id][nested_prop_id] = search_params[param]
-            except NoResultFound:
-                raise InvalidSearchParameter(param)
+            value = search_params[param]
+            split_param_list = param.split('[')
+            prop_name = split_param_list[0]
+            nested_prop_name = split_param_list[1].split(']')[0]
+            if prop_name not in search_params:
+                search_params[prop_name] = dict()
+            search_params[prop_name][nested_prop_name] = value
+            search_params.pop(param)
         # For normal parameters
         else:
-            try:
-                prop_id = session.query(properties).filter(
-                    properties.name == param).one().id
-                search_props[prop_id] = search_params[param]
-            except NoResultFound:
-                raise InvalidSearchParameter(param)
-    return search_props
+            # Skip if the parameter is not nested
+            continue
+    return search_params
 
 
 def calculate_page_limit_and_offset(paginate: bool, page_size: int, page: int, result_length: int,
@@ -179,30 +137,28 @@ def attach_hydra_view(collection_template: Dict[str, Any], paginate_param: str,
                  is used for pagination, None otherwise.
     """
     if paginate_param == "offset":
-        collection_template["view"] = {
-            "@id": "{}{}={}".format(iri, paginate_param, offset),
-            "@type": "PartialCollectionView",
-            "first": "{}{}=0".format(iri, paginate_param),
-            "last": "{}{}={}".format(iri, paginate_param, result_length-page_size)
+        collection_template["hydra:view"] = {
+            "@id": f"{iri}{paginate_param}={offset}",
+            "@type": "hydra:PartialCollectionView",
+            "hydra:first": f"{iri}{paginate_param}=0",
+            "hydra:last": f"{iri}{paginate_param}={result_length - page_size}"
         }
         if offset > page_size:
-            collection_template["view"]["previous"] = "{}{}={}".format(iri,
-                                                                       paginate_param,
-                                                                       offset - page_size)
+            collection_template["hydra:view"]["hydra:previous"] = (
+                f"{iri}{paginate_param}={offset - page_size}")
         if offset < result_length-page_size:
-            collection_template["view"]["next"] = "{}{}={}".format(iri,
-                                                                   paginate_param,
-                                                                   offset + page_size)
+            collection_template["hydra:view"]["hydra:next"] = (
+                f"{iri}{paginate_param}={offset + page_size}")
     else:
-        collection_template["view"] = {
-            "@id": "{}{}={}".format(iri, paginate_param, page),
-            "@type": "PartialCollectionView",
-            "first": "{}{}=1".format(iri, paginate_param),
-            "last": "{}{}={}".format(iri, paginate_param, last)
+        collection_template["hydra:view"] = {
+            "@id": f"{iri}{paginate_param}={page}",
+            "@type": "hydra:PartialCollectionView",
+            "hydra:first": f"{iri}{paginate_param}=1",
+            "hydra:last": f"{iri}{paginate_param}={last}"
         }
         if page != 1:
-            collection_template["view"]["previous"] = "{}{}={}".format(iri, paginate_param,
-                                                                       page-1)
+            collection_template["hydra:view"]["hydra:previous"] = (
+                f"{iri}{paginate_param}={page-1}")
         if page != last:
-            collection_template["view"]["next"] = "{}{}={}".format(iri, paginate_param,
-                                                                   page + 1)
+            collection_template["hydra:view"]["hydra:next"] = (
+               f"{iri}{paginate_param}={page + 1}")

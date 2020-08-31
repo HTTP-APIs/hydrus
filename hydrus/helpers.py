@@ -1,19 +1,22 @@
 from typing import Dict, Any, List, Optional, Union, Tuple
 
-from flask import Response
+from flask import Response, jsonify
 
 from hydrus.data import crud
 
 from hydrus.utils import get_doc, get_api_name, get_hydrus_server_url, get_session
-
+from hydrus.utils import get_collections_and_parsed_classes
 from hydra_python_core.doc_writer import HydraIriTemplate, IriTemplateMapping, HydraLink
+from hydra_python_core.doc_writer import HydraError, DocUrl
+from hydrus.socketio_factory import socketio
 
 
 def validObject(object_: Dict[str, Any]) -> bool:
     """
-        Check if the Dict passed in POST is of valid format or not.
+    Check if the Dict passed in POST is of valid format or not.
         (if there's an "@type" key in the dict)
-        :param object_ - Object to be checked
+    :param object_ - Object to be checked
+    :return : <bool> True if Object has "@type" key
     """
     if "@type" in object_:
         return True
@@ -22,9 +25,10 @@ def validObject(object_: Dict[str, Any]) -> bool:
 
 def validObjectList(objects_: List[Dict[str, Any]]) -> bool:
     """
-        Check if the List of Dicts passed are of the valid format or not.
+    Check if the List of Dicts passed are of the valid format or not.
         (if there's an "@type" key in the dict)
     :param objects_: Object to be checked
+    :return : <bool> True if all the Object in the List of Dicts have "@type" key
     """
     for object_ in objects_:
         if "@type" not in object_:
@@ -50,36 +54,57 @@ def set_response_headers(resp: Response,
                          ct: str = "application/ld+json",
                          headers: List[Dict[str, Any]]=[],
                          status_code: int = 200) -> Response:
-    """Set the response headers."""
+    """
+    Set the response headers.
+    :param resp: Response.
+    :param ct: Content-type default "application/ld+json".
+    :param headers: List of objects.
+    :param status_code: status code default 200.
+    :return: Response with headers.
+    """
     resp.status_code = status_code
     for header in headers:
         resp.headers[list(header.keys())[0]] = header[list(header.keys())[0]]
     resp.headers['Content-type'] = ct
     link = "http://www.w3.org/ns/hydra/core#apiDocumentation"
-    resp.headers['Link'] = '<{}{}/vocab>; rel="{}"'.format(
-        get_hydrus_server_url(), get_api_name(), link)
+    vocab_route = get_doc().doc_name
+    link_header = f'<{get_hydrus_server_url()}{get_api_name()}/{vocab_route}>; rel="{link}"'
+    resp.headers['Link'] = link_header
     return resp
 
 
 def hydrafy(object_: Dict[str, Any], path: Optional[str]) -> Dict[str, Any]:
-    """Add hydra context to objects."""
+    """
+    Add hydra context to objects.
+    :param object_ : Object.
+    :param path : Path of the collection or non-collection class .
+    :return : object with hydra context
+    """
     if path == object_["@type"]:
         object_[
-            "@context"] = "/{}/contexts/{}.jsonld".format(get_api_name(), object_["@type"])
+            "@context"] = f"/{get_api_name()}/contexts/{object_['@type']}.jsonld"
     else:
         object_[
-            "@context"] = "/{}/contexts/{}.jsonld".format(get_api_name(), path)
+            "@context"] = f"/{get_api_name()}/contexts/{path}.jsonld"
     return object_
 
 
 def checkEndpoint(method: str, path: str) -> Dict[str, Union[bool, int]]:
-    """Check if endpoint and method is supported in the API."""
+    """
+    Check if endpoint and method is supported in the API.
+    :param method: Method name
+    :param path: Path of the collection or non-collection class
+    :return : Dict with 'method' and 'status' key
+    """
     status_val = 404
-    if path == 'vocab':
+    vocab_route = get_doc().doc_name
+    if path == vocab_route:
         return {'method': False, 'status': 405}
-
+    expanded_base_url = DocUrl.doc_url
     for endpoint in get_doc().entrypoint.entrypoint.supportedProperty:
-        if path == "/".join(endpoint.id_.split("/")[1:]):
+        expanded_endpoint_id = endpoint.id_.replace("EntryPoint/", "")
+        endpoint_id = expanded_endpoint_id.split(expanded_base_url)[1]
+        if path == endpoint_id:
             status_val = 405
             for operation in endpoint.supportedOperation:
                 if operation.method == method:
@@ -89,23 +114,32 @@ def checkEndpoint(method: str, path: str) -> Dict[str, Union[bool, int]]:
 
 
 def getType(class_path: str, method: str) -> Any:
-    """Return the @type of object allowed for POST/PUT."""
+    """
+    Return the @type of object allowed for POST/PUT.
+    :param class_path: path for the class
+    :param method: Method name
+    """
+    expanded_base_url = DocUrl.doc_url
     for supportedOp in get_doc(
     ).parsed_classes[class_path]["class"].supportedOperation:
         if supportedOp.method == method:
-            return supportedOp.expects.replace("vocab:", "")
-    # NOTE: Don't use split, if there are more than one substrings with
-    # 'vocab:' not everything will be returned.
+            class_type = supportedOp.expects.split(expanded_base_url)[1]
+            return class_type
 
 
 def checkClassOp(path: str, method: str) -> bool:
-    """Check if the Class supports the operation.
+    """
+    Check if the Class supports the operation.
     :param path: Path of the collection or non-collection class.
     :param method: Method name.
     :return: True if the method is defined, false otherwise.
     """
-    for supportedOp in get_doc(
-    ).parsed_classes[path]["class"].supportedOperation:
+    collections, parsed_classes = get_collections_and_parsed_classes()
+    if path in collections:
+        supported_operations = get_doc().collections[path]["collection"].supportedOperation
+    else:
+        supported_operations = get_doc().parsed_classes[path]["class"].supportedOperation
+    for supportedOp in supported_operations:
         if supportedOp.method == method:
             return True
     return False
@@ -119,7 +153,14 @@ def check_required_props(path: str, obj: Dict[str, Any]) -> bool:
     :return: True if the object contains all required properties
              False otherwise.
     """
-    for prop in get_doc().parsed_classes[path]["class"].supportedProperty:
+    collections, parsed_classes = get_collections_and_parsed_classes()
+    if path in collections:
+        # path is of a collection class
+        supported_properties = get_doc().collections[path]["collection"].supportedProperty
+    else:
+        # path is of a non-collection class
+        supported_properties = get_doc().parsed_classes[path]["class"].supportedProperty
+    for prop in supported_properties:
         if prop.required:
             if prop.title not in obj:
                 return False
@@ -134,7 +175,14 @@ def check_writeable_props(path: str, obj: Dict[str, Any]) -> bool:
     :return: True if the object only contains writeable properties
              False otherwise.
     """
-    for prop in get_doc().parsed_classes[path]["class"].supportedProperty:
+    collections, parsed_classes = get_collections_and_parsed_classes()
+    if path in collections:
+        # path is of a collection class
+        supported_properties = get_doc().collections[path]["collection"].supportedProperty
+    else:
+        # path is of a non-collection class
+        supported_properties = get_doc().parsed_classes[path]["class"].supportedProperty
+    for prop in supported_properties:
         if prop.write is False:
             if prop.title in obj:
                 return False
@@ -149,11 +197,18 @@ def get_nested_class_path(class_type: str) -> Tuple[str, bool]:
              the second element is a boolean, True if the class is a collection class
              False otherwise.
     """
-    for collection in get_doc().collections:
-        if get_doc().collections[collection]["collection"].class_.title == class_type:
-            return get_doc().collections[collection]["collection"].path, True
-    for class_path in get_doc().parsed_classes:
-        if class_type == get_doc().parsed_classes[class_path]["class"].title:
+    expanded_base_url = DocUrl.doc_url
+    collections, parsed_classes = get_collections_and_parsed_classes()
+    for path in collections:
+        collection = collections[path]["collection"]
+        class_name = collection.manages["object"].split(expanded_base_url)[1]
+        collection_manages_class = parsed_classes[class_name]["class"]
+        collection_manages_class_type = collection_manages_class.title
+        collection_manages_class_path = collection_manages_class.path
+        if collection_manages_class_type == class_type:
+            return collection_manages_class_path, True
+    for class_path in parsed_classes:
+        if class_type == parsed_classes[class_path]["class"].title:
             return class_path, False
 
 
@@ -166,29 +221,51 @@ def finalize_response(path: str, obj: Dict[str, Any]) -> Dict[str, Any]:
     :return: An object not containing any `readable=False` properties and having proper path
              of any nested object's url.
     """
-    for prop in get_doc().parsed_classes[path]["class"].supportedProperty:
-        # Skip not required properties which are not inserted yet.
-        if not prop.required and prop.title not in obj:
-            continue
-        if prop.read is False:
-            obj.pop(prop.title, None)
-        elif isinstance(prop.prop, HydraLink):
-            hydra_link = prop.prop
-            range_class = hydra_link.range.replace("vocab:", "")
-            nested_path, is_collection = get_nested_class_path(range_class)
-            if is_collection:
+    collections, parsed_classes = get_collections_and_parsed_classes()
+    expanded_base_url = DocUrl.doc_url
+    if path in collections:
+        members = list()
+        for member in obj["members"]:
+            member_id = member[0]
+            member_type = member[1]
+            member_path = get_path_from_type(member_type)
+            member = {
+                "@type": "hydra:Link",
+                "@id": f"/{get_api_name()}/{member_path}/{member_id}",
+            }
+            members.append(member)
+        obj['members'] = members
+        return obj
+    else:
+        # path is of a non-collection class
+        supported_properties = get_doc().parsed_classes[path]["class"].supportedProperty
+        expanded_base_url = DocUrl.doc_url
+        for prop in supported_properties:
+            # Skip not required properties which are not inserted yet.
+            if not prop.required and prop.title not in obj:
+                continue
+            # if prop.read is False:
+            #     obj.pop(prop.title, None)
+            elif isinstance(prop.prop, HydraLink):
+                hydra_link = prop.prop
+                range_class = hydra_link.range.split(expanded_base_url)[1]
+                nested_path, is_collection = get_nested_class_path(range_class)
+                if is_collection:
+                    id = obj[prop.title]
+                    obj[prop.title] = f"/{get_api_name()}/{nested_path}/{id}"
+                else:
+                    obj[prop.title] = f"/{get_api_name()}/{nested_path}"
+            elif expanded_base_url in prop.prop:
+                prop_class = prop.prop.split(expanded_base_url)[1]
+                prop_class_path = parsed_classes[prop_class]['class'].path
                 id = obj[prop.title]
-                obj[prop.title] = "/{}/{}/{}".format(get_api_name(), nested_path, id)
-            else:
-                obj[prop.title] = "/{}/{}".format(get_api_name(), nested_path)
-        elif 'vocab:' in prop.prop:
-            prop_class = prop.prop.replace("vocab:", "")
-            id = obj[prop.title]
-            obj[prop.title] = crud.get(id, prop_class, get_api_name(), get_session())
-    return obj
+                class_resp = crud.get(id, prop_class, get_api_name(), get_session(),
+                                      path=prop_class_path)
+                obj[prop.title] = finalize_response(prop_class_path, class_resp)
+        return obj
 
 
-def add_iri_template(path: str, API_NAME: str) -> Dict[str, Any]:
+def add_iri_template(path: str, API_NAME: str, collection_path: str) -> Dict[str, Any]:
     """
     Creates an IriTemplate.
     :param path: Path of the collection or the non-collection class.
@@ -196,8 +273,7 @@ def add_iri_template(path: str, API_NAME: str) -> Dict[str, Any]:
     :return: Hydra IriTemplate .
     """
     template_mappings = list()
-    template = "/{}/{}(".format(API_NAME, path)
-    first = True
+    template = f"/{API_NAME}/{collection_path}{{?"
     template, template_mappings = generate_iri_mappings(path, template,
                                                         template_mapping=template_mappings,)
 
@@ -209,7 +285,8 @@ def add_iri_template(path: str, API_NAME: str) -> Dict[str, Any]:
 def generate_iri_mappings(path: str, template: str, skip_nested: bool = False,
                           template_mapping: List[IriTemplateMapping] = [],
                           parent_prop_name: str = None) -> Tuple[str, List[IriTemplateMapping]]:
-    """Generate iri mappings to add to IriTemplate
+    """
+    Generate iri mappings to add to IriTemplate
     :param path: Path of the collection or non-collection class.
     :param template: IriTemplate string.
     :param skip_nested: To only add properties of the class_type class or
@@ -220,16 +297,17 @@ def generate_iri_mappings(path: str, template: str, skip_nested: bool = False,
     :return: Template string, list of template mappings and boolean showing whether
              to keep adding delimiter or not.
     """
+    expanded_base_url = DocUrl.doc_url
     for supportedProp in get_doc(
     ).parsed_classes[path]["class"].supportedProperty:
         prop_class = supportedProp.prop
         nested_class_prop = False
         if isinstance(supportedProp.prop, HydraLink):
             hydra_link = supportedProp.prop
-            prop_class = hydra_link.range.replace("vocab:", "")
+            prop_class = hydra_link.range.split(expanded_base_url)[1]
             nested_class_prop = True
-        elif "vocab:" in supportedProp.prop:
-            prop_class = supportedProp.prop.replace("vocab:", "")
+        elif expanded_base_url in supportedProp.prop:
+            prop_class = supportedProp.prop.split(expanded_base_url)[1]
             nested_class_prop = True
         if nested_class_prop and skip_nested is False:
             template, template_mapping = generate_iri_mappings(prop_class, template,
@@ -238,20 +316,21 @@ def generate_iri_mappings(path: str, template: str, skip_nested: bool = False,
                                                                template_mapping=template_mapping)
             continue
         if skip_nested is True:
-            var = "{}[{}]".format(parent_prop_name, supportedProp.title)
+            var = f"{parent_prop_name}[{supportedProp.title}]"
             mapping = IriTemplateMapping(variable=var, prop=prop_class)
         else:
             var = supportedProp.title
             mapping = IriTemplateMapping(variable=var, prop=prop_class)
         template_mapping.append(mapping)
-        template = template + "{}, ".format(var)
+        template = template + f"{var}, "
     return template, template_mapping
 
 
 def add_pagination_iri_mappings(template: str,
                                 template_mapping: List[IriTemplateMapping]
                                 ) -> Tuple[str, List[IriTemplateMapping]]:
-    """Add various pagination related to variable to the IRI template and also adds mappings for them.
+    """
+    Add various pagination related to variable to the IRI template and also adds mappings for them.
     :param template: IriTemplate string.
     :param template_mapping: List of template mappings.
     :return: Final IriTemplate string and related list of mappings.
@@ -260,9 +339,9 @@ def add_pagination_iri_mappings(template: str,
     for i in range(len(paginate_variables)):
         # If final variable then do not add space and comma and add the final parentheses
         if i == len(paginate_variables) - 1:
-            template += "{})".format(paginate_variables[i])
+            template += f"{paginate_variables[i]}}}"
         else:
-            template += "{}, ".format(paginate_variables[i])
+            template += f"{paginate_variables[i]}, "
         mapping = IriTemplateMapping(variable=paginate_variables[i], prop=paginate_variables[i])
         template_mapping.append(mapping)
     return template, template_mapping
@@ -270,7 +349,8 @@ def add_pagination_iri_mappings(template: str,
 
 def send_sync_update(socketio, new_job_id: int, last_job_id: str,
                      method: str, resource_url: str):
-    """Sends synchronization update to all connected clients.
+    """
+    Sends synchronization update to all connected clients.
     :param socketio: socketio connection.
     :param new_job_id: Job id of the new modification(update).
     :param last_job_id: Job id of the last(most recent) modification until this new one.
@@ -296,10 +376,18 @@ def get_link_props(path: str, object_) -> Tuple[Dict[str, Any], bool]:
              second element represents boolean representing validity of the link.
     """
     link_props = {}
-    for supportedProp in get_doc().parsed_classes[path]['class'].supportedProperty:
+    collections, parsed_classes = get_collections_and_parsed_classes()
+    expanded_base_url = DocUrl.doc_url
+    if path in collections:
+        # path is of a collection class
+        supported_properties = get_doc().collections[path]["collection"].supportedProperty
+    else:
+        # path is of a non-collection class
+        supported_properties = get_doc().parsed_classes[path]["class"].supportedProperty
+    for supportedProp in supported_properties:
         if isinstance(supportedProp.prop, HydraLink) and supportedProp.title in object_:
             prop_range = supportedProp.prop.range
-            range_class_name = prop_range.replace("vocab:", "")
+            range_class_name = prop_range.split(expanded_base_url)[1]
             for collection_path in get_doc().collections:
                 if collection_path in object_[supportedProp.title]:
                     class_title = get_doc().collections[collection_path]['collection'].class_.title
@@ -335,3 +423,110 @@ def get_link_props_for_multiple_objects(path: str,
         else:
             return [], False
     return link_prop_list, True
+
+
+def validate_object(object_: Dict[str, Any],
+                    obj_type: str, class_path: str) -> bool:
+    """
+    Check if the object dict passed in POST can be inserted/updated
+    in database.
+
+    :param object_: Object to be checked
+    :param obj_type: The required object type
+    :param class_path: Path of the class
+    :return: True if the object is completely valid
+    """
+    return (validObject(object_) and
+            object_["@type"] == obj_type and
+            check_required_props(class_path, object_))
+
+
+def get_context(category: str) -> Response:
+    """
+    Generate the context for a given category.
+
+    :param category: The category of class for which context is required
+    :type category: str
+    :return: Response with context
+    :rtype: Response
+    """
+    collections, parsed_classes = get_collections_and_parsed_classes()
+    # Check for collection
+    if category in get_doc().collections:
+        # type: Union[Dict[str,Any],Dict[int,str]]
+        response = {"@context": collections[category]["context"].generate()}
+        return set_response_headers(jsonify(response))
+    # Check for non collection class
+    elif category in parsed_classes:
+        response = {"@context": get_doc().parsed_classes[category]["context"].generate()}
+        return set_response_headers(jsonify(response))
+    else:
+        error = HydraError(code=404, title="NOT FOUND", desc="Context not found")
+        return error_response(error)
+
+
+def error_response(error: HydraError) -> Response:
+    """
+    Generate the response if there is an error while performing any operation
+
+    :param error: HydraError object which will help in generating response
+    :type error: HydraError
+    :return: Error response with appropriate status code
+    :rtype: Response
+    """
+    return set_response_headers(jsonify(error.generate()),
+                                status_code=error.code)
+
+
+def send_update(method: str, path: str):
+    """Handler for sending synchronization update to all connected clients.
+
+    :param method: Method type of the operation.
+    :type method: str
+    :param path: Path to the Item collection to which update is made.
+    :type path: str
+    """
+    resource_url = f"{get_hydrus_server_url()}{get_api_name()}/{path}"
+    session = get_session()
+    last_job_id = crud.get_last_modification_job_id(session)
+    new_job_id = crud.insert_modification_record(method, resource_url, session)
+    send_sync_update(socketio, new_job_id, last_job_id, method, resource_url)
+
+
+def get_path_from_type(type_: str) -> str:
+    _, parsed_classes = get_collections_and_parsed_classes()
+    expanded_base_url = DocUrl.doc_url
+    for class_name in parsed_classes:
+        class_ = parsed_classes[class_name]['class']
+        if type_ == class_.id_.split(expanded_base_url)[1]:
+            return class_.path
+
+
+def parse_collection_members(object_: dict) -> dict:
+    """Parse the members of a collection to make it easier
+    to insert in database.
+
+    :param object_: The body of the request having object members
+    :type object_: dict
+    :return: Object with parsed members
+    :rtype: dict
+    """
+    members = list()
+    for member in object_['members']:
+        # example member
+        # {
+        #     "@id": "/serverapi/LogEntry/aab38f9d-516a-4bb2-ae16-068c0c5345bd",
+        #     "@type": "LogEntry"
+        # }
+        member_id = member['@id'].split('/')[-1]
+        member_type = member['@type']
+        if crud.item_exists(member_type, member_id, get_session()):
+            members.append({
+                "id_": member_id,
+                "@type": member_type,
+            })
+        else:
+            error = HydraError(code=400, title="Data is not valid")
+            return error_response(error)
+    object_['members'] = members
+    return object_

@@ -2,8 +2,8 @@ alembic==1.0.10
 aniso8601==3.0.2
 appdirs==1.4.3
 blinker==1.4
+click==7.0
 certifi==2019.11.28
-click==6.7
 Flask==1.1.1
 Flask-Cors==3.0.8
 Flask-RESTful==0.3.7
@@ -16,6 +16,8 @@ git+https://github.com/HTTP-APIs/hydra-openapi-parser@0.1.1#egg=hydra_openapi_pa
 itsdangerous==1.1.0
 Jinja2==2.10.3
 lifter==0.4.1
+psycopg2==2.7.5
+pytest==5.4.1
 Mako==1.1.0
 MarkupSafe==1.1.1
 packaging==19.2
