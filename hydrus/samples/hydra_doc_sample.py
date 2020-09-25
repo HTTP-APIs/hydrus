@@ -58,7 +58,11 @@ doc = {
         "supportedOperation": "hydra:supportedOperation",
         "supportedProperty": "hydra:supportedProperty",
         "title": "hydra:title",
-        "writeable": "hydra:writeable"
+        "writeable": "hydra:writeable",
+        "collections":{
+        "@id": "hydra:Collection",
+        "@type": "@id",
+        },
     },
     "@id": "http://localhost:8080/api/vocab",
     "@type": "ApiDocumentation",
