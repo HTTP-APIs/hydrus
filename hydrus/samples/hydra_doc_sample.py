@@ -59,7 +59,7 @@ doc = {
         "supportedProperty": "hydra:supportedProperty",
         "title": "hydra:title",
         "writeable": "hydra:writeable",
-        
+
     },
     "@id": "http://localhost:8080/api/vocab",
     "@type": "ApiDocumentation",
@@ -706,6 +706,86 @@ doc = {
                 }
             ],
             "title": "Collection"
+        },
+        {
+            "@id":"http://localhost:8080/api/vocab#DroneCollection",
+            "@type":"Collection",
+            "description":"A collection of drones",
+            "manages":{
+                "object":"http://localhost:8080/api/vocab#Drone",
+                "property":"rdfs:type"
+            },
+            "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
+            "supportedOperation": [
+                {
+                    "@id": "submitdrone",
+                    "@type": "http://schema.org/UpdateAction",
+                    "description": "null",
+                    "expects": "http://localhost:8080/api/vocab#Drone",
+                    "expectsHeader": [],
+                    "label": "SubmitDrone",
+                    "method": "POST",
+                    "possibleStatus": [
+                        {
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
+                            "description": "Drone updated",
+                            "statusCode": 200,
+                            "title": ""
+                        }
+                    ],
+                    "returns": "null",
+                    "returnsHeader": []
+                },
+                {
+                    "@id": "createdrone",
+                    "@type": "http://schema.org/AddAction",
+                    "description": "null",
+                    "expects": "http://localhost:8080/api/vocab#Drone",
+                    "expectsHeader": [],
+                    "label": "CreateDrone",
+                    "method": "PUT",
+                    "possibleStatus": [
+                        {
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
+                            "description": "Drone added",
+                            "statusCode": 200,
+                            "title": ""
+                        }
+                    ],
+                    "returns": "null",
+                    "returnsHeader": []
+                },
+                {
+                    "@id": "getdrone",
+                    "@type": "http://schema.org/FindAction",
+                    "description": "null",
+                    "expects": "null",
+                    "expectsHeader": [],
+                    "label": "GetDrone",
+                    "method": "GET",
+                    "possibleStatus": [
+                        {
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
+                            "description": "Drone not found",
+                            "statusCode": 404,
+                            "title": ""
+                        },
+                        {
+                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+                            "@type": "Status",
+                            "description": "Drone Returned",
+                            "statusCode": 200,
+                            "title": ""
+                        }
+                    ],
+                    "returns": "http://localhost:8080/api/vocab#Drone",
+                    "returnsHeader": []
+
+                }
+            ]
         },
         {
             "@id": "http://localhost:8080/api/vocab#MessageCollection",
