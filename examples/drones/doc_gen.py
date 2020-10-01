@@ -247,7 +247,7 @@ def doc_gen(API: str, BASE_URL: str) -> HydraDoc:
                                          manages=message_collection_manages)
 
     api_doc.add_supported_class(drone)
-    api_doc.add_supported_collection(drone_collection)
+    api_doc.add_supported_collection(message_collection)
     api_doc.add_supported_class(state)
     api_doc.add_supported_collection(state_collection)
     api_doc.add_supported_class(datastream)
