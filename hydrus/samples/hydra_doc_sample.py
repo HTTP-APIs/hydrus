@@ -1,4 +1,7 @@
-doc= {
+"""
+Generated API Documentation for Server API using server_doc_gen.py."""
+
+doc = {
     "@context": {
         "ApiDocumentation": "hydra:ApiDocumentation",
         "description": "hydra:description",
@@ -704,88 +707,88 @@ doc= {
             "title": "Collection"
         },
         {
-            "@id": "http://localhost:8080/api/vocab#DroneCollection",
+            "@id": "http://localhost:8080/api/vocab#MessageCollection",
             "@type": "Collection",
-            "description": "A collection of drones",
+            "description": "A collection of messages",
             "manages": {
-                "object": "http://localhost:8080/api/vocab#Drone",
+                "object": "http://localhost:8080/api/vocab#Message",
                 "property": "rdfs:type"
             },
             "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
             "supportedOperation": [
                 {
-                    "@id": "_:DroneCollection_retrieve",
+                    "@id": "_:MessageCollection_retrieve",
                     "@type": "http://schema.org/FindAction",
-                    "description": "Retrieves all the members of DroneCollection",
+                    "description": "Retrieves all the members of MessageCollection",
                     "expects": "null",
                     "expectsHeader": [],
                     "method": "GET",
                     "possibleStatus": [],
-                    "returns": "http://localhost:8080/api/vocab#Drone",
+                    "returns": "http://localhost:8080/api/vocab#Message",
                     "returnsHeader": []
                 },
                 {
-                    "@id": "_:DroneCollection_create",
+                    "@id": "_:MessageCollection_create",
                     "@type": "http://schema.org/AddAction",
-                    "description": "Create new member in DroneCollection",
-                    "expects": "http://localhost:8080/api/vocab#Drone",
+                    "description": "Create new member in MessageCollection",
+                    "expects": "http://localhost:8080/api/vocab#Message",
                     "expectsHeader": [],
                     "method": "PUT",
                     "possibleStatus": [
                         {
                             "@context": "http://www.w3.org/ns/hydra/context.jsonld",
                             "@type": "Status",
-                            "description": "A new member in DroneCollection created",
+                            "description": "A new member in MessageCollection created",
                             "statusCode": 201,
                             "title": ""
                         }
                     ],
-                    "returns": "http://localhost:8080/api/vocab#Drone",
+                    "returns": "http://localhost:8080/api/vocab#Message",
                     "returnsHeader": []
                 },
                 {
-                    "@id": "_:DroneCollection_update",
+                    "@id": "_:MessageCollection_update",
                     "@type": "http://schema.org/UpdateAction",
-                    "description": "Update member of  DroneCollection ",
-                    "expects": "http://localhost:8080/api/vocab#Drone",
+                    "description": "Update member of  MessageCollection ",
+                    "expects": "http://localhost:8080/api/vocab#Message",
                     "expectsHeader": [],
                     "method": "POST",
                     "possibleStatus": [
                         {
                             "@context": "http://www.w3.org/ns/hydra/context.jsonld",
                             "@type": "Status",
-                            "description": "If the entity was updatedfrom DroneCollection.",
+                            "description": "If the entity was updatedfrom MessageCollection.",
                             "statusCode": 200,
                             "title": ""
                         }
                     ],
-                    "returns": "http://localhost:8080/api/vocab#Drone",
+                    "returns": "http://localhost:8080/api/vocab#Message",
                     "returnsHeader": []
                 },
                 {
-                    "@id": "_:DroneCollection_delete",
+                    "@id": "_:MessageCollection_delete",
                     "@type": "http://schema.org/DeleteAction",
-                    "description": "Delete member of DroneCollection ",
-                    "expects": "http://localhost:8080/api/vocab#Drone",
+                    "description": "Delete member of MessageCollection ",
+                    "expects": "http://localhost:8080/api/vocab#Message",
                     "expectsHeader": [],
                     "method": "DELETE",
                     "possibleStatus": [
                         {
                             "@context": "http://www.w3.org/ns/hydra/context.jsonld",
                             "@type": "Status",
-                            "description": "If entity was deletedsuccessfully from DroneCollection.",
+                            "description": "If entity was deletedsuccessfully from MessageCollection.",
                             "statusCode": 200,
                             "title": ""
                         }
                     ],
-                    "returns": "http://localhost:8080/api/vocab#Drone",
+                    "returns": "http://localhost:8080/api/vocab#Message",
                     "returnsHeader": []
                 }
             ],
             "supportedProperty": [
                 {
                     "@type": "SupportedProperty",
-                    "description": "The members of DroneCollection",
+                    "description": "The members of MessageCollection",
                     "property": "http://www.w3.org/ns/hydra/core#member",
                     "readable": "false",
                     "required": "false",
@@ -793,7 +796,7 @@ doc= {
                     "writeable": "false"
                 }
             ],
-            "title": "DroneCollection"
+            "title": "MessageCollection"
         },
         {
             "@id": "http://localhost:8080/api/vocab#StateCollection",
@@ -1162,98 +1165,6 @@ doc= {
                 }
             ],
             "title": "CommandCollection"
-        },
-        {
-            "@id": "http://localhost:8080/api/vocab#MessageCollection",
-            "@type": "Collection",
-            "description": "A collection of messages",
-            "manages": {
-                "object": "http://localhost:8080/api/vocab#Message",
-                "property": "rdfs:type"
-            },
-            "subClassOf": "http://www.w3.org/ns/hydra/core#Collection",
-            "supportedOperation": [
-                {
-                    "@id": "_:MessageCollection_retrieve",
-                    "@type": "http://schema.org/FindAction",
-                    "description": "Retrieves all the members of MessageCollection",
-                    "expects": "null",
-                    "expectsHeader": [],
-                    "method": "GET",
-                    "possibleStatus": [],
-                    "returns": "http://localhost:8080/api/vocab#Message",
-                    "returnsHeader": []
-                },
-                {
-                    "@id": "_:MessageCollection_create",
-                    "@type": "http://schema.org/AddAction",
-                    "description": "Create new member in MessageCollection",
-                    "expects": "http://localhost:8080/api/vocab#Message",
-                    "expectsHeader": [],
-                    "method": "PUT",
-                    "possibleStatus": [
-                        {
-                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
-                            "@type": "Status",
-                            "description": "A new member in MessageCollection created",
-                            "statusCode": 201,
-                            "title": ""
-                        }
-                    ],
-                    "returns": "http://localhost:8080/api/vocab#Message",
-                    "returnsHeader": []
-                },
-                {
-                    "@id": "_:MessageCollection_update",
-                    "@type": "http://schema.org/UpdateAction",
-                    "description": "Update member of  MessageCollection ",
-                    "expects": "http://localhost:8080/api/vocab#Message",
-                    "expectsHeader": [],
-                    "method": "POST",
-                    "possibleStatus": [
-                        {
-                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
-                            "@type": "Status",
-                            "description": "If the entity was updatedfrom MessageCollection.",
-                            "statusCode": 200,
-                            "title": ""
-                        }
-                    ],
-                    "returns": "http://localhost:8080/api/vocab#Message",
-                    "returnsHeader": []
-                },
-                {
-                    "@id": "_:MessageCollection_delete",
-                    "@type": "http://schema.org/DeleteAction",
-                    "description": "Delete member of MessageCollection ",
-                    "expects": "http://localhost:8080/api/vocab#Message",
-                    "expectsHeader": [],
-                    "method": "DELETE",
-                    "possibleStatus": [
-                        {
-                            "@context": "http://www.w3.org/ns/hydra/context.jsonld",
-                            "@type": "Status",
-                            "description": "If entity was deletedsuccessfully from MessageCollection.",
-                            "statusCode": 200,
-                            "title": ""
-                        }
-                    ],
-                    "returns": "http://localhost:8080/api/vocab#Message",
-                    "returnsHeader": []
-                }
-            ],
-            "supportedProperty": [
-                {
-                    "@type": "SupportedProperty",
-                    "description": "The members of MessageCollection",
-                    "property": "http://www.w3.org/ns/hydra/core#member",
-                    "readable": "false",
-                    "required": "false",
-                    "title": "members",
-                    "writeable": "false"
-                }
-            ],
-            "title": "MessageCollection"
         },
         {
             "@id": "http://localhost:8080/api#EntryPoint",
@@ -1762,86 +1673,86 @@ doc= {
                     "writeable": "false"
                 },
                 {
-                    "hydra:description": "The DroneCollection collection",
-                    "hydra:title": "dronecollection",
+                    "hydra:description": "The MessageCollection collection",
+                    "hydra:title": "messagecollection",
                     "property": {
-                        "@id": "http://localhost:8080/api/vocab#EntryPoint/DroneCollection",
+                        "@id": "http://localhost:8080/api/vocab#EntryPoint/MessageCollection",
                         "@type": "hydra:Link",
-                        "description": "The DroneCollection collection",
+                        "description": "The MessageCollection collection",
                         "domain": "http://localhost:8080/api/vocab#EntryPoint",
-                        "label": "DroneCollection",
+                        "label": "MessageCollection",
                         "manages": {
-                            "object": "http://localhost:8080/api/vocab#Drone",
+                            "object": "http://localhost:8080/api/vocab#Message",
                             "property": "rdfs:type"
                         },
-                        "range": "http://localhost:8080/api/vocab#DroneCollection",
+                        "range": "http://localhost:8080/api/vocab#MessageCollection",
                         "supportedOperation": [
                             {
-                                "@id": "_:dronecollection_retrieve",
+                                "@id": "_:messagecollection_retrieve",
                                 "@type": "http://schema.org/FindAction",
-                                "description": "Retrieves all the members of DroneCollection",
+                                "description": "Retrieves all the members of MessageCollection",
                                 "expects": "null",
                                 "expectsHeader": [],
                                 "method": "GET",
                                 "possibleStatus": [],
-                                "returns": "http://localhost:8080/api/vocab#Drone",
+                                "returns": "http://localhost:8080/api/vocab#Message",
                                 "returnsHeader": []
                             },
                             {
-                                "@id": "_:dronecollection_create",
+                                "@id": "_:messagecollection_create",
                                 "@type": "http://schema.org/AddAction",
-                                "description": "Create new member in DroneCollection",
-                                "expects": "http://localhost:8080/api/vocab#Drone",
+                                "description": "Create new member in MessageCollection",
+                                "expects": "http://localhost:8080/api/vocab#Message",
                                 "expectsHeader": [],
                                 "method": "PUT",
                                 "possibleStatus": [
                                     {
                                         "@context": "http://www.w3.org/ns/hydra/context.jsonld",
                                         "@type": "Status",
-                                        "description": "A new member in DroneCollection created",
+                                        "description": "A new member in MessageCollection created",
                                         "statusCode": 201,
                                         "title": ""
                                     }
                                 ],
-                                "returns": "http://localhost:8080/api/vocab#Drone",
+                                "returns": "http://localhost:8080/api/vocab#Message",
                                 "returnsHeader": []
                             },
                             {
-                                "@id": "_:dronecollection_update",
+                                "@id": "_:messagecollection_update",
                                 "@type": "http://schema.org/UpdateAction",
-                                "description": "Update member of  DroneCollection ",
-                                "expects": "http://localhost:8080/api/vocab#Drone",
+                                "description": "Update member of  MessageCollection ",
+                                "expects": "http://localhost:8080/api/vocab#Message",
                                 "expectsHeader": [],
                                 "method": "POST",
                                 "possibleStatus": [
                                     {
                                         "@context": "http://www.w3.org/ns/hydra/context.jsonld",
                                         "@type": "Status",
-                                        "description": "If the entity was updatedfrom DroneCollection.",
+                                        "description": "If the entity was updatedfrom MessageCollection.",
                                         "statusCode": 200,
                                         "title": ""
                                     }
                                 ],
-                                "returns": "http://localhost:8080/api/vocab#Drone",
+                                "returns": "http://localhost:8080/api/vocab#Message",
                                 "returnsHeader": []
                             },
                             {
-                                "@id": "_:dronecollection_delete",
+                                "@id": "_:messagecollection_delete",
                                 "@type": "http://schema.org/DeleteAction",
-                                "description": "Delete member of DroneCollection ",
-                                "expects": "http://localhost:8080/api/vocab#Drone",
+                                "description": "Delete member of MessageCollection ",
+                                "expects": "http://localhost:8080/api/vocab#Message",
                                 "expectsHeader": [],
                                 "method": "DELETE",
                                 "possibleStatus": [
                                     {
                                         "@context": "http://www.w3.org/ns/hydra/context.jsonld",
                                         "@type": "Status",
-                                        "description": "If entity was deletedsuccessfully from DroneCollection.",
+                                        "description": "If entity was deletedsuccessfully from MessageCollection.",
                                         "statusCode": 200,
                                         "title": ""
                                     }
                                 ],
-                                "returns": "http://localhost:8080/api/vocab#Drone",
+                                "returns": "http://localhost:8080/api/vocab#Message",
                                 "returnsHeader": []
                             }
                         ]
@@ -2198,95 +2109,6 @@ doc= {
                                     }
                                 ],
                                 "returns": "http://localhost:8080/api/vocab#Command",
-                                "returnsHeader": []
-                            }
-                        ]
-                    },
-                    "readable": "true",
-                    "required": "null",
-                    "writeable": "false"
-                },
-                {
-                    "hydra:description": "The MessageCollection collection",
-                    "hydra:title": "messagecollection",
-                    "property": {
-                        "@id": "http://localhost:8080/api/vocab#EntryPoint/MessageCollection",
-                        "@type": "hydra:Link",
-                        "description": "The MessageCollection collection",
-                        "domain": "http://localhost:8080/api/vocab#EntryPoint",
-                        "label": "MessageCollection",
-                        "manages": {
-                            "object": "http://localhost:8080/api/vocab#Message",
-                            "property": "rdfs:type"
-                        },
-                        "range": "http://localhost:8080/api/vocab#MessageCollection",
-                        "supportedOperation": [
-                            {
-                                "@id": "_:messagecollection_retrieve",
-                                "@type": "http://schema.org/FindAction",
-                                "description": "Retrieves all the members of MessageCollection",
-                                "expects": "null",
-                                "expectsHeader": [],
-                                "method": "GET",
-                                "possibleStatus": [],
-                                "returns": "http://localhost:8080/api/vocab#Message",
-                                "returnsHeader": []
-                            },
-                            {
-                                "@id": "_:messagecollection_create",
-                                "@type": "http://schema.org/AddAction",
-                                "description": "Create new member in MessageCollection",
-                                "expects": "http://localhost:8080/api/vocab#Message",
-                                "expectsHeader": [],
-                                "method": "PUT",
-                                "possibleStatus": [
-                                    {
-                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
-                                        "@type": "Status",
-                                        "description": "A new member in MessageCollection created",
-                                        "statusCode": 201,
-                                        "title": ""
-                                    }
-                                ],
-                                "returns": "http://localhost:8080/api/vocab#Message",
-                                "returnsHeader": []
-                            },
-                            {
-                                "@id": "_:messagecollection_update",
-                                "@type": "http://schema.org/UpdateAction",
-                                "description": "Update member of  MessageCollection ",
-                                "expects": "http://localhost:8080/api/vocab#Message",
-                                "expectsHeader": [],
-                                "method": "POST",
-                                "possibleStatus": [
-                                    {
-                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
-                                        "@type": "Status",
-                                        "description": "If the entity was updatedfrom MessageCollection.",
-                                        "statusCode": 200,
-                                        "title": ""
-                                    }
-                                ],
-                                "returns": "http://localhost:8080/api/vocab#Message",
-                                "returnsHeader": []
-                            },
-                            {
-                                "@id": "_:messagecollection_delete",
-                                "@type": "http://schema.org/DeleteAction",
-                                "description": "Delete member of MessageCollection ",
-                                "expects": "http://localhost:8080/api/vocab#Message",
-                                "expectsHeader": [],
-                                "method": "DELETE",
-                                "possibleStatus": [
-                                    {
-                                        "@context": "http://www.w3.org/ns/hydra/context.jsonld",
-                                        "@type": "Status",
-                                        "description": "If entity was deletedsuccessfully from MessageCollection.",
-                                        "statusCode": 200,
-                                        "title": ""
-                                    }
-                                ],
-                                "returns": "http://localhost:8080/api/vocab#Message",
                                 "returnsHeader": []
                             }
                         ]
