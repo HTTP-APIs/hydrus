@@ -1,7 +1,4 @@
-"""
-Generated API Documentation for Server API using server_doc_gen.py."""
-
-doc = {
+doc= {
     "@context": {
         "ApiDocumentation": "hydra:ApiDocumentation",
         "description": "hydra:description",
