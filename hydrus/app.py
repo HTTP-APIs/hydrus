@@ -49,25 +49,25 @@ if AUTH:
 # Create a Hydrus app
 app = app_factory(API_NAME)
 
-with set_authentication(app, AUTH):
-    # Use authentication for all requests
-    with set_token(app, TOKEN):
-        with set_api_name(app, API_NAME):
-            # Set the API Documentation
-            with set_doc(app, apidoc):
-                # Set HYDRUS_SERVER_URL
-                with set_hydrus_server_url(app, HYDRUS_SERVER_URL):
-                    # Set the Database session
-                    with set_session(app, session):
-                        if __name__ == "__main__":
-                            # this is run only if development server is run
-                            # Set the name of the API
-                            app.run(host='127.0.0.1', debug=DEBUG, port=PORT)
-                        else:
-                            # Start the Hydrus app
-                            http_server = WSGIServer(('', PORT), app)
-                            logger.info(f'Running server at port {PORT}')
-                            try:
-                                http_server.serve_forever()
-                            except KeyboardInterrupt:
-                                pass
+#
+# Nested context managers
+#
+# Use authentication for all requests
+# Set the API Documentation
+# Set HYDRUS_SERVER_URL
+# Set the Database session
+with set_authentication(app, AUTH), set_token(app, TOKEN), \
+     set_api_name(app, API_NAME), set_doc(app, apidoc), \
+     set_hydrus_server_url(app, HYDRUS_SERVER_URL), set_session(app, session):
+        if __name__ == "__main__":
+            # this is run only if development server is run
+            # Set the name of the API
+            app.run(host='127.0.0.1', debug=DEBUG, port=PORT)
+        else:
+            # Start the Hydrus app
+            http_server = WSGIServer(('', PORT), app)
+            logger.info(f'Running server at port {PORT}')
+            try:
+                http_server.serve_forever()
+            except KeyboardInterrupt:
+                pass
