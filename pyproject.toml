@@ -1,0 +1,52 @@
+[tool.poetry]
+name = "hydrus"
+version = "0.3.1"
+description = "Hydra Ecosystem Flagship Server. Deploy REST data for Web 3.0"
+authors = ["Hydra Ecosystem"]
+license = "MIT License"
+
+[tool.poetry.dependencies]
+python = "^3.5.2"
+alembic = "~1.0.10"
+aniso8601 = "~3.0.2"
+appdirs = "~1.4.3"
+blinker = "~1.4"
+click = "~7.1.2"
+certifi = "~2019.11.28"
+Flask = "~1.1.1"
+Flask-Cors = "~3.0.8"
+Flask-RESTful = "~0.3.7"
+Flask-SocketIO = "~4.2.1"
+gevent = "~1.3.5"
+gevent-websocket = "~0.10.1"
+greenlet = "~0.4.13"
+hydra_python_core = { git = "https://github.com/HTTP-APIs/hydra-python-core" }
+hydra_openapi_parser = { git = "https://github.com/HTTP-APIs/hydra-openapi-parser", tag = "0.1.1" }
+itsdangerous = "~1.1.0"
+Jinja2 = "~2.10.3"
+lifter = "~0.4.1"
+psycopg2 = "~2.7.5"
+pytest = "~5.4.1"
+Mako = "~1.1.0"
+MarkupSafe = "~1.1.1"
+packaging = "~19.2"
+pep8 = "~1.7.1"
+persisting-theory = "~0.2.1"
+pyparsing = "~2.4.6"
+python-dateutil = "~2.8.1"
+python-editor = "~1.0.4"
+python-engineio = "~3.11.2"
+python-socketio = "~4.4.0"
+pytz = "~2019.3"
+PyYAML = "~5.2"
+six = "~1.13.0"
+SQLAlchemy = "~1.3.12"
+thespian = "~3.9.11"
+Werkzeug = "~0.16.0"
+flake8 = "~3.8.3"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
