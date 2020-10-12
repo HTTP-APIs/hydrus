@@ -4,6 +4,7 @@ Generated API Documentation for Server API using server_doc_gen.py."""
 doc = {
     "@context": {
         "ApiDocumentation": "hydra:ApiDocumentation",
+        "Collection":"hydra:collection",
         "description": "hydra:description",
         "domain": {
             "@id": "rdfs:domain",
