@@ -65,7 +65,7 @@ class Vocab(Resource):
     def get(self) -> Response:
         """Return the main hydra vocab or a fragment of the main hydra vocab."""
         try:
-            frag=request.args.getlist('frag')[0]
+            frag = request.args.getlist('frag')[0]
             return set_response_headers(jsonify(get_fragments(frag)))
         except:
             return set_response_headers(jsonify(get_doc().generate()))

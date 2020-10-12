@@ -540,12 +540,11 @@ def get_fragments(frag: str) -> dict:
     :return: Object referred to by the fragment
     :rtype: dict
     """
-    fragdict=dict()
-    generated_doc=get_doc().generate()
-    fragdict['@context']={i:generated_doc['@context'][i] for i in sorted(generated_doc['@context'])}
+    fragdict = dict()
+    generated_doc = get_doc().generate()
+    fragdict['@context'] = {i : generated_doc['@context'][i] for i in sorted(generated_doc['@context'])}
     vocab_route = get_doc().doc_name
-    matching_string=f'{get_hydrus_server_url()}{get_api_name()}/{vocab_route}'+'#'+frag
+    matching_string = f'{get_hydrus_server_url()}{get_api_name()}/{vocab_route}'+'#'+frag
     res = next((i for i in generated_doc['supportedClass'] if i['@id'] == matching_string), None)
-    fragdict["supportedClass"]=[res]
+    fragdict["supportedClass"] = [res]
     return fragdict
-    
