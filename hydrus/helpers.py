@@ -531,6 +531,7 @@ def parse_collection_members(object_: dict) -> dict:
     object_['members'] = members
     return object_
 
+
 def get_fragments(frag: str) -> dict:
     """Gets a fragment of the main hydra vocabulary.
 
@@ -547,3 +548,4 @@ def get_fragments(frag: str) -> dict:
     res = next((i for i in generated_doc['supportedClass'] if i['@id'] == matching_string), None)
     fragdict["supportedClass"]=[res]
     return fragdict
+    
