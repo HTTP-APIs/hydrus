@@ -76,7 +76,7 @@ and run the server using:
 hydrus serve
 ```
 
-The demo should be up and running on `http://localhost:8080/serverapi/`.
+The demo should be up and running on `http://localhost:8080/api/`.
 
 <a name="usage"></a>
 Usage
@@ -86,6 +86,8 @@ For more info, head to the [Usage](http://www.hydraecosystem.org/01-Usage.html) 
 
 Development
 -------------
+
+The suggested way of running `hydrus` is via Docker-Compose: `docker-compose up --build`.
 
 From the `hydrus` directory:
 * To run formatter: `pip install black && black *.py`

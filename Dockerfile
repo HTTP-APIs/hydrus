@@ -4,6 +4,9 @@ ENV PYTHONFAULTHANDLER=1 \
     PYTHONHASHSEED=random \
     PYTHONUNBUFFERED=1
 
+#
+# building stage
+#
 FROM base as builder
 
 ENV PIP_DEFAULT_TIMEOUT=100 \
@@ -18,18 +21,18 @@ RUN apk add --no-cache gcc libffi-dev musl-dev \
 
 COPY . ./app
 WORKDIR /app
-
+# Poetry requires a virtualenv
 RUN pip install --user "poetry==$POETRY_VERSION"
-RUN pwd
 RUN virtualenv -p $(which python) .venv
-
-RUN pwd
-
+# Build wheels with Poetry
 RUN poetry build && .venv/bin/pip install dist/*.whl
 
+#
+# running stage
+#
 FROM base as final
-
 RUN apk add --no-cache libffi libpq
+# copy virtualenv and application
 COPY --from=builder /app/.venv /.venv
-COPY docker-entrypoint.sh ./
-CMD ["./docker-entrypoint.sh"]
+COPY . ./app
+CMD ["/.venv/bin/uwsgi --http :8080 /app/hydrus/uwsgi.ini"]
