@@ -35,4 +35,5 @@ RUN apk add --no-cache libffi libpq
 # copy virtualenv and application
 COPY --from=builder /app/.venv /.venv
 COPY . ./app
-CMD ["/.venv/bin/uwsgi --http :8080 /app/hydrus/uwsgi.ini"]
+WORKDIR /app
+CMD ["/.venv/bin/gunicorn --bind 0.0.0.0:8080 --forwarded-allow-ips='*' hydrus:app"]
