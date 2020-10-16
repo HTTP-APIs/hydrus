@@ -6,7 +6,7 @@ hydrus uses the [Hydra(W3C)](http://www.hydra-cg.com/) standard for creation and
 Start-up the demo
 -----------------
 * with *Docker* and *docker-compose* installed, run `docker-compose up --build`
-* open the browser at `http://localhost:8000/api/vocab`
+* open the browser at `http://localhost:8080/api/vocab`
 
 You should be displaying the example API as served by the server.
 
@@ -82,3 +82,11 @@ The demo should be up and running on `http://localhost:8080/serverapi/`.
 Usage
 -------------
 For more info, head to the [Usage](http://www.hydraecosystem.org/01-Usage.html) section of the [wiki](http://www.hydraecosystem.org/).
+
+
+Development
+-------------
+
+From the `hydrus` directory:
+* To run formatter: `pip install black && black *.py`
+* To test for formatting: `flake8 *.py`
