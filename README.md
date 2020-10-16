@@ -65,7 +65,7 @@ git checkout -b develop origin/develop
 
 Install hydrus using:
 ```bash
-pip3 install -r requirements.txt
+poetry install
 
 python3 setup.py install
 ```
