@@ -3,7 +3,8 @@ python:
   - "3.7"
   - "3.7-dev" # 3.7 development branch
 install:
-  - pip install poetry && poetry install  --no-interaction --no-ansi
+  - pip install poetry
+  - poetry install  --no-interaction --no-ansi
 script: pytest
 env:
   - API_NAME=api PORT=8000
