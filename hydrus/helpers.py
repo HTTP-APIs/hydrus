@@ -2,6 +2,8 @@ from typing import Dict, Any, List, Optional, Union, Tuple
 
 from flask import Response, jsonify
 
+import re
+
 from hydrus.data import crud
 
 from hydrus.utils import get_doc, get_api_name, get_hydrus_server_url, get_session
@@ -540,11 +542,14 @@ def get_fragments(resource: str) -> dict:
     :return: Object referred to by the fragment
     :rtype: dict
     """
-    resourcedict = dict()
+    resource_dict = dict()
     gen_doc = get_doc().generate()
-    resourcedict['@context'] = {i: gen_doc['@context'][i] for i in sorted(gen_doc['@context'])}
-    vocab_route = get_doc().doc_name
-    matching_string = f'{get_hydrus_server_url()}{get_api_name()}/{vocab_route}'+'#'+resource
-    res = next((i for i in gen_doc['supportedClass'] if i['@id'] == matching_string), None)
-    resourcedict["supportedClass"] = [res]
-    return resourcedict
+    resource_dict['@context'] = gen_doc['@context']
+    for class_ in gen_doc['supportedClass']:
+        match_string = r'\b({0})\b'.format(resource)
+        if re.search(match_string, class_['@id']):
+            res = class_
+            break
+
+    resource_dict["supportedClass"] = [res]
+    return resource_dict
