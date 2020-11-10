@@ -199,5 +199,5 @@ if __name__ == "__main__":
     doc = doc.replace('true', '"true"')
     doc = doc.replace('false', '"false"')
     doc = doc.replace('null', '"null"')
-    with open("doc_writer_sample_output.py", "w") as f:
+    with open("samples/doc_writer_sample_output.py", "w") as f:
         f.write(doc)
