@@ -88,7 +88,7 @@ dummyProp1 = HydraClassProp(prop1_uri, prop1_title,
 prop2_uri = "http://props.hydrus.com/prop2"
 prop2_title = "Prop2"
 
-dummyProp2 = HydraClassProp(prop1_uri, prop2_title,
+dummyProp2 = HydraClassProp(prop2_uri, prop2_title,
                             required=False, read=False, write=True)
 # NOTE: Properties that are required=True must be added during class object creation
 #       Properties that are read=True are read only
@@ -199,5 +199,5 @@ if __name__ == "__main__":
     doc = doc.replace('true', '"true"')
     doc = doc.replace('false', '"false"')
     doc = doc.replace('null', '"null"')
-    with open("samples/doc_writer_sample_output.py", "w") as f:
+    with open("doc_writer_sample_output.py", "w") as f:
         f.write(doc)
