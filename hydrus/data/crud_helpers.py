@@ -10,6 +10,7 @@ from hydrus.data.exceptions import (
     IncompatibleParameters,
     OffsetOutOfRange,
 )
+from hydrus.conf import get_host_domain
 
 
 def recreate_iri(API_NAME: str, path: str, search_params: Dict[str, Any]) -> str:
@@ -138,10 +139,10 @@ def attach_hydra_view(collection_template: Dict[str, Any], paginate_param: str,
     """
     if paginate_param == "offset":
         collection_template["hydra:view"] = {
-            "@id": f"{iri}{paginate_param}={offset}",
+            "@id": f"{get_host_domain()}{iri}{paginate_param}={offset}",
             "@type": "hydra:PartialCollectionView",
-            "hydra:first": f"{iri}{paginate_param}=0",
-            "hydra:last": f"{iri}{paginate_param}={result_length - page_size}"
+            "hydra:first": f"{get_host_domain()}{iri}{paginate_param}=0",
+            "hydra:last": f"{get_host_domain()}{iri}{paginate_param}={result_length - page_size}"
         }
         if offset > page_size:
             collection_template["hydra:view"]["hydra:previous"] = (
@@ -151,10 +152,10 @@ def attach_hydra_view(collection_template: Dict[str, Any], paginate_param: str,
                 f"{iri}{paginate_param}={offset + page_size}")
     else:
         collection_template["hydra:view"] = {
-            "@id": f"{iri}{paginate_param}={page}",
+            "@id": f"{get_host_domain()}{iri}{paginate_param}={page}",
             "@type": "hydra:PartialCollectionView",
-            "hydra:first": f"{iri}{paginate_param}=1",
-            "hydra:last": f"{iri}{paginate_param}={last}"
+            "hydra:first": f"{get_host_domain()}{iri}{paginate_param}=1",
+            "hydra:last": f"{get_host_domain()}{iri}{paginate_param}={last}"
         }
         if page != 1:
             collection_template["hydra:view"]["hydra:previous"] = (

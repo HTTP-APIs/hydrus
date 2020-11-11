@@ -9,6 +9,7 @@ from hydrus.utils import get_collections_and_parsed_classes
 from hydra_python_core.doc_writer import HydraIriTemplate, IriTemplateMapping, HydraLink
 from hydra_python_core.doc_writer import HydraError, DocUrl
 from hydrus.socketio_factory import socketio
+from hydrus.conf import get_host_domain
 
 
 def validObject(object_: Dict[str, Any]) -> bool:
@@ -82,10 +83,10 @@ def hydrafy(object_: Dict[str, Any], path: Optional[str]) -> Dict[str, Any]:
     """
     if path == object_["@type"]:
         object_[
-            "@context"] = f"/{get_api_name()}/contexts/{object_['@type']}.jsonld"
+            "@context"] = f"{get_host_domain()}/{get_api_name()}/contexts/{object_['@type']}.jsonld"
     else:
         object_[
-            "@context"] = f"/{get_api_name()}/contexts/{path}.jsonld"
+            "@context"] = f"{get_host_domain()}/{get_api_name()}/contexts/{path}.jsonld"
     return object_
 
 
