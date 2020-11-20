@@ -38,7 +38,7 @@ def parse_search_params(search_params: Dict[str, Any]) -> Dict[str, Any]:
             prop_name = split_param_list[0]
             nested_prop_name = split_param_list[1].split(']')[0]
             if prop_name not in search_params:
-                search_params[prop_name] = dict()
+                search_params[prop_name] = {}
             search_params[prop_name][nested_prop_name] = value
             search_params.pop(param)
         # For normal parameters
