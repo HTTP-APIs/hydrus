@@ -19,7 +19,7 @@ def recreate_iri(API_NAME: str, path: str, search_params: Dict[str, Any]) -> str
     for param in search_params:
         # Skip page, pageIndex or offset parameters as they will be updated to point to
         # next, previous and last page
-        if param == "page" or param == "pageIndex" or param == "offset":
+        if param in ["page", "pageIndex", "offset"]:
             continue
         iri += f"{param}={search_params[param]}&"
     return iri
