@@ -1,12 +1,8 @@
 # from sqlalchemy.orm.session import Session
-from sqlalchemy.orm.scoping import scoped_session
 
 from typing import Dict, Any, Tuple
-
-from sqlalchemy.orm.exc import NoResultFound
 from hydrus.data.exceptions import (
     PageNotFound,
-    InvalidSearchParameter,
     IncompatibleParameters,
     OffsetOutOfRange,
 )

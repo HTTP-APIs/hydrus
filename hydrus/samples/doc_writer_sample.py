@@ -1,9 +1,8 @@
 """Sample to create Hydra APIDocumentation using doc_writer."""
 
 from hydra_python_core.doc_writer import (HydraDoc, HydraClass, HydraClassProp, HydraClassOp,
-                                            HydraStatus, HydraError, HydraLink,HydraCollection)
+                                            HydraStatus, HydraLink,HydraCollection)
 from typing import Any, Dict, Union
-from urllib.parse import urljoin
 
 # Creating the HydraDoc object, this is the primary class for the Doc
 API_NAME = "api"                # Name of the API, will serve as EntryPoint

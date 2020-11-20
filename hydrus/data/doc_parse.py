@@ -1,9 +1,6 @@
 """Parser for Hydra APIDocumentation creates Classes and Properties."""
-from sqlalchemy import exists
 
 from typing import Any, Dict, List, Set, Optional
-from sqlalchemy.orm.session import Session
-from sqlalchemy.orm import scoped_session
 from hydra_python_core.doc_writer import HydraDoc
 
 

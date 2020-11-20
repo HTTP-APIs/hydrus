@@ -22,7 +22,6 @@ from hydrus.helpers import (
 )
 from hydrus.utils import (
     get_session,
-    get_doc,
     get_api_name,
     get_hydrus_server_url,
     get_collections_and_parsed_classes
