@@ -11,7 +11,7 @@
 ### Steps to reproduce:
 <!-- If you can then please provide the steps to reproduce the bug -->
 
-### Configuration:
+### Configurations:
 <!-- Please provide the configuration details of the following --> 
 * python version
 * pip version
