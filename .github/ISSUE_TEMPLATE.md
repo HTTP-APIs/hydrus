@@ -11,5 +11,11 @@
 ### Steps to reproduce:
 <!-- If you can then please provide the steps to reproduce the bug -->
 
+### Configurations:
+<!-- Please provide the configration details of the following --> 
+* python Version
+* pip version
+* OS details
+
 ### Do you want to work on this issue?
 <!-- yes/no -->
