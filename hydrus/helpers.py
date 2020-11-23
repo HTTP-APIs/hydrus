@@ -280,7 +280,7 @@ def add_iri_template(path: str, API_NAME: str, collection_path: str) -> Dict[str
 
     template, template_mappings = add_pagination_iri_mappings(template=template,
                                                               template_mapping=template_mappings)
-    return HydraIriTemplate(template=template, iri_mapping=template_mappings).generate()
+    return HydraIriTemplate(base_url=get_host_domain(), template=template, iri_mapping=template_mappings).generate()
 
 
 def generate_iri_mappings(path: str, template: str, skip_nested: bool = False,
