@@ -17,9 +17,9 @@ Flask = "~1.1.1"
 Flask-Cors = "~3.0.8"
 Flask-RESTful = "~0.3.7"
 Flask-SocketIO = "~4.2.1"
-gevent = "~1.3.5"
+gevent = "~20.12.0"
 gevent-websocket = "~0.10.1"
-greenlet = "~0.4.13"
+greenlet = "~0.4.17"
 hydra_python_core = { git = "https://github.com/HTTP-APIs/hydra-python-core" }
 hydra_openapi_parser = { git = "https://github.com/HTTP-APIs/hydra-openapi-parser", tag = "0.1.1" }
 itsdangerous = "~1.1.0"
