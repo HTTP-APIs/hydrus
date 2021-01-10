@@ -143,7 +143,7 @@ def insert_multiple(objects_: List[Dict[str,
     id_list = id_.split(',')
 
     # list to hold all the ids of inserted objects
-    instance_id_list = list()
+    instance_id_list = []
 
     for index in range(len(objects_)):
         id_of_object_ = None
@@ -433,7 +433,7 @@ def pagination(filtered_instances, path, type_, API_NAME,
         "@id": f"/{API_NAME}/{path}/",
         "@context": None,
         "@type": f"{path}",
-        "members": list()
+        "members": []
     }  # type: Dict[str, Any]
     result_length = len(filtered_instances)
     try:
