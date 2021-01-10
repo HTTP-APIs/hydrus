@@ -15,8 +15,6 @@ from hydrus.helpers import (
     finalize_response,
     hydrafy,
     getType,
-    validObject,
-    check_required_props,
     send_sync_update,
     get_link_props,
     error_response,

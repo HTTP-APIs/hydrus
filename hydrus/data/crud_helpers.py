@@ -1,12 +1,8 @@
 # from sqlalchemy.orm.session import Session
-from sqlalchemy.orm.scoping import scoped_session
 
 from typing import Dict, Any, Tuple
-
-from sqlalchemy.orm.exc import NoResultFound
 from hydrus.data.exceptions import (
     PageNotFound,
-    InvalidSearchParameter,
     IncompatibleParameters,
     OffsetOutOfRange,
 )
@@ -23,7 +19,7 @@ def recreate_iri(API_NAME: str, path: str, search_params: Dict[str, Any]) -> str
     for param in search_params:
         # Skip page, pageIndex or offset parameters as they will be updated to point to
         # next, previous and last page
-        if param == "page" or param == "pageIndex" or param == "offset":
+        if param in ["page", "pageIndex", "offset"]:
             continue
         iri += f"{param}={search_params[param]}&"
     return iri
@@ -42,7 +38,7 @@ def parse_search_params(search_params: Dict[str, Any]) -> Dict[str, Any]:
             prop_name = split_param_list[0]
             nested_prop_name = split_param_list[1].split(']')[0]
             if prop_name not in search_params:
-                search_params[prop_name] = dict()
+                search_params[prop_name] = {}
             search_params[prop_name][nested_prop_name] = value
             search_params.pop(param)
         # For normal parameters

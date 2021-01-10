@@ -132,7 +132,7 @@ def get_object(
         )
         if len(objects) == 0:
             raise InstanceNotFound(type_=type_, id_=id_)
-        object_template = dict()
+        object_template = {}
         object_template["@type"] = query_info["@type"]
         object_template["members"] = objects
         return object_template

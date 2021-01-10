@@ -1,9 +1,8 @@
 """Sample to create Hydra APIDocumentation using doc_writer."""
 
 from hydra_python_core.doc_writer import (HydraDoc, HydraClass, HydraClassProp, HydraClassOp,
-                                            HydraStatus, HydraError, HydraLink,HydraCollection)
+                                            HydraStatus, HydraLink,HydraCollection)
 from typing import Any, Dict, Union
-from urllib.parse import urljoin
 
 # Creating the HydraDoc object, this is the primary class for the Doc
 API_NAME = "api"                # Name of the API, will serve as EntryPoint
@@ -88,7 +87,7 @@ dummyProp1 = HydraClassProp(prop1_uri, prop1_title,
 prop2_uri = "http://props.hydrus.com/prop2"
 prop2_title = "Prop2"
 
-dummyProp2 = HydraClassProp(prop1_uri, prop2_title,
+dummyProp2 = HydraClassProp(prop2_uri, prop2_title,
                             required=False, read=False, write=True)
 # NOTE: Properties that are required=True must be added during class object creation
 #       Properties that are read=True are read only

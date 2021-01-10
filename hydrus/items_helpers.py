@@ -22,7 +22,6 @@ from hydrus.helpers import (
 )
 from hydrus.utils import (
     get_session,
-    get_doc,
     get_api_name,
     get_hydrus_server_url,
     get_collections_and_parsed_classes
@@ -47,7 +46,7 @@ def items_put_response(path: str, int_list="") -> Response:
     if path in parsed_classes:
         class_path = path
         obj_type = getType(path, "PUT")
-        incomplete_objects = list()
+        incomplete_objects = []
         for obj in object_:
             if not check_required_props(class_path, obj):
                 incomplete_objects.append(obj)
