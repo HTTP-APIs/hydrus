@@ -19,6 +19,7 @@ from hydrus.utils import get_doc
 class TestApp():
     def test_Index(self, test_app_client, constants):
         """Test for the Index."""
+        HYDRUS_SERVER_URL = constants['HYDRUS_SERVER_URL']
         API_NAME = constants['API_NAME']
         response_get = test_app_client.get(f'/{API_NAME}')
         endpoints = json.loads(response_get.data.decode('utf-8'))
@@ -26,7 +27,7 @@ class TestApp():
         response_put = test_app_client.put(f'/{API_NAME}', data=dict(foo='bar'))
         response_delete = test_app_client.delete(f'/{API_NAME}')
         assert '@context' in endpoints
-        assert endpoints['@id'] == f'/{API_NAME}'
+        assert endpoints['@id'] == f'{HYDRUS_SERVER_URL}{API_NAME}'
         assert endpoints['@type'] == 'EntryPoint'
         assert response_get.status_code == 200
         assert response_post.status_code == 405

@@ -58,6 +58,7 @@ from hydrus.data.resource_based_classes import (
     get_single_response,
     get_database_class
 )
+from hydrus.conf import get_host_domain
 
 
 def get(id_: str, type_: str, api_name: str, session: scoped_session,
@@ -430,7 +431,7 @@ def pagination(filtered_instances, path, type_, API_NAME,
     :return: response containing a page of the objects of that particular type_
     """
     collection_template = {
-        "@id": f"/{API_NAME}/{path}/",
+        "@id": f"{get_host_domain()}/{API_NAME}/{path}/",
         "@context": None,
         "@type": f"{path}",
         "members": []
@@ -449,7 +450,7 @@ def pagination(filtered_instances, path, type_, API_NAME,
         current_page_size = result_length - offset
     for i in range(offset, offset+current_page_size):
         object_template = {
-            "@id": f"/{API_NAME}/{type_}/{filtered_instances[i].id}",
+            "@id": f"{get_host_domain()}/{API_NAME}/{type_}/{filtered_instances[i].id}",
             "@type": type_
         }
         collection_template["members"].append(object_template)
