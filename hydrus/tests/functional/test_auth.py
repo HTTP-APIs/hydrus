@@ -18,12 +18,13 @@ def test_wrong_id_get(test_client, constants, headers_with_wrong_id, collection_
     API_NAME = constants["API_NAME"]
     response = test_client.get(f"/{API_NAME}")
     endpoints = json.loads(response.data.decode('utf-8'))
-    for endpoint in endpoints:
-        if endpoint in collection_names:
-            response = test_client.get(endpoints[endpoint])
+    for collection_ in endpoints["collections"]:
+        collection_name = collection_['@id'].split(f"{API_NAME}/")[1]
+        if collection_name in collection_names:
+            response = test_client.get(collection_['@id'])
             headers_with_wrong_id['X-Authentication'] = response.headers['X-Authentication']
             response_get = test_client.get(
-                endpoints[endpoint], headers=headers_with_wrong_id)
+                collection_['@id'], headers=headers_with_wrong_id)
             assert response_get.status_code == 401 or response_get.status_code == 400
 
 
@@ -55,12 +56,13 @@ def test_wrong_pass_get(test_client, constants, collection_names, headers_with_w
     API_NAME = constants["API_NAME"]
     response = test_client.get(f"/{API_NAME}")
     endpoints = json.loads(response.data.decode('utf-8'))
-    for endpoint in endpoints:
-        if endpoint in collection_names:
-            response = test_client.get(endpoints[endpoint])
+    for collection_ in endpoints["collections"]:
+        collection_name = collection_['@id'].split(f"{API_NAME}/")[1]
+        if collection_name in collection_names:
+            response = test_client.get(collection_['@id'])
             headers_with_wrong_pass['X-Authentication'] = response.headers['X-Authentication']
             response_get = test_client.get(
-                endpoints[endpoint], headers=headers_with_wrong_pass)
+                collection_['@id'], headers=headers_with_wrong_pass)
             assert response_get.status_code == 401
 
 
@@ -93,11 +95,12 @@ def test_wrong_nonce_get(test_client, constants, collection_names,
     API_NAME = constants["API_NAME"]
     response = test_client.get(f"/{API_NAME}")
     endpoints = json.loads(response.data.decode('utf-8'))
-    for endpoint in endpoints:
-        if endpoint in collection_names:
+    for collection_ in endpoints["collections"]:
+        collection_name = collection_['@id'].split(f"{API_NAME}/")[1]
+        if collection_name in collection_names:
             headers_with_correct_pass_and_id['X-authentication'] = "random-string"
             response_get = test_client.get(
-                endpoints[endpoint], headers=headers_with_correct_pass_and_id)
+                collection_['@id'], headers=headers_with_correct_pass_and_id)
             assert response_get.status_code == 401
 
 
@@ -135,13 +138,14 @@ def test_correct_auth_get(operation, test_client, constants, collection_names,
     API_NAME = constants["API_NAME"]
     response = test_client.get(f"/{API_NAME}")
     endpoints = json.loads(response.data.decode('utf-8'))
-    for endpoint in endpoints:
-        if endpoint in collection_names:
-            response = test_client.get(endpoints[endpoint])
+    for collection_ in endpoints["collections"]:
+        collection_name = collection_['@id'].split(f"{API_NAME}/")[1]
+        if collection_name in collection_names:
+            response = test_client.get(collection_['@id'])
             x_auth = 'X-Authentication'
             headers_with_correct_pass_and_id[x_auth] = response.headers[x_auth]
             # get the response for the required operation
-            response_op = getattr(test_client, operation)(endpoints[endpoint],
+            response_op = getattr(test_client, operation)(collection_['@id'],
                                                           headers=headers_with_correct_pass_and_id)
             assert response_op.status_code != 401
 
