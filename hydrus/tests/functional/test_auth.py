@@ -133,7 +133,7 @@ def test_correct_auth_get(operation, test_client, constants, collection_names,
     """
     GIVEN a Flask application
     WHEN a collection endpoint has a GET or a DELETE request with correct user credentials
-    THEN check that a '401' status code is not returned
+    THEN check that a '200' or '405' status code is returned
     """
     API_NAME = constants["API_NAME"]
     response = test_client.get(f"/{API_NAME}")
@@ -147,7 +147,7 @@ def test_correct_auth_get(operation, test_client, constants, collection_names,
             # get the response for the required operation
             response_op = getattr(test_client, operation)(collection_['@id'],
                                                           headers=headers_with_correct_pass_and_id)
-            assert response_op.status_code != 401
+            assert response_op.status_code == 200 or response_op.status_code == 405
 
 
 # post and put can be parametrized together as for them data object in request can be same
