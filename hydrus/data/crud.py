@@ -84,7 +84,7 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
     }
 
     object_template = get_object(query_info, session, collection)
-    object_template["@id"] = f"/{api_name}/{path}/{id_}"
+    object_template["@id"] = f"{get_host_domain()}/{api_name}/{path}/{id_}"
 
     return object_template
 
@@ -280,9 +280,9 @@ def get_single(type_: str, api_name: str, session: scoped_session,
     instance = get_single_response(session, type_)
     object_ = get(instance.id, type_, session=session, api_name=api_name, path=path)
     if path is not None:
-        object_["@id"] = f"/{api_name}/{path}"
+        object_["@id"] = f"{get_host_domain()}/{api_name}/{path}"
     else:
-        object_["@id"] = f"/{api_name}/{type_}"
+        object_["@id"] = f"{get_host_domain()}/{api_name}/{type_}"
     return object_
 
 

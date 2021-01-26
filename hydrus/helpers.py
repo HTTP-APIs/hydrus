@@ -232,7 +232,7 @@ def finalize_response(path: str, obj: Dict[str, Any]) -> Dict[str, Any]:
             member_path = get_path_from_type(member_type)
             member = {
                 "@type": "hydra:Link",
-                "@id": f"/{get_api_name()}/{member_path}/{member_id}",
+                "@id": f"{get_host_domain()}/{get_api_name()}/{member_path}/{member_id}",
             }
             members.append(member)
         obj['members'] = members
