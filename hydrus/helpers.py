@@ -544,12 +544,23 @@ def get_fragments(resource: str) -> dict:
     """
     resource_dict = dict()
     gen_doc = get_doc().generate()
-    resource_dict['@context'] = gen_doc['@context']
-    for class_ in gen_doc['supportedClass']:
-        match_string = r'\b({0})\b'.format(resource)
-        if re.search(match_string, class_['@id']):
-            res = class_
-            break
-
-    resource_dict["supportedClass"] = [res]
+    if 'EntryPoint/' in resource:
+        match_string = r'\b(EntryPoint)\b'
+        for class_ in gen_doc['supportedClass']:
+            if re.search(match_string, class_['@id']):
+                res = class_
+                break
+        for properties in res["supportedProperty"]:
+            if resource in properties["property"]["@id"]:
+                res = properties
+                break
+        resource_dict[resource[11:]] = res
+    else:
+        resource_dict['@context'] = gen_doc['@context']
+        for class_ in gen_doc['supportedClass']:
+            match_string = r'\b({0})\b'.format(resource)
+            if re.search(match_string, class_['@id']):
+                res = class_
+                break
+        resource_dict["supportedClass"] = [res]
     return resource_dict
