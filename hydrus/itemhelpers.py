@@ -163,3 +163,24 @@ def items_delete_check_support(id_, class_type, path, is_collection):
     except (ClassNotFound, InstanceNotFound) as e:
         error = e.get_HTTP()
         return error_response(error)
+
+
+def member_get_check_support(collection_id, member_id, class_type, class_path, path):
+    """Check if class_type supports GET operation"""
+    try:
+        # Try getting the Item based on Collection ID and Member ID and Class type
+        response = crud.get_member(
+            collection_id,
+            member_id,
+            class_type,
+            api_name=get_api_name(),
+            session=get_session(),
+            path=path)
+
+        response = finalize_response(class_path, response)
+        return set_response_headers(
+            jsonify(hydrafy(response, path=path)))
+
+    except (ClassNotFound, InstanceNotFound) as e:
+        error = e.get_HTTP()
+        return error_response(error)

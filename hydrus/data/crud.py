@@ -56,7 +56,8 @@ from hydrus.data.resource_based_classes import (
     delete_object,
     get_all_filtered_instances,
     get_single_response,
-    get_database_class
+    get_database_class,
+    get_collection_member
 )
 from hydrus.conf import get_host_domain
 
@@ -351,6 +352,35 @@ def delete_single(type_: str, session: scoped_session) -> None:
     instance = get_single_response(session, type_)
 
     return delete(instance.id, type_, session=session)
+
+
+def get_member(collection_id: str, member_id: str, type_: str, api_name: str,
+               session: scoped_session, path: str = None) -> Dict[str, str]:
+    """Retrieve an Instance with given IDs from the database [GET].
+    :param collection_id: id of the collection to be fetched
+    :param member_id: id of the member to be fetched
+    :param type_: type of object
+    :param api_name: name of api specified while starting server
+    :param session: sqlalchemy scoped session
+    :param path: endpoint
+    :return: response to the request
+
+
+    Raises:
+        ClassNotFound: If the `type_` is not a valid/defined RDFClass.
+        InstanceNotFound: If no Instance of the 'type_` class if found.
+
+    """
+    query_info = {
+        "@type": type_,
+        "member_id": member_id,
+        "collection_id": collection_id
+    }
+
+    object_template = get_collection_member(query_info, session)
+    object_template["@id"] = f"{get_host_domain()}/{api_name}/{path}/{collection_id}"
+
+    return object_template
 
 
 def insert_modification_record(method: str, resource_url: str,

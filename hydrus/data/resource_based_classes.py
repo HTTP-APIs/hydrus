@@ -220,6 +220,30 @@ def update_object(
     return id_
 
 
+def get_collection_member(query_info: Dict[str, str], session: scoped_session) -> Dict[str, str]:
+    """
+    Get member from a collection
+    :param query_info: Dict containing the ids and @type of object that has to retrieved
+    :param session: sqlalchemy session
+    :return: dict of object with its properties
+    """
+    type_ = query_info["@type"]
+    collection_id = query_info["collection_id"]
+    member_id = query_info["member_id"]
+    database_class = get_database_class(type_)
+    objects = (
+        session.query(database_class.members, database_class.member_type)
+        .filter(database_class.collection_id == collection_id, database_class.members == member_id)
+        .all()
+    )
+    if len(objects) == 0:
+        raise InstanceNotFound(type_=type_, id_=collection_id)
+    object_template = {}
+    object_template["@type"] = query_info["@type"]
+    object_template["members"] = objects
+    return object_template
+
+
 def get_all_filtered_instances(
     session: scoped_session, search_params: Dict[str, Any], type_: str, collection: bool = False
 ):

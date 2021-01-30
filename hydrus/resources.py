@@ -38,7 +38,8 @@ from hydrus.itemhelpers import (
     items_get_check_support,
     items_post_check_support,
     items_put_check_support,
-    items_delete_check_support
+    items_delete_check_support,
+    member_get_check_support
 )
 from hydrus.item_collection_helpers import (
     item_collection_get_response,
@@ -194,6 +195,33 @@ class ItemCollection(Resource):
             # If endpoint and PUT method is not supported in the API
             abort(endpoint_['status'])
         return item_collection_put_response(path)
+
+
+class ItemMember(Resource):
+    """Handles operations(GET,DELETE) related to member of an Item(Collection).
+    (Item should be hydra:Collection)"""
+    @authenticate
+    def get(self, id_: str, path: str, collection_id_: str) -> Response:
+        """
+        GET object with collection_id = collection_id_
+        and member = id_ (member of a collection) from the database.
+        :param id_ : Item ID (Member)
+        :param collection_id_ : Item ID (Collection)
+        :param path : Path for Item ( Specified in APIDoc @id)
+        :return : object with member=id_ and collection_id=collection_id_
+        """
+        collection_id = str(collection_id_)
+        member_id = str(id_)
+        collections, parsed_classes = get_collections_and_parsed_classes()
+        if path in parsed_classes:
+            abort(405)
+        if path in collections:
+            item_class = collections[path]["collection"]
+            class_type = item_class.name
+            # Get path of the collection-class
+            class_path = item_class.path
+            return member_get_check_support(collection_id, member_id, class_type, class_path, path)
+        abort(405)
 
 
 class Items(Resource):
