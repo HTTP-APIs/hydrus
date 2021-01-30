@@ -244,6 +244,31 @@ def get_collection_member(query_info: Dict[str, str], session: scoped_session) -
     return object_template
 
 
+def delete_collection_member(query_info: Dict[str, str], session: scoped_session) -> None:
+    """
+    Delete the object from the collection in database
+    :param query_info: Dict containing the id and @type of object that has to retrieved
+    :param session: sqlalchemy session
+    """
+    type_ = query_info["@type"]
+    member_id = query_info["member_id"]
+    collection_id = query_info["collection_id"]
+    database_class = get_database_class(type_)
+    try:
+        objects = (
+            session.query(database_class.members, database_class.member_type)
+            .filter(database_class.collection_id == collection_id,
+                    database_class.members == member_id).delete()
+        )
+    except NoResultFound:
+        raise InstanceNotFound(type_=type_, id_=collection_id)
+    try:
+        session.commit()
+    except InvalidRequestError:
+        session.rollback()
+    return collection_id
+
+
 def get_all_filtered_instances(
     session: scoped_session, search_params: Dict[str, Any], type_: str, collection: bool = False
 ):

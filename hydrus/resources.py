@@ -39,7 +39,8 @@ from hydrus.itemhelpers import (
     items_post_check_support,
     items_put_check_support,
     items_delete_check_support,
-    member_get_check_support
+    member_get_check_support,
+    member_delete_check_support
 )
 from hydrus.item_collection_helpers import (
     item_collection_get_response,
@@ -220,7 +221,29 @@ class ItemMember(Resource):
             class_type = item_class.name
             # Get path of the collection-class
             class_path = item_class.path
+        if checkClassOp(class_path, "GET"):
             return member_get_check_support(collection_id, member_id, class_type, class_path, path)
+        abort(405)
+
+    @authenticate
+    def delete(self, id_: str, path: str, collection_id_: str) -> Response:
+        """
+        Delete object with id=id_ from database.
+        :param id_ - ID of Item to be deleted
+        :param path - Path for Item type( Specified in APIDoc @id) to be deleted
+        """
+        collection_id = str(collection_id_)
+        member_id = str(id_)
+        collections, parsed_classes = get_collections_and_parsed_classes()
+        if path in parsed_classes:
+            abort(405)
+        if path in collections:
+            item_class = collections[path]["collection"]
+            class_type = item_class.name
+            # Get path of the collection-class
+            class_path = item_class.path
+        if checkClassOp(class_path, "DELETE"):
+            return member_delete_check_support(collection_id, member_id, class_type, path)
         abort(405)
 
 

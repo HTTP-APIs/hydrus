@@ -184,3 +184,35 @@ def member_get_check_support(collection_id, member_id, class_type, class_path, p
     except (ClassNotFound, InstanceNotFound) as e:
         error = e.get_HTTP()
         return error_response(error)
+
+
+def member_delete_check_support(collection_id, member_id, class_type, path):
+    """Check if class_type supports DELETE operation"""
+    try:
+        # Delete the Item with IDs collection_id and member_id
+        # collection_id is id of a collection
+        # member_id is the id of member of a collection
+        crud.delete_member(
+            collection_id,
+            member_id,
+            class_type,
+            session=get_session()
+        )
+
+        method = "DELETE"
+        resource_url = f"{get_hydrus_server_url()}{get_api_name()}/{path}/{collection_id}"
+        last_job_id = crud.get_last_modification_job_id(session=get_session())
+        new_job_id = crud.insert_modification_record(method, resource_url,
+                                                     session=get_session())
+        send_sync_update(socketio=socketio, new_job_id=new_job_id,
+                         last_job_id=last_job_id, method=method,
+                         resource_url=resource_url)
+        status_description = (f"Object with ID {member_id} successfully"
+                              f" deleted from Collection with ID {collection_id}")
+        status = HydraStatus(code=200, title="Object successfully deleted.",
+                             desc=status_description)
+        return set_response_headers(jsonify(status.generate()))
+
+    except (ClassNotFound, InstanceNotFound) as e:
+        error = e.get_HTTP()
+        return error_response(error)
