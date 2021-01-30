@@ -9,7 +9,8 @@ from hydrus.data.exceptions import (
     ClassNotFound,
     InstanceNotFound,
     InstanceExists,
-    PropertyNotFound)
+    PropertyNotFound,
+    MemberInstanceNotFound)
 from hydrus.helpers import (
     set_response_headers,
     finalize_response,
@@ -181,7 +182,7 @@ def member_get_check_support(collection_id, member_id, class_type, class_path, p
         return set_response_headers(
             jsonify(hydrafy(response, path=path)))
 
-    except (ClassNotFound, InstanceNotFound) as e:
+    except (ClassNotFound, MemberInstanceNotFound) as e:
         error = e.get_HTTP()
         return error_response(error)
 
@@ -213,6 +214,6 @@ def member_delete_check_support(collection_id, member_id, class_type, path):
                              desc=status_description)
         return set_response_headers(jsonify(status.generate()))
 
-    except (ClassNotFound, InstanceNotFound) as e:
+    except (ClassNotFound, MemberInstanceNotFound) as e:
         error = e.get_HTTP()
         return error_response(error)

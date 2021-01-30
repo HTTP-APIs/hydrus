@@ -12,6 +12,7 @@ from hydrus.data.exceptions import (
     InvalidSearchParameter,
     PropertyNotFound,
     PropertyNotGiven,
+    MemberInstanceNotFound
 )
 from sqlalchemy import exists
 from sqlalchemy.exc import InvalidRequestError
@@ -237,7 +238,8 @@ def get_collection_member(query_info: Dict[str, str], session: scoped_session) -
         .all()
     )
     if len(objects) == 0:
-        raise InstanceNotFound(type_=type_, id_=collection_id)
+        raise MemberInstanceNotFound(type_=type_, collection_id_=collection_id,
+                                     member_id_=member_id)
     object_template = {}
     object_template["@type"] = query_info["@type"]
     object_template["members"] = objects
@@ -254,14 +256,14 @@ def delete_collection_member(query_info: Dict[str, str], session: scoped_session
     member_id = query_info["member_id"]
     collection_id = query_info["collection_id"]
     database_class = get_database_class(type_)
-    try:
-        objects = (
-            session.query(database_class.members, database_class.member_type)
-            .filter(database_class.collection_id == collection_id,
-                    database_class.members == member_id).delete()
-        )
-    except NoResultFound:
-        raise InstanceNotFound(type_=type_, id_=collection_id)
+    objects = (
+        session.query(database_class)
+        .filter(database_class.collection_id == collection_id,
+                database_class.members == member_id).delete()
+    )
+    if objects == 0:
+        raise MemberInstanceNotFound(type_=type_, collection_id_=collection_id,
+                                     member_id_=member_id)
     try:
         session.commit()
     except InvalidRequestError:
