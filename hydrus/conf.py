@@ -90,6 +90,14 @@ def load_apidoc(path):
         raise
 
 
+def get_host_domain():
+    """
+    Returns host domain.
+    """
+    HOST_DOMAIN = f'http://localhost:{PORT}'
+    return HOST_DOMAIN
+
+
 (path, FOUND_DOC) = get_apidoc_path()
 APIDOC_OBJ = load_apidoc(path)
 HYDRUS_SERVER_URL = f'http://localhost:{PORT}/'
