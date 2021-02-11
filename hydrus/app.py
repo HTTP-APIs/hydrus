@@ -18,6 +18,7 @@ from hydra_python_core import doc_maker
 from hydrus.utils import (
     set_session, set_doc, set_hydrus_server_url,
     set_token, set_api_name, set_authentication)
+from hydrus.socketio_factory import create_socket
 
 logger = logging.getLogger(__file__)
 
@@ -48,7 +49,7 @@ if AUTH:
 
 # Create a Hydrus app
 app = app_factory(API_NAME)
-
+socketio = create_socket(app, session)
 #
 # Nested context managers
 #
@@ -62,7 +63,7 @@ with set_authentication(app, AUTH), set_token(app, TOKEN), \
         if __name__ == "__main__":
             # this is run only if development server is run
             # Set the name of the API
-            app.run(host='127.0.0.1', debug=DEBUG, port=PORT)
+            socketio.run(app=app, debug=True, port=PORT)
         else:
             # Start the Hydrus app
             http_server = WSGIServer(('', PORT), app)
