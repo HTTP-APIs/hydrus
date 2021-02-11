@@ -14,7 +14,7 @@ from hydrus.data.exceptions import (
     PropertyNotGiven,
 )
 from sqlalchemy import exists
-from sqlalchemy.exc import InvalidRequestError
+from sqlalchemy.exc import InvalidRequestError, IntegrityError
 from sqlalchemy.orm.scoping import scoped_session
 from sqlalchemy.orm.exc import NoResultFound
 from typing import Dict, Any
@@ -69,8 +69,11 @@ def insert_object(object_: Dict[str, Any], session: scoped_session,
             try:
                 session.add(inserted_object)
                 session.commit()
-            except InvalidRequestError:
+            except (InvalidRequestError, IntegrityError):
                 session.rollback()
+                member_type_ = member['@type']
+                member_id_ = member['id_']
+                raise InstanceExists(member_type_, member_id_)
         return collection_id
     else:
         # when type_ is of a non-collection class
