@@ -69,7 +69,9 @@ def insert_object(object_: Dict[str, Any], session: scoped_session,
             try:
                 session.add(inserted_object)
                 session.commit()
-            except (InvalidRequestError, IntegrityError):
+            except InvalidRequestError:
+                session.rollback()
+            except IntegrityError:
                 session.rollback()
                 member_type_ = member['@type']
                 member_id_ = member['id_']
