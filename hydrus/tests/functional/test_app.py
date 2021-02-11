@@ -26,7 +26,7 @@ class TestApp():
         response_put = test_app_client.put(f'/{API_NAME}', data=dict(foo='bar'))
         response_delete = test_app_client.delete(f'/{API_NAME}')
         assert '@context' in endpoints
-        assert endpoints['@id'] == f'/{API_NAME}'
+        assert endpoints['@id'] == f'{HYDRUS_SERVER_URL}/{API_NAME}'
         assert endpoints['@type'] == 'EntryPoint'
         assert response_get.status_code == 200
         assert response_post.status_code == 405
