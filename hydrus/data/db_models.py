@@ -16,6 +16,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.engine import Engine
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.schema import UniqueConstraint
 from sqlalchemy.sql import func
 from hydra_python_core.doc_writer import DocUrl
 # from hydrus.settings import DB_URL
@@ -101,8 +102,6 @@ class Resource:
                 attr_dict[title] = Column(String)
 
         if "manages" in self.resource:
-            # if the class is a collection, then member id should be unique
-            attr_dict[title] = Column(String, unique=True)
             # if the class is a collection, add an extra column for
             # collection id
             attr_dict['collection_id'] = Column(
@@ -113,6 +112,11 @@ class Resource:
             # member @type
             attr_dict['member_type'] = Column(
                 String,
+            )
+            # if the class is a collection, then a member id and collection id
+            # should be a unique constraint altogether
+            attr_dict['__table_args__'] = (
+                UniqueConstraint(title, 'collection_id'),
             )
         return attr_dict
 
