@@ -63,15 +63,30 @@ cd hydrus
 git checkout -b develop origin/develop
 ```
 
+Install a [*Python virtual environment*](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/) using:
+```bash
+python3.7 -m venv .venv
+```
+or:
+```bash
+virtualenv -p python3.7 .venv
+```
+
 Install hydrus using:
 ```bash
-pip3 install -r requirements.txt
-
-python3 setup.py install
+source .venv/bin/activate
+pip install -r requirements.txt
+python setup.py install
 ```
- 
-and run the server using:
 
+NOTE: there is an alternative way to install dependencies with `poetry`:
+```bash
+pip3 install poetry
+poetry install
+```
+This is mostly used to check dependencies conflicts among packages.
+ 
+After installation is successful, to run the server:
 ```bash
 hydrus serve
 ```
