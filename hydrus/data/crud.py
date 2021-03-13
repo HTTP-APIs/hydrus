@@ -58,6 +58,7 @@ from hydrus.data.resource_based_classes import (
     get_single_response,
     get_database_class
 )
+from hydrus.conf import get_host_domain
 
 
 def get(id_: str, type_: str, api_name: str, session: scoped_session,
@@ -83,7 +84,7 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
     }
 
     object_template = get_object(query_info, session, collection)
-    object_template["@id"] = f"/{api_name}/{path}/{id_}"
+    object_template["@id"] = f"{get_host_domain()}/{api_name}/{path}/{id_}"
 
     return object_template
 
@@ -143,7 +144,7 @@ def insert_multiple(objects_: List[Dict[str,
     id_list = id_.split(',')
 
     # list to hold all the ids of inserted objects
-    instance_id_list = list()
+    instance_id_list = []
 
     for index in range(len(objects_)):
         id_of_object_ = None
@@ -279,9 +280,9 @@ def get_single(type_: str, api_name: str, session: scoped_session,
     instance = get_single_response(session, type_)
     object_ = get(instance.id, type_, session=session, api_name=api_name, path=path)
     if path is not None:
-        object_["@id"] = f"/{api_name}/{path}"
+        object_["@id"] = f"{get_host_domain()}/{api_name}/{path}"
     else:
-        object_["@id"] = f"/{api_name}/{type_}"
+        object_["@id"] = f"{get_host_domain()}/{api_name}/{type_}"
     return object_
 
 
@@ -430,10 +431,10 @@ def pagination(filtered_instances, path, type_, API_NAME,
     :return: response containing a page of the objects of that particular type_
     """
     collection_template = {
-        "@id": f"/{API_NAME}/{path}/",
+        "@id": f"{get_host_domain()}/{API_NAME}/{path}/",
         "@context": None,
         "@type": f"{path}",
-        "members": list()
+        "members": []
     }  # type: Dict[str, Any]
     result_length = len(filtered_instances)
     try:
@@ -449,7 +450,7 @@ def pagination(filtered_instances, path, type_, API_NAME,
         current_page_size = result_length - offset
     for i in range(offset, offset+current_page_size):
         object_template = {
-            "@id": f"/{API_NAME}/{type_}/{filtered_instances[i].id}",
+            "@id": f"{get_host_domain()}/{API_NAME}/{type_}/{filtered_instances[i].id}",
             "@type": type_
         }
         collection_template["members"].append(object_template)

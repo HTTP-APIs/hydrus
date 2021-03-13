@@ -1,9 +1,6 @@
 """Parser for Hydra APIDocumentation creates Classes and Properties."""
-from sqlalchemy import exists
 
 from typing import Any, Dict, List, Set, Optional
-from sqlalchemy.orm.session import Session
-from sqlalchemy.orm import scoped_session
 from hydra_python_core.doc_writer import HydraDoc
 
 
@@ -12,7 +9,7 @@ def get_classes(apidoc: HydraDoc) -> List[Dict[str, Any]]:
     COLLECTION_ID = "http://www.w3.org/ns/hydra/core#Collection"
     RESOURCE_ID = "http://www.w3.org/ns/hydra/core#Resource"
     ENTRYPOINT_ID = apidoc.entrypoint.entrypoint.id_
-    classes = list()
+    classes = []
     for class_ in apidoc.generate()["supportedClass"]:
         if class_["@id"] not in [COLLECTION_ID, RESOURCE_ID, ENTRYPOINT_ID]:
             classes.append(class_)

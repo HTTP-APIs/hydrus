@@ -9,10 +9,14 @@ Global variables are loaded or set here:
     FOUND_DOC
 """
 import os
+import json
+import yaml
 import logging
 from os.path import abspath, dirname
 from pathlib import Path
 from importlib.machinery import SourceFileLoader
+from hydra_openapi_parser.openapi_parser import parse
+
 logger = logging.getLogger(__file__)
 
 try:
@@ -84,6 +88,14 @@ def load_apidoc(path):
     except BaseException:
         logger.critical("Problem parsing specified hydradoc file")
         raise
+
+
+def get_host_domain():
+    """
+    Returns host domain.
+    """
+    HOST_DOMAIN = f'http://localhost:{PORT}'
+    return HOST_DOMAIN
 
 
 (path, FOUND_DOC) = get_apidoc_path()

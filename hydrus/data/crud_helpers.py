@@ -1,15 +1,12 @@
 # from sqlalchemy.orm.session import Session
-from sqlalchemy.orm.scoping import scoped_session
 
 from typing import Dict, Any, Tuple
-
-from sqlalchemy.orm.exc import NoResultFound
 from hydrus.data.exceptions import (
     PageNotFound,
-    InvalidSearchParameter,
     IncompatibleParameters,
     OffsetOutOfRange,
 )
+from hydrus.conf import get_host_domain
 
 
 def recreate_iri(API_NAME: str, path: str, search_params: Dict[str, Any]) -> str:
@@ -23,7 +20,7 @@ def recreate_iri(API_NAME: str, path: str, search_params: Dict[str, Any]) -> str
     for param in search_params:
         # Skip page, pageIndex or offset parameters as they will be updated to point to
         # next, previous and last page
-        if param == "page" or param == "pageIndex" or param == "offset":
+        if param in ["page", "pageIndex", "offset"]:
             continue
         iri += f"{param}={search_params[param]}&"
     return iri
@@ -42,7 +39,7 @@ def parse_search_params(search_params: Dict[str, Any]) -> Dict[str, Any]:
             prop_name = split_param_list[0]
             nested_prop_name = split_param_list[1].split(']')[0]
             if prop_name not in search_params:
-                search_params[prop_name] = dict()
+                search_params[prop_name] = {}
             search_params[prop_name][nested_prop_name] = value
             search_params.pop(param)
         # For normal parameters
@@ -138,10 +135,10 @@ def attach_hydra_view(collection_template: Dict[str, Any], paginate_param: str,
     """
     if paginate_param == "offset":
         collection_template["hydra:view"] = {
-            "@id": f"{iri}{paginate_param}={offset}",
+            "@id": f"{get_host_domain()}{iri}{paginate_param}={offset}",
             "@type": "hydra:PartialCollectionView",
-            "hydra:first": f"{iri}{paginate_param}=0",
-            "hydra:last": f"{iri}{paginate_param}={result_length - page_size}"
+            "hydra:first": f"{get_host_domain()}{iri}{paginate_param}=0",
+            "hydra:last": f"{get_host_domain()}{iri}{paginate_param}={result_length - page_size}"
         }
         if offset > page_size:
             collection_template["hydra:view"]["hydra:previous"] = (
@@ -151,10 +148,10 @@ def attach_hydra_view(collection_template: Dict[str, Any], paginate_param: str,
                 f"{iri}{paginate_param}={offset + page_size}")
     else:
         collection_template["hydra:view"] = {
-            "@id": f"{iri}{paginate_param}={page}",
+            "@id": f"{get_host_domain()}{iri}{paginate_param}={page}",
             "@type": "hydra:PartialCollectionView",
-            "hydra:first": f"{iri}{paginate_param}=1",
-            "hydra:last": f"{iri}{paginate_param}={last}"
+            "hydra:first": f"{get_host_domain()}{iri}{paginate_param}=1",
+            "hydra:last": f"{get_host_domain()}{iri}{paginate_param}={last}"
         }
         if page != 1:
             collection_template["hydra:view"]["hydra:previous"] = (

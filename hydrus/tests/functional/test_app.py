@@ -19,6 +19,7 @@ from hydrus.utils import get_doc
 class TestApp():
     def test_Index(self, test_app_client, constants):
         """Test for the Index."""
+        HYDRUS_SERVER_URL = constants['HYDRUS_SERVER_URL']
         API_NAME = constants['API_NAME']
         response_get = test_app_client.get(f'/{API_NAME}')
         endpoints = json.loads(response_get.data.decode('utf-8'))
@@ -26,7 +27,7 @@ class TestApp():
         response_put = test_app_client.put(f'/{API_NAME}', data=dict(foo='bar'))
         response_delete = test_app_client.delete(f'/{API_NAME}')
         assert '@context' in endpoints
-        assert endpoints['@id'] == f'/{API_NAME}'
+        assert endpoints['@id'] == f'{HYDRUS_SERVER_URL}{API_NAME}'
         assert endpoints['@type'] == 'EntryPoint'
         assert response_get.status_code == 200
         assert response_post.status_code == 405
@@ -158,6 +159,26 @@ class TestApp():
                                                         data=json.dumps(dummy_object))
                 assert good_response_put.status_code == 201
 
+    def test_Collections_constraint_PUT(self, test_app_client, constants, doc):
+        """Test collection constraints by inserting same object twice."""
+        API_NAME = constants['API_NAME']
+        index = test_app_client.get(f'/{API_NAME}')
+        assert index.status_code == 200
+        endpoints = json.loads(index.data.decode('utf-8'))
+        for endpoint in endpoints['collections']:
+            collection_name = '/'.join(endpoint['@id'].split(f'/{API_NAME}/')[1:])
+            collection = doc.collections[collection_name]['collection']
+            collection_methods = [x.method for x in collection.supportedOperation]
+            if 'PUT' in collection_methods:
+                dummy_object = gen_dummy_object(collection.name, doc)
+                good_response_put = test_app_client.put(endpoint['@id'],
+                                                        data=json.dumps(dummy_object))
+                assert good_response_put.status_code == 201
+                collection_id = good_response_put.location
+                bad_response_put = test_app_client.put(collection_id,
+                                                       data=json.dumps(dummy_object))
+                assert bad_response_put.status_code == 400
+
     def test_collection_object_GET(self, test_app_client, constants, doc):
         """Test GET of a given collection object using ID."""
         API_NAME = constants['API_NAME']
@@ -193,10 +214,16 @@ class TestApp():
             collection = doc.collections[collection_name]['collection']
             collection_methods = [x.method for x in collection.supportedOperation]
             if 'PUT' in collection_methods:
-                dummy_object = gen_dummy_object(collection.name, doc)
+                dummy_object_1 = gen_dummy_object(collection.name, doc)
                 initial_put_response = test_app_client.put(
-                    endpoint['@id'], data=json.dumps(dummy_object))
+                    endpoint['@id'], data=json.dumps(dummy_object_1))
                 assert initial_put_response.status_code == 201
+                collection_id = initial_put_response.location
+                dummy_object_2 = gen_dummy_object(collection.name, doc)
+                second_put_response = test_app_client.put(
+                    collection_id, data=json.dumps(dummy_object_2))
+                assert second_put_response.status_code == 201
+                assert second_put_response.location == collection_id
 
     def test_collection_object_POST(self, test_app_client, constants, doc, socketio):
         """Test POST of a given collection object using ID."""
