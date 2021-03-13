@@ -25,7 +25,7 @@ hydra_openapi_parser = { git = "https://github.com/HTTP-APIs/hydra-openapi-parse
 itsdangerous = "~1.1.0"
 Jinja2 = "~2.10.3"
 lifter = "~0.4.1"
-psycopg2 = "~2.8.6"
+psycopg2-binary = "~2.8.6"
 pytest = "~5.4.1"
 Mako = "~1.1.0"
 MarkupSafe = "~1.1.1"
