@@ -2,6 +2,7 @@
 
 import logging
 import sys
+from hydrus.socketio_factory import create_socket
 from os.path import dirname, abspath
 
 # insert the ./app.py file path in the PYTHONPATH variable for imports to work
@@ -27,7 +28,6 @@ from hydra_python_core import doc_maker  # noqa: E402
 from hydrus.utils import (
     set_session, set_doc, set_hydrus_server_url,
     set_token, set_api_name, set_authentication)  # noqa: E402
-from hydrus.socketio_factory import create_socket
 
 logger = logging.getLogger(__file__)
 
