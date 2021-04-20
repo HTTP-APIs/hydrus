@@ -205,9 +205,6 @@ def member_delete_check_support(collection_id, member_id, class_type, path):
         last_job_id = crud.get_last_modification_job_id(session=get_session())
         new_job_id = crud.insert_modification_record(method, resource_url,
                                                      session=get_session())
-        send_sync_update(socketio=socketio, new_job_id=new_job_id,
-                         last_job_id=last_job_id, method=method,
-                         resource_url=resource_url)
         status_description = (f"Object with ID {member_id} successfully"
                               f" deleted from Collection with ID {collection_id}")
         status = HydraStatus(code=200, title="Object successfully deleted.",

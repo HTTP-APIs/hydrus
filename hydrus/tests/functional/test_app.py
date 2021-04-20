@@ -388,6 +388,28 @@ class TestApp():
                         response_get = test_app_client.get(endpoints[endpoint])
                         assert response_get.status_code == 405
 
+    def test_Collections_member_GET(self, test_app_client, constants, doc):
+        """Test endpoint to get member from a collection"""
+        API_NAME = constants['API_NAME']
+        index = test_app_client.get(f'/{API_NAME}')
+        assert index.status_code == 200
+        endpoints = json.loads(index.data.decode('utf-8'))
+        for endpoint in endpoints['collections']:
+            collection_name = '/'.join(endpoint['@id'].split(f'/{API_NAME}/')[1:])
+            collection = doc.collections[collection_name]['collection']
+            collection_methods = [x.method for x in collection.supportedOperation]
+            if 'PUT' in collection_methods:
+                dummy_object = gen_dummy_object(collection.name, doc)
+                good_response_put = test_app_client.put(endpoint['@id'],
+                                                        data=json.dumps(dummy_object))
+                assert good_response_put.status_code == 201
+                collection_endpoint = good_response_put.location
+                if 'GET' in collection_methods:
+                    for member in dummy_object['members']:
+                        member_id = member['@id'].split('/')[-1]
+                        get_response = test_app_client.get(f'{collection_endpoint}/{member_id}')
+                        assert get_response.status_code == 200
+
     def test_IriTemplate(self, test_app_client, constants, doc):
         """Test structure of IriTemplates attached to parsed classes"""
         API_NAME = constants['API_NAME']
