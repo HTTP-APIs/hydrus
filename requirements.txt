@@ -4,6 +4,7 @@ appdirs==1.4.3
 blinker==1.4
 click==7.1.2
 certifi==2019.11.28
+flake8
 Flask==1.1.1
 Flask-Cors==3.0.8
 Flask-RESTful==0.3.7
@@ -14,7 +15,7 @@ greenlet==0.4.17
 hydra_python_core
 hydra_openapi_parser
 itsdangerous==1.1.0
-Jinja2==2.10.3
+Jinja2==2.11.3
 lifter==0.4.1
 psycopg2-binary==2.8.6
 pytest==5.4.1
@@ -29,9 +30,8 @@ python-editor==1.0.4
 python-engineio==3.11.2
 python-socketio==4.4.0
 pytz==2019.3
-PyYAML==5.2
+PyYAML==5.3
 six==1.13.0
 SQLAlchemy==1.3.12
 thespian==3.9.11
 Werkzeug==0.16.0
-flake8
