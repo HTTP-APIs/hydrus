@@ -55,7 +55,6 @@ To run a demo for hydrus using the sample API, just do the following:
 1. Clone hydrus:
 ```bash
 git clone https://github.com/HTTP-APIs/hydrus
-```bash
 cd hydrus
 ```
 2. Install a [*Python virtual environment*](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/) using:
@@ -79,7 +78,7 @@ NOTE: there is an alternative way to install dependencies with `poetry`:
 pip3 install poetry
 poetry install
 ```
-This is mostly used to check dependencies conflicts among packages.
+This is mostly used to check dependencies conflicts among packages and to release to `PyPi`.
  
 After installation is successful, to *run the server*:
 ```bash

@@ -11,8 +11,8 @@ Flask-SocketIO==4.2.1
 gevent==20.12.0
 gevent-websocket==0.10.1
 greenlet==0.4.17
-git+https://github.com/HTTP-APIs/hydra-python-core@master#egg=hydra_python_core
-git+https://github.com/HTTP-APIs/hydra-openapi-parser@0.1.1#egg=hydra_openapi_parser
+hydra_python_core
+hydra_openapi_parser
 itsdangerous==1.1.0
 Jinja2==2.10.3
 lifter==0.4.1
@@ -20,7 +20,7 @@ psycopg2-binary==2.8.6
 pytest==5.4.1
 Mako==1.1.0
 MarkupSafe==1.1.1
-packaging==19.2
+packaging==20.9
 pep8==1.7.1
 persisting-theory==0.2.1
 pyparsing==2.4.6

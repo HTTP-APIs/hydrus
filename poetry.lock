@@ -263,38 +263,24 @@ python-versions = "*"
 
 [[package]]
 name = "hydra-openapi-parser"
-version = "0.1"
+version = "0.2.0"
 description = "A Parser from OpenAPI to Hydra specs"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
-
-[package.source]
-type = "git"
-url = "https://github.com/HTTP-APIs/hydra-openapi-parser"
-reference = "0.1.1"
-resolved_reference = "e80f75fdaa214f065bd25d97f2236b61d59dc573"
 
 [[package]]
 name = "hydra-python-core"
-version = "0.1"
+version = "0.2"
 description = "Core functions for Hydrus"
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
 
 [package.dependencies]
 pyld = "*"
 requests = "*"
 sphinx = "3.1.2"
-
-[package.source]
-type = "git"
-url = "https://github.com/HTTP-APIs/hydra-python-core"
-reference = "master"
-resolved_reference = "3795cb0bd8eeb0f310febf17090ca3bdb1b1d135"
 
 [[package]]
 name = "idna"
@@ -870,7 +856,7 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.5.2"
-content-hash = "22e7957c039ab3367930647b331dd9577b3ed4572a7546da6fb4d6435d136e86"
+content-hash = "4c1be16a072e0d1e115f67fef3b662423e7d25bf56787d0d79673d40a403edab"
 
 [metadata.files]
 alabaster = [
@@ -1039,8 +1025,14 @@ greenlet = [
     {file = "greenlet-0.4.17-cp39-cp39-manylinux1_x86_64.whl", hash = "sha256:1023d7b43ca11264ab7052cb09f5635d4afdb43df55e0854498fc63070a0b206"},
     {file = "greenlet-0.4.17.tar.gz", hash = "sha256:41d8835c69a78de718e466dd0e6bfd4b46125f21a67c3ff6d76d8d8059868d6b"},
 ]
-hydra-openapi-parser = []
-hydra-python-core = []
+hydra-openapi-parser = [
+    {file = "hydra_openapi_parser-0.2.0-py3-none-any.whl", hash = "sha256:ef23190c3022a6eab068b8e7695255b35b6b4ef8fffe948be2ee1460623a9e71"},
+    {file = "hydra_openapi_parser-0.2.0.tar.gz", hash = "sha256:7fd1ca6892ec014f3285bd7a19de03bb94c9d4fee49e3815c2714ac133b70468"},
+]
+hydra-python-core = [
+    {file = "hydra_python_core-0.2-py3-none-any.whl", hash = "sha256:857b4deae715ba80310fca1e168445d3761e3c9206ecba092691c675a7aa80a0"},
+    {file = "hydra_python_core-0.2.tar.gz", hash = "sha256:163cbefd69e116daefb7790c7d083ce0b13c90135d56d1c77542d2b53e8bbd4d"},
+]
 idna = [
     {file = "idna-2.10-py2.py3-none-any.whl", hash = "sha256:b97d804b1e9b523befed77c48dacec60e6dcb0b5391d57af6a65a312a90648c0"},
     {file = "idna-2.10.tar.gz", hash = "sha256:b307872f855b18632ce0c21c5e45be78c0ea7ae4c15c828c20788b26921eb3f6"},
