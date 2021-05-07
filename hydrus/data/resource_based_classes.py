@@ -12,6 +12,7 @@ from hydrus.data.exceptions import (
     InvalidSearchParameter,
     PropertyNotFound,
     PropertyNotGiven,
+    MemberInstanceNotFound
 )
 from sqlalchemy import exists
 from sqlalchemy.exc import InvalidRequestError, IntegrityError
@@ -223,6 +224,56 @@ def update_object(
         d = insert_object(old_object, session, collection)
         raise e
     return id_
+
+
+def get_collection_member(query_info: Dict[str, str], session: scoped_session) -> Dict[str, str]:
+    """
+    Get member from a collection
+    :param query_info: Dict containing the ids and @type of object that has to retrieved
+    :param session: sqlalchemy session
+    :return: dict of object with its properties
+    """
+    type_ = query_info["@type"]
+    collection_id = query_info["collection_id"]
+    member_id = query_info["member_id"]
+    database_class = get_database_class(type_)
+    objects = (
+        session.query(database_class.members, database_class.member_type)
+        .filter(database_class.collection_id == collection_id, database_class.members == member_id)
+        .all()
+    )
+    if len(objects) == 0:
+        raise MemberInstanceNotFound(type_=type_, collection_id_=collection_id,
+                                     member_id_=member_id)
+    object_template = {}
+    object_template["@type"] = query_info["@type"]
+    object_template["members"] = objects
+    return object_template
+
+
+def delete_collection_member(query_info: Dict[str, str], session: scoped_session) -> None:
+    """
+    Delete the object from the collection in database
+    :param query_info: Dict containing the id and @type of object that has to retrieved
+    :param session: sqlalchemy session
+    """
+    type_ = query_info["@type"]
+    member_id = query_info["member_id"]
+    collection_id = query_info["collection_id"]
+    database_class = get_database_class(type_)
+    objects = (
+        session.query(database_class)
+        .filter(database_class.collection_id == collection_id,
+                database_class.members == member_id).delete()
+    )
+    if objects == 0:
+        raise MemberInstanceNotFound(type_=type_, collection_id_=collection_id,
+                                     member_id_=member_id)
+    try:
+        session.commit()
+    except InvalidRequestError:
+        session.rollback()
+    return collection_id
 
 
 def get_all_filtered_instances(
