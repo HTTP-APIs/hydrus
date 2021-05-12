@@ -248,6 +248,8 @@ class ItemMember(Resource):
 
 
 class Items(Resource):
+    """Handles operations(PUT,DELETE) related to multiple objects.
+    (Item should be hydra:Class)"""
     @authenticate
     def put(self, path, int_list="") -> Response:
         """
