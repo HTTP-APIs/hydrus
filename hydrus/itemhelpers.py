@@ -9,7 +9,8 @@ from hydrus.data.exceptions import (
     ClassNotFound,
     InstanceNotFound,
     InstanceExists,
-    PropertyNotFound)
+    PropertyNotFound,
+    MemberInstanceNotFound)
 from hydrus.helpers import (
     set_response_headers,
     finalize_response,
@@ -161,5 +162,55 @@ def items_delete_check_support(id_, class_type, path, is_collection):
         return set_response_headers(jsonify(status.generate()))
 
     except (ClassNotFound, InstanceNotFound) as e:
+        error = e.get_HTTP()
+        return error_response(error)
+
+
+def member_get_check_support(collection_id, member_id, class_type, class_path, path):
+    """Check if class_type supports GET operation"""
+    try:
+        # Try getting the Item based on Collection ID and Member ID and Class type
+        response = crud.get_member(
+            collection_id,
+            member_id,
+            class_type,
+            api_name=get_api_name(),
+            session=get_session(),
+            path=path)
+
+        response = finalize_response(class_path, response)
+        return set_response_headers(
+            jsonify(hydrafy(response, path=path)))
+
+    except (ClassNotFound, MemberInstanceNotFound) as e:
+        error = e.get_HTTP()
+        return error_response(error)
+
+
+def member_delete_check_support(collection_id, member_id, class_type, path):
+    """Check if class_type supports DELETE operation"""
+    try:
+        # Delete the Item with IDs collection_id and member_id
+        # collection_id is id of a collection
+        # member_id is the id of member of a collection
+        crud.delete_member(
+            collection_id,
+            member_id,
+            class_type,
+            session=get_session()
+        )
+
+        method = "DELETE"
+        resource_url = f"{get_hydrus_server_url()}{get_api_name()}/{path}/{collection_id}"
+        last_job_id = crud.get_last_modification_job_id(session=get_session())
+        new_job_id = crud.insert_modification_record(method, resource_url,
+                                                     session=get_session())
+        status_description = (f"Object with ID {member_id} successfully"
+                              f" deleted from Collection with ID {collection_id}")
+        status = HydraStatus(code=200, title="Object successfully deleted.",
+                             desc=status_description)
+        return set_response_headers(jsonify(status.generate()))
+
+    except (ClassNotFound, MemberInstanceNotFound) as e:
         error = e.get_HTTP()
         return error_response(error)
