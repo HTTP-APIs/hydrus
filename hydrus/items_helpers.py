@@ -17,6 +17,7 @@ from hydrus.helpers import (
     check_required_props,
     send_sync_update,
     get_link_props_for_multiple_objects,
+    get_iri_from_int_list,
     error_response,
     getType,
 )
@@ -75,11 +76,15 @@ def items_put_response(path: str, int_list="") -> Response:
                             jsonify(response), headers=headers_,
                             status_code=status.code)
                     else:
+                        path_url = f"{get_hydrus_server_url()}{get_api_name()}/{path}"
+                        response_url_list = get_iri_from_int_list(path_url, object_id)
                         status_description = f"Objects with ID {object_id} successfully added"
                         status = HydraStatus(code=201, title="Objects successfully added",
                                              desc=status_description)
+                        status_response = status.generate()
+                        status_response["iri"] = response_url_list
                         return set_response_headers(
-                            jsonify(status.generate()), headers=headers_,
+                            jsonify(status_response), headers=headers_,
                             status_code=status.code)
                 except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
                     error = e.get_HTTP()
