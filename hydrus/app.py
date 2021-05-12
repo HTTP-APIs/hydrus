@@ -38,7 +38,7 @@ try:
 except Exception:
     pass
 
-AUTH = False
+AUTH = True
 TOKEN = True
 
 if AUTH:
