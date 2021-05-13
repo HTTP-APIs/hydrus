@@ -134,6 +134,7 @@ class TestApp():
                 good_response_put = test_app_client.put(endpoint['@id'],
                                                         data=json.dumps(dummy_object))
                 assert good_response_put.status_code == 201
+                assert good_response_put.json["iri"] == good_response_put.location
 
     def test_Collections_constraint_PUT(self, test_app_client, constants, doc):
         """Test collection constraints by inserting same object twice."""
@@ -150,6 +151,7 @@ class TestApp():
                 good_response_put = test_app_client.put(endpoint['@id'],
                                                         data=json.dumps(dummy_object))
                 assert good_response_put.status_code == 201
+                assert good_response_put.json["iri"] == good_response_put.location
                 collection_id = good_response_put.location
                 bad_response_put = test_app_client.put(collection_id,
                                                        data=json.dumps(dummy_object))
@@ -200,6 +202,7 @@ class TestApp():
                     collection_id, data=json.dumps(dummy_object_2))
                 assert second_put_response.status_code == 201
                 assert second_put_response.location == collection_id
+                assert second_put_response.json["iri"] == collection_id
 
     def test_collection_object_POST(self, test_app_client, constants, doc, socketio):
         """Test POST of a given collection object using ID."""
@@ -215,6 +218,7 @@ class TestApp():
             initial_put_response = test_app_client.put(
                 endpoint['@id'], data=json.dumps(dummy_object))
             assert initial_put_response.status_code == 201
+            assert initial_put_response.json["iri"] == initial_put_response.location
             response = json.loads(initial_put_response.data.decode('utf-8'))
             regex = r'(.*)ID (.{36})* (.*)'
             matchObj = re.match(regex, response['description'])
@@ -272,6 +276,7 @@ class TestApp():
                 put_response = test_app_client.put(f'{endpoint["@id"]}/{uuid.uuid4()}',
                                                    data=json.dumps(dummy_object))
                 assert put_response.status_code == 201
+                assert put_response.json["iri"] == put_response.location
 
     def test_object_PUT_at_ids(self, test_app_client, constants, doc):
         API_NAME = constants['API_NAME']
@@ -295,6 +300,7 @@ class TestApp():
                         put_response = test_app_client.put(f'{endpoints[endpoint]}/add/{ids}',
                                                            data=json.dumps(data_))
                         assert put_response.status_code == 201
+                        assert isinstance(put_response.json['iri'], list)
 
     def test_endpointClass_PUT(self, test_app_client, constants, doc):
         """Check non collection Class PUT."""
@@ -315,6 +321,7 @@ class TestApp():
                         put_response = test_app_client.put(endpoints[endpoint],
                                                            data=json.dumps(dummy_object))
                         assert put_response.status_code == 201
+                        assert put_response.json["iri"] == put_response.location
 
     def test_endpointClass_POST(self, test_app_client, constants, doc):
         """Check non collection Class POST."""
