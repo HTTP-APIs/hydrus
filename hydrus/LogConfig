@@ -1,0 +1,21 @@
+[loggers]
+keys=root
+
+[handlers]
+keys = FileHandler
+
+[formatters]
+keys=simpleFormatter
+
+[logger_root]
+handlers=FileHandler
+level = DEBUG
+
+[handler_FileHandler]
+class=FileHandler
+level=DEBUG
+args=('hydrus.log',)
+
+[formatter_simpleFormatter]
+format=%(asctime)s - %(name)s - %(levelname)s - %(message)s
+datefmt=
