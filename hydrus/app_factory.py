@@ -1,7 +1,8 @@
-from flask import Flask, redirect
+from flask import Flask, redirect, request
+import uuid
 from flask_cors import CORS
 from flask_restful import Api
-
+from hydrus_logger import HydrusLogger
 from hydrus.resources import (Index, Vocab, Contexts, Entrypoint,
                               ItemCollection, Item, Items, ItemMember)
 
@@ -19,6 +20,12 @@ def app_factory(api_name: str = "api", vocab_route: str = "vocab") -> Flask:
     CORS(app)
     app.url_map.strict_slashes = False
     api = Api(app)
+
+    @app.after_request
+    def logging_request_response(response):
+        logger = HydrusLogger().get_logger()
+        logger.info("{} {}/<iri>".format(uuid.uuid4(), request.method))
+        return response
 
     # Redirecting root_path to root_path/api_name
     if api_name:
