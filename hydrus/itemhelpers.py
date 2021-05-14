@@ -90,7 +90,9 @@ def items_post_check_support(id_, object_, class_path, path, is_collection):
                                   "updated")
             status = HydraStatus(
                 code=200, title="Object updated", desc=status_description)
-            return set_response_headers(jsonify(status.generate()),
+            status_response = status.generate()
+            status_response["iri"] = resource_url
+            return set_response_headers(jsonify(status_response),
                                         headers=headers_)
 
         except (ClassNotFound,
@@ -125,13 +127,15 @@ def items_put_check_support(id_, class_path, path, is_collection):
             # Add the object with given ID
             object_id = crud.insert(object_=object_, id_=id_,
                                     session=get_session(), collection=is_collection)
-            headers_ = [{"Location": f"{get_hydrus_server_url()}"
-                                     f"{get_api_name()}/{path}/{object_id}"}]
+            resource_url = f"{get_hydrus_server_url()}{get_api_name()}/{path}/{object_id}"
+            headers_ = [{"Location": resource_url}]
             status_description = f"Object with ID {object_id} successfully added"
             status = HydraStatus(code=201, title="Object successfully added.",
                                  desc=status_description)
+            status_response = status.generate()
+            status_response["iri"] = resource_url
             return set_response_headers(
-                jsonify(status.generate()), headers=headers_,
+                jsonify(status_response), headers=headers_,
                 status_code=status.code)
         except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
             error = e.get_HTTP()
