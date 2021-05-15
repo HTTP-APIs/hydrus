@@ -2,19 +2,27 @@
 keys=root
 
 [handlers]
-keys = FileHandler
+keys = FileHandler,StreamHandler
 
 [formatters]
-keys=simpleFormatter
+keys=simpleFormatter, ConsoleFormatter
 
 [logger_root]
-handlers=FileHandler
-level = DEBUG
+handlers=FileHandler, StreamHandler
 
 [handler_FileHandler]
 class=FileHandler
-level=DEBUG
 args=('hydrus.log',)
+
+[handler_StreamHandler]
+class = StreamHandler
+
+formatter=ConsoleFormatter
+args=(sys.stdout,)
+level = INFO
+
+[formatter_ConsoleFormatter]
+format=
 
 [formatter_simpleFormatter]
 format=%(asctime)s - %(name)s - %(levelname)s - %(message)s
