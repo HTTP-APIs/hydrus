@@ -19,7 +19,6 @@ class = StreamHandler
 
 formatter=ConsoleFormatter
 args=(sys.stdout,)
-level = INFO
 
 [formatter_ConsoleFormatter]
 format=
