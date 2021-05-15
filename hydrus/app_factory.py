@@ -5,7 +5,9 @@ from flask_restful import Api
 from hydrus_logger import HydrusLogger
 from hydrus.resources import (Index, Vocab, Contexts, Entrypoint,
                               ItemCollection, Item, Items, ItemMember)
+
 logger = HydrusLogger().get_logger()
+
 
 def app_factory(api_name: str = "api", vocab_route: str = "vocab") -> Flask:
     """
@@ -21,11 +23,14 @@ def app_factory(api_name: str = "api", vocab_route: str = "vocab") -> Flask:
     app.url_map.strict_slashes = False
     api = Api(app)
 
-
     @app.after_request
     def logging_request_response(response):
-        logger.info(" {} {}:{} Object_created_at : {}, status_code : {} "
-                    .format(uuid.uuid4(), request.method, request.path, response.location, response.status))
+        if response.location and response.status_code != 302:
+            logger.info(" {} {}:{} Object_created_at : {}, status_code : {} "
+                        .format(uuid.uuid4(), request.method, request.path, response.location, response.status))
+        else:
+            logger.info(" {} {}:{}  status_code : {} "
+                        .format(uuid.uuid4(), request.method, request.path, response.status))
         return response
 
     # Redirecting root_path to root_path/api_name
