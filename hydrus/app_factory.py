@@ -24,7 +24,8 @@ def app_factory(api_name: str = "api", vocab_route: str = "vocab") -> Flask:
     @app.after_request
     def logging_request_response(response):
         logger = HydrusLogger().get_logger()
-        logger.info("{} {}/<iri>".format(uuid.uuid4(), request.method))
+        logger.info(" {} {}:{} Object_created_at : {}, status_code : {} "
+                    .format(uuid.uuid4(), request.method, request.path, response.location, response.status))
         return response
 
     # Redirecting root_path to root_path/api_name
