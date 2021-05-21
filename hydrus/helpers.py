@@ -39,6 +39,18 @@ def validObjectList(objects_: List[Dict[str, Any]]) -> bool:
     return True
 
 
+def get_iri_from_int_list(path_url: str, int_list: List[str]) -> List[str]:
+    """Returns a list of full IRIs of multiple objects from int_list
+    :param path_url: The path of the object
+    :param int_list: Optional String containing ',' separated ID's
+    :return: IRIs of multiple objects
+    """
+    iri_list = []
+    for id_ in int_list:
+        iri_list.append(f"{path_url}/{id_}")
+    return iri_list
+
+
 def type_match(object_: List[Dict[str, Any]], obj_type: str) -> bool:
     """
     Checks if the object type matches for every object in list.

@@ -1,9 +1,12 @@
-from flask import Flask
+from flask import Flask, redirect, request
+import uuid
 from flask_cors import CORS
 from flask_restful import Api
-
+from hydrus_logger import HydrusLogger
 from hydrus.resources import (Index, Vocab, Contexts, Entrypoint,
-                              ItemCollection, Item, Items)
+                              ItemCollection, Item, Items, ItemMember)
+
+logger = HydrusLogger().get_logger()
 
 
 def app_factory(api_name: str = "api", vocab_route: str = "vocab") -> Flask:
@@ -19,6 +22,22 @@ def app_factory(api_name: str = "api", vocab_route: str = "vocab") -> Flask:
     CORS(app)
     app.url_map.strict_slashes = False
     api = Api(app)
+
+    @app.after_request
+    def logging_request_response(response):
+        if response.location and response.status_code != 302:
+            logger.info(" {} {}:{} Object_created_at : {}, status_code : {} "
+                        .format(uuid.uuid4(), request.method, request.path, response.location, response.status))
+        else:
+            logger.info(" {} {}:{}  status_code : {} "
+                        .format(uuid.uuid4(), request.method, request.path, response.status))
+        return response
+
+    # Redirecting root_path to root_path/api_name
+    if api_name:
+        @app.route("/")
+        def root_url():
+            return redirect(f"/{api_name}/")
 
     api.add_resource(Index, f"/{api_name}/", endpoint="api")
     api.add_resource(Vocab, f"/{api_name}/{vocab_route}", endpoint="vocab")
@@ -38,6 +57,10 @@ def app_factory(api_name: str = "api", vocab_route: str = "vocab") -> Flask:
         Item,
         f"/{api_name}/<string:path>/<uuid:id_>",
         endpoint="item")
+    api.add_resource(
+        ItemMember,
+        f"/{api_name}/<string:path>/<uuid:collection_id_>/<uuid:id_>",
+        endpoint="member")
     api.add_resource(
         Items,
         f"/{api_name}/<string:path>/add/<int_list>",

@@ -158,6 +158,7 @@ class TestApp():
                 good_response_put = test_app_client.put(endpoint['@id'],
                                                         data=json.dumps(dummy_object))
                 assert good_response_put.status_code == 201
+                assert good_response_put.json["iri"] == good_response_put.location
 
     def test_Collections_constraint_PUT(self, test_app_client, constants, doc):
         """Test collection constraints by inserting same object twice."""
@@ -174,6 +175,7 @@ class TestApp():
                 good_response_put = test_app_client.put(endpoint['@id'],
                                                         data=json.dumps(dummy_object))
                 assert good_response_put.status_code == 201
+                assert good_response_put.json["iri"] == good_response_put.location
                 collection_id = good_response_put.location
                 bad_response_put = test_app_client.put(collection_id,
                                                        data=json.dumps(dummy_object))
@@ -224,6 +226,7 @@ class TestApp():
                     collection_id, data=json.dumps(dummy_object_2))
                 assert second_put_response.status_code == 201
                 assert second_put_response.location == collection_id
+                assert second_put_response.json["iri"] == collection_id
 
     def test_collection_object_POST(self, test_app_client, constants, doc, socketio):
         """Test POST of a given collection object using ID."""
@@ -239,6 +242,7 @@ class TestApp():
             initial_put_response = test_app_client.put(
                 endpoint['@id'], data=json.dumps(dummy_object))
             assert initial_put_response.status_code == 201
+            assert initial_put_response.json["iri"] == initial_put_response.location
             response = json.loads(initial_put_response.data.decode('utf-8'))
             regex = r'(.*)ID (.{36})* (.*)'
             matchObj = re.match(regex, response['description'])
@@ -296,6 +300,7 @@ class TestApp():
                 put_response = test_app_client.put(f'{endpoint["@id"]}/{uuid.uuid4()}',
                                                    data=json.dumps(dummy_object))
                 assert put_response.status_code == 201
+                assert put_response.json["iri"] == put_response.location
 
     def test_object_PUT_at_ids(self, test_app_client, constants, doc):
         API_NAME = constants['API_NAME']
@@ -319,6 +324,7 @@ class TestApp():
                         put_response = test_app_client.put(f'{endpoints[endpoint]}/add/{ids}',
                                                            data=json.dumps(data_))
                         assert put_response.status_code == 201
+                        assert isinstance(put_response.json['iri'], list)
 
     def test_endpointClass_PUT(self, test_app_client, constants, doc):
         """Check non collection Class PUT."""
@@ -339,6 +345,7 @@ class TestApp():
                         put_response = test_app_client.put(endpoints[endpoint],
                                                            data=json.dumps(dummy_object))
                         assert put_response.status_code == 201
+                        assert put_response.json["iri"] == put_response.location
 
     def test_endpointClass_POST(self, test_app_client, constants, doc):
         """Check non collection Class POST."""
@@ -411,6 +418,51 @@ class TestApp():
                     if 'GET' in class_methods:
                         response_get = test_app_client.get(endpoints[endpoint])
                         assert response_get.status_code == 405
+
+    def test_Collections_member_GET(self, test_app_client, constants, doc):
+        """Test endpoint to get member from a collection"""
+        API_NAME = constants['API_NAME']
+        index = test_app_client.get(f'/{API_NAME}')
+        assert index.status_code == 200
+        endpoints = json.loads(index.data.decode('utf-8'))
+        for endpoint in endpoints['collections']:
+            collection_name = '/'.join(endpoint['@id'].split(f'/{API_NAME}/')[1:])
+            collection = doc.collections[collection_name]['collection']
+            collection_methods = [x.method for x in collection.supportedOperation]
+            if 'PUT' in collection_methods:
+                dummy_object = gen_dummy_object(collection.name, doc)
+                good_response_put = test_app_client.put(endpoint['@id'],
+                                                        data=json.dumps(dummy_object))
+                assert good_response_put.status_code == 201
+                collection_endpoint = good_response_put.location
+                if 'GET' in collection_methods:
+                    for member in dummy_object['members']:
+                        member_id = member['@id'].split('/')[-1]
+                        get_response = test_app_client.get(f'{collection_endpoint}/{member_id}')
+                        assert get_response.status_code == 200
+
+    def test_Collections_member_DELETE(self, test_app_client, constants, doc):
+        """Test endpoint to delete member from a collection."""
+        API_NAME = constants['API_NAME']
+        index = test_app_client.get(f'/{API_NAME}')
+        assert index.status_code == 200
+        endpoints = json.loads(index.data.decode('utf-8'))
+        for endpoint in endpoints['collections']:
+            collection_name = '/'.join(endpoint['@id'].split(f'/{API_NAME}/')[1:])
+            collection = doc.collections[collection_name]['collection']
+            collection_methods = [x.method for x in collection.supportedOperation]
+            if 'PUT' in collection_methods:
+                dummy_object = gen_dummy_object(collection.name, doc)
+                good_response_put = test_app_client.put(endpoint['@id'],
+                                                        data=json.dumps(dummy_object))
+                assert good_response_put.status_code == 201
+                collection_endpoint = good_response_put.location
+                if 'DELETE' in collection_methods:
+                    for member in dummy_object['members']:
+                        member_id = member['@id'].split('/')[-1]
+                        full_endpoint = f'{collection_endpoint}/{member_id}'
+                        delete_response = test_app_client.delete(full_endpoint)
+                        assert delete_response.status_code == 200
 
     def test_IriTemplate(self, test_app_client, constants, doc):
         """Test structure of IriTemplates attached to parsed classes"""

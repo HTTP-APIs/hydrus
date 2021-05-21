@@ -1,0 +1,28 @@
+[loggers]
+keys=root
+
+[handlers]
+keys = FileHandler,StreamHandler
+
+[formatters]
+keys=simpleFormatter, ConsoleFormatter
+
+[logger_root]
+handlers=FileHandler, StreamHandler
+
+[handler_FileHandler]
+class=FileHandler
+args=('hydrus.log',)
+
+[handler_StreamHandler]
+class = StreamHandler
+
+formatter=ConsoleFormatter
+args=(sys.stdout,)
+
+[formatter_ConsoleFormatter]
+format=
+
+[formatter_simpleFormatter]
+format=%(asctime)s - %(name)s - %(levelname)s - %(message)s
+datefmt=

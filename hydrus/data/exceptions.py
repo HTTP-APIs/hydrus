@@ -34,6 +34,28 @@ class InstanceNotFound(Exception):
             return HydraError(code=404, title="Instance not found", desc=description)
 
 
+class MemberInstanceNotFound(Exception):
+    """Error when the Instance (Member in Collection) is not found."""
+
+    def __init__(self, type_: str, collection_id_: Union[str, None]=None,
+                 member_id_: Union[str, None]=None) -> None:
+        """Constructor."""
+        self.type_ = type_
+        self.collection_id = collection_id_
+        self.member_id = member_id_
+
+    def get_HTTP(self) -> HydraError:
+        """Return the HTTP response for the Exception."""
+        if str(self.member_id) is None:
+            description = f"Instance of type {self.type_} not found"
+            return HydraError(code=404, title="Instance not found", desc=description)
+        else:
+            description = (f"Instance of type {self.type_} with"
+                           f" Collection ID {str(self.collection_id)}"
+                           f" and member_id {str(self.member_id)} not found")
+            return HydraError(code=404, title="Instance not found", desc=description)
+
+
 class PropertyNotFound(Exception):
     """Error when the Property is not found."""
 

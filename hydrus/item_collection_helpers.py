@@ -116,14 +116,16 @@ def item_collection_put_response(path: str) -> Response:
             # Insert object and return location in Header
             object_id = crud.insert(object_=object_, session=get_session(),
                                     collection=is_collection)
-            headers_ = [
-                {"Location": f"{get_hydrus_server_url()}{get_api_name()}/{path}/{object_id}"}]
+            resource_url = f"{get_hydrus_server_url()}{get_api_name()}/{path}/{object_id}"
+            headers_ = [{"Location": resource_url}]
             status_description = f"Object with ID {object_id} successfully added"
             status = HydraStatus(code=201,
                                  title="Object successfully added",
                                  desc=status_description)
+            status_response = status.generate()
+            status_response["iri"] = resource_url
             return set_response_headers(
-                jsonify(status.generate()), headers=headers_,
+                jsonify(status_response), headers=headers_,
                 status_code=status.code)
         except (ClassNotFound, InstanceExists, PropertyNotFound,
                 PropertyNotGiven) as e:
