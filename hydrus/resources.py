@@ -31,14 +31,17 @@ from hydrus.helpers import (
     checkClassOp,
     checkEndpoint,
     check_writeable_props,
-    get_context
+    get_context,
+    get_fragments
 )
 from hydrus.utils import get_doc, get_collections_and_parsed_classes
 from hydrus.itemhelpers import (
     items_get_check_support,
     items_post_check_support,
     items_put_check_support,
-    items_delete_check_support
+    items_delete_check_support,
+    member_get_check_support,
+    member_delete_check_support
 )
 from hydrus.item_collection_helpers import (
     item_collection_get_response,
@@ -62,8 +65,12 @@ class Vocab(Resource):
     """Vocabulary for Hydra."""
 
     def get(self) -> Response:
-        """Return the main hydra vocab."""
-        return set_response_headers(jsonify(get_doc().generate()))
+        """Return the main hydra vocab or a fragment of the main hydra vocab."""
+        try:
+            resource = request.args.getlist('resource')[0]
+            return set_response_headers(jsonify(get_fragments(resource)))
+        except:
+            return set_response_headers(jsonify(get_doc().generate()))
 
 
 class Entrypoint(Resource):
@@ -196,7 +203,58 @@ class ItemCollection(Resource):
         return item_collection_put_response(path)
 
 
+class ItemMember(Resource):
+    """Handles operations(GET,DELETE) related to member of an Item(Collection).
+    (Item should be hydra:Collection)"""
+    @authenticate
+    def get(self, id_: str, path: str, collection_id_: str) -> Response:
+        """
+        GET object with collection_id = collection_id_
+        and member = id_ (member of a collection) from the database.
+        :param id_ : Item ID (Member)
+        :param collection_id_ : Item ID (Collection)
+        :param path : Path for Item ( Specified in APIDoc @id)
+        :return : object with member=id_ and collection_id=collection_id_
+        """
+        collection_id = str(collection_id_)
+        member_id = str(id_)
+        collections, parsed_classes = get_collections_and_parsed_classes()
+        if path in parsed_classes:
+            abort(405)
+        if path in collections:
+            item_class = collections[path]["collection"]
+            class_type = item_class.name
+            # Get path of the collection-class
+            class_path = item_class.path
+        if checkClassOp(class_path, "GET"):
+            return member_get_check_support(collection_id, member_id, class_type, class_path, path)
+        abort(405)
+
+    @authenticate
+    def delete(self, id_: str, path: str, collection_id_: str) -> Response:
+        """
+        Delete object with id=id_ from database.
+        :param id_ - ID of Item to be deleted
+        :param path - Path for Item type( Specified in APIDoc @id) to be deleted
+        """
+        collection_id = str(collection_id_)
+        member_id = str(id_)
+        collections, parsed_classes = get_collections_and_parsed_classes()
+        if path in parsed_classes:
+            abort(405)
+        if path in collections:
+            item_class = collections[path]["collection"]
+            class_type = item_class.name
+            # Get path of the collection-class
+            class_path = item_class.path
+        if checkClassOp(class_path, "DELETE"):
+            return member_delete_check_support(collection_id, member_id, class_type, path)
+        abort(405)
+
+
 class Items(Resource):
+    """Handles operations(PUT,DELETE) related to multiple objects.
+    (Item should be hydra:Class)"""
     @authenticate
     def put(self, path, int_list="") -> Response:
         """
