@@ -2,6 +2,8 @@ from typing import Dict, Any, List, Optional, Union, Tuple
 
 from flask import Response, jsonify
 
+import re
+
 from hydrus.data import crud
 
 from hydrus.utils import get_doc, get_api_name, get_hydrus_server_url, get_session
@@ -543,3 +545,35 @@ def parse_collection_members(object_: dict) -> dict:
             return error_response(error)
     object_['members'] = members
     return object_
+
+
+def get_fragments(resource: str) -> dict:
+    """Gets a fragment of the main hydra vocabulary.
+
+    :param resource: Fragment specified in the request parameters
+    :type resource: str
+    :return: Object referred to by the fragment
+    :rtype: dict
+    """
+    resource_dict = dict()
+    gen_doc = get_doc().generate()
+    if 'EntryPoint/' in resource:
+        match_string = r'\b(EntryPoint)\b'
+        for class_ in gen_doc['supportedClass']:
+            if re.search(match_string, class_['@id']):
+                res = class_
+                break
+        for properties in res["supportedProperty"]:
+            if resource in properties["property"]["@id"]:
+                res = properties
+                break
+        resource_dict[resource[11:]] = res
+    else:
+        resource_dict['@context'] = gen_doc['@context']
+        for class_ in gen_doc['supportedClass']:
+            match_string = r'\b({0})\b'.format(resource)
+            if re.search(match_string, class_['@id']):
+                res = class_
+                break
+        resource_dict["supportedClass"] = [res]
+    return resource_dict

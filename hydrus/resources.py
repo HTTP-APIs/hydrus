@@ -31,7 +31,8 @@ from hydrus.helpers import (
     checkClassOp,
     checkEndpoint,
     check_writeable_props,
-    get_context
+    get_context,
+    get_fragments
 )
 from hydrus.utils import get_doc, get_collections_and_parsed_classes
 from hydrus.itemhelpers import (
@@ -64,8 +65,12 @@ class Vocab(Resource):
     """Vocabulary for Hydra."""
 
     def get(self) -> Response:
-        """Return the main hydra vocab."""
-        return set_response_headers(jsonify(get_doc().generate()))
+        """Return the main hydra vocab or a fragment of the main hydra vocab."""
+        try:
+            resource = request.args.getlist('resource')[0]
+            return set_response_headers(jsonify(get_fragments(resource)))
+        except:
+            return set_response_headers(jsonify(get_doc().generate()))
 
 
 class Entrypoint(Resource):
