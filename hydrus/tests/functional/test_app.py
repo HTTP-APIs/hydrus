@@ -80,19 +80,17 @@ class TestApp():
 
         for class_ in response_get_data['supportedClass']:
             resource_id = class_['@id']
-            regex = "#[a-zA-Z]+"
-            resource_name = re.search(regex, resource_id).group(0)
-            resource_name = resource_name[1:]
+            if '#' not in resource_id:
+                resource_name = resource_id.split('?resource=')[-1]
+                vocab_uri = f'{HYDRUS_SERVER_URL}{API_NAME}/{vocab_route}'
+                param_string = f'?resource={resource_name}'
+                response_fragment_get = test_app_client.get(f'{vocab_uri}{param_string}')
+                response_fragment_get_data = json.loads(response_fragment_get.data.decode('utf-8'))
 
-            vocab_uri = f'{HYDRUS_SERVER_URL}{API_NAME}/{vocab_route}'
-            param_string = f'?resource={resource_name}'
-            response_fragment_get = test_app_client.get(f'{vocab_uri}{param_string}')
-            response_fragment_get_data = json.loads(response_fragment_get.data.decode('utf-8'))
-
-            assert response_fragment_get.status_code == 200
-            assert '@context' in response_fragment_get_data
-            assert response_fragment_get_data['supportedClass'][0]['@id'] == resource_id
-            assert len(response_fragment_get_data['supportedClass']) == 1
+                assert response_fragment_get.status_code == 200
+                assert '@context' in response_fragment_get_data
+                assert response_fragment_get_data['supportedClass'][0]['@id'] == resource_id
+                assert len(response_fragment_get_data['supportedClass']) == 1
 
     def test_Collections_GET(self, test_app_client, constants, doc, init_db_for_app_tests):
         """Test GET on collection endpoints."""
