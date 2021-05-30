@@ -48,7 +48,7 @@ def get_apidoc_path():
         found_doc = True
     except KeyError:
         found_doc = False
-        apidoc_path = cwd_path / 'hydrus' / 'samples' / 'hydra_doc_sample.py'
+        apidoc_path = cwd_path / 'hydrus' / 'samples' / 'movie_api_doc.py'
     return (apidoc_path, found_doc)
 
 
