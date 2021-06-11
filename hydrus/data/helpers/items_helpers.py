@@ -156,3 +156,43 @@ def items_delete_response(path: str, int_list="") -> Response:
             return error_response(error)
 
     abort(405)
+
+
+def items_delete_members_response(path: str, collection_id_:str, int_list="") -> Response:
+    """
+    Handles DELETE operation to insert multiple items.
+
+    :param path: Path for Item Collection
+    :type path: str
+    :param int_list: Optional String containing ',' separated ID's
+    :type int_list: List
+    :return: Appropriate response for the DELETE operation on multiple items.
+    :rtype: Response
+    """
+    collection_id_ = str(collection_id_)
+    collections, parsed_classes = get_collections_and_parsed_classes()
+    if path in parsed_classes:
+            abort(405)
+    if path in collections:
+        item_class = collections[path]["collection"]
+        class_type = item_class.name
+        # Get path of the collection-class
+        class_path = item_class.path
+    
+    if checkClassOp(class_path, "DELETE"):
+        # Check if class_type supports PUT operation
+        try:
+            # Delete the Item with ID == id_
+            crud.delete_multiple_members(collection_id_, int_list, class_type, session=get_session())
+            id_list = int_list.split(',')
+            status_description = f"Objects with ID {id_list} successfully deleted"
+            status = HydraStatus(code=200,
+                                 title="Objects successfully deleted",
+                                 desc=status_description)
+            return set_response_headers(jsonify(status.generate()))
+
+        except (ClassNotFound, InstanceNotFound) as e:
+            error = e.get_HTTP()
+            return error_response(error)
+
+    abort(405)
