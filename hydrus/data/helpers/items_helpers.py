@@ -158,7 +158,7 @@ def items_delete_response(path: str, int_list="") -> Response:
     abort(405)
 
 
-def items_delete_members_response(path: str, collection_id_:str, int_list="") -> Response:
+def items_delete_members_response(path: str, collection_id_: str, int_list="") -> Response:
     """
     Handles DELETE operation to insert multiple items.
 
@@ -179,12 +179,14 @@ def items_delete_members_response(path: str, collection_id_:str, int_list="") ->
         class_type = item_class.name
         # Get path of the collection-class
         class_path = item_class.path
-    
     if checkClassOp(class_path, "DELETE"):
         # Check if class_type supports PUT operation
         try:
             # Delete the Item with ID == id_
-            crud.delete_multiple_members(collection_id_, int_list, class_type, session=get_session())
+            crud.delete_multiple_members(collection_id_,
+                                         int_list,
+                                         class_type,
+                                         session=get_session())
             id_list = int_list.split(',')
             status_description = f"Objects with ID {id_list} successfully deleted"
             status = HydraStatus(code=200,

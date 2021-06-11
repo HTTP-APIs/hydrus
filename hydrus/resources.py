@@ -46,7 +46,11 @@ from hydrus.data.helpers.item_collection_helpers import (
     item_collection_get_response,
     item_collection_put_response,
 )
-from hydrus.data.helpers.items_helpers import items_put_response, items_delete_response
+from hydrus.data.helpers.items_helpers import (
+    items_put_response,
+    items_delete_response,
+    items_delete_members_response,
+)
 
 
 class Index(Resource):

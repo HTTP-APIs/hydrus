@@ -407,7 +407,7 @@ def delete_member(
 
     Raises:
         ClassNotFound: If `type_` does not represent a valid/defined RDFClass.
-        InstanceNotFound: If no instace of type `type_` with id `id_` exists.
+        MemberInstanceNotFound: If no instace of type `type_` with id `id_` exists.
 
     """
     query_info = {
@@ -418,9 +418,37 @@ def delete_member(
     delete_collection_member(query_info, session)
 
 
+<<<<<<< HEAD
 def insert_modification_record(
     method: str, resource_url: str, session: scoped_session
 ) -> int:
+=======
+def delete_multiple_members(
+        collection_id_: str,
+        id_: List[str],
+        type_: str,
+        session: scoped_session) -> None:
+    """
+    To delete multiple members in a single request
+    :param collection_id_: ID of the collection
+    :param id_: list of ids of members to be deleted
+    :param type_: type of object to be deleted
+    :param session: sqlalchemy scoped session
+
+    Raises:
+        ClassNotFound: If `type_` does not represent a valid/defined RDFClass.
+        MemberInstanceNotFound: If any instance with type 'type_' and any id in 'id_' list
+            does not exist.
+
+    """
+    id_list = id_.split(',')
+    for member_id_ in id_list:
+        delete_member(collection_id_, member_id_, type_, session)
+
+
+def insert_modification_record(method: str, resource_url: str,
+                               session: scoped_session) -> int:
+>>>>>>> added crud/delete_multiple_members
     """
     Insert a modification record into the database.
     :param method: HTTP method type of related operation.
