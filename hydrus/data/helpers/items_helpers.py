@@ -164,12 +164,13 @@ def items_delete_members_response(path: str, collection_id_:str, int_list="") ->
 
     :param path: Path for Item Collection
     :type path: str
+    :param collection_id_: ID of the collection
+    :type collection_id_: str
     :param int_list: Optional String containing ',' separated ID's
     :type int_list: List
     :return: Appropriate response for the DELETE operation on multiple items.
     :rtype: Response
     """
-    collection_id_ = str(collection_id_)
     collections, parsed_classes = get_collections_and_parsed_classes()
     if path in parsed_classes:
             abort(405)

@@ -294,11 +294,13 @@ class ItemMembers(Resource):
     @authenticate
     def delete(self, path, collection_id_, int_list):
         """
-        To delete multiple objects
+        To delete multiple members from a Collection
         :param path: endpoints
+        :param collection_id_: ID of the collection
         :param int_list: Optional String containing ',' separated ID's
         :return:
         """
+        collection_id_ = str(collection_id_)
         return items_delete_members_response(path, collection_id_, int_list)
 
 
