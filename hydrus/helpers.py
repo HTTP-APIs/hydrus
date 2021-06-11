@@ -10,7 +10,7 @@ from hydrus.utils import get_doc, get_api_name, get_hydrus_server_url, get_sessi
 from hydrus.utils import get_collections_and_parsed_classes
 from hydra_python_core.doc_writer import HydraIriTemplate, IriTemplateMapping, HydraLink
 from hydra_python_core.doc_writer import HydraError, DocUrl
-from hydrus.socketio_factory import socketio
+from hydrus.extensions.socketio_factory import socketio
 from hydrus.conf import get_host_domain
 
 

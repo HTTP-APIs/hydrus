@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 
 from hydrus.app_factory import app_factory
-from hydrus.socketio_factory import create_socket
+from hydrus.extensions.socketio_factory import create_socket
 from hydrus.utils import (
     set_session,
     set_doc,

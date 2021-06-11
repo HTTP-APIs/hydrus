@@ -27,7 +27,7 @@ from hydrus.utils import (
     get_api_name,
     get_hydrus_server_url,
     get_collections_and_parsed_classes)
-from hydrus.socketio_factory import socketio
+from hydrus.extensions.socketio_factory import socketio
 
 
 def items_get_check_support(id_, class_type, class_path, path, is_collection=False):
