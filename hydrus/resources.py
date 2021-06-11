@@ -290,6 +290,18 @@ class Items(Resource):
         return items_delete_response(path, int_list)
 
 
+class ItemMembers(Resource):
+    @authenticate
+    def delete(self, path, collection_id_, int_list):
+        """
+        To delete multiple objects
+        :param path: endpoints
+        :param int_list: Optional String containing ',' separated ID's
+        :return:
+        """
+        return items_delete_members_response(path, collection_id_, int_list)
+
+
 class Contexts(Resource):
     """Dynamically generated contexts."""
 
