@@ -27,7 +27,7 @@ from hydrus.utils import (
     get_hydrus_server_url,
     get_collections_and_parsed_classes
 )
-from hydrus.socketio_factory import socketio
+from hydrus.extensions.socketio_factory import socketio
 
 
 def items_put_response(path: str, int_list="") -> Response:

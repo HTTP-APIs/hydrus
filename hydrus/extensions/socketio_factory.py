@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_socketio import SocketIO
 from sqlalchemy.orm import scoped_session
-from hydrus.sync_namespace import SyncNamespace
+from hydrus.extensions.sync_namespace import SyncNamespace
 
 
 socketio = SocketIO()

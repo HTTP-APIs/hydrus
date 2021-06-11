@@ -15,7 +15,7 @@ from hydrus.data.db_models import Base, create_database_tables
 from hydrus.data.user import add_user
 from hydrus.helpers import get_path_from_type
 from hydrus.samples import doc_writer_sample, hydra_doc_sample
-from hydrus.socketio_factory import create_socket
+from hydrus.extensions.socketio_factory import create_socket
 from hydrus.utils import (get_api_name, get_session, set_api_name,
                           set_authentication, set_doc, set_page_size,
                           set_session, set_token)
