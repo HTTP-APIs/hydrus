@@ -9,7 +9,7 @@ from hydra_python_core.doc_writer import HydraLink, DocUrl
 
 import hydrus.data.crud as crud
 from hydrus.data.exceptions import PropertyNotGiven
-from hydrus.tests.conftest import gen_dummy_object
+from tests.conftest import gen_dummy_object
 
 
 def test_crud_insert_response_is_str(drone_doc_parsed_classes, drone_doc, session,

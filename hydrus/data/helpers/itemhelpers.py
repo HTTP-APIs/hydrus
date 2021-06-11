@@ -10,8 +10,9 @@ from hydrus.data.exceptions import (
     InstanceNotFound,
     InstanceExists,
     PropertyNotFound,
-    MemberInstanceNotFound)
-from hydrus.helpers import (
+    MemberInstanceNotFound,
+)
+from hydrus.data.helpers import (
     set_response_headers,
     finalize_response,
     hydrafy,
@@ -21,12 +22,9 @@ from hydrus.helpers import (
     error_response,
     validate_object,
     parse_collection_members,
+    get_collections_and_parsed_classes,
 )
-from hydrus.utils import (
-    get_session,
-    get_api_name,
-    get_hydrus_server_url,
-    get_collections_and_parsed_classes)
+from hydrus.utils import get_session, get_api_name, get_hydrus_server_url
 from hydrus.extensions.socketio_factory import socketio
 
 
@@ -40,11 +38,11 @@ def items_get_check_support(id_, class_type, class_path, path, is_collection=Fal
             api_name=get_api_name(),
             session=get_session(),
             path=path,
-            collection=is_collection)
+            collection=is_collection,
+        )
 
         response = finalize_response(class_path, response)
-        return set_response_headers(
-            jsonify(hydrafy(response, path=path)))
+        return set_response_headers(jsonify(hydrafy(response, path=path)))
 
     except (ClassNotFound, InstanceNotFound) as e:
         error = e.get_HTTP()
@@ -63,7 +61,7 @@ def items_post_check_support(id_, object_, class_path, path, is_collection):
         obj_type = collection.name
     link_props, link_type_check = get_link_props(class_path, object_)
     # Load new object and type
-    if (validate_object(object_, obj_type, class_path) and link_type_check):
+    if validate_object(object_, obj_type, class_path) and link_type_check:
         if is_collection:
             object_ = parse_collection_members(object_)
         try:
@@ -75,31 +73,33 @@ def items_post_check_support(id_, object_, class_path, path, is_collection):
                 type_=object_["@type"],
                 session=get_session(),
                 api_name=get_api_name(),
-                collection=is_collection)
+                collection=is_collection,
+            )
             method = "POST"
-            resource_url = f"{get_hydrus_server_url()}{get_api_name()}/{path}/{object_id}"
-            last_job_id = crud.get_last_modification_job_id(
-                session=get_session())
-            new_job_id = crud.insert_modification_record(method, resource_url,
-                                                         session=get_session())
-            send_sync_update(socketio=socketio, new_job_id=new_job_id,
-                             last_job_id=last_job_id, method=method,
-                             resource_url=resource_url)
+            resource_url = (
+                f"{get_hydrus_server_url()}{get_api_name()}/{path}/{object_id}"
+            )
+            last_job_id = crud.get_last_modification_job_id(session=get_session())
+            new_job_id = crud.insert_modification_record(
+                method, resource_url, session=get_session()
+            )
+            send_sync_update(
+                socketio=socketio,
+                new_job_id=new_job_id,
+                last_job_id=last_job_id,
+                method=method,
+                resource_url=resource_url,
+            )
             headers_ = [{"Location": resource_url}]
-            status_description = (f"Object with ID {object_id} successfully "
-                                  "updated")
+            status_description = f"Object with ID {object_id} successfully " "updated"
             status = HydraStatus(
-                code=200, title="Object updated", desc=status_description)
+                code=200, title="Object updated", desc=status_description
+            )
             status_response = status.generate()
             status_response["iri"] = resource_url
-            return set_response_headers(jsonify(status_response),
-                                        headers=headers_)
+            return set_response_headers(jsonify(status_response), headers=headers_)
 
-        except (ClassNotFound,
-                InstanceNotFound,
-                InstanceExists,
-                PropertyNotFound
-                ) as e:
+        except (ClassNotFound, InstanceNotFound, InstanceExists, PropertyNotFound) as e:
             error = e.get_HTTP()
             return error_response(error)
     else:
@@ -109,7 +109,7 @@ def items_post_check_support(id_, object_, class_path, path, is_collection):
 
 def items_put_check_support(id_, class_path, path, is_collection):
     """Check if class_type supports PUT operation"""
-    object_ = json.loads(request.data.decode('utf-8'))
+    object_ = json.loads(request.data.decode("utf-8"))
     collections, parsed_classes = get_collections_and_parsed_classes()
     if path in parsed_classes:
         class_path = path
@@ -120,23 +120,30 @@ def items_put_check_support(id_, class_path, path, is_collection):
         obj_type = collection.name
     link_props, link_type_check = get_link_props(class_path, object_)
     # Load new object and type
-    if (validate_object(object_, obj_type, class_path) and link_type_check):
+    if validate_object(object_, obj_type, class_path) and link_type_check:
         if is_collection:
             object_ = parse_collection_members(object_)
         try:
             # Add the object with given ID
-            object_id = crud.insert(object_=object_, id_=id_,
-                                    session=get_session(), collection=is_collection)
-            resource_url = f"{get_hydrus_server_url()}{get_api_name()}/{path}/{object_id}"
+            object_id = crud.insert(
+                object_=object_,
+                id_=id_,
+                session=get_session(),
+                collection=is_collection,
+            )
+            resource_url = (
+                f"{get_hydrus_server_url()}{get_api_name()}/{path}/{object_id}"
+            )
             headers_ = [{"Location": resource_url}]
             status_description = f"Object with ID {object_id} successfully added"
-            status = HydraStatus(code=201, title="Object successfully added.",
-                                 desc=status_description)
+            status = HydraStatus(
+                code=201, title="Object successfully added.", desc=status_description
+            )
             status_response = status.generate()
             status_response["iri"] = resource_url
             return set_response_headers(
-                jsonify(status_response), headers=headers_,
-                status_code=status.code)
+                jsonify(status_response), headers=headers_, status_code=status.code
+            )
         except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
             error = e.get_HTTP()
             return error_response(error)
@@ -155,14 +162,20 @@ def items_delete_check_support(id_, class_type, path, is_collection):
         method = "DELETE"
         resource_url = f"{get_hydrus_server_url()}{get_api_name()}/{path}/{id_}"
         last_job_id = crud.get_last_modification_job_id(session=get_session())
-        new_job_id = crud.insert_modification_record(method, resource_url,
-                                                     session=get_session())
-        send_sync_update(socketio=socketio, new_job_id=new_job_id,
-                         last_job_id=last_job_id, method=method,
-                         resource_url=resource_url)
+        new_job_id = crud.insert_modification_record(
+            method, resource_url, session=get_session()
+        )
+        send_sync_update(
+            socketio=socketio,
+            new_job_id=new_job_id,
+            last_job_id=last_job_id,
+            method=method,
+            resource_url=resource_url,
+        )
         status_description = f"Object with ID {id_} successfully deleted"
-        status = HydraStatus(code=200, title="Object successfully deleted.",
-                             desc=status_description)
+        status = HydraStatus(
+            code=200, title="Object successfully deleted.", desc=status_description
+        )
         return set_response_headers(jsonify(status.generate()))
 
     except (ClassNotFound, InstanceNotFound) as e:
@@ -180,11 +193,11 @@ def member_get_check_support(collection_id, member_id, class_type, class_path, p
             class_type,
             api_name=get_api_name(),
             session=get_session(),
-            path=path)
+            path=path,
+        )
 
         response = finalize_response(class_path, response)
-        return set_response_headers(
-            jsonify(hydrafy(response, path=path)))
+        return set_response_headers(jsonify(hydrafy(response, path=path)))
 
     except (ClassNotFound, MemberInstanceNotFound) as e:
         error = e.get_HTTP()
@@ -197,22 +210,23 @@ def member_delete_check_support(collection_id, member_id, class_type, path):
         # Delete the Item with IDs collection_id and member_id
         # collection_id is id of a collection
         # member_id is the id of member of a collection
-        crud.delete_member(
-            collection_id,
-            member_id,
-            class_type,
-            session=get_session()
-        )
+        crud.delete_member(collection_id, member_id, class_type, session=get_session())
 
         method = "DELETE"
-        resource_url = f"{get_hydrus_server_url()}{get_api_name()}/{path}/{collection_id}"
+        resource_url = (
+            f"{get_hydrus_server_url()}{get_api_name()}/{path}/{collection_id}"
+        )
         last_job_id = crud.get_last_modification_job_id(session=get_session())
-        new_job_id = crud.insert_modification_record(method, resource_url,
-                                                     session=get_session())
-        status_description = (f"Object with ID {member_id} successfully"
-                              f" deleted from Collection with ID {collection_id}")
-        status = HydraStatus(code=200, title="Object successfully deleted.",
-                             desc=status_description)
+        new_job_id = crud.insert_modification_record(
+            method, resource_url, session=get_session()
+        )
+        status_description = (
+            f"Object with ID {member_id} successfully"
+            f" deleted from Collection with ID {collection_id}"
+        )
+        status = HydraStatus(
+            code=200, title="Object successfully deleted.", desc=status_description
+        )
         return set_response_headers(jsonify(status.generate()))
 
     except (ClassNotFound, MemberInstanceNotFound) as e:

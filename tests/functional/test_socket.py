@@ -7,7 +7,7 @@ import json
 import pytest
 
 import hydrus.data.crud as crud
-from hydrus.tests.conftest import gen_dummy_object
+from tests.conftest import gen_dummy_object
 
 
 @pytest.mark.usefixtures('init_db_for_socket_tests')

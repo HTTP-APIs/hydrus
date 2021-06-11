@@ -30,15 +30,21 @@ class InstanceNotFound(Exception):
             description = f"Instance of type {self.type_} not found"
             return HydraError(code=404, title="Instance not found", desc=description)
         else:
-            description = f"Instance of type {self.type_} with ID {str(self.id_)} not found"
+            description = (
+                f"Instance of type {self.type_} with ID {str(self.id_)} not found"
+            )
             return HydraError(code=404, title="Instance not found", desc=description)
 
 
 class MemberInstanceNotFound(Exception):
     """Error when the Instance (Member in Collection) is not found."""
 
-    def __init__(self, type_: str, collection_id_: Union[str, None]=None,
-                 member_id_: Union[str, None]=None) -> None:
+    def __init__(
+        self,
+        type_: str,
+        collection_id_: Union[str, None]=None,
+        member_id_: Union[str, None]=None,
+    ) -> None:
         """Constructor."""
         self.type_ = type_
         self.collection_id = collection_id_
@@ -50,9 +56,11 @@ class MemberInstanceNotFound(Exception):
             description = f"Instance of type {self.type_} not found"
             return HydraError(code=404, title="Instance not found", desc=description)
         else:
-            description = (f"Instance of type {self.type_} with"
-                           f" Collection ID {str(self.collection_id)}"
-                           f" and member_id {str(self.member_id)} not found")
+            description = (
+                f"Instance of type {self.type_} with"
+                f" Collection ID {str(self.collection_id)}"
+                f" and member_id {str(self.member_id)} not found"
+            )
             return HydraError(code=404, title="Instance not found", desc=description)
 
 
@@ -81,10 +89,16 @@ class InstanceExists(Exception):
         """Return the HTTP response for the Exception."""
         if str(self.id_) is None:
             description = f"Instance of type {self.type_} already exists"
-            return HydraError(code=400, title="Instance already exists.", desc=description)
+            return HydraError(
+                code=400, title="Instance already exists.", desc=description
+            )
         else:
-            description = f"Instance of type {self.type_} with ID {str(self.id_)} already exists"
-            return HydraError(code=400, title="Instance already exists.", desc=description)
+            description = (
+                f"Instance of type {self.type_} with ID {str(self.id_)} already exists"
+            )
+            return HydraError(
+                code=400, title="Instance already exists.", desc=description
+            )
 
 
 class UserExists(Exception):

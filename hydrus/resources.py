@@ -16,8 +16,6 @@
     hydrus.utils.get_hydrus_server_url : Function the gets the server URL
     hydrus.utils.get_authentication : Function that checks whether API needs to be
     authenticated or not
-    hydrus.utils.get_collections_and_parsed_classes: Function that returns
-    all the collections and parsed classes in the API documentation
 """  # nopep8
 
 import json
@@ -26,31 +24,29 @@ from flask import Response, jsonify, request, abort
 from flask_restful import Resource
 
 from hydrus.auth import authenticate
-from hydrus.helpers import (
+from hydrus.data.helpers import (
     set_response_headers,
     checkClassOp,
     checkEndpoint,
     check_writeable_props,
     get_context,
-    get_fragments
+    get_fragments,
+    get_doc,
+    get_collections_and_parsed_classes,
 )
-from hydrus.utils import get_doc, get_collections_and_parsed_classes
-from hydrus.itemhelpers import (
+from hydrus.data.helpers.itemhelpers import (
     items_get_check_support,
     items_post_check_support,
     items_put_check_support,
     items_delete_check_support,
     member_get_check_support,
-    member_delete_check_support
+    member_delete_check_support,
 )
-from hydrus.item_collection_helpers import (
+from hydrus.data.helpers.item_collection_helpers import (
     item_collection_get_response,
-    item_collection_put_response
+    item_collection_put_response,
 )
-from hydrus.items_helpers import (
-    items_put_response,
-    items_delete_response
-)
+from hydrus.data.helpers.items_helpers import items_put_response, items_delete_response
 
 
 class Index(Resource):
@@ -67,7 +63,7 @@ class Vocab(Resource):
     def get(self) -> Response:
         """Return the main hydra vocab or a fragment of the main hydra vocab."""
         try:
-            resource = request.args.getlist('resource')[0]
+            resource = request.args.getlist("resource")[0]
             return set_response_headers(jsonify(get_fragments(resource)))
         except:
             return set_response_headers(jsonify(get_doc().generate()))
@@ -85,6 +81,7 @@ class Entrypoint(Resource):
 class Item(Resource):
     """Handles all operations(GET, POST, PATCH, DELETE) on Items
     (item can be anything depending upon the vocabulary)."""
+
     @authenticate
     def get(self, id_: str, path: str) -> Response:
         """
@@ -98,7 +95,7 @@ class Item(Resource):
         is_collection = False
         if path in parsed_classes:
             class_path = path
-            class_type = parsed_classes[path]['class'].title
+            class_type = parsed_classes[path]["class"].title
         if path in collections:
             item_class = collections[path]["collection"]
             class_type = item_class.name
@@ -106,7 +103,9 @@ class Item(Resource):
             class_path = item_class.path
             is_collection = True
         if checkClassOp(class_path, "GET"):
-            return items_get_check_support(id_, class_type, class_path, path, is_collection)
+            return items_get_check_support(
+                id_, class_type, class_path, path, is_collection
+            )
         abort(405)
 
     @authenticate
@@ -125,9 +124,13 @@ class Item(Resource):
             item_class = collections[path]["collection"]
             class_path = item_class.path
             is_collection = True
-        object_ = json.loads(request.data.decode('utf-8'))
-        if checkClassOp(class_path, "POST") and check_writeable_props(class_path, object_):
-            return items_post_check_support(id_, object_, class_path, path, is_collection)
+        object_ = json.loads(request.data.decode("utf-8"))
+        if checkClassOp(class_path, "POST") and check_writeable_props(
+            class_path, object_
+        ):
+            return items_post_check_support(
+                id_, object_, class_path, path, is_collection
+            )
         abort(405)
 
     @authenticate
@@ -162,7 +165,7 @@ class Item(Resource):
         is_collection = False
         if path in parsed_classes:
             class_path = path
-            class_type = parsed_classes[path]['class'].title
+            class_type = parsed_classes[path]["class"].title
         if path in collections:
             item_class = collections[path]["collection"]
             class_type = item_class.name
@@ -176,6 +179,7 @@ class Item(Resource):
 
 class ItemCollection(Resource):
     """Handle operation related to ItemCollection (a collection of items)."""
+
     @authenticate
     def get(self, path: str) -> Response:
         """
@@ -184,9 +188,9 @@ class ItemCollection(Resource):
         :return : collection of items
         """
         endpoint_ = checkEndpoint("GET", path)
-        if not endpoint_['method']:
+        if not endpoint_["method"]:
             # If endpoint and Get method not supported in the API
-            abort(endpoint_['status'])
+            abort(endpoint_["status"])
         return item_collection_get_response(path)
 
     @authenticate
@@ -197,15 +201,16 @@ class ItemCollection(Resource):
         :param path - Path for Item type ( Specified in APIDoc @id)
         """
         endpoint_ = checkEndpoint("PUT", path)
-        if not endpoint_['method']:
+        if not endpoint_["method"]:
             # If endpoint and PUT method is not supported in the API
-            abort(endpoint_['status'])
+            abort(endpoint_["status"])
         return item_collection_put_response(path)
 
 
 class ItemMember(Resource):
     """Handles operations(GET,DELETE) related to member of an Item(Collection).
     (Item should be hydra:Collection)"""
+
     @authenticate
     def get(self, id_: str, path: str, collection_id_: str) -> Response:
         """
@@ -227,7 +232,9 @@ class ItemMember(Resource):
             # Get path of the collection-class
             class_path = item_class.path
         if checkClassOp(class_path, "GET"):
-            return member_get_check_support(collection_id, member_id, class_type, class_path, path)
+            return member_get_check_support(
+                collection_id, member_id, class_type, class_path, path
+            )
         abort(405)
 
     @authenticate
@@ -248,13 +255,16 @@ class ItemMember(Resource):
             # Get path of the collection-class
             class_path = item_class.path
         if checkClassOp(class_path, "DELETE"):
-            return member_delete_check_support(collection_id, member_id, class_type, path)
+            return member_delete_check_support(
+                collection_id, member_id, class_type, path
+            )
         abort(405)
 
 
 class Items(Resource):
     """Handles operations(PUT,DELETE) related to multiple objects.
     (Item should be hydra:Class)"""
+
     @authenticate
     def put(self, path, int_list="") -> Response:
         """
@@ -264,9 +274,9 @@ class Items(Resource):
         :return:
         """
         endpoint_ = checkEndpoint("PUT", path)
-        if not endpoint_['method']:
+        if not endpoint_["method"]:
             # If endpoint and PUT method is not supported in the API
-            abort(endpoint_['status'])
+            abort(endpoint_["status"])
         return items_put_response(path, int_list)
 
     @authenticate

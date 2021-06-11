@@ -13,7 +13,6 @@ from hydrus.app_factory import app_factory
 from hydrus.data import crud, doc_parse
 from hydrus.data.db_models import Base, create_database_tables
 from hydrus.data.user import add_user
-from hydrus.helpers import get_path_from_type
 from hydrus.samples import doc_writer_sample, hydra_doc_sample
 from hydrus.extensions.socketio_factory import create_socket
 from hydrus.utils import (get_api_name, get_session, set_api_name,
@@ -66,6 +65,7 @@ def gen_dummy_object(class_title, doc):
                 member_id = crud.insert(object_=member,
                                         session=get_session(),
                                         collection=False)
+                from hydrus.data.helpers import get_path_from_type
                 member_class_path = get_path_from_type(member_class)
                 member_api_path = f'/{get_api_name()}/{member_class_path}/{member_id}'
                 members.append({
