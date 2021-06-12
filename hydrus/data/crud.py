@@ -418,11 +418,6 @@ def delete_member(
     delete_collection_member(query_info, session)
 
 
-<<<<<<< HEAD
-def insert_modification_record(
-    method: str, resource_url: str, session: scoped_session
-) -> int:
-=======
 def delete_multiple_members(
         collection_id_: str,
         id_: List[str],
@@ -446,9 +441,9 @@ def delete_multiple_members(
         delete_member(collection_id_, member_id_, type_, session)
 
 
-def insert_modification_record(method: str, resource_url: str,
-                               session: scoped_session) -> int:
->>>>>>> added crud/delete_multiple_members
+def insert_modification_record(
+    method: str, resource_url: str, session: scoped_session
+) -> int:
     """
     Insert a modification record into the database.
     :param method: HTTP method type of related operation.
