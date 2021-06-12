@@ -92,6 +92,20 @@ def gen_dummy_object(class_title, doc):
             return object_
 
 
+def get_ids_list(dummy_object):
+    """
+    Takes a dummy object for Collection and returns ids_list separated by ','.
+    :param dummy_object: dummy_object created for collection.
+    :return: A string of ids of members separated by ','.
+    """
+    id_list = []
+    for member in dummy_object["members"]:
+        id = member["@id"].split('/')[-1]
+        id_list.append(id)
+    ids = ','.join(id_list)
+    return ids
+
+
 @pytest.fixture(scope='module')
 def constants():
     """
