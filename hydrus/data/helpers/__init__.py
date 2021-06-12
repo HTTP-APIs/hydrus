@@ -1,3 +1,12 @@
+"""
+Pluggable utilities for data operations.
+=======================================
+This module is for generic data-related helpers. For server-related
+ utilities use `hydrus.utils`.
+
+Other specific data helpers are in other modules in the same package.
+"""
+
 from typing import Dict, Any, List, Optional, Union, Tuple
 
 from flask import Response, jsonify
@@ -6,8 +15,13 @@ import re
 
 from hydrus.data import crud
 
-from hydrus.utils import get_doc, get_api_name, get_hydrus_server_url, get_session
-from hydrus.utils import get_collections_and_parsed_classes
+from hydrus.utils import (
+    get_doc,
+    get_api_name,
+    set_response_headers,
+    get_session,
+    error_response,
+)
 from hydra_python_core.doc_writer import HydraIriTemplate, IriTemplateMapping, HydraLink
 from hydra_python_core.doc_writer import HydraError, DocUrl
 from hydrus.extensions.socketio_factory import socketio
@@ -65,29 +79,6 @@ def type_match(object_: List[Dict[str, Any]], obj_type: str) -> bool:
     return True
 
 
-def set_response_headers(resp: Response,
-                         ct: str = "application/ld+json",
-                         headers: List[Dict[str, Any]]=[],
-                         status_code: int = 200) -> Response:
-    """
-    Set the response headers.
-    :param resp: Response.
-    :param ct: Content-type default "application/ld+json".
-    :param headers: List of objects.
-    :param status_code: status code default 200.
-    :return: Response with headers.
-    """
-    resp.status_code = status_code
-    for header in headers:
-        resp.headers[list(header.keys())[0]] = header[list(header.keys())[0]]
-    resp.headers['Content-type'] = ct
-    link = "http://www.w3.org/ns/hydra/core#apiDocumentation"
-    vocab_route = get_doc().doc_name
-    link_header = f'<{get_hydrus_server_url()}{get_api_name()}/{vocab_route}>; rel="{link}"'
-    resp.headers['Link'] = link_header
-    return resp
-
-
 def hydrafy(object_: Dict[str, Any], path: Optional[str]) -> Dict[str, Any]:
     """
     Add hydra context to objects.
@@ -97,10 +88,12 @@ def hydrafy(object_: Dict[str, Any], path: Optional[str]) -> Dict[str, Any]:
     """
     if path == object_["@type"]:
         object_[
-            "@context"] = f"{get_host_domain()}/{get_api_name()}/contexts/{object_['@type']}.jsonld"
+            "@context"
+        ] = f"{get_host_domain()}/{get_api_name()}/contexts/{object_['@type']}.jsonld"
     else:
         object_[
-            "@context"] = f"{get_host_domain()}/{get_api_name()}/contexts/{path}.jsonld"
+            "@context"
+        ] = f"{get_host_domain()}/{get_api_name()}/contexts/{path}.jsonld"
     return object_
 
 
@@ -114,7 +107,7 @@ def checkEndpoint(method: str, path: str) -> Dict[str, Union[bool, int]]:
     status_val = 404
     vocab_route = get_doc().doc_name
     if path == vocab_route:
-        return {'method': False, 'status': 405}
+        return {"method": False, "status": 405}
     expanded_base_url = DocUrl.doc_url
     for endpoint in get_doc().entrypoint.entrypoint.supportedProperty:
         expanded_endpoint_id = endpoint.id_.replace("EntryPoint/", "")
@@ -124,8 +117,8 @@ def checkEndpoint(method: str, path: str) -> Dict[str, Union[bool, int]]:
             for operation in endpoint.supportedOperation:
                 if operation.method == method:
                     status_val = 200
-                    return {'method': True, 'status': status_val}
-    return {'method': False, 'status': status_val}
+                    return {"method": True, "status": status_val}
+    return {"method": False, "status": status_val}
 
 
 def getType(class_path: str, method: str) -> Any:
@@ -135,8 +128,7 @@ def getType(class_path: str, method: str) -> Any:
     :param method: Method name
     """
     expanded_base_url = DocUrl.doc_url
-    for supportedOp in get_doc(
-    ).parsed_classes[class_path]["class"].supportedOperation:
+    for supportedOp in get_doc().parsed_classes[class_path]["class"].supportedOperation:
         if supportedOp.method == method:
             class_type = supportedOp.expects.split(expanded_base_url)[1]
             return class_type
@@ -151,9 +143,13 @@ def checkClassOp(path: str, method: str) -> bool:
     """
     collections, parsed_classes = get_collections_and_parsed_classes()
     if path in collections:
-        supported_operations = get_doc().collections[path]["collection"].supportedOperation
+        supported_operations = (
+            get_doc().collections[path]["collection"].supportedOperation
+        )
     else:
-        supported_operations = get_doc().parsed_classes[path]["class"].supportedOperation
+        supported_operations = (
+            get_doc().parsed_classes[path]["class"].supportedOperation
+        )
     for supportedOp in supported_operations:
         if supportedOp.method == method:
             return True
@@ -171,7 +167,9 @@ def check_required_props(path: str, obj: Dict[str, Any]) -> bool:
     collections, parsed_classes = get_collections_and_parsed_classes()
     if path in collections:
         # path is of a collection class
-        supported_properties = get_doc().collections[path]["collection"].supportedProperty
+        supported_properties = (
+            get_doc().collections[path]["collection"].supportedProperty
+        )
     else:
         # path is of a non-collection class
         supported_properties = get_doc().parsed_classes[path]["class"].supportedProperty
@@ -193,7 +191,9 @@ def check_writeable_props(path: str, obj: Dict[str, Any]) -> bool:
     collections, parsed_classes = get_collections_and_parsed_classes()
     if path in collections:
         # path is of a collection class
-        supported_properties = get_doc().collections[path]["collection"].supportedProperty
+        supported_properties = (
+            get_doc().collections[path]["collection"].supportedProperty
+        )
     else:
         # path is of a non-collection class
         supported_properties = get_doc().parsed_classes[path]["class"].supportedProperty
@@ -249,7 +249,7 @@ def finalize_response(path: str, obj: Dict[str, Any]) -> Dict[str, Any]:
                 "@id": f"{get_host_domain()}/{get_api_name()}/{member_path}/{member_id}",
             }
             members.append(member)
-        obj['members'] = members
+        obj["members"] = members
         return obj
     else:
         # path is of a non-collection class
@@ -272,10 +272,11 @@ def finalize_response(path: str, obj: Dict[str, Any]) -> Dict[str, Any]:
                     obj[prop.title] = f"/{get_api_name()}/{nested_path}"
             elif expanded_base_url in prop.prop:
                 prop_class = prop.prop.split(expanded_base_url)[1]
-                prop_class_path = parsed_classes[prop_class]['class'].path
+                prop_class_path = parsed_classes[prop_class]["class"].path
                 id = obj[prop.title]
-                class_resp = crud.get(id, prop_class, get_api_name(), get_session(),
-                                      path=prop_class_path)
+                class_resp = crud.get(
+                    id, prop_class, get_api_name(), get_session(), path=prop_class_path
+                )
                 obj[prop.title] = finalize_response(prop_class_path, class_resp)
         return obj
 
@@ -289,17 +290,25 @@ def add_iri_template(path: str, API_NAME: str, collection_path: str) -> Dict[str
     """
     template_mappings = list()
     template = f"/{API_NAME}/{collection_path}{{?"
-    template, template_mappings = generate_iri_mappings(path, template,
-                                                        template_mapping=template_mappings,)
+    template, template_mappings = generate_iri_mappings(
+        path,
+        template,
+        template_mapping=template_mappings,
+    )
 
-    template, template_mappings = add_pagination_iri_mappings(template=template,
-                                                              template_mapping=template_mappings)
+    template, template_mappings = add_pagination_iri_mappings(
+        template=template, template_mapping=template_mappings
+    )
     return HydraIriTemplate(template=template, iri_mapping=template_mappings).generate()
 
 
-def generate_iri_mappings(path: str, template: str, skip_nested: bool = False,
-                          template_mapping: List[IriTemplateMapping] = [],
-                          parent_prop_name: str = None) -> Tuple[str, List[IriTemplateMapping]]:
+def generate_iri_mappings(
+    path: str,
+    template: str,
+    skip_nested: bool = False,
+    template_mapping: List[IriTemplateMapping] = [],
+    parent_prop_name: str = None,
+) -> Tuple[str, List[IriTemplateMapping]]:
     """
     Generate iri mappings to add to IriTemplate
     :param path: Path of the collection or non-collection class.
@@ -313,8 +322,7 @@ def generate_iri_mappings(path: str, template: str, skip_nested: bool = False,
              to keep adding delimiter or not.
     """
     expanded_base_url = DocUrl.doc_url
-    for supportedProp in get_doc(
-    ).parsed_classes[path]["class"].supportedProperty:
+    for supportedProp in get_doc().parsed_classes[path]["class"].supportedProperty:
         prop_class = supportedProp.prop
         nested_class_prop = False
         if isinstance(supportedProp.prop, HydraLink):
@@ -325,10 +333,13 @@ def generate_iri_mappings(path: str, template: str, skip_nested: bool = False,
             prop_class = supportedProp.prop.split(expanded_base_url)[1]
             nested_class_prop = True
         if nested_class_prop and skip_nested is False:
-            template, template_mapping = generate_iri_mappings(prop_class, template,
-                                                               skip_nested=True,
-                                                               parent_prop_name=supportedProp.title,
-                                                               template_mapping=template_mapping)
+            template, template_mapping = generate_iri_mappings(
+                prop_class,
+                template,
+                skip_nested=True,
+                parent_prop_name=supportedProp.title,
+                template_mapping=template_mapping,
+            )
             continue
         if skip_nested is True:
             var = f"{parent_prop_name}[{supportedProp.title}]"
@@ -341,9 +352,9 @@ def generate_iri_mappings(path: str, template: str, skip_nested: bool = False,
     return template, template_mapping
 
 
-def add_pagination_iri_mappings(template: str,
-                                template_mapping: List[IriTemplateMapping]
-                                ) -> Tuple[str, List[IriTemplateMapping]]:
+def add_pagination_iri_mappings(
+    template: str, template_mapping: List[IriTemplateMapping]
+) -> Tuple[str, List[IriTemplateMapping]]:
     """
     Add various pagination related to variable to the IRI template and also adds mappings for them.
     :param template: IriTemplate string.
@@ -357,13 +368,16 @@ def add_pagination_iri_mappings(template: str,
             template += f"{paginate_variables[i]}}}"
         else:
             template += f"{paginate_variables[i]}, "
-        mapping = IriTemplateMapping(variable=paginate_variables[i], prop=paginate_variables[i])
+        mapping = IriTemplateMapping(
+            variable=paginate_variables[i], prop=paginate_variables[i]
+        )
         template_mapping.append(mapping)
     return template, template_mapping
 
 
-def send_sync_update(socketio, new_job_id: int, last_job_id: str,
-                     method: str, resource_url: str):
+def send_sync_update(
+    socketio, new_job_id: int, last_job_id: str, method: str, resource_url: str
+):
     """
     Sends synchronization update to all connected clients.
     :param socketio: socketio connection.
@@ -376,9 +390,9 @@ def send_sync_update(socketio, new_job_id: int, last_job_id: str,
         "job_id": new_job_id,
         "last_job_id": last_job_id,
         "method": method,
-        "resource_url": resource_url
+        "resource_url": resource_url,
     }
-    socketio.emit('update', data, namespace="/sync")
+    socketio.emit("update", data, namespace="/sync")
 
 
 def get_link_props(path: str, object_) -> Tuple[Dict[str, Any], bool]:
@@ -395,7 +409,9 @@ def get_link_props(path: str, object_) -> Tuple[Dict[str, Any], bool]:
     expanded_base_url = DocUrl.doc_url
     if path in collections:
         # path is of a collection class
-        supported_properties = get_doc().collections[path]["collection"].supportedProperty
+        supported_properties = (
+            get_doc().collections[path]["collection"].supportedProperty
+        )
     else:
         # path is of a non-collection class
         supported_properties = get_doc().parsed_classes[path]["class"].supportedProperty
@@ -405,15 +421,23 @@ def get_link_props(path: str, object_) -> Tuple[Dict[str, Any], bool]:
             range_class_name = prop_range.split(expanded_base_url)[1]
             for collection_path in get_doc().collections:
                 if collection_path in object_[supportedProp.title]:
-                    class_title = get_doc().collections[collection_path]['collection'].class_.title
+                    class_title = (
+                        get_doc()
+                        .collections[collection_path]["collection"]
+                        .class_.title
+                    )
                     if range_class_name != class_title:
                         return {}, False
-                    link_props[supportedProp.title] = object_[supportedProp.title].split('/')[-1]
+                    link_props[supportedProp.title] = object_[
+                        supportedProp.title
+                    ].split("/")[-1]
                     break
             if supportedProp.title not in link_props:
                 for class_path in get_doc().parsed_classes:
                     if class_path in object_[supportedProp.title]:
-                        class_title = get_doc().parsed_classes[class_path]['class'].title
+                        class_title = (
+                            get_doc().parsed_classes[class_path]["class"].title
+                        )
                         if range_class_name != class_title:
                             return {}, False
                         link_props[supportedProp.title] = class_title
@@ -421,9 +445,9 @@ def get_link_props(path: str, object_) -> Tuple[Dict[str, Any], bool]:
     return link_props, True
 
 
-def get_link_props_for_multiple_objects(path: str,
-                                        object_list: List[Dict[str, Any]]
-                                        ) -> Tuple[List[Dict[str, Any]], bool]:
+def get_link_props_for_multiple_objects(
+    path: str, object_list: List[Dict[str, Any]]
+) -> Tuple[List[Dict[str, Any]], bool]:
     """
     Get link_props of multiple objects.
     :param path: Path of the collection or non-collection class.
@@ -440,8 +464,7 @@ def get_link_props_for_multiple_objects(path: str,
     return link_prop_list, True
 
 
-def validate_object(object_: Dict[str, Any],
-                    obj_type: str, class_path: str) -> bool:
+def validate_object(object_: Dict[str, Any], obj_type: str, class_path: str) -> bool:
     """
     Check if the object dict passed in POST can be inserted/updated
     in database.
@@ -451,9 +474,11 @@ def validate_object(object_: Dict[str, Any],
     :param class_path: Path of the class
     :return: True if the object is completely valid
     """
-    return (validObject(object_) and
-            object_["@type"] == obj_type and
-            check_required_props(class_path, object_))
+    return (
+        validObject(object_) and
+        object_["@type"] == obj_type and
+        check_required_props(class_path, object_)
+    )
 
 
 def get_context(category: str) -> Response:
@@ -473,46 +498,20 @@ def get_context(category: str) -> Response:
         return set_response_headers(jsonify(response))
     # Check for non collection class
     elif category in parsed_classes:
-        response = {"@context": get_doc().parsed_classes[category]["context"].generate()}
+        response = {
+            "@context": get_doc().parsed_classes[category]["context"].generate()
+        }
         return set_response_headers(jsonify(response))
     else:
         error = HydraError(code=404, title="NOT FOUND", desc="Context not found")
         return error_response(error)
 
 
-def error_response(error: HydraError) -> Response:
-    """
-    Generate the response if there is an error while performing any operation
-
-    :param error: HydraError object which will help in generating response
-    :type error: HydraError
-    :return: Error response with appropriate status code
-    :rtype: Response
-    """
-    return set_response_headers(jsonify(error.generate()),
-                                status_code=error.code)
-
-
-def send_update(method: str, path: str):
-    """Handler for sending synchronization update to all connected clients.
-
-    :param method: Method type of the operation.
-    :type method: str
-    :param path: Path to the Item collection to which update is made.
-    :type path: str
-    """
-    resource_url = f"{get_hydrus_server_url()}{get_api_name()}/{path}"
-    session = get_session()
-    last_job_id = crud.get_last_modification_job_id(session)
-    new_job_id = crud.insert_modification_record(method, resource_url, session)
-    send_sync_update(socketio, new_job_id, last_job_id, method, resource_url)
-
-
 def get_path_from_type(type_: str) -> str:
     _, parsed_classes = get_collections_and_parsed_classes()
     expanded_base_url = DocUrl.doc_url
     for class_name in parsed_classes:
-        class_ = parsed_classes[class_name]['class']
+        class_ = parsed_classes[class_name]["class"]
         if type_ == class_.id_.split(expanded_base_url)[1]:
             return class_.path
 
@@ -527,23 +526,25 @@ def parse_collection_members(object_: dict) -> dict:
     :rtype: dict
     """
     members = list()
-    for member in object_['members']:
+    for member in object_["members"]:
         # example member
         # {
         #     "@id": "/serverapi/LogEntry/aab38f9d-516a-4bb2-ae16-068c0c5345bd",
         #     "@type": "LogEntry"
         # }
-        member_id = member['@id'].split('/')[-1]
-        member_type = member['@type']
+        member_id = member["@id"].split("/")[-1]
+        member_type = member["@type"]
         if crud.item_exists(member_type, member_id, get_session()):
-            members.append({
-                "id_": member_id,
-                "@type": member_type,
-            })
+            members.append(
+                {
+                    "id_": member_id,
+                    "@type": member_type,
+                }
+            )
         else:
             error = HydraError(code=400, title="Data is not valid")
             return error_response(error)
-    object_['members'] = members
+    object_["members"] = members
     return object_
 
 
@@ -557,10 +558,10 @@ def get_fragments(resource: str) -> dict:
     """
     resource_dict = dict()
     gen_doc = get_doc().generate()
-    if 'EntryPoint/' in resource:
-        match_string = r'\b(EntryPoint)\b'
-        for class_ in gen_doc['supportedClass']:
-            if re.search(match_string, class_['@id']):
+    if "EntryPoint/" in resource:
+        match_string = r"\b(EntryPoint)\b"
+        for class_ in gen_doc["supportedClass"]:
+            if re.search(match_string, class_["@id"]):
                 res = class_
                 break
         for properties in res["supportedProperty"]:
@@ -569,11 +570,24 @@ def get_fragments(resource: str) -> dict:
                 break
         resource_dict[resource[11:]] = res
     else:
-        resource_dict['@context'] = gen_doc['@context']
-        for class_ in gen_doc['supportedClass']:
-            match_string = r'\b({0})\b'.format(resource)
-            if re.search(match_string, class_['@id']):
+        resource_dict["@context"] = gen_doc["@context"]
+        for class_ in gen_doc["supportedClass"]:
+            match_string = r"\b({0})\b".format(resource)
+            if re.search(match_string, class_["@id"]):
                 res = class_
                 break
         resource_dict["supportedClass"] = [res]
     return resource_dict
+
+
+def get_collections_and_parsed_classes():
+    """
+    Get all the collections and parsed classes from
+    the API doc.
+    :return collections, parsed_classes
+            <tuple>
+    """
+    api_doc = get_doc()
+    parsed_classes = api_doc.parsed_classes
+    collections = api_doc.collections
+    return (collections, parsed_classes)

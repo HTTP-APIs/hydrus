@@ -10,7 +10,7 @@ import uuid
 import pytest
 from hydra_python_core.doc_writer import HydraLink, DocUrl
 
-from hydrus.tests.conftest import gen_dummy_object
+from tests.conftest import gen_dummy_object
 from hydrus.utils import get_doc
 
 

@@ -28,6 +28,7 @@ def get_all_properties(classes: List[Dict[str, Any]]) -> Set[str]:
                 # properties.append(prop)
     return set(prop_names)
 
+
 # if __name__ == "__main__":
 #     Session = sessionmaker(bind=engine)
 #     session = Session()

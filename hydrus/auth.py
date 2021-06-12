@@ -3,12 +3,15 @@ from functools import wraps
 
 from flask import jsonify, Response, request
 from hydra_python_core.doc_writer import HydraError
-from hydrus.utils import get_session, get_token, get_authentication
+from hydrus.utils import (
+    get_session,
+    get_token,
+    get_authentication,
+    set_response_headers,
+    error_response,
+)
 
-from hydrus.data.user import (create_nonce, check_authorization,
-                              add_token, check_token)
-
-from hydrus.helpers import set_response_headers, error_response
+from hydrus.data.user import create_nonce, check_authorization, add_token, check_token
 
 
 def token_response(token: str) -> Response:
@@ -16,8 +19,9 @@ def token_response(token: str) -> Response:
     Return succesful token generation object
     """
     message = {200: "User token generated"}
-    response = set_response_headers(jsonify(message), status_code=200,
-                                    headers=[{'X-Authorization': token}])
+    response = set_response_headers(
+        jsonify(message), status_code=200, headers=[{"X-Authorization": token}]
+    )
     return response
 
 
@@ -32,9 +36,11 @@ def failed_authentication(incorrect: bool) -> Response:
         message = {401: "Incorrect credentials"}
         realm = 'Basic realm="Incorrect credentials"'
     nonce = create_nonce(get_session())
-    response = set_response_headers(jsonify(message), status_code=401,
-                                    headers=[{'WWW-Authenticate': realm},
-                                             {'X-Authentication': nonce}])
+    response = set_response_headers(
+        jsonify(message),
+        status_code=401,
+        headers=[{"WWW-Authenticate": realm}, {"X-Authentication": nonce}],
+    )
     return response
 
 
@@ -81,10 +87,12 @@ def authenticate(f):
     Returns the authentication response if required, else
     continues with the request.
     """
+
     @wraps(f)
     def wrapper(*args, **kwargs):
         auth_response = check_authentication_response()
         if isinstance(auth_response, Response):
             return auth_response
         return f(*args, **kwargs)
+
     return wrapper

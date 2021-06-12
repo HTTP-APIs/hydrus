@@ -35,9 +35,9 @@ def parse_search_params(search_params: Dict[str, Any]) -> Dict[str, Any]:
         # For one level deep nested parameters
         if "[" in param and "]" in param:
             value = search_params[param]
-            split_param_list = param.split('[')
+            split_param_list = param.split("[")
             prop_name = split_param_list[0]
-            nested_prop_name = split_param_list[1].split(']')[0]
+            nested_prop_name = split_param_list[1].split("]")[0]
             if prop_name not in search_params:
                 search_params[prop_name] = {}
             search_params[prop_name][nested_prop_name] = value
@@ -49,8 +49,14 @@ def parse_search_params(search_params: Dict[str, Any]) -> Dict[str, Any]:
     return search_params
 
 
-def calculate_page_limit_and_offset(paginate: bool, page_size: int, page: int, result_length: int,
-                                    offset: int, limit: int) -> Tuple[int, int]:
+def calculate_page_limit_and_offset(
+    paginate: bool,
+    page_size: int,
+    page: int,
+    result_length: int,
+    offset: int,
+    limit: int,
+) -> Tuple[int, int]:
     """Calculate page limit and offset for pagination.
     :param paginate: Showing whether pagination is enable/disable.
     :param page_size: Number maximum elements showed in a page.
@@ -73,8 +79,9 @@ def calculate_page_limit_and_offset(paginate: bool, page_size: int, page: int, r
     return limit, offset
 
 
-def pre_process_pagination_parameters(search_params: Dict[str, Any], paginate: bool,
-                                      page_size: int, result_length: int) -> Tuple[int, int, int]:
+def pre_process_pagination_parameters(
+    search_params: Dict[str, Any], paginate: bool, page_size: int, result_length: int
+) -> Tuple[int, int, int]:
     """Pre-process pagination related query parameters passed by client.
     :param search_params: Dict of all search parameters.
     :param paginate: Indicates if pagination is enabled/disabled.
@@ -89,10 +96,11 @@ def pre_process_pagination_parameters(search_params: Dict[str, Any], paginate: b
         if incompatible_parameters[i] not in search_params:
             continue
         if i != incompatible_parameters_len - 1:
-            for j in range(i+1, incompatible_parameters_len):
+            for j in range(i + 1, incompatible_parameters_len):
                 if incompatible_parameters[j] in search_params:
-                    raise IncompatibleParameters([incompatible_parameters[i],
-                                                  incompatible_parameters[j]])
+                    raise IncompatibleParameters(
+                        [incompatible_parameters[i], incompatible_parameters[j]]
+                    )
     try:
         # Extract page number from query arguments
         if "pageIndex" in search_params:
@@ -100,7 +108,7 @@ def pre_process_pagination_parameters(search_params: Dict[str, Any], paginate: b
             offset = None
         elif "offset" in search_params:
             offset = int(search_params.get("offset"))
-            page = offset//page_size + 1
+            page = offset // page_size + 1
             if offset > result_length:
                 raise OffsetOutOfRange(str(offset))
         else:
@@ -112,16 +120,27 @@ def pre_process_pagination_parameters(search_params: Dict[str, Any], paginate: b
             limit = None
     except ValueError:
         raise PageNotFound(page)
-    page_limit, offset = calculate_page_limit_and_offset(paginate=paginate, page_size=page_size,
-                                                         page=page, result_length=result_length,
-                                                         offset=offset, limit=limit)
+    page_limit, offset = calculate_page_limit_and_offset(
+        paginate=paginate,
+        page_size=page_size,
+        page=page,
+        result_length=result_length,
+        offset=offset,
+        limit=limit,
+    )
     return page, page_limit, offset
 
 
-def attach_hydra_view(collection_template: Dict[str, Any], paginate_param: str,
-                      result_length: int, page_size: int,
-                      iri: str, offset: int = None,
-                      page: int = None, last: int = None) -> None:
+def attach_hydra_view(
+    collection_template: Dict[str, Any],
+    paginate_param: str,
+    result_length: int,
+    page_size: int,
+    iri: str,
+    offset: int = None,
+    page: int = None,
+    last: int = None,
+) -> None:
     """Attaches hydra:view to the collection template.
     :param collection_template: the collection template.
     :param paginate_param: type of paginate parameter used.
@@ -138,24 +157,28 @@ def attach_hydra_view(collection_template: Dict[str, Any], paginate_param: str,
             "@id": f"{get_host_domain()}{iri}{paginate_param}={offset}",
             "@type": "hydra:PartialCollectionView",
             "hydra:first": f"{get_host_domain()}{iri}{paginate_param}=0",
-            "hydra:last": f"{get_host_domain()}{iri}{paginate_param}={result_length - page_size}"
+            "hydra:last": f"{get_host_domain()}{iri}{paginate_param}={result_length - page_size}",
         }
         if offset > page_size:
-            collection_template["hydra:view"]["hydra:previous"] = (
-                f"{iri}{paginate_param}={offset - page_size}")
-        if offset < result_length-page_size:
-            collection_template["hydra:view"]["hydra:next"] = (
-                f"{iri}{paginate_param}={offset + page_size}")
+            collection_template["hydra:view"][
+                "hydra:previous"
+            ] = f"{iri}{paginate_param}={offset - page_size}"
+        if offset < result_length - page_size:
+            collection_template["hydra:view"][
+                "hydra:next"
+            ] = f"{iri}{paginate_param}={offset + page_size}"
     else:
         collection_template["hydra:view"] = {
             "@id": f"{get_host_domain()}{iri}{paginate_param}={page}",
             "@type": "hydra:PartialCollectionView",
             "hydra:first": f"{get_host_domain()}{iri}{paginate_param}=1",
-            "hydra:last": f"{get_host_domain()}{iri}{paginate_param}={last}"
+            "hydra:last": f"{get_host_domain()}{iri}{paginate_param}={last}",
         }
         if page != 1:
-            collection_template["hydra:view"]["hydra:previous"] = (
-                f"{iri}{paginate_param}={page-1}")
+            collection_template["hydra:view"][
+                "hydra:previous"
+            ] = f"{iri}{paginate_param}={page-1}"
         if page != last:
-            collection_template["hydra:view"]["hydra:next"] = (
-               f"{iri}{paginate_param}={page + 1}")
+            collection_template["hydra:view"][
+                "hydra:next"
+            ] = f"{iri}{paginate_param}={page + 1}"

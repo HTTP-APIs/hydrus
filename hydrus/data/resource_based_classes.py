@@ -12,7 +12,7 @@ from hydrus.data.exceptions import (
     InvalidSearchParameter,
     PropertyNotFound,
     PropertyNotGiven,
-    MemberInstanceNotFound
+    MemberInstanceNotFound,
 )
 from sqlalchemy import exists
 from sqlalchemy.exc import InvalidRequestError, IntegrityError
@@ -46,8 +46,9 @@ def get_database_class(type_: str):
     return database_class
 
 
-def insert_object(object_: Dict[str, Any], session: scoped_session,
-                  collection: bool = False) -> str:
+def insert_object(
+    object_: Dict[str, Any], session: scoped_session, collection: bool = False
+) -> str:
     """
     Insert the object in the database
     :param object_: Dict containing object properties
@@ -59,14 +60,15 @@ def insert_object(object_: Dict[str, Any], session: scoped_session,
     id_ = object_.get("id", None)
     if collection:
         # if type_ is of a collection class
-        members = object_['members']
+        members = object_["members"]
         collection_id = id_ if id_ else str(uuid.uuid4())
         for member in members:
             # add all the members of that collection
-            inserted_object = database_class(members=member['id_'],
-                                             collection_id=collection_id,
-                                             member_type=member['@type'],
-                                             )
+            inserted_object = database_class(
+                members=member["id_"],
+                collection_id=collection_id,
+                member_type=member["@type"],
+            )
             try:
                 session.add(inserted_object)
                 session.commit()
@@ -74,8 +76,8 @@ def insert_object(object_: Dict[str, Any], session: scoped_session,
                 session.rollback()
             except IntegrityError:
                 session.rollback()
-                member_type_ = member['@type']
-                member_id_ = member['id_']
+                member_type_ = member["@type"]
+                member_id_ = member["id_"]
                 raise InstanceExists(member_type_, member_id_)
         return collection_id
     else:
@@ -145,9 +147,7 @@ def get_object(
     else:
         try:
             object_ = (
-                session.query(database_class)
-                .filter(database_class.id == id_)
-                .one()
+                session.query(database_class).filter(database_class.id == id_).one()
             ).__dict__
         except NoResultFound:
             raise InstanceNotFound(type_=type_, id_=id_)
@@ -159,8 +159,9 @@ def get_object(
         return object_template
 
 
-def delete_object(query_info: Dict[str, str], session: scoped_session,
-                  collection: bool = False) -> None:
+def delete_object(
+    query_info: Dict[str, str], session: scoped_session, collection: bool = False
+) -> None:
     """
     Delete the object from the database
     :param query_info: Dict containing the id and @type of object that has to retrieved
@@ -172,7 +173,9 @@ def delete_object(query_info: Dict[str, str], session: scoped_session,
     database_class = get_database_class(type_)
     if collection:
         try:
-            objects = session.query(database_class).filter_by(collection_id=id_).delete()
+            objects = (
+                session.query(database_class).filter_by(collection_id=id_).delete()
+            )
         except NoResultFound:
             raise InstanceNotFound(type_=type_, id_=id_)
         try:
@@ -183,9 +186,7 @@ def delete_object(query_info: Dict[str, str], session: scoped_session,
     else:
         try:
             object_ = (
-                session.query(database_class)
-                .filter(database_class.id == id_)
-                .one()
+                session.query(database_class).filter(database_class.id == id_).one()
             )
         except NoResultFound:
             raise InstanceNotFound(type_=type_, id_=id_)
@@ -200,7 +201,7 @@ def update_object(
     object_: Dict[str, Any],
     query_info: Dict[str, str],
     session: scoped_session,
-    collection: bool = False
+    collection: bool = False,
 ) -> str:
     """
     Update the object from the database
@@ -226,7 +227,9 @@ def update_object(
     return id_
 
 
-def get_collection_member(query_info: Dict[str, str], session: scoped_session) -> Dict[str, str]:
+def get_collection_member(
+    query_info: Dict[str, str], session: scoped_session
+) -> Dict[str, str]:
     """
     Get member from a collection
     :param query_info: Dict containing the ids and @type of object that has to retrieved
@@ -239,19 +242,25 @@ def get_collection_member(query_info: Dict[str, str], session: scoped_session) -
     database_class = get_database_class(type_)
     objects = (
         session.query(database_class.members, database_class.member_type)
-        .filter(database_class.collection_id == collection_id, database_class.members == member_id)
+        .filter(
+            database_class.collection_id == collection_id,
+            database_class.members == member_id,
+        )
         .all()
     )
     if len(objects) == 0:
-        raise MemberInstanceNotFound(type_=type_, collection_id_=collection_id,
-                                     member_id_=member_id)
+        raise MemberInstanceNotFound(
+            type_=type_, collection_id_=collection_id, member_id_=member_id
+        )
     object_template = {}
     object_template["@type"] = query_info["@type"]
     object_template["members"] = objects
     return object_template
 
 
-def delete_collection_member(query_info: Dict[str, str], session: scoped_session) -> None:
+def delete_collection_member(
+    query_info: Dict[str, str], session: scoped_session
+) -> None:
     """
     Delete the object from the collection in database
     :param query_info: Dict containing the id and @type of object that has to retrieved
@@ -263,12 +272,16 @@ def delete_collection_member(query_info: Dict[str, str], session: scoped_session
     database_class = get_database_class(type_)
     objects = (
         session.query(database_class)
-        .filter(database_class.collection_id == collection_id,
-                database_class.members == member_id).delete()
+        .filter(
+            database_class.collection_id == collection_id,
+            database_class.members == member_id,
+        )
+        .delete()
     )
     if objects == 0:
-        raise MemberInstanceNotFound(type_=type_, collection_id_=collection_id,
-                                     member_id_=member_id)
+        raise MemberInstanceNotFound(
+            type_=type_, collection_id_=collection_id, member_id_=member_id
+        )
     try:
         session.commit()
     except InvalidRequestError:
@@ -277,7 +290,10 @@ def delete_collection_member(query_info: Dict[str, str], session: scoped_session
 
 
 def get_all_filtered_instances(
-    session: scoped_session, search_params: Dict[str, Any], type_: str, collection: bool = False
+    session: scoped_session,
+    search_params: Dict[str, Any],
+    type_: str,
+    collection: bool = False,
 ):
     """Get all the filtered instances of from the database
     based on given query parameters.
@@ -289,7 +305,7 @@ def get_all_filtered_instances(
     """
     database_class = get_database_class(type_)
     if collection:
-        query = session.query(database_class.collection_id.label('id')).distinct()
+        query = session.query(database_class.collection_id.label("id")).distinct()
     else:
         query = session.query(database_class)
         for param, param_value in search_params.items():
@@ -297,7 +313,7 @@ def get_all_filtered_instances(
             if type(param_value) is dict:
                 foreign_keys = database_class.__table__.foreign_keys
                 for fk in foreign_keys:
-                    if fk.info['column_name'] == param:
+                    if fk.info["column_name"] == param:
                         fk_table_name = fk.column.table.name
                         continue
                 nested_param_db_class = get_database_class(fk_table_name)
@@ -305,15 +321,17 @@ def get_all_filtered_instances(
                 for attr, value in param_value.items():
                     query = query.join(nested_param_db_class)
                     try:
-                        query = query.filter(getattr(nested_param_db_class, attr) == value)
+                        query = query.filter(
+                            getattr(nested_param_db_class, attr) == value
+                        )
                     except AttributeError:
-                        raise InvalidSearchParameter(f'{param}[{attr}]')
+                        raise InvalidSearchParameter(f"{param}[{attr}]")
             else:
                 value = search_params[param]
                 try:
                     query = query.filter(getattr(database_class, param) == value)
                 except AttributeError:
-                    raise InvalidSearchParameter(f'{param}')
+                    raise InvalidSearchParameter(f"{param}")
 
     filtered_instances = query.all()
     return filtered_instances

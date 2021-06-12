@@ -18,7 +18,7 @@ from hydra_python_core import doc_maker
 from hydrus.data.db_models import Base, create_database_tables
 from hydrus.data.user import add_user
 from hydrus.data.exceptions import UserExists
-from hydrus.data.stale_records_cleanup import remove_stale_modification_records
+from hydrus.extensions.stale_records_cleanup import remove_stale_modification_records
 from hydra_openapi_parser.openapi_parser import parse
 from importlib.machinery import SourceFileLoader
 import json

@@ -38,13 +38,15 @@ from hydrus.data.exceptions import (
     InstanceExists,
     PageNotFound,
     IncompatibleParameters,
-    OffsetOutOfRange)
+    OffsetOutOfRange,
+)
 from hydrus.data.crud_helpers import (
     recreate_iri,
     attach_hydra_view,
     pre_process_pagination_parameters,
-    parse_search_params
+    parse_search_params,
 )
+
 # from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.scoping import scoped_session
 from typing import Dict, Optional, Any, List
@@ -58,13 +60,19 @@ from hydrus.data.resource_based_classes import (
     get_single_response,
     get_database_class,
     get_collection_member,
-    delete_collection_member
+    delete_collection_member,
 )
 from hydrus.conf import get_host_domain
 
 
-def get(id_: str, type_: str, api_name: str, session: scoped_session,
-        path: str = None, collection: bool = False) -> Dict[str, str]:
+def get(
+    id_: str,
+    type_: str,
+    api_name: str,
+    session: scoped_session,
+    path: str = None,
+    collection: bool = False,
+) -> Dict[str, str]:
     """Retrieve an Instance with given ID from the database [GET].
     :param id_: id of object to be fetched
     :param type_: type of object
@@ -80,10 +88,7 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
         InstanceNotFound: If no Instance of the 'type_` class if found.
 
     """
-    query_info = {
-        "@type": type_,
-        "id_": id_
-    }
+    query_info = {"@type": type_, "id_": id_}
 
     object_template = get_object(query_info, session, collection)
     object_template["@id"] = f"{get_host_domain()}/{api_name}/{path}/{id_}"
@@ -91,8 +96,12 @@ def get(id_: str, type_: str, api_name: str, session: scoped_session,
     return object_template
 
 
-def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[str] = None,
-           collection: bool = False) -> str:
+def insert(
+    object_: Dict[str, Any],
+    session: scoped_session,
+    id_: Optional[str] = None,
+    collection: bool = False,
+) -> str:
     """Insert an object to database [POST] and returns the inserted object.
     :param object_: object to be inserted
     :param session: sqlalchemy scoped session
@@ -114,15 +123,14 @@ def insert(object_: Dict[str, Any], session: scoped_session, id_: Optional[str] 
     """
     object_template = copy.deepcopy(object_)
     if id_ is not None:
-        object_template['id'] = id_
+        object_template["id"] = id_
     inserted_object_id = insert_object(object_template, session, collection)
     return inserted_object_id
 
 
-def insert_multiple(objects_: List[Dict[str,
-                                        Any]],
-                    session: scoped_session,
-                    id_: Optional[str] = "") -> List[str]:
+def insert_multiple(
+    objects_: List[Dict[str, Any]], session: scoped_session, id_: Optional[str] = ""
+) -> List[str]:
     """
     Adds a list of object with given ids to the database
     :param objects_: List of dict's to be added to the database
@@ -143,7 +151,7 @@ def insert_multiple(objects_: List[Dict[str,
     """
     # import pdb;pdb.set_trace()
 
-    id_list = id_.split(',')
+    id_list = id_.split(",")
 
     # list to hold all the ids of inserted objects
     instance_id_list = []
@@ -162,7 +170,9 @@ def insert_multiple(objects_: List[Dict[str,
     return instance_id_list
 
 
-def delete(id_: str, type_: str, session: scoped_session, collection: bool = False) -> None:
+def delete(
+    id_: str, type_: str, session: scoped_session, collection: bool = False
+) -> None:
     """Delete an Instance and all its relations from DB given id [DELETE].
     :param id_: id of object to be deleted
     :param type_: type of object to be deleted
@@ -173,17 +183,11 @@ def delete(id_: str, type_: str, session: scoped_session, collection: bool = Fal
         InstanceNotFound: If no instace of type `type_` with id `id_` exists.
 
     """
-    query_info = {
-        "@type": type_,
-        "id_": id_
-    }
+    query_info = {"@type": type_, "id_": id_}
     delete_object(query_info, session, collection)
 
 
-def delete_multiple(
-        id_: List[int],
-        type_: str,
-        session: scoped_session) -> None:
+def delete_multiple(id_: List[int], type_: str, session: scoped_session) -> None:
     """
     To delete multiple rows in a single request
     :param id_: list of ids for objects to be deleted\
@@ -196,19 +200,20 @@ def delete_multiple(
             does not exist.
 
     """
-    id_list = id_.split(',')
+    id_list = id_.split(",")
     for object_id_ in id_list:
         delete(object_id_, type_, session)
 
 
-def update(id_: str,
-           type_: str,
-           object_: Dict[str,
-                         str],
-           session: scoped_session,
-           api_name: str,
-           path: str = None,
-           collection: bool = False) -> str:
+def update(
+    id_: str,
+    type_: str,
+    object_: Dict[str, str],
+    session: scoped_session,
+    api_name: str,
+    path: str = None,
+    collection: bool = False,
+) -> str:
     """Update an object properties based on the given object [PUT].
     :param id_: if of object to be updated
     :param type_: type of object to be updated
@@ -219,22 +224,21 @@ def update(id_: str,
     :param collection: True if the type_ is of a collection, False for any other class
     :return: id of updated object
     """
-    query_info = {
-        "@type": type_,
-        "id_": id_
-    }
+    query_info = {"@type": type_, "id_": id_}
     updated_object_id = update_object(object_, query_info, session, collection)
     return updated_object_id
 
 
-def get_collection(API_NAME: str,
-                   type_: str,
-                   session: scoped_session,
-                   paginate: bool,
-                   page_size: int,
-                   search_params: Dict[str, Any]=None,
-                   path: str = None,
-                   collection: bool = False) -> Dict[str, Any]:
+def get_collection(
+    API_NAME: str,
+    type_: str,
+    session: scoped_session,
+    paginate: bool,
+    page_size: int,
+    search_params: Dict[str, Any]=None,
+    path: str = None,
+    collection: bool = False,
+) -> Dict[str, Any]:
     """Retrieve a type of collection from the database.
     :param API_NAME: api name specified while starting server
     :param type_: type of object to be updated
@@ -259,14 +263,17 @@ def get_collection(API_NAME: str,
             database_search_params.pop(param)
     database_search_params = parse_search_params(database_search_params)
     filtered_instances = get_all_filtered_instances(
-        session, database_search_params, type_, collection)
-    collection_template = pagination(filtered_instances, path, type_, API_NAME,
-                                     search_params, paginate, page_size)
+        session, database_search_params, type_, collection
+    )
+    collection_template = pagination(
+        filtered_instances, path, type_, API_NAME, search_params, paginate, page_size
+    )
     return collection_template
 
 
-def get_single(type_: str, api_name: str, session: scoped_session,
-               path: str = None) -> Dict[str, Any]:
+def get_single(
+    type_: str, api_name: str, session: scoped_session, path: str = None
+) -> Dict[str, Any]:
     """Get instance of classes with single objects.
     :param type_: type of object to be updated
     :param api_name: api name specified while starting server
@@ -310,11 +317,9 @@ def insert_single(object_: Dict[str, Any], session: scoped_session) -> Any:
     raise InstanceExists(type_)
 
 
-def update_single(object_: Dict[str,
-                                Any],
-                  session: scoped_session,
-                  api_name: str,
-                  path: str = None) -> int:
+def update_single(
+    object_: Dict[str, Any], session: scoped_session, api_name: str, path: str = None
+) -> int:
     """Update instance of classes with single objects.
     :param object_: new object
     :param session: sqlalchemy scoped session
@@ -336,7 +341,8 @@ def update_single(object_: Dict[str,
         object_=object_,
         session=session,
         api_name=api_name,
-        path=path)
+        path=path,
+    )
 
 
 def delete_single(type_: str, session: scoped_session) -> None:
@@ -355,8 +361,14 @@ def delete_single(type_: str, session: scoped_session) -> None:
     return delete(instance.id, type_, session=session)
 
 
-def get_member(collection_id: str, member_id: str, type_: str, api_name: str,
-               session: scoped_session, path: str = None) -> Dict[str, str]:
+def get_member(
+    collection_id: str,
+    member_id: str,
+    type_: str,
+    api_name: str,
+    session: scoped_session,
+    path: str = None,
+) -> Dict[str, str]:
     """Retrieve an Instance with given IDs from the database [GET].
     :param collection_id: id of the collection to be fetched
     :param member_id: id of the member to be fetched
@@ -375,7 +387,7 @@ def get_member(collection_id: str, member_id: str, type_: str, api_name: str,
     query_info = {
         "@type": type_,
         "member_id": member_id,
-        "collection_id": collection_id
+        "collection_id": collection_id,
     }
 
     object_template = get_collection_member(query_info, session)
@@ -384,7 +396,9 @@ def get_member(collection_id: str, member_id: str, type_: str, api_name: str,
     return object_template
 
 
-def delete_member(collection_id: str, member_id: str, type_: str, session: scoped_session) -> None:
+def delete_member(
+    collection_id: str, member_id: str, type_: str, session: scoped_session
+) -> None:
     """Delete an Instance and all its relations from DB given id [DELETE].
     :param collection_id: id of the collection
     :param member_id: id of member to be deleted
@@ -399,13 +413,14 @@ def delete_member(collection_id: str, member_id: str, type_: str, session: scope
     query_info = {
         "@type": type_,
         "member_id": member_id,
-        "collection_id": collection_id
+        "collection_id": collection_id,
     }
     delete_collection_member(query_info, session)
 
 
-def insert_modification_record(method: str, resource_url: str,
-                               session: scoped_session) -> int:
+def insert_modification_record(
+    method: str, resource_url: str, session: scoped_session
+) -> int:
     """
     Insert a modification record into the database.
     :param method: HTTP method type of related operation.
@@ -425,7 +440,9 @@ def get_last_modification_job_id(session: scoped_session) -> str:
     :param session: sqlalchemy session
     :return: job id of recent modification.
     """
-    last_modification = session.query(Modification).order_by(Modification.job_id.desc()).first()
+    last_modification = (
+        session.query(Modification).order_by(Modification.job_id.desc()).first()
+    )
     if last_modification is None:
         last_job_id = ""
     else:
@@ -433,8 +450,9 @@ def get_last_modification_job_id(session: scoped_session) -> str:
     return last_job_id
 
 
-def get_modification_table_diff(session: scoped_session,
-                                agent_job_id: str = None) -> List[Dict[str, Any]]:
+def get_modification_table_diff(
+    session: scoped_session, agent_job_id: str = None
+) -> List[Dict[str, Any]]:
     """
     Get modification table difference.
     :param session: sqlalchemy session.
@@ -443,19 +461,26 @@ def get_modification_table_diff(session: scoped_session,
     """
     # If agent_job_id is not given then return all the elements.
     if agent_job_id is None:
-        modifications = session.query(Modification).order_by(
-            Modification.job_id.asc()).all()
+        modifications = (
+            session.query(Modification).order_by(Modification.job_id.asc()).all()
+        )
     # If agent_job_id is given then return all records which are older
     # than the record with agent_job_id.
     else:
         try:
-            record_for_agent_job_id = session.query(Modification).filter(
-                Modification.job_id == agent_job_id).one()
+            record_for_agent_job_id = (
+                session.query(Modification)
+                .filter(Modification.job_id == agent_job_id)
+                .one()
+            )
         except NoResultFound:
             return []
-        modifications = session.query(Modification).filter(
-            Modification.job_id > record_for_agent_job_id.job_id).order_by(
-            Modification.job_id.asc()).all()
+        modifications = (
+            session.query(Modification)
+            .filter(Modification.job_id > record_for_agent_job_id.job_id)
+            .order_by(Modification.job_id.asc())
+            .all()
+        )
 
     # Create response body
     list_of_modification_records = []
@@ -463,14 +488,15 @@ def get_modification_table_diff(session: scoped_session,
         modification_record = {
             "job_id": modification.job_id,
             "method": modification.method,
-            "resource_url": modification.resource_url
+            "resource_url": modification.resource_url,
         }
         list_of_modification_records.append(modification_record)
     return list_of_modification_records
 
 
-def pagination(filtered_instances, path, type_, API_NAME,
-               search_params, paginate, page_size):
+def pagination(
+    filtered_instances, path, type_, API_NAME, search_params, paginate, page_size
+):
     """Add pagination to the response and return the response
     :param filtered_instances: instances after filtered from the database query
     :param path: endpoint
@@ -485,24 +511,26 @@ def pagination(filtered_instances, path, type_, API_NAME,
         "@id": f"{get_host_domain()}/{API_NAME}/{path}/",
         "@context": None,
         "@type": f"{path}",
-        "members": []
+        "members": [],
     }  # type: Dict[str, Any]
     result_length = len(filtered_instances)
     try:
         # To paginate, calculate offset and page_limit values for pagination of search results
-        page, page_size, offset = pre_process_pagination_parameters(search_params=search_params,
-                                                                    paginate=paginate,
-                                                                    page_size=page_size,
-                                                                    result_length=result_length)
+        page, page_size, offset = pre_process_pagination_parameters(
+            search_params=search_params,
+            paginate=paginate,
+            page_size=page_size,
+            result_length=result_length,
+        )
     except (IncompatibleParameters, PageNotFound, OffsetOutOfRange):
         raise
     current_page_size = page_size
     if result_length - offset < page_size:
         current_page_size = result_length - offset
-    for i in range(offset, offset+current_page_size):
+    for i in range(offset, offset + current_page_size):
         object_template = {
             "@id": f"{get_host_domain()}/{API_NAME}/{type_}/{filtered_instances[i].id}",
-            "@type": type_
+            "@type": type_,
         }
         collection_template["members"].append(object_template)
 
@@ -525,9 +553,16 @@ def pagination(filtered_instances, path, type_, API_NAME,
         paginate_param = "pageIndex"
     else:
         paginate_param = "page"
-    attach_hydra_view(collection_template=collection_template, paginate_param=paginate_param,
-                      result_length=result_length, iri=recreated_iri, page_size=page_size,
-                      offset=offset, page=page, last=last)
+    attach_hydra_view(
+        collection_template=collection_template,
+        paginate_param=paginate_param,
+        result_length=result_length,
+        iri=recreated_iri,
+        page_size=page_size,
+        offset=offset,
+        page=page,
+        last=last,
+    )
     return collection_template
 
 

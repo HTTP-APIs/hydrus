@@ -1,6 +1,9 @@
 """
-Pluggable utilities for Hydrus.
+Pluggable utilities for hydrus.
 ===============================
+This module is for Web server-related utilities. For data-related
+ utilities use `data.helpers`
+
 Imports :
 contextlib.contextmanager : This function is a decorator that can be used to
 define a factory function for with statement context managers, without needing
@@ -20,10 +23,12 @@ hydra_python_core.doc_writer.HydraDoc : Class for Hydra Documentation
 """  # nopep8
 
 from contextlib import contextmanager
+from typing import Dict, List
 from flask import appcontext_pushed
-from flask import g
+from flask import g, Response, jsonify
 from hydrus.samples import doc_writer_sample
 from hydrus.data.db_models import engine
+from hydra_python_core.doc_writer import HydraError
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.orm.session import Session
 from hydra_python_core.doc_writer import HydraDoc
@@ -51,6 +56,7 @@ def set_authentication(application: Flask, authentication: bool) -> Iterator:
 
     def handler(sender: Flask, **kwargs: Any) -> None:
         g.authentication_ = authentication
+
     with appcontext_pushed.connected_to(handler, application):
         yield
 
@@ -63,7 +69,7 @@ def get_authentication() -> bool:
             <bool>
     """
     try:
-        authentication = getattr(g, 'authentication_')
+        authentication = getattr(g, "authentication_")
     except AttributeError:
         authentication = False
         g.authentication_ = authentication
@@ -88,6 +94,7 @@ def set_api_name(application: Flask, api_name: str) -> Iterator:
 
     def handler(sender: Flask, **kwargs: Any) -> None:
         g.api_name = api_name
+
     with appcontext_pushed.connected_to(handler, application):
         yield
 
@@ -100,7 +107,7 @@ def get_api_name() -> str:
             <str>
     """
     try:
-        api_name = getattr(g, 'api_name')
+        api_name = getattr(g, "api_name")
     except AttributeError:
         api_name = "api"
         g.api_name = api_name
@@ -125,6 +132,7 @@ def set_page_size(application: Flask, page_size: int) -> Iterator:
 
     def handler(sender: Flask, **kwargs: Any) -> None:
         g.page_size = page_size
+
     with appcontext_pushed.connected_to(handler, application):
         yield
 
@@ -136,7 +144,7 @@ def get_page_size() -> int:
             <int>
     """
     try:
-        page_size = getattr(g, 'page_size')
+        page_size = getattr(g, "page_size")
     except AttributeError:
         page_size = 10
         g.page_size = page_size
@@ -161,6 +169,7 @@ def set_pagination(application: Flask, paginate: bool) -> Iterator:
 
     def handler(sender: Flask, **kwargs: Any) -> None:
         g.paginate = paginate
+
     with appcontext_pushed.connected_to(handler, application):
         yield
 
@@ -172,7 +181,7 @@ def get_pagination() -> bool:
             <bool>
     """
     try:
-        paginate = getattr(g, 'paginate')
+        paginate = getattr(g, "paginate")
     except AttributeError:
         paginate = True
         g.paginate = paginate
@@ -194,10 +203,12 @@ def set_doc(application: Flask, APIDOC: HydraDoc) -> Iterator:
     """
     if not isinstance(APIDOC, HydraDoc):
         raise TypeError(
-            "The API Doc is not of type <hydra_python_core.doc_writer.HydraDoc>")
+            "The API Doc is not of type <hydra_python_core.doc_writer.HydraDoc>"
+        )
 
     def handler(sender: Flask, **kwargs: Any) -> None:
         g.doc = APIDOC
+
     with appcontext_pushed.connected_to(handler, application):
         yield
 
@@ -215,6 +226,7 @@ def set_token(application: Flask, token: bool) -> Iterator:
 
     def handler(sender: Flask, **kwargs: Any) -> None:
         g.token_ = token
+
     with appcontext_pushed.connected_to(handler, application):
         yield
 
@@ -227,7 +239,7 @@ def get_doc() -> HydraDoc:
             <hydra_python_core.doc_writer.HydraDoc>
     """
     try:
-        apidoc = getattr(g, 'doc')
+        apidoc = getattr(g, "doc")
     except AttributeError:
         g.doc = apidoc = doc_writer_sample.api_doc
     return apidoc
@@ -236,7 +248,7 @@ def get_doc() -> HydraDoc:
 def get_token() -> bool:
     """Check wether API needs to be authenticated or not."""
     try:
-        token = getattr(g, 'token_')
+        token = getattr(g, "token_")
     except AttributeError:
         token = False
         g.token_ = token
@@ -261,6 +273,7 @@ def set_hydrus_server_url(application: Flask, server_url: str) -> Iterator:
 
     def handler(sender: Flask, **kwargs: Any) -> None:
         g.hydrus_server_url = server_url
+
     with appcontext_pushed.connected_to(handler, application):
         yield
 
@@ -273,7 +286,7 @@ def get_hydrus_server_url() -> str:
             <str>
     """
     try:
-        hydrus_server_url = getattr(g, 'hydrus_server_url')
+        hydrus_server_url = getattr(g, "hydrus_server_url")
     except AttributeError:
         hydrus_server_url = "http://localhost/"
         g.hydrus_server_url = hydrus_server_url
@@ -294,13 +307,16 @@ def set_session(application: Flask, DB_SESSION: scoped_session) -> Iterator:
 
     """
     if not isinstance(DB_SESSION, scoped_session) and not isinstance(
-            DB_SESSION, Session):
+        DB_SESSION, Session
+    ):
         raise TypeError(
             "The API Doc is not of type <sqlalchemy.orm.session.Session> or"
-            " <sqlalchemy.orm.scoping.scoped_session>")
+            " <sqlalchemy.orm.scoping.scoped_session>"
+        )
 
     def handler(sender: Flask, **kwargs: Any) -> None:
         g.dbsession = DB_SESSION
+
     with appcontext_pushed.connected_to(handler, application):
         yield
 
@@ -313,21 +329,47 @@ def get_session() -> scoped_session:
             <sqlalchemy.orm.scoped_session>
     """
     try:
-        session = getattr(g, 'dbsession')
+        session = getattr(g, "dbsession")
     except AttributeError:
         session = scoped_session(sessionmaker(bind=engine))
         g.dbsession = session
     return session
 
 
-def get_collections_and_parsed_classes():
+def set_response_headers(
+    resp: Response,
+    ct: str = "application/ld+json",
+    headers: List[Dict[str, Any]]=[],
+    status_code: int = 200,
+) -> Response:
     """
-    Get all the collections and parsed classes from
-    the API doc.
-    :return collections, parsed_classes
-            <tuple>
+    Set the response headers.
+    :param resp: Response.
+    :param ct: Content-type default "application/ld+json".
+    :param headers: List of objects.
+    :param status_code: status code default 200.
+    :return: Response with headers.
     """
-    api_doc = get_doc()
-    parsed_classes = api_doc.parsed_classes
-    collections = api_doc.collections
-    return (collections, parsed_classes)
+    resp.status_code = status_code
+    for header in headers:
+        resp.headers[list(header.keys())[0]] = header[list(header.keys())[0]]
+    resp.headers["Content-type"] = ct
+    link = "http://www.w3.org/ns/hydra/core#apiDocumentation"
+    vocab_route = get_doc().doc_name
+    link_header = (
+        f'<{get_hydrus_server_url()}{get_api_name()}/{vocab_route}>; rel="{link}"'
+    )
+    resp.headers["Link"] = link_header
+    return resp
+
+
+def error_response(error: HydraError) -> Response:
+    """
+    Generate the response if there is an error while performing any operation
+
+    :param error: HydraError object which will help in generating response
+    :type error: HydraError
+    :return: Error response with appropriate status code
+    :rtype: Response
+    """
+    return set_response_headers(jsonify(error.generate()), status_code=error.code)

@@ -19,6 +19,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.schema import UniqueConstraint
 from sqlalchemy.sql import func
 from hydra_python_core.doc_writer import DocUrl
+
 # from hydrus.settings import DB_URL
 
 engine = create_engine("sqlite:///database.db")
@@ -104,20 +105,18 @@ class Resource:
         if "manages" in self.resource:
             # if the class is a collection, add an extra column for
             # collection id
-            attr_dict['collection_id'] = Column(
+            attr_dict["collection_id"] = Column(
                 String,
                 default=lambda: str(uuid.uuid4()),
             )
             # if the class is a collection, add an extra column for
             # member @type
-            attr_dict['member_type'] = Column(
+            attr_dict["member_type"] = Column(
                 String,
             )
             # if the class is a collection, then a member id and collection id
             # should be a unique constraint altogether
-            attr_dict['__table_args__'] = (
-                UniqueConstraint(title, 'collection_id'),
-            )
+            attr_dict["__table_args__"] = (UniqueConstraint(title, "collection_id"),)
         return attr_dict
 
     @staticmethod

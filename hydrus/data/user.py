@@ -6,6 +6,7 @@ from hydrus.data.exceptions import UserExists, UserNotFound
 from hydrus.data.db_models import User, Token, Nonce
 from hashlib import sha224
 import base64
+
 # import random
 from sqlalchemy.orm.session import Session
 from werkzeug.local import LocalProxy
@@ -24,8 +25,9 @@ def add_user(id_: int, paraphrase: str, session: Session) -> None:
     if session.query(exists().where(User.id == id_)).scalar():
         raise UserExists(id_=id_)
     else:
-        new_user = User(id=id_, paraphrase=sha224(
-            paraphrase.encode('utf-8')).hexdigest())
+        new_user = User(
+            id=id_, paraphrase=sha224(paraphrase.encode("utf-8")).hexdigest()
+        )
         session.add(new_user)
         session.commit()
 
@@ -33,7 +35,7 @@ def add_user(id_: int, paraphrase: str, session: Session) -> None:
 def check_nonce(request: LocalProxy, session: Session) -> bool:
     """check validity of nonce passed by the user."""
     try:
-        id_ = request.headers['X-Authentication']
+        id_ = request.headers["X-Authentication"]
         nonce = session.query(Nonce).filter(Nonce.id == id_).one()
         present = datetime.now()
         present = present - nonce.timestamp
@@ -65,16 +67,16 @@ def add_token(request: LocalProxy, session: Session) -> str:
     valid existing token to the user.
     """
     token = None
-    id_ = int(request.authorization['username'])
+    id_ = int(request.authorization["username"])
     try:
         token = session.query(Token).filter(Token.user_id == id_).one()
         if not token.is_valid():
-            update_token = '%030x' % randrange(16**30)
+            update_token = "%030x" % randrange(16 ** 30)
             token.id = update_token
             token.timestamp = datetime.now()
             session.commit()
     except NoResultFound:
-        token = '%030x' % randrange(16**30)
+        token = "%030x" % randrange(16 ** 30)
         new_token = Token(user_id=id_, id=token)
         session.add(new_token)
         session.commit()
@@ -88,7 +90,7 @@ def check_token(request: LocalProxy, session: Session) -> bool:
     """
     token = None
     try:
-        id_ = request.headers['X-Authorization']
+        id_ = request.headers["X-Authorization"]
         token = session.query(Token).filter(Token.id == id_).one()
         if not token.is_valid():
             token.delete()
@@ -100,9 +102,9 @@ def check_token(request: LocalProxy, session: Session) -> bool:
 
 def generate_basic_digest(id_: int, paraphrase: str) -> str:
     """Create the digest to be added to the HTTP Authorization header."""
-    paraphrase_digest = sha224(paraphrase.encode('utf-8')).hexdigest()
-    credentials = f'{id_}:{paraphrase_digest}'
-    digest = base64.b64encode(credentials.encode('utf-8')).decode('utf-8')
+    paraphrase_digest = sha224(paraphrase.encode("utf-8")).hexdigest()
+    credentials = f"{id_}:{paraphrase_digest}"
+    digest = base64.b64encode(credentials.encode("utf-8")).decode("utf-8")
     return digest
 
 
@@ -119,7 +121,7 @@ def authenticate_user(id_: int, paraphrase: str, session: Session) -> bool:
     except NoResultFound:
         raise UserNotFound(id_=id_)
     hashvalue = user.paraphrase
-    generated_hash = sha224(paraphrase.encode('utf-8')).hexdigest()
+    generated_hash = sha224(paraphrase.encode("utf-8")).hexdigest()
 
     return generated_hash == hashvalue
 
