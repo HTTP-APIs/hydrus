@@ -46,7 +46,11 @@ from hydrus.data.helpers.item_collection_helpers import (
     item_collection_get_response,
     item_collection_put_response,
 )
-from hydrus.data.helpers.items_helpers import items_put_response, items_delete_response
+from hydrus.data.helpers.items_helpers import (
+    items_put_response,
+    items_delete_response,
+    items_delete_members_response,
+)
 
 
 class Index(Resource):
@@ -288,6 +292,20 @@ class Items(Resource):
         :return:
         """
         return items_delete_response(path, int_list)
+
+
+class ItemMembers(Resource):
+    @authenticate
+    def delete(self, path, collection_id_, int_list):
+        """
+        To delete multiple members from a Collection
+        :param path: endpoints
+        :param collection_id_: ID of the collection
+        :param int_list: Optional String containing ',' separated ID's
+        :return:
+        """
+        collection_id_ = str(collection_id_)
+        return items_delete_members_response(path, collection_id_, int_list)
 
 
 class Contexts(Resource):

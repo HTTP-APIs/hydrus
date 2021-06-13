@@ -10,7 +10,7 @@ import uuid
 import pytest
 from hydra_python_core.doc_writer import HydraLink, DocUrl
 
-from tests.conftest import gen_dummy_object
+from tests.conftest import gen_dummy_object, get_ids_list
 from hydrus.utils import get_doc
 
 
@@ -461,6 +461,28 @@ class TestApp():
                         full_endpoint = f'{collection_endpoint}/{member_id}'
                         delete_response = test_app_client.delete(full_endpoint)
                         assert delete_response.status_code == 200
+
+    def test_Collections_member_DELETE_multiple(self, capsys, test_app_client, constants, doc):
+        """Test endpoint to delete member from a collection."""
+        API_NAME = constants['API_NAME']
+        index = test_app_client.get(f'/{API_NAME}')
+        assert index.status_code == 200
+        endpoints = json.loads(index.data.decode('utf-8'))
+        for endpoint in endpoints['collections']:
+            collection_name = '/'.join(endpoint['@id'].split(f'/{API_NAME}/')[1:])
+            collection = doc.collections[collection_name]['collection']
+            collection_methods = [x.method for x in collection.supportedOperation]
+            if 'PUT' in collection_methods:
+                dummy_object = gen_dummy_object(collection.name, doc)
+                good_response_put = test_app_client.put(endpoint['@id'],
+                                                        data=json.dumps(dummy_object))
+                assert good_response_put.status_code == 201
+                collection_endpoint = good_response_put.location
+                if 'DELETE' in collection_methods:
+                    ids_list = get_ids_list(dummy_object)
+                    full_endpoint = f'{collection_endpoint}/delete/{ids_list}'
+                    delete_response = test_app_client.delete(full_endpoint)
+                    assert delete_response.status_code == 200
 
     def test_IriTemplate(self, test_app_client, constants, doc):
         """Test structure of IriTemplates attached to parsed classes"""
