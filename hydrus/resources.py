@@ -227,6 +227,20 @@ class ItemCollection(Resource):
             return items_put_response(path, int_list)
         return item_collection_put_response(path)
 
+    @authenticate
+    def delete(self, path):
+        """
+        To delete multiple objects
+        :param path: endpoints
+        :param int_list: Optional String containing ',' separated ID's
+        :return:
+        """
+        params = request.args.to_dict()
+        if params.get('instance'):
+            int_list = params.get('instance',None)
+            return items_delete_response(path, int_list)
+        abort(405)
+
 
 class ItemMember(Resource):
     """Handles operations(GET,DELETE) related to member of an Item(Collection).
