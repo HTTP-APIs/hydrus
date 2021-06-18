@@ -219,6 +219,12 @@ class ItemCollection(Resource):
         if not endpoint_["method"]:
             # If endpoint and PUT method is not supported in the API
             abort(endpoint_["status"])
+        # If 'instance' is available in request
+        params = request.args.to_dict()
+        object_ = json.loads(request.data.decode("utf-8"))
+        if params.get("instance") or object_.get("data"):
+            int_list = params.get("instance",None)
+            return items_put_response(path, int_list)
         return item_collection_put_response(path)
 
 
