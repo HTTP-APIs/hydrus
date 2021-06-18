@@ -19,9 +19,6 @@ def app_factory(api_name: str = "api", vocab_route: str = "vocab") -> Flask:
         Entrypoint,
         ItemCollection,
         Item,
-        Items,
-        ItemMember,
-        ItemMembers,
     )
 
     app = Flask(__name__)
