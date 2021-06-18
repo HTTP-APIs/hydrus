@@ -106,6 +106,13 @@ class Item(Resource):
             # Get path of the collection-class
             class_path = item_class.path
             is_collection = True
+            # To check if it's a request to GET a single instance from Collection
+            params = request.args.to_dict()
+            member_id = params.get('instance', None)
+            if member_id:
+                return member_get_check_support(
+                    id_, member_id, class_type, class_path, path
+                )
         if checkClassOp(class_path, "GET"):
             return items_get_check_support(
                 id_, class_type, class_path, path, is_collection
@@ -165,6 +172,10 @@ class Item(Resource):
         :param path - Path for Item type( Specified in APIDoc @id) to be deleted
         """
         id_ = str(id_)
+        params = request.args.to_dict()
+        if params.get('instance'):
+            id_list = params.get('instance',None)
+            return items_delete_members_response(path, id_, id_list)
         collections, parsed_classes = get_collections_and_parsed_classes()
         is_collection = False
         if path in parsed_classes:

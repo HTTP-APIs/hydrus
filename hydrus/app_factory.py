@@ -52,16 +52,6 @@ def app_factory(api_name: str = "api", vocab_route: str = "vocab") -> Flask:
     )
     api.add_resource(Item, f"/{api_name}/<string:path>/<uuid:id_>", endpoint="item")
     api.add_resource(
-        ItemMember,
-        f"/{api_name}/<string:path>/<uuid:collection_id_>/<uuid:id_>",
-        endpoint="member"
-    )
-    api.add_resource(
-        ItemMembers,
-        f"/{api_name}/<string:path>/<uuid:collection_id_>/delete/<int_list>",
-        endpoint="members"
-    )
-    api.add_resource(
         Items,
         f"/{api_name}/<string:path>/add/<int_list>",
         f"/{api_name}/<string:path>/add",
