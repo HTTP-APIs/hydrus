@@ -174,7 +174,7 @@ class Item(Resource):
         id_ = str(id_)
         params = request.args.to_dict()
         if params.get('instance'):
-            id_list = params.get('instance',None)
+            id_list = params.get('instance', None)
             return items_delete_members_response(path, id_, id_list)
         collections, parsed_classes = get_collections_and_parsed_classes()
         is_collection = False
@@ -223,7 +223,7 @@ class ItemCollection(Resource):
         params = request.args.to_dict()
         object_ = json.loads(request.data.decode("utf-8"))
         if params.get("instance") or object_.get("data"):
-            int_list = params.get("instance",None)
+            int_list = params.get("instance", None)
             return items_put_response(path, int_list)
         return item_collection_put_response(path)
 
@@ -237,7 +237,7 @@ class ItemCollection(Resource):
         """
         params = request.args.to_dict()
         if params.get('instance'):
-            int_list = params.get('instance',None)
+            int_list = params.get('instance', None)
             return items_delete_response(path, int_list)
         abort(405)
 
