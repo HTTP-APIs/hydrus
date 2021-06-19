@@ -232,7 +232,6 @@ class ItemCollection(Resource):
         """
         To delete multiple objects
         :param path: endpoints
-        :param int_list: Optional String containing ',' separated ID's
         :return:
         """
         params = request.args.to_dict()
