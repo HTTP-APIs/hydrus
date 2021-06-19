@@ -319,7 +319,7 @@ class TestApp():
                         ids = f'{uuid.uuid4()},'
                     data_['data'] = objects
                     if 'PUT' in class_methods:
-                        put_response = test_app_client.put(f'{endpoints[endpoint]}?instance={ids}',
+                        put_response = test_app_client.put(f'{endpoints[endpoint]}?instances={ids}',
                                                            data=json.dumps(data_))
                         assert put_response.status_code == 201
                         assert isinstance(put_response.json['iri'], list)
@@ -436,7 +436,7 @@ class TestApp():
                 if 'GET' in collection_methods:
                     for member in dummy_object['members']:
                         member_id = member['@id'].split('/')[-1]
-                        get_response = test_app_client.get(f'{collection_endpoint}?instance={member_id}')
+                        get_response = test_app_client.get(f'{collection_endpoint}?instances={member_id}')
                         assert get_response.status_code == 200
 
     def test_Collections_member_DELETE(self, test_app_client, constants, doc):
@@ -458,7 +458,7 @@ class TestApp():
                 if 'DELETE' in collection_methods:
                     for member in dummy_object['members']:
                         member_id = member['@id'].split('/')[-1]
-                        full_endpoint = f'{collection_endpoint}?instance={member_id}'
+                        full_endpoint = f'{collection_endpoint}?instances={member_id}'
                         delete_response = test_app_client.delete(full_endpoint)
                         assert delete_response.status_code == 200
 
@@ -480,7 +480,7 @@ class TestApp():
                 collection_endpoint = good_response_put.location
                 if 'DELETE' in collection_methods:
                     ids_list = get_ids_list(dummy_object)
-                    full_endpoint = f'{collection_endpoint}?instance={ids_list}'
+                    full_endpoint = f'{collection_endpoint}?instances={ids_list}'
                     delete_response = test_app_client.delete(full_endpoint)
                     assert delete_response.status_code == 200
 
