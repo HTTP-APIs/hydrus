@@ -149,9 +149,10 @@ def insert_multiple(
             valid/defined RDFClass but is not a dictionary neither an Abstract Property
 
     """
-    # import pdb;pdb.set_trace()
-
-    id_list = id_.split(",")
+    if id_:
+        id_list = id_.split(",")
+    else:
+        id_list = None
 
     # list to hold all the ids of inserted objects
     instance_id_list = []
@@ -163,6 +164,8 @@ def insert_multiple(
         try:
             id_of_object_ = id_list[index]
         except IndexError:
+            pass
+        except TypeError:
             pass
         inserted_object_id = insert(object_, session, id_of_object_)
         instance_id_list.append(inserted_object_id)

@@ -106,6 +106,13 @@ class Item(Resource):
             # Get path of the collection-class
             class_path = item_class.path
             is_collection = True
+            # To check if it's a request to GET a single instance from Collection
+            params = request.args.to_dict()
+            member_id = params.get("instances")
+            if member_id is not None:
+                return member_get_check_support(
+                    id_, member_id, class_type, class_path, path
+                )
         if checkClassOp(class_path, "GET"):
             return items_get_check_support(
                 id_, class_type, class_path, path, is_collection
@@ -165,6 +172,10 @@ class Item(Resource):
         :param path - Path for Item type( Specified in APIDoc @id) to be deleted
         """
         id_ = str(id_)
+        params = request.args.to_dict()
+        if params.get("instances"):
+            id_list = params.get("instances")
+            return items_delete_members_response(path, id_, id_list)
         collections, parsed_classes = get_collections_and_parsed_classes()
         is_collection = False
         if path in parsed_classes:
@@ -208,104 +219,26 @@ class ItemCollection(Resource):
         if not endpoint_["method"]:
             # If endpoint and PUT method is not supported in the API
             abort(endpoint_["status"])
+        # If 'instances' is available in request
+        params = request.args.to_dict()
+        object_ = json.loads(request.data.decode("utf-8"))
+        if params.get("instances") or object_.get("data"):
+            int_list = params.get("instances")
+            return items_put_response(path, int_list)
         return item_collection_put_response(path)
 
-
-class ItemMember(Resource):
-    """Handles operations(GET,DELETE) related to member of an Item(Collection).
-    (Item should be hydra:Collection)"""
-
     @authenticate
-    def get(self, id_: str, path: str, collection_id_: str) -> Response:
-        """
-        GET object with collection_id = collection_id_
-        and member = id_ (member of a collection) from the database.
-        :param id_ : Item ID (Member)
-        :param collection_id_ : Item ID (Collection)
-        :param path : Path for Item ( Specified in APIDoc @id)
-        :return : object with member=id_ and collection_id=collection_id_
-        """
-        collection_id = str(collection_id_)
-        member_id = str(id_)
-        collections, parsed_classes = get_collections_and_parsed_classes()
-        if path in parsed_classes:
-            abort(405)
-        if path in collections:
-            item_class = collections[path]["collection"]
-            class_type = item_class.name
-            # Get path of the collection-class
-            class_path = item_class.path
-        if checkClassOp(class_path, "GET"):
-            return member_get_check_support(
-                collection_id, member_id, class_type, class_path, path
-            )
-        abort(405)
-
-    @authenticate
-    def delete(self, id_: str, path: str, collection_id_: str) -> Response:
-        """
-        Delete object with id=id_ from database.
-        :param id_ - ID of Item to be deleted
-        :param path - Path for Item type( Specified in APIDoc @id) to be deleted
-        """
-        collection_id = str(collection_id_)
-        member_id = str(id_)
-        collections, parsed_classes = get_collections_and_parsed_classes()
-        if path in parsed_classes:
-            abort(405)
-        if path in collections:
-            item_class = collections[path]["collection"]
-            class_type = item_class.name
-            # Get path of the collection-class
-            class_path = item_class.path
-        if checkClassOp(class_path, "DELETE"):
-            return member_delete_check_support(
-                collection_id, member_id, class_type, path
-            )
-        abort(405)
-
-
-class Items(Resource):
-    """Handles operations(PUT,DELETE) related to multiple objects.
-    (Item should be hydra:Class)"""
-
-    @authenticate
-    def put(self, path, int_list="") -> Response:
-        """
-        To insert multiple objects into the database
-        :param path: endpoint
-        :param int_list: Optional String containing ',' separated ID's
-        :return:
-        """
-        endpoint_ = checkEndpoint("PUT", path)
-        if not endpoint_["method"]:
-            # If endpoint and PUT method is not supported in the API
-            abort(endpoint_["status"])
-        return items_put_response(path, int_list)
-
-    @authenticate
-    def delete(self, path, int_list):
+    def delete(self, path):
         """
         To delete multiple objects
         :param path: endpoints
-        :param int_list: Optional String containing ',' separated ID's
         :return:
         """
-        return items_delete_response(path, int_list)
-
-
-class ItemMembers(Resource):
-    @authenticate
-    def delete(self, path, collection_id_, int_list):
-        """
-        To delete multiple members from a Collection
-        :param path: endpoints
-        :param collection_id_: ID of the collection
-        :param int_list: Optional String containing ',' separated ID's
-        :return:
-        """
-        collection_id_ = str(collection_id_)
-        return items_delete_members_response(path, collection_id_, int_list)
+        params = request.args.to_dict()
+        if params.get("instances"):
+            int_list = params.get("instances")
+            return items_delete_response(path, int_list)
+        abort(405)
 
 
 class Contexts(Resource):
