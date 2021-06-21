@@ -108,8 +108,8 @@ class Item(Resource):
             is_collection = True
             # To check if it's a request to GET a single instance from Collection
             params = request.args.to_dict()
-            member_id = params.get('instances', None)
-            if member_id:
+            member_id = params.get("instances")
+            if member_id is not None:
                 return member_get_check_support(
                     id_, member_id, class_type, class_path, path
                 )
@@ -173,8 +173,8 @@ class Item(Resource):
         """
         id_ = str(id_)
         params = request.args.to_dict()
-        if params.get('instances'):
-            id_list = params.get('instances', None)
+        if params.get("instances"):
+            id_list = params.get("instances")
             return items_delete_members_response(path, id_, id_list)
         collections, parsed_classes = get_collections_and_parsed_classes()
         is_collection = False
@@ -223,7 +223,7 @@ class ItemCollection(Resource):
         params = request.args.to_dict()
         object_ = json.loads(request.data.decode("utf-8"))
         if params.get("instances") or object_.get("data"):
-            int_list = params.get("instances", None)
+            int_list = params.get("instances")
             return items_put_response(path, int_list)
         return item_collection_put_response(path)
 
@@ -235,8 +235,8 @@ class ItemCollection(Resource):
         :return:
         """
         params = request.args.to_dict()
-        if params.get('instances'):
-            int_list = params.get('instances', None)
+        if params.get("instances"):
+            int_list = params.get("instances")
             return items_delete_response(path, int_list)
         abort(405)
 
