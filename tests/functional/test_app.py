@@ -313,17 +313,40 @@ class TestApp():
                     class_methods = [x.method for x in class_.supportedOperation]
                     data_ = {'data': list()}
                     objects = list()
-                    ids = ''
+                    ids_list = list()
                     for index in range(3):
                         objects.append(gen_dummy_object(class_.title, doc))
-                        ids = f'{uuid.uuid4()},'
+                        ids_list.append(f'{uuid.uuid4()}')
                     data_['data'] = objects
                     if 'PUT' in class_methods:
+                        ids = ','.join(ids_list)
                         put_response = test_app_client.put(f'{endpoints[endpoint]}?instances={ids}',
                                                            data=json.dumps(data_))
                         assert put_response.status_code == 201
                         assert isinstance(put_response.json['iri'], list)
 
+    def test_multiple_object_PUT_without_ids(self, test_app_client, constants, doc):
+        API_NAME = constants['API_NAME']
+        index = test_app_client.get(f'/{API_NAME}')
+        assert index.status_code == 200
+        endpoints = json.loads(index.data.decode('utf-8'))
+        for endpoint in endpoints:
+            if endpoint not in ['@context', '@id', '@type', 'collections']:
+                class_name = '/'.join(endpoints[endpoint].split(f'/{API_NAME}/')[1:])
+                if class_name not in doc.collections:
+                    class_ = doc.parsed_classes[class_name]['class']
+                    class_methods = [x.method for x in class_.supportedOperation]
+                    data_ = {'data': list()}
+                    objects = list()
+                    for index in range(3):
+                        objects.append(gen_dummy_object(class_.title, doc))
+                    data_['data'] = objects
+                    if 'PUT' in class_methods:
+                        put_response = test_app_client.put(f'{endpoints[endpoint]}',
+                                                           data=json.dumps(data_))
+                        assert put_response.status_code == 201
+                        assert isinstance(put_response.json['iri'], list)
+    
     def test_endpointClass_PUT(self, test_app_client, constants, doc):
         """Check non collection Class PUT."""
         API_NAME = constants['API_NAME']
