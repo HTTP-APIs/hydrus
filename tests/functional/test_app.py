@@ -279,6 +279,35 @@ class TestApp():
                 delete_response = test_app_client.delete(
                     f'{endpoint["@id"]}/{id_}')
                 assert delete_response.status_code == 200
+    
+    def test_Collection_Class_foreign_key(self, test_app_client, constants, doc):
+        """Test insert data to the collection."""
+        API_NAME = constants['API_NAME']
+        index = test_app_client.get(f'/{API_NAME}')
+        assert index.status_code == 200
+        endpoints = json.loads(index.data.decode('utf-8'))
+        a = []
+        for endpoint in endpoints['collections']:
+            collection_name = '/'.join(endpoint['@id'].split(f'/{API_NAME}/')[1:])
+            collection = doc.collections[collection_name]['collection']
+            collection_methods = [x.method for x in collection.supportedOperation]
+            if 'PUT' in collection_methods:
+                dummy_object = gen_dummy_object(collection.name, doc)
+                collection_response_put = test_app_client.put(endpoint['@id'],
+                                                        data=json.dumps(dummy_object))
+                collection_iri = collection_response_put.location
+                assert collection_response_put.status_code == 201
+                class_name = collection.manages["object"].split(DocUrl.doc_url)[1]
+                class_ = doc.parsed_classes[class_name]['class']
+                class_methods = [x.method for x in class_.supportedOperation]
+                member_ids = get_ids_list(dummy_object)
+                class_endpoint = f"{endpoint['@id'].rsplit('/', 1)[0]}/{class_name}" 
+                if 'DELETE' in class_methods:
+                    delete_endpoint = f"{class_endpoint}?instances={member_ids}"
+                    delete_response = test_app_client.delete(delete_endpoint)
+                    assert delete_response.status_code == 200
+                    collection_final_res = test_app_client.get(collection_iri)
+                    assert collection_final_res.status_code == 404
 
     def test_object_PUT_at_id(self, test_app_client, constants, doc):
         """Create object in collection using PUT at specific ID."""
