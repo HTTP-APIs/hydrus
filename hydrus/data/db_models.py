@@ -111,6 +111,9 @@ class Resource:
             )
             # if the class is a collection, add an extra column for
             # member @type
+            manages = self.resource["manages"]
+            managed_class = manages["object"].split(expanded_base_url)[1]
+            attr_dict[title] = Resource.foreign_key_column(managed_class, title)
             attr_dict["member_type"] = Column(
                 String,
             )
