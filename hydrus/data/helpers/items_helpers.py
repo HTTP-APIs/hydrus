@@ -121,7 +121,7 @@ def items_delete_response(path: str, int_list="") -> Response:
     """
     _, parsed_classes = get_collections_and_parsed_classes()
     if path in parsed_classes:
-        class_type = getType(path, "DELETE")
+        class_type = parsed_classes[path]["class"].title
 
     if checkClassOp(class_type, "DELETE"):
         # Check if class_type supports PUT operation
