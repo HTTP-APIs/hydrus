@@ -57,7 +57,8 @@ doc = {
         "supportedOperation": "hydra:supportedOperation",
         "supportedProperty": "hydra:supportedProperty",
         "title": "hydra:title",
-        "writeable": "hydra:writeable"
+        "writeable": "hydra:writeable",
+        "xsd": "https://www.w3.org/TR/xmlschema-2/#"
     },
     "@id": "http://hydrus.com/api/vocab",
     "@type": "ApiDocumentation",
@@ -77,7 +78,7 @@ doc = {
                     "method": "POST",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "dummyClass updated.",
                             "statusCode": 200,
@@ -98,7 +99,7 @@ doc = {
                     "method": "DELETE",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "dummyClass deleted.",
                             "statusCode": 200,
@@ -116,7 +117,7 @@ doc = {
                     "method": "PUT",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "dummyClass successfully added.",
                             "statusCode": 201,
@@ -134,7 +135,7 @@ doc = {
                     "method": "GET",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "dummyClass returned.",
                             "statusCode": 200,
@@ -186,7 +187,7 @@ doc = {
                     "method": "POST",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "singleClass changed.",
                             "statusCode": 200,
@@ -204,7 +205,7 @@ doc = {
                     "method": "DELETE",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "singleClass deleted.",
                             "statusCode": 200,
@@ -222,7 +223,7 @@ doc = {
                     "method": "PUT",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "singleClass successfully added.",
                             "statusCode": 201,
@@ -240,7 +241,7 @@ doc = {
                     "method": "GET",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "singleClass returned.",
                             "statusCode": 200,
@@ -308,7 +309,7 @@ doc = {
                     "method": "GET",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "anotherSingleClass returned.",
                             "statusCode": 200,
@@ -387,7 +388,7 @@ doc = {
                     "method": "PUT",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "A new member in Extraclasses created",
                             "statusCode": 201,
@@ -406,7 +407,7 @@ doc = {
                     "method": "POST",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "If the entity was updatedfrom Extraclasses.",
                             "statusCode": 200,
@@ -425,7 +426,7 @@ doc = {
                     "method": "DELETE",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "If entity was deletedsuccessfully from Extraclasses.",
                             "statusCode": 200,
@@ -479,7 +480,7 @@ doc = {
                     "method": "PUT",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "A new member in dummyclasses created",
                             "statusCode": 201,
@@ -498,7 +499,7 @@ doc = {
                     "method": "POST",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "If the entity was updatedfrom dummyclasses.",
                             "statusCode": 200,
@@ -517,7 +518,7 @@ doc = {
                     "method": "DELETE",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "If entity was deletedsuccessfully from dummyclasses.",
                             "statusCode": 200,
@@ -580,7 +581,7 @@ doc = {
                                 "method": "POST",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "singleClass changed.",
                                         "statusCode": 200,
@@ -600,7 +601,7 @@ doc = {
                                 "method": "DELETE",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "singleClass deleted.",
                                         "statusCode": 200,
@@ -620,7 +621,7 @@ doc = {
                                 "method": "PUT",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "singleClass successfully added.",
                                         "statusCode": 201,
@@ -640,7 +641,7 @@ doc = {
                                 "method": "GET",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "singleClass returned.",
                                         "statusCode": 200,
@@ -677,7 +678,7 @@ doc = {
                                 "method": "GET",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "anotherSingleClass returned.",
                                         "statusCode": 200,
@@ -728,7 +729,7 @@ doc = {
                                 "method": "PUT",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "A new member in Extraclasses created",
                                         "statusCode": 201,
@@ -747,7 +748,7 @@ doc = {
                                 "method": "POST",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "If the entity was updatedfrom Extraclasses.",
                                         "statusCode": 200,
@@ -766,7 +767,7 @@ doc = {
                                 "method": "DELETE",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "If entity was deletedsuccessfully from Extraclasses.",
                                         "statusCode": 200,
@@ -817,7 +818,7 @@ doc = {
                                 "method": "PUT",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "A new member in dummyclasses created",
                                         "statusCode": 201,
@@ -836,7 +837,7 @@ doc = {
                                 "method": "POST",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "If the entity was updatedfrom dummyclasses.",
                                         "statusCode": 200,
@@ -855,7 +856,7 @@ doc = {
                                 "method": "DELETE",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "If entity was deletedsuccessfully from dummyclasses.",
                                         "statusCode": 200,

@@ -87,8 +87,12 @@ def gen_dummy_object(class_title, doc):
                     prop_class = prop.prop.split(expanded_base_url)[1]
                     object_[prop.title] = gen_dummy_object(prop_class, doc)
                 else:
-                    object_[prop.title] = ''.join(random.choice(
-                        string.ascii_uppercase + string.digits) for _ in range(6))
+                    type_ = prop.kwargs.get('range')
+                    if type_ is not None:
+                        object_[prop.title] = random.randint(50,100)
+                    else:
+                        object_[prop.title] = ''.join(random.choice(
+                            string.ascii_uppercase + string.digits) for _ in range(6))
             return object_
 
 

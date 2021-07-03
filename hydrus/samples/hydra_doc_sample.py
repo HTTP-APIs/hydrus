@@ -58,7 +58,8 @@ doc = {
         "supportedOperation": "hydra:supportedOperation",
         "supportedProperty": "hydra:supportedProperty",
         "title": "hydra:title",
-        "writeable": "hydra:writeable"
+        "writeable": "hydra:writeable",
+        "xsd": "https://www.w3.org/TR/xmlschema-2/#"
     },
     "@id": "http://localhost:8080/api/vocab",
     "@type": "ApiDocumentation",
@@ -78,7 +79,7 @@ doc = {
                     "method": "POST",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "Drone updated",
                             "statusCode": 200,
@@ -96,7 +97,7 @@ doc = {
                     "method": "PUT",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "Drone added",
                             "statusCode": 200,
@@ -114,14 +115,14 @@ doc = {
                     "method": "GET",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "Drone not found",
                             "statusCode": 404,
                             "title": ""
                         },
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "Drone Returned",
                             "statusCode": 200,
@@ -189,14 +190,14 @@ doc = {
                     "method": "GET",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "State not found",
                             "statusCode": 404,
                             "title": ""
                         },
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "State Returned",
                             "statusCode": 200,
@@ -272,14 +273,14 @@ doc = {
                     "method": "GET",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "Data not found",
                             "statusCode": 404,
                             "title": ""
                         },
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "Data returned",
                             "statusCode": 200,
@@ -297,7 +298,7 @@ doc = {
                     "method": "POST",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "Data updated",
                             "statusCode": 200,
@@ -315,7 +316,7 @@ doc = {
                     "method": "DELETE",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "Data deleted",
                             "statusCode": 200,
@@ -367,14 +368,14 @@ doc = {
                     "method": "GET",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "Log entry not found",
                             "statusCode": 404,
                             "title": ""
                         },
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "Log entry returned",
                             "statusCode": 200,
@@ -392,7 +393,7 @@ doc = {
                     "method": "PUT",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "Log entry created",
                             "statusCode": 201,
@@ -476,7 +477,7 @@ doc = {
                     "method": "POST",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "Area of interest changed",
                             "statusCode": 200,
@@ -494,14 +495,14 @@ doc = {
                     "method": "GET",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "Area of interest not found",
                             "statusCode": 200,
                             "title": ""
                         },
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "Area of interest returned",
                             "statusCode": 200,
@@ -545,14 +546,14 @@ doc = {
                     "method": "GET",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "Command not found",
                             "statusCode": 404,
                             "title": ""
                         },
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "Command Returned",
                             "statusCode": 200,
@@ -570,7 +571,7 @@ doc = {
                     "method": "PUT",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "Command added",
                             "statusCode": 201,
@@ -588,7 +589,7 @@ doc = {
                     "method": "DELETE",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "Command deleted",
                             "statusCode": 201,
@@ -632,14 +633,14 @@ doc = {
                     "method": "GET",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "Message not found",
                             "statusCode": 200,
                             "title": ""
                         },
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "Message returned",
                             "statusCode": 200,
@@ -657,7 +658,7 @@ doc = {
                     "method": "DELETE",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "Message deleted",
                             "statusCode": 200,
@@ -736,7 +737,7 @@ doc = {
                     "method": "PUT",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "A new member in DroneCollection created",
                             "statusCode": 201,
@@ -755,7 +756,7 @@ doc = {
                     "method": "POST",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "If the entity was updatedfrom DroneCollection.",
                             "statusCode": 200,
@@ -774,7 +775,7 @@ doc = {
                     "method": "DELETE",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "If entity was deletedsuccessfully from DroneCollection.",
                             "statusCode": 200,
@@ -828,7 +829,7 @@ doc = {
                     "method": "PUT",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "A new member in StateCollection created",
                             "statusCode": 201,
@@ -847,7 +848,7 @@ doc = {
                     "method": "POST",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "If the entity was updatedfrom StateCollection.",
                             "statusCode": 200,
@@ -866,7 +867,7 @@ doc = {
                     "method": "DELETE",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "If entity was deletedsuccessfully from StateCollection.",
                             "statusCode": 200,
@@ -920,7 +921,7 @@ doc = {
                     "method": "PUT",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "A new member in DatastreamCollection created",
                             "statusCode": 201,
@@ -939,7 +940,7 @@ doc = {
                     "method": "POST",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "If the entity was updatedfrom DatastreamCollection.",
                             "statusCode": 200,
@@ -958,7 +959,7 @@ doc = {
                     "method": "DELETE",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "If entity was deletedsuccessfully from DatastreamCollection.",
                             "statusCode": 200,
@@ -1012,7 +1013,7 @@ doc = {
                     "method": "PUT",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "A new member in LogEntryCollection created",
                             "statusCode": 201,
@@ -1031,7 +1032,7 @@ doc = {
                     "method": "POST",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "If the entity was updatedfrom LogEntryCollection.",
                             "statusCode": 200,
@@ -1050,7 +1051,7 @@ doc = {
                     "method": "DELETE",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "If entity was deletedsuccessfully from LogEntryCollection.",
                             "statusCode": 200,
@@ -1104,7 +1105,7 @@ doc = {
                     "method": "PUT",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "A new member in CommandCollection created",
                             "statusCode": 201,
@@ -1123,7 +1124,7 @@ doc = {
                     "method": "POST",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "If the entity was updatedfrom CommandCollection.",
                             "statusCode": 200,
@@ -1142,7 +1143,7 @@ doc = {
                     "method": "DELETE",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "If entity was deletedsuccessfully from CommandCollection.",
                             "statusCode": 200,
@@ -1196,7 +1197,7 @@ doc = {
                     "method": "PUT",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "A new member in MessageCollection created",
                             "statusCode": 201,
@@ -1215,7 +1216,7 @@ doc = {
                     "method": "POST",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "If the entity was updatedfrom MessageCollection.",
                             "statusCode": 200,
@@ -1234,7 +1235,7 @@ doc = {
                     "method": "DELETE",
                     "possibleStatus": [
                         {
-                            "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                            "@context": "https://www.w3.org/ns/hydra/core",
                             "@type": "Status",
                             "description": "If entity was deletedsuccessfully from MessageCollection.",
                             "statusCode": 200,
@@ -1297,7 +1298,7 @@ doc = {
                                 "method": "POST",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "Drone updated",
                                         "statusCode": 200,
@@ -1317,7 +1318,7 @@ doc = {
                                 "method": "PUT",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "Drone added",
                                         "statusCode": 200,
@@ -1337,14 +1338,14 @@ doc = {
                                 "method": "GET",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "Drone not found",
                                         "statusCode": 404,
                                         "title": ""
                                     },
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "Drone Returned",
                                         "statusCode": 200,
@@ -1381,14 +1382,14 @@ doc = {
                                 "method": "GET",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "State not found",
                                         "statusCode": 404,
                                         "title": ""
                                     },
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "State Returned",
                                         "statusCode": 200,
@@ -1425,14 +1426,14 @@ doc = {
                                 "method": "GET",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "Data not found",
                                         "statusCode": 404,
                                         "title": ""
                                     },
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "Data returned",
                                         "statusCode": 200,
@@ -1452,7 +1453,7 @@ doc = {
                                 "method": "POST",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "Data updated",
                                         "statusCode": 200,
@@ -1472,7 +1473,7 @@ doc = {
                                 "method": "DELETE",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "Data deleted",
                                         "statusCode": 200,
@@ -1509,14 +1510,14 @@ doc = {
                                 "method": "GET",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "Log entry not found",
                                         "statusCode": 404,
                                         "title": ""
                                     },
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "Log entry returned",
                                         "statusCode": 200,
@@ -1536,7 +1537,7 @@ doc = {
                                 "method": "PUT",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "Log entry created",
                                         "statusCode": 201,
@@ -1573,7 +1574,7 @@ doc = {
                                 "method": "POST",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "Area of interest changed",
                                         "statusCode": 200,
@@ -1593,14 +1594,14 @@ doc = {
                                 "method": "GET",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "Area of interest not found",
                                         "statusCode": 200,
                                         "title": ""
                                     },
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "Area of interest returned",
                                         "statusCode": 200,
@@ -1637,14 +1638,14 @@ doc = {
                                 "method": "GET",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "Command not found",
                                         "statusCode": 404,
                                         "title": ""
                                     },
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "Command Returned",
                                         "statusCode": 200,
@@ -1664,7 +1665,7 @@ doc = {
                                 "method": "PUT",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "Command added",
                                         "statusCode": 201,
@@ -1684,7 +1685,7 @@ doc = {
                                 "method": "DELETE",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "Command deleted",
                                         "statusCode": 201,
@@ -1721,14 +1722,14 @@ doc = {
                                 "method": "GET",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "Message not found",
                                         "statusCode": 200,
                                         "title": ""
                                     },
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "Message returned",
                                         "statusCode": 200,
@@ -1748,7 +1749,7 @@ doc = {
                                 "method": "DELETE",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "Message deleted",
                                         "statusCode": 200,
@@ -1799,7 +1800,7 @@ doc = {
                                 "method": "PUT",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "A new member in DroneCollection created",
                                         "statusCode": 201,
@@ -1818,7 +1819,7 @@ doc = {
                                 "method": "POST",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "If the entity was updatedfrom DroneCollection.",
                                         "statusCode": 200,
@@ -1837,7 +1838,7 @@ doc = {
                                 "method": "DELETE",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "If entity was deletedsuccessfully from DroneCollection.",
                                         "statusCode": 200,
@@ -1888,7 +1889,7 @@ doc = {
                                 "method": "PUT",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "A new member in StateCollection created",
                                         "statusCode": 201,
@@ -1907,7 +1908,7 @@ doc = {
                                 "method": "POST",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "If the entity was updatedfrom StateCollection.",
                                         "statusCode": 200,
@@ -1926,7 +1927,7 @@ doc = {
                                 "method": "DELETE",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "If entity was deletedsuccessfully from StateCollection.",
                                         "statusCode": 200,
@@ -1977,7 +1978,7 @@ doc = {
                                 "method": "PUT",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "A new member in DatastreamCollection created",
                                         "statusCode": 201,
@@ -1996,7 +1997,7 @@ doc = {
                                 "method": "POST",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "If the entity was updatedfrom DatastreamCollection.",
                                         "statusCode": 200,
@@ -2015,7 +2016,7 @@ doc = {
                                 "method": "DELETE",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "If entity was deletedsuccessfully from DatastreamCollection.",
                                         "statusCode": 200,
@@ -2066,7 +2067,7 @@ doc = {
                                 "method": "PUT",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "A new member in LogEntryCollection created",
                                         "statusCode": 201,
@@ -2085,7 +2086,7 @@ doc = {
                                 "method": "POST",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "If the entity was updatedfrom LogEntryCollection.",
                                         "statusCode": 200,
@@ -2104,7 +2105,7 @@ doc = {
                                 "method": "DELETE",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "If entity was deletedsuccessfully from LogEntryCollection.",
                                         "statusCode": 200,
@@ -2155,7 +2156,7 @@ doc = {
                                 "method": "PUT",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "A new member in CommandCollection created",
                                         "statusCode": 201,
@@ -2174,7 +2175,7 @@ doc = {
                                 "method": "POST",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "If the entity was updatedfrom CommandCollection.",
                                         "statusCode": 200,
@@ -2193,7 +2194,7 @@ doc = {
                                 "method": "DELETE",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "If entity was deletedsuccessfully from CommandCollection.",
                                         "statusCode": 200,
@@ -2244,7 +2245,7 @@ doc = {
                                 "method": "PUT",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "A new member in MessageCollection created",
                                         "statusCode": 201,
@@ -2263,7 +2264,7 @@ doc = {
                                 "method": "POST",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "If the entity was updatedfrom MessageCollection.",
                                         "statusCode": 200,
@@ -2282,7 +2283,7 @@ doc = {
                                 "method": "DELETE",
                                 "possibleStatus": [
                                     {
-                                        "@context": "https://raw.githubusercontent.com/HydraCG/Specifications/master/spec/latest/core/core.jsonld",
+                                        "@context": "https://www.w3.org/ns/hydra/core",
                                         "@type": "Status",
                                         "description": "If entity was deletedsuccessfully from MessageCollection.",
                                         "statusCode": 200,
