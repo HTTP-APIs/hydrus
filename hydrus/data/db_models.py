@@ -10,6 +10,7 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     Integer,
+    Float,
     String,
     create_engine,
     event,
@@ -100,7 +101,13 @@ class Resource:
                     foreign_table_name, title
                 )
             else:
-                attr_dict[title] = Column(String)
+                datatype_keys = {'integer': Integer, 'float': Float}
+                if 'range' in supported_property:
+                    datatype = supported_property['range'].split('#')[1]
+                    if datatype in datatype_keys:
+                        attr_dict[title] = Column(datatype_keys[datatype])
+                else:
+                    attr_dict[title] = Column(String)
 
         if "manages" in self.resource:
             # if the class is a collection, add an extra column for
