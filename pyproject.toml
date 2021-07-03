@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "hydrus"
-version = "0.4.3"
+version = "0.4.4"
 description = "Hydra Ecosystem Flagship Server. Deploy REST data for Web 3.0"
 authors = ["Hydra Ecosystem"]
 license = "MIT License"
@@ -21,7 +21,7 @@ Flask-SocketIO = "~4.2.1"
 gevent = "~20.12.0"
 gevent-websocket = "~0.10.1"
 greenlet = "~0.4.17"
-hydra_python_core = ">=0.3"
+hydra_python_core = ">=0.3.1"
 hydra_openapi_parser = ">=0.2"
 itsdangerous = ">=2.0.0"
 Jinja2 = ">=3.0"
