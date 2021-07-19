@@ -101,7 +101,7 @@ class Resource:
                     foreign_table_name, title
                 )
             else:
-                datatype_keys = {'integer': Integer, 'float': Float}
+                datatype_keys = {'integer': Integer, 'float': Float, 'decimal': Float}
                 if 'range' in supported_property:
                     datatype = supported_property['range'].split('#')[1]
                     if datatype in datatype_keys:
