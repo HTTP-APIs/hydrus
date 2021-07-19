@@ -21,7 +21,7 @@ for package_index in range(len(dependencies)):
 setup(
     name="hydrus",
     include_package_data=True,
-    version="0.4.4",
+    version="0.4.5",
     description="Hydra Ecosystem Flagship Server. Deploy REST data for Web 3.0",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
