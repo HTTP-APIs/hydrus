@@ -97,6 +97,7 @@ def get(
 
 
 def insert(
+    doc_,
     object_: Dict[str, Any],
     session: scoped_session,
     id_: Optional[str] = None,
@@ -124,12 +125,12 @@ def insert(
     object_template = copy.deepcopy(object_)
     if id_ is not None:
         object_template["id"] = id_
-    inserted_object_id = insert_object(object_template, session, collection)
+    inserted_object_id = insert_object(doc_, object_template, session, collection)
     return inserted_object_id
 
 
 def insert_multiple(
-    objects_: List[Dict[str, Any]], session: scoped_session, id_: Optional[str] = ""
+    doc, objects_: List[Dict[str, Any]], session: scoped_session, id_: Optional[str] = ""
 ) -> List[str]:
     """
     Adds a list of object with given ids to the database
@@ -167,7 +168,7 @@ def insert_multiple(
             pass
         except TypeError:
             pass
-        inserted_object_id = insert(object_, session, id_of_object_)
+        inserted_object_id = insert(doc, object_, session, id_of_object_)
         instance_id_list.append(inserted_object_id)
 
     return instance_id_list
@@ -209,6 +210,7 @@ def delete_multiple(id_: List[int], type_: str, session: scoped_session) -> None
 
 
 def update(
+    doc_,
     id_: str,
     type_: str,
     object_: Dict[str, str],
@@ -228,7 +230,7 @@ def update(
     :return: id of updated object
     """
     query_info = {"@type": type_, "id_": id_}
-    updated_object_id = update_object(object_, query_info, session, collection)
+    updated_object_id = update_object(doc_, object_, query_info, session, collection)
     return updated_object_id
 
 

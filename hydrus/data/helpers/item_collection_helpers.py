@@ -34,6 +34,7 @@ from hydrus.utils import (
     get_hydrus_server_url,
     get_page_size,
     get_pagination,
+    get_doc
 )
 
 
@@ -99,6 +100,7 @@ def item_collection_put_response(path: str) -> Response:
     :rtype: Response
     """
     object_ = json.loads(request.data.decode("utf-8"))
+    doc_object = get_doc()
     collections, parsed_classes = get_collections_and_parsed_classes()
     is_collection = False
     if path in parsed_classes:
@@ -118,7 +120,7 @@ def item_collection_put_response(path: str) -> Response:
         try:
             # Insert object and return location in Header
             object_id = crud.insert(
-                object_=object_, session=get_session(), collection=is_collection
+                object_=object_, session=get_session(), doc_=doc_object, collection=is_collection
             )
             resource_url = (
                 f"{get_hydrus_server_url()}{get_api_name()}/{path}/{object_id}"
