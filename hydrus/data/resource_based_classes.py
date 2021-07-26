@@ -81,10 +81,11 @@ def get_database_class(type_: str):
 
 
 def insert_object(
-    doc_, object_: Dict[str, Any], session: scoped_session, collection: bool = False
+    doc_: HydraDoc, object_: Dict[str, Any], session: scoped_session, collection: bool = False
 ) -> str:
     """
     Insert the object in the database
+    :param doc_: HydraDoc object
     :param object_: Dict containing object properties
     :param session: sqlalchemy session
     :return: The ID of the inserted object
@@ -236,7 +237,7 @@ def delete_object(
 
 
 def update_object(
-    doc_,
+    doc_: HydraDoc,
     object_: Dict[str, Any],
     query_info: Dict[str, str],
     session: scoped_session,
@@ -244,6 +245,7 @@ def update_object(
 ) -> str:
     """
     Update the object from the database
+    :param doc_: HydraDoc object
     :param object_: Dict containing updated object properties
     :param query_info: Dict containing the id and @type of object that has to retrieved
     :param session: sqlalchemy session
