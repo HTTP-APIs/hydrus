@@ -19,7 +19,7 @@ from sqlalchemy import exists
 from sqlalchemy.exc import InvalidRequestError, IntegrityError
 from sqlalchemy.orm.scoping import scoped_session
 from sqlalchemy.orm.exc import NoResultFound
-from hydrus.utils import get_doc
+from hydra_python_core.doc_writer import HydraDoc
 from typing import Dict, Any
 
 
@@ -36,7 +36,14 @@ def get_type(object_: Dict[str, Any]) -> str:
     return type_
 
 
-def get_modified_object(object_, doc, path):
+def get_modified_object(object_: Dict[str, Any], doc: HydraDoc, path: str) -> Dict[str, Any]:
+    """
+    Return the object after modifying properties.
+    :param object_: Dict containing object properties
+    :param doc: HydraDoc object
+    :param path: Path of the Class or Collection
+    :return: object_ containing properties
+    """
     temp_object = copy.deepcopy(object_)
     class_ = doc.parsed_classes[path]
     properties = class_["class"].supportedProperty
