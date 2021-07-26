@@ -81,14 +81,14 @@ prop1_uri = "http://props.hydrus.com/prop1"
 prop1_title = "Prop1"                   # Title of the property
 
 dummyProp1 = HydraClassProp(prop1_uri, prop1_title,
-                            required=False, read=False, write=True)
+                            required=False, read=False, write=True, range="xsd:dateTime")
 
 
 prop2_uri = "http://props.hydrus.com/prop2"
 prop2_title = "Prop2"
 
 dummyProp2 = HydraClassProp(prop2_uri, prop2_title,
-                            required=False, read=False, write=True)
+                            required=False, read=False, write=True, range="xsd:float")
 # NOTE: Properties that are required=True must be added during class object creation
 #       Properties that are read=True are read only
 #       Properties that are write=True are writable

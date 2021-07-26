@@ -42,9 +42,9 @@ def get_modified_object(object_, doc, path):
     properties = class_["class"].supportedProperty
     datetimefields = []
     for prop in properties:
-        kwargs = getattr(prop,'kwargs',None)
+        kwargs = getattr(prop, 'kwargs', None)
         range = kwargs.get('range')
-        title = getattr(prop,'title')
+        title = getattr(prop, 'title')
         if range is not None:
             if "dateTime" in range:
                 datetimefield = title
