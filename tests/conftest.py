@@ -93,7 +93,7 @@ def gen_dummy_object(class_title, doc):
                     if type_ is not None:
                         if "dateTime" in type_:
                             value = datetime.utcnow()
-                            obj = datetime.strftime(value, "%d/%m/%Y %H:%M:%S")
+                            obj = value.isoformat()
                             object_[prop.title] = obj
                         elif "string" in type_:
                             object_[prop.title] = ''.join(random.choice(

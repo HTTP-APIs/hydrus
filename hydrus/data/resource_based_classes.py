@@ -4,7 +4,7 @@ resources in the provided API Doc.
 """
 import copy
 import uuid
-from datetime import datetime
+from dateutil import parser
 from hydrus.data.db_models import Resource
 from hydrus.data.exceptions import (
     ClassNotFound,
@@ -60,7 +60,7 @@ def get_modified_object(object_: Dict[str, Any], doc: HydraDoc, path: str) -> Di
         for field in datetimefields:
             try:
                 datetime_value = temp_object.get(field)
-                dt_object = datetime.strptime(datetime_value, "%d/%m/%Y %H:%M:%S")
+                dt_object = parser.isoparse(datetime_value)
                 temp_object[field] = dt_object
             except TypeError:
                 datetime_value = temp_object.get(field)
