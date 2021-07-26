@@ -17,7 +17,7 @@ def test_crud_insert_response_is_str(drone_doc_parsed_classes, drone_doc, sessio
     """Test CRUD insert response is string"""
     object_ = gen_dummy_object(random.choice(drone_doc_parsed_classes), drone_doc)
     id_ = str(uuid.uuid4())
-    response = crud.insert(object_=object_, id_=id_, session=session)
+    response = crud.insert(drone_doc, object_=object_, id_=id_, session=session)
 
     assert isinstance(response, str)
 
@@ -26,7 +26,7 @@ def test_crud_get_returns_correct_object(drone_doc_parsed_classes, drone_doc, se
     """Test CRUD get returns correct object"""
     object_ = gen_dummy_object(random.choice(drone_doc_parsed_classes), drone_doc)
     id_ = str(uuid.uuid4())
-    response = crud.insert(object_=object_, id_=id_, session=session)
+    response = crud.insert(drone_doc, object_=object_, id_=id_, session=session)
     object_ = crud.get(id_=id_, type_=object_['@type'], session=session, api_name='api')
     assert isinstance(response, str)
     assert object_['@id'].split('/')[-1] == id_
@@ -42,7 +42,7 @@ def test_get_for_nested_obj(drone_doc_parsed_classes, drone_doc, session, consta
                     dummy_obj = gen_dummy_object(class_, drone_doc)
                     nested_class = prop.prop.split(expanded_base_url)[1]
                     obj_id = str(uuid.uuid4())
-                    response = crud.insert(object_=dummy_obj, id_=obj_id, session=session)
+                    response = crud.insert(drone_doc, object_=dummy_obj, id_=obj_id, session=session)
                     object_ = crud.get(id_=obj_id, type_=class_, session=session,
                                        api_name='api')
                     assert prop.title in object_
@@ -91,7 +91,7 @@ def test_searching_over_collection_elements(drone_doc_parsed_classes, drone_doc,
 
                 obj_id = str(uuid.uuid4())
                 response = crud.insert(
-                    object_=object_, id_=obj_id, session=session)
+                    drone_doc, object_=object_, id_=obj_id, session=session)
                 search_result = crud.get_collection(API_NAME='api', type_=class_,
                                                     session=session, paginate=True,
                                                     page_size=5, search_params=search_params)
@@ -108,8 +108,9 @@ def test_update_on_object(drone_doc_parsed_classes, drone_doc, session):
     object_ = gen_dummy_object(random_class, drone_doc)
     new_object = gen_dummy_object(random_class, drone_doc)
     id_ = str(uuid.uuid4())
-    insert_response = crud.insert(object_=object_, id_=id_, session=session)
+    insert_response = crud.insert(drone_doc, object_=object_, id_=id_, session=session)
     update_response = crud.update(
+        drone_doc, 
         id_=id_,
         type_=object_['@type'],
         object_=new_object,
@@ -126,7 +127,7 @@ def test_delete_on_object(drone_doc_parsed_classes, drone_doc, session):
     """Test CRUD delete on object"""
     object_ = gen_dummy_object(random.choice(drone_doc_parsed_classes), drone_doc)
     id_ = str(uuid.uuid4())
-    insert_response = crud.insert(object_=object_, id_=id_, session=session)
+    insert_response = crud.insert(drone_doc, object_=object_, id_=id_, session=session)
     assert isinstance(insert_response, str)
     delete_response = crud.delete(id_=id_, type_=object_['@type'], session=session)
     response_code = None
@@ -160,7 +161,7 @@ def test_delete_on_wrong_id(drone_doc_parsed_classes, drone_doc, session):
     object_ = gen_dummy_object(random.choice(
         drone_doc_parsed_classes), drone_doc)
     id_ = str(uuid.uuid4())
-    insert_response = crud.insert(object_=object_, id_=id_, session=session)
+    insert_response = crud.insert(drone_doc, object_=object_, id_=id_, session=session)
     response_code = None
     try:
         delete_response = crud.delete(id_=999, type_=object_['@type'], session=session)
@@ -176,11 +177,11 @@ def test_insert_used_id(drone_doc_parsed_classes, drone_doc, session):
     """Test CRUD insert when used ID is given."""
     object_ = gen_dummy_object(random.choice(drone_doc_parsed_classes), drone_doc)
     id_ = str(uuid.uuid4())
-    insert_response = crud.insert(object_=object_, id_=id_, session=session)
+    insert_response = crud.insert(drone_doc, object_=object_, id_=id_, session=session)
     response_code = None
     try:
         insert_response = crud.insert(
-            object_=object_, id_=id_, session=session)
+            drone_doc, object_=object_, id_=id_, session=session)
     except Exception as e:
         error = e.get_HTTP()
         response_code = error.code
@@ -203,7 +204,7 @@ def test_delete_on_wrong_type(drone_doc_parsed_classes, drone_doc, session):
     """Test CRUD delete when wrong/undefined class is given."""
     object_ = gen_dummy_object(random.choice(drone_doc_parsed_classes), drone_doc)
     id_ = str(uuid.uuid4())
-    insert_response = crud.insert(object_=object_, id_=id_, session=session)
+    insert_response = crud.insert(drone_doc, object_=object_, id_=id_, session=session)
     assert isinstance(insert_response, str)
     assert insert_response == id_
     response_code = None
@@ -222,7 +223,7 @@ def test_insert_on_wrong_type(drone_doc_parsed_classes, drone_doc, session):
     object_['@type'] = 'otherClass'
     response_code = None
     try:
-        insert_response = crud.insert(object_=object_, id_=id_, session=session)
+        insert_response = crud.insert(drone_doc, object_=object_, id_=id_, session=session)
     except Exception as e:
         error = e.get_HTTP()
         response_code = error.code
@@ -237,7 +238,7 @@ def test_insert_multiple_id(drone_doc_parsed_classes, drone_doc, session):
     for index in range(len(ids_list)):
         object = gen_dummy_object(random.choice(drone_doc_parsed_classes), drone_doc)
         objects.append(object)
-    insert_response = crud.insert_multiple(objects_=objects, session=session, id_=ids)
+    insert_response = crud.insert_multiple(drone_doc, objects_=objects, session=session, id_=ids)
     for id_ in ids_list:
         assert id_ in insert_response
 
@@ -250,7 +251,7 @@ def test_delete_multiple_id(drone_doc_parsed_classes, drone_doc, session):
     for index in range(len(ids.split(','))):
         object = gen_dummy_object(random_class, drone_doc)
         objects.append(object)
-    insert_response = crud.insert_multiple(objects_=objects, session=session, id_=ids)
+    insert_response = crud.insert_multiple(drone_doc, objects_=objects, session=session, id_=ids)
     delete_response = crud.delete_multiple(id_=ids, type_=random_class, session=session)
 
     response_code = None
@@ -283,7 +284,7 @@ def test_insert_when_property_not_given(drone_doc_parsed_classes, drone_doc,
     dummy_obj.pop(nested_prop_title)
     id_ = str(uuid.uuid4())
     try:
-        insert_response = crud.insert(object_=dummy_obj, id_=id_, session=session)
+        insert_response = crud.insert(drone_doc, object_=dummy_obj, id_=id_, session=session)
     except PropertyNotGiven as e:
         error = e.get_HTTP()
         response_code = error.code

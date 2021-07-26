@@ -2,6 +2,7 @@ import random
 import string
 import uuid
 from base64 import b64encode
+from datetime import datetime
 
 import pytest
 from hydra_python_core import doc_maker
@@ -64,6 +65,7 @@ def gen_dummy_object(class_title, doc):
                 member = gen_dummy_object(member_class, doc)
                 member_id = crud.insert(object_=member,
                                         session=get_session(),
+                                        doc_=doc,
                                         collection=False)
                 from hydrus.data.helpers import get_path_from_type
                 member_class_path = get_path_from_type(member_class)
@@ -89,7 +91,12 @@ def gen_dummy_object(class_title, doc):
                 else:
                     type_ = prop.kwargs.get('range')
                     if type_ is not None:
-                        object_[prop.title] = random.randint(50,100)
+                        if "dateTime" in type_:
+                            value = datetime.utcnow()
+                            obj = datetime.strftime(value, "%d/%m/%Y %H:%M:%S")
+                            object_[prop.title] = obj
+                        else:
+                            object_[prop.title] = random.randint(50,100)
                     else:
                         object_[prop.title] = ''.join(random.choice(
                             string.ascii_uppercase + string.digits) for _ in range(6))
@@ -300,11 +307,11 @@ def init_db_for_app_tests(doc, constants, session, add_doc_classes_and_propertie
     for class_ in doc.parsed_classes:
         class_title = doc.parsed_classes[class_]['class'].title
         dummy_obj = gen_dummy_object(class_title, doc)
-        crud.insert(dummy_obj, id_=str(uuid.uuid4()), session=session)
+        crud.insert(doc, dummy_obj, id_=str(uuid.uuid4()), session=session)
         # If it's a collection class then add an extra object so
         # we can test pagination thoroughly.
         if class_ in doc.collections:
-            crud.insert(dummy_obj, id_=str(uuid.uuid4()), session=session)
+            crud.insert(doc, dummy_obj, id_=str(uuid.uuid4()), session=session )
 
 
 @pytest.fixture()
@@ -316,11 +323,11 @@ def init_db_for_socket_tests(doc, add_doc_classes_and_properties_to_db, session)
     for class_ in doc.parsed_classes:
         class_title = doc.parsed_classes[class_]["class"].title
         dummy_obj = gen_dummy_object(class_title, doc)
-        crud.insert(dummy_obj, id_=str(uuid.uuid4()), session=session)
+        crud.insert(doc, dummy_obj, id_=str(uuid.uuid4()), session=session)
         # If it's a collection class then add an extra object so
         # we can test pagination thoroughly.
         if class_ in doc.collections:
-            crud.insert(dummy_obj, id_=str(uuid.uuid4()), session=session)
+            crud.insert(doc, dummy_obj, id_=str(uuid.uuid4()), session=session)
     # Add two dummy modification records
     crud.insert_modification_record(method="POST", resource_url="", session=session)
     crud.insert_modification_record(method="DELETE", resource_url="", session=session)
