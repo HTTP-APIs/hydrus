@@ -4,6 +4,7 @@ resources in the provided API Doc.
 """
 import copy
 import uuid
+from datetime import datetime
 from hydrus.data.db_models import Resource
 from hydrus.data.exceptions import (
     ClassNotFound,
@@ -18,6 +19,7 @@ from sqlalchemy import exists
 from sqlalchemy.exc import InvalidRequestError, IntegrityError
 from sqlalchemy.orm.scoping import scoped_session
 from sqlalchemy.orm.exc import NoResultFound
+from hydrus.utils import get_doc
 from typing import Dict, Any
 
 
@@ -34,6 +36,31 @@ def get_type(object_: Dict[str, Any]) -> str:
     return type_
 
 
+def get_modified_object(object_, doc, path):
+    temp_object = copy.deepcopy(object_)
+    class_ = doc.parsed_classes[path]
+    properties = class_["class"].supportedProperty
+    datetimefields = []
+    for prop in properties:
+        kwargs = getattr(prop,'kwargs',None)
+        range = kwargs.get('range')
+        title = getattr(prop,'title')
+        if range is not None:
+            if "dateTime" in range:
+                datetimefield = title
+                datetimefields.append(datetimefield)
+    if len(datetimefields) != 0:
+        for field in datetimefields:
+            try:
+                datetime_value = temp_object.get(field)
+                dt_object = datetime.strptime(datetime_value, "%d/%m/%Y %H:%M:%S")
+                temp_object[field] = dt_object
+            except TypeError:
+                datetime_value = temp_object.get(field)
+                temp_object[field] = datetime_value
+    return temp_object
+
+
 def get_database_class(type_: str):
     """
     Get the sqlalchemy class object from given classname
@@ -47,7 +74,7 @@ def get_database_class(type_: str):
 
 
 def insert_object(
-    object_: Dict[str, Any], session: scoped_session, collection: bool = False
+    doc_, object_: Dict[str, Any], session: scoped_session, collection: bool = False
 ) -> str:
     """
     Insert the object in the database
@@ -94,16 +121,20 @@ def insert_object(
             fk_column = fk.info["column_name"]
             try:
                 fk_object = object_[fk_column]
+                fk_object_path = fk_object.get('@type')
+                fk_object = get_modified_object(fk_object, doc_, fk_object_path)
             except KeyError as e:
                 wrong_property = e.args[0]
                 raise PropertyNotGiven(type_=wrong_property)
             # insert the foreign key object
-            fk_object_id = insert_object(fk_object, session)
+            fk_object_id = insert_object(doc_, fk_object, session)
             # put the id of the foreign instance in this table's column
             object_[fk_column] = fk_object_id
         try:
             # remove the @type from object before using the object to make a
             # instance of it using sqlalchemy class
+            object_path = object_.get('@type')
+            object_ = get_modified_object(object_, doc_, object_path)
             object_.pop("@type")
             inserted_object = database_class(**object_)
         except TypeError as e:
@@ -198,6 +229,7 @@ def delete_object(
 
 
 def update_object(
+    doc_,
     object_: Dict[str, Any],
     query_info: Dict[str, str],
     session: scoped_session,
@@ -218,11 +250,11 @@ def update_object(
     # Try inserting new object
     try:
         object_["id"] = id_
-        d = insert_object(object_, session, collection)
+        d = insert_object(doc_, object_, session, collection)
     except Exception as e:
         # Put old object back
         old_object["id"] = id_
-        d = insert_object(old_object, session, collection)
+        d = insert_object(doc_, old_object, session, collection)
         raise e
     return id_
 
