@@ -95,6 +95,9 @@ def gen_dummy_object(class_title, doc):
                             value = datetime.utcnow()
                             obj = datetime.strftime(value, "%d/%m/%Y %H:%M:%S")
                             object_[prop.title] = obj
+                        elif "string" in type_:
+                            object_[prop.title] = ''.join(random.choice(
+                            string.ascii_uppercase + string.digits) for _ in range(6))
                         else:
                             object_[prop.title] = random.randint(50,100)
                     else:

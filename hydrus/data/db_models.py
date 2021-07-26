@@ -104,6 +104,7 @@ class Resource:
                 datatype_keys = {'integer': Integer,
                                  'float': Float,
                                  'decimal': Float,
+                                 'string': String,
                                  'dateTime': DateTime}
                 if 'range' in supported_property:
                     datatype = supported_property['range'].split('#')[1]
