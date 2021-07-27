@@ -45,7 +45,6 @@ def get_modified_object(object_: Dict[str, Any], doc: HydraDoc, path: str) -> Di
     :param path: Path of the Class or Collection
     :return: object_ containing properties
     """
-    temp_object = copy.deepcopy(object_)
     class_ = doc.parsed_classes[path]
     properties = class_["class"].supportedProperty
     datetimefields = []
@@ -60,15 +59,15 @@ def get_modified_object(object_: Dict[str, Any], doc: HydraDoc, path: str) -> Di
     if len(datetimefields) != 0:
         for field in datetimefields:
             try:
-                datetime_value = temp_object.get(field)
+                datetime_value = object_.get(field)
                 dt_object = parser.isoparse(datetime_value)
-                temp_object[field] = dt_object
+                object_[field] = dt_object
             except ValueError:
                 raise InvalidDateTimeFormat(field)
             except TypeError:
-                datetime_value = temp_object.get(field)
-                temp_object[field] = datetime_value
-    return temp_object
+                datetime_value = object_.get(field)
+                object_[field] = datetime_value
+    return object_
 
 
 def get_database_class(type_: str):
