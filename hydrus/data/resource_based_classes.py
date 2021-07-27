@@ -14,6 +14,7 @@ from hydrus.data.exceptions import (
     PropertyNotFound,
     PropertyNotGiven,
     MemberInstanceNotFound,
+    InvalidDateTimeFormat
 )
 from sqlalchemy import exists
 from sqlalchemy.exc import InvalidRequestError, IntegrityError
@@ -62,6 +63,8 @@ def get_modified_object(object_: Dict[str, Any], doc: HydraDoc, path: str) -> Di
                 datetime_value = temp_object.get(field)
                 dt_object = parser.isoparse(datetime_value)
                 temp_object[field] = dt_object
+            except ValueError:
+                raise InvalidDateTimeFormat(field)
             except TypeError:
                 datetime_value = temp_object.get(field)
                 temp_object[field] = datetime_value

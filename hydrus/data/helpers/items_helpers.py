@@ -8,6 +8,7 @@ from hydrus.data.exceptions import (
     InstanceExists,
     PropertyNotFound,
     InstanceNotFound,
+    InvalidDateTimeFormat
 )
 from hydrus.data.helpers import (
     checkClassOp,
@@ -102,7 +103,8 @@ def items_put_response(path: str, int_list="") -> Response:
                             headers=headers_,
                             status_code=status.code,
                         )
-                except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
+                except (ClassNotFound, InstanceExists,
+                        PropertyNotFound, InvalidDateTimeFormat) as e:
                     error = e.get_HTTP()
                     return error_response(error)
 

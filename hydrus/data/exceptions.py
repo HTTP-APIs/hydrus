@@ -195,3 +195,17 @@ class PropertyNotGiven(Exception):
         """Return the HTTP response for the Exception."""
         description = f"The property {self.type_} is not given."
         return HydraError(code=400, title="Property not given", desc=description)
+
+
+class InvalidDateTimeFormat(Exception):
+    """Error when a datetime field input is invalid"""
+
+    def __init__(self, field_: str) -> None:
+        """Constructor."""
+        self.field_ = field_
+
+    def get_HTTP(self) -> HydraError:
+        """Return the HTTP response for the Exception."""
+        description = (f"The format of {self.field_} is invalid."
+                       f" Datetime input should be in ISO format.")
+        return HydraError(code=400, title="Invalid Datetime format", desc=description)

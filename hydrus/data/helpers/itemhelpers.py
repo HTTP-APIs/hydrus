@@ -9,6 +9,7 @@ from hydrus.data.exceptions import (
     ClassNotFound,
     InstanceNotFound,
     InstanceExists,
+    InvalidDateTimeFormat,
     PropertyNotFound,
     MemberInstanceNotFound,
 )
@@ -101,7 +102,8 @@ def items_post_check_support(id_, object_, class_path, path, is_collection):
             status_response["iri"] = resource_url
             return set_response_headers(jsonify(status_response), headers=headers_)
 
-        except (ClassNotFound, InstanceNotFound, InstanceExists, PropertyNotFound) as e:
+        except (ClassNotFound, InstanceNotFound, InstanceExists,
+                PropertyNotFound, InvalidDateTimeFormat) as e:
             error = e.get_HTTP()
             return error_response(error)
     else:
@@ -148,7 +150,8 @@ def items_put_check_support(id_, class_path, path, is_collection):
             return set_response_headers(
                 jsonify(status_response), headers=headers_, status_code=status.code
             )
-        except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
+        except (ClassNotFound, InstanceExists,
+                PropertyNotFound, InvalidDateTimeFormat) as e:
             error = e.get_HTTP()
             return error_response(error)
     else:

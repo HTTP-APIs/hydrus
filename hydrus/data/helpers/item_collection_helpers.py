@@ -15,6 +15,7 @@ from hydrus.data.exceptions import (
     InvalidSearchParameter,
     OffsetOutOfRange,
     PropertyNotGiven,
+    InvalidDateTimeFormat
 )
 
 from hydrus.data.helpers import (
@@ -135,7 +136,8 @@ def item_collection_put_response(path: str) -> Response:
             return set_response_headers(
                 jsonify(status_response), headers=headers_, status_code=status.code
             )
-        except (ClassNotFound, InstanceExists, PropertyNotFound, PropertyNotGiven) as e:
+        except (ClassNotFound, InstanceExists, PropertyNotFound,
+                PropertyNotGiven, InvalidDateTimeFormat) as e:
             error = e.get_HTTP()
             return error_response(error)
     else:
