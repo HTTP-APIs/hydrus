@@ -8,6 +8,7 @@ from hydrus.data.exceptions import (
     InstanceExists,
     PropertyNotFound,
     InstanceNotFound,
+    InvalidDateTimeFormat
 )
 from hydrus.data.helpers import (
     checkClassOp,
@@ -26,6 +27,7 @@ from hydrus.utils import (
     get_api_name,
     get_hydrus_server_url,
     set_response_headers,
+    get_doc
 )
 from hydrus.extensions.socketio_factory import socketio
 
@@ -42,6 +44,7 @@ def items_put_response(path: str, int_list="") -> Response:
     :rtype: Response
     """
     object_ = json.loads(request.data.decode("utf-8"))
+    doc = get_doc()
     object_ = object_["data"]
     _, parsed_classes = get_collections_and_parsed_classes()
     if path in parsed_classes:
@@ -65,7 +68,7 @@ def items_put_response(path: str, int_list="") -> Response:
                 try:
                     # Insert object and return location in Header
                     object_id = crud.insert_multiple(
-                        objects_=object_, session=get_session(), id_=int_list
+                        doc, objects_=object_, session=get_session(), id_=int_list
                     )
                     headers_ = [
                         {
@@ -100,7 +103,8 @@ def items_put_response(path: str, int_list="") -> Response:
                             headers=headers_,
                             status_code=status.code,
                         )
-                except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
+                except (ClassNotFound, InstanceExists,
+                        PropertyNotFound, InvalidDateTimeFormat) as e:
                     error = e.get_HTTP()
                     return error_response(error)
 

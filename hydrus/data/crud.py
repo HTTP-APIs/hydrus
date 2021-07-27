@@ -49,6 +49,7 @@ from hydrus.data.crud_helpers import (
 
 # from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.scoping import scoped_session
+from hydra_python_core.doc_writer import HydraDoc
 from typing import Dict, Optional, Any, List
 
 from hydrus.data.resource_based_classes import (
@@ -97,12 +98,14 @@ def get(
 
 
 def insert(
+    doc_: HydraDoc,
     object_: Dict[str, Any],
     session: scoped_session,
     id_: Optional[str] = None,
     collection: bool = False,
 ) -> str:
     """Insert an object to database [POST] and returns the inserted object.
+    :param doc_ : Hydra Doc object
     :param object_: object to be inserted
     :param session: sqlalchemy scoped session
     :param id_: id of the object to be inserted (optional param)
@@ -124,15 +127,19 @@ def insert(
     object_template = copy.deepcopy(object_)
     if id_ is not None:
         object_template["id"] = id_
-    inserted_object_id = insert_object(object_template, session, collection)
+    inserted_object_id = insert_object(doc_, object_template, session, collection)
     return inserted_object_id
 
 
 def insert_multiple(
-    objects_: List[Dict[str, Any]], session: scoped_session, id_: Optional[str] = ""
+    doc: HydraDoc,
+    objects_: List[Dict[str, Any]],
+    session: scoped_session,
+    id_: Optional[str] = ""
 ) -> List[str]:
     """
     Adds a list of object with given ids to the database
+    :param doc : Hydra Doc object
     :param objects_: List of dict's to be added to the database
     :param session: scoped session from getSession in utils
     :param id_: optional parameter containing the ids of objects that have to be inserted
@@ -167,7 +174,7 @@ def insert_multiple(
             pass
         except TypeError:
             pass
-        inserted_object_id = insert(object_, session, id_of_object_)
+        inserted_object_id = insert(doc, object_, session, id_of_object_)
         instance_id_list.append(inserted_object_id)
 
     return instance_id_list
@@ -209,6 +216,7 @@ def delete_multiple(id_: List[int], type_: str, session: scoped_session) -> None
 
 
 def update(
+    doc_: HydraDoc,
     id_: str,
     type_: str,
     object_: Dict[str, str],
@@ -218,6 +226,7 @@ def update(
     collection: bool = False,
 ) -> str:
     """Update an object properties based on the given object [PUT].
+    :param doc_ : Hydra Doc object
     :param id_: if of object to be updated
     :param type_: type of object to be updated
     :param object_: object that has to be inserted
@@ -228,7 +237,7 @@ def update(
     :return: id of updated object
     """
     query_info = {"@type": type_, "id_": id_}
-    updated_object_id = update_object(object_, query_info, session, collection)
+    updated_object_id = update_object(doc_, object_, query_info, session, collection)
     return updated_object_id
 
 

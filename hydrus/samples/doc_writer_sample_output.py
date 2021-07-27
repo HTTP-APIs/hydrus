@@ -151,6 +151,7 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "http://props.hydrus.com/prop1",
+                    "range": "xsd:dateTime",
                     "readable": "false",
                     "required": "false",
                     "title": "Prop1",
@@ -159,6 +160,7 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "http://props.hydrus.com/prop2",
+                    "range": "xsd:float",
                     "readable": "false",
                     "required": "false",
                     "title": "Prop2",
@@ -257,6 +259,7 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "http://props.hydrus.com/prop1",
+                    "range": "xsd:dateTime",
                     "readable": "false",
                     "required": "false",
                     "title": "Prop1",
@@ -265,6 +268,7 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "http://props.hydrus.com/prop2",
+                    "range": "xsd:float",
                     "readable": "false",
                     "required": "false",
                     "title": "Prop2",
@@ -325,6 +329,7 @@ doc = {
                 {
                     "@type": "SupportedProperty",
                     "property": "http://props.hydrus.com/prop1",
+                    "range": "xsd:dateTime",
                     "readable": "false",
                     "required": "false",
                     "title": "Prop1",

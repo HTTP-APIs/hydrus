@@ -9,6 +9,7 @@ from hydrus.data.exceptions import (
     ClassNotFound,
     InstanceNotFound,
     InstanceExists,
+    InvalidDateTimeFormat,
     PropertyNotFound,
     MemberInstanceNotFound,
 )
@@ -24,7 +25,7 @@ from hydrus.data.helpers import (
     parse_collection_members,
     get_collections_and_parsed_classes,
 )
-from hydrus.utils import get_session, get_api_name, get_hydrus_server_url
+from hydrus.utils import get_session, get_api_name, get_hydrus_server_url, get_doc
 from hydrus.extensions.socketio_factory import socketio
 
 
@@ -52,6 +53,7 @@ def items_get_check_support(id_, class_type, class_path, path, is_collection=Fal
 def items_post_check_support(id_, object_, class_path, path, is_collection):
     """Check if class_type supports POST operation"""
     collections, parsed_classes = get_collections_and_parsed_classes()
+    doc = get_doc()
     if path in parsed_classes:
         class_path = path
         obj_type = getType(path, "PUT")
@@ -68,6 +70,7 @@ def items_post_check_support(id_, object_, class_path, path, is_collection):
             # Update the right ID if the object is valid and matches
             # type of Item
             object_id = crud.update(
+                doc,
                 object_=object_,
                 id_=id_,
                 type_=object_["@type"],
@@ -99,7 +102,8 @@ def items_post_check_support(id_, object_, class_path, path, is_collection):
             status_response["iri"] = resource_url
             return set_response_headers(jsonify(status_response), headers=headers_)
 
-        except (ClassNotFound, InstanceNotFound, InstanceExists, PropertyNotFound) as e:
+        except (ClassNotFound, InstanceNotFound, InstanceExists,
+                PropertyNotFound, InvalidDateTimeFormat) as e:
             error = e.get_HTTP()
             return error_response(error)
     else:
@@ -110,6 +114,7 @@ def items_post_check_support(id_, object_, class_path, path, is_collection):
 def items_put_check_support(id_, class_path, path, is_collection):
     """Check if class_type supports PUT operation"""
     object_ = json.loads(request.data.decode("utf-8"))
+    doc = get_doc()
     collections, parsed_classes = get_collections_and_parsed_classes()
     if path in parsed_classes:
         class_path = path
@@ -126,6 +131,7 @@ def items_put_check_support(id_, class_path, path, is_collection):
         try:
             # Add the object with given ID
             object_id = crud.insert(
+                doc,
                 object_=object_,
                 id_=id_,
                 session=get_session(),
@@ -144,7 +150,8 @@ def items_put_check_support(id_, class_path, path, is_collection):
             return set_response_headers(
                 jsonify(status_response), headers=headers_, status_code=status.code
             )
-        except (ClassNotFound, InstanceExists, PropertyNotFound) as e:
+        except (ClassNotFound, InstanceExists,
+                PropertyNotFound, InvalidDateTimeFormat) as e:
             error = e.get_HTTP()
             return error_response(error)
     else:
