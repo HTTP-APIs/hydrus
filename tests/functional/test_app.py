@@ -4,7 +4,6 @@ response format is proper. Run tests/unit/test_crud.py before running this.
 """
 
 import json
-import re
 import uuid
 
 import pytest
@@ -194,13 +193,9 @@ class TestApp():
                 initial_put_response = test_app_client.put(
                     endpoint['@id'], data=json.dumps(dummy_object))
                 assert initial_put_response.status_code == 201
-                response = json.loads(initial_put_response.data.decode('utf-8'))
-                regex = r'(.*)ID (.{36})* (.*)'
-                matchObj = re.match(regex, response['description'])
-                assert matchObj is not None
-                id_ = matchObj.group(2)
+                full_endpoint = initial_put_response.location
                 if 'GET' in collection_methods:
-                    get_response = test_app_client.get(f'{endpoint["@id"]}/{id_}')
+                    get_response = test_app_client.get(f'{full_endpoint}')
                     assert get_response.status_code == 200
 
     def test_collection_object_PUT(self, test_app_client, constants, doc):
@@ -241,16 +236,12 @@ class TestApp():
                 endpoint['@id'], data=json.dumps(dummy_object))
             assert initial_put_response.status_code == 201
             assert initial_put_response.json["iri"] == initial_put_response.location
-            response = json.loads(initial_put_response.data.decode('utf-8'))
-            regex = r'(.*)ID (.{36})* (.*)'
-            matchObj = re.match(regex, response['description'])
-            assert matchObj is not None
-            id_ = matchObj.group(2)
+            full_endpoint = initial_put_response.location
             if 'POST' in collection_methods:
                 # members attribute should be writeable for POSTs
                 if collection.supportedProperty[0].write:
                     dummy_object = gen_dummy_object(collection.name, doc)
-                    post_replace_response = test_app_client.post(f'{endpoint["@id"]}/{id_}',
+                    post_replace_response = test_app_client.post(f'{full_endpoint}',
                                                                  data=json.dumps(dummy_object))
                     assert post_replace_response.status_code == 200
 
@@ -270,14 +261,9 @@ class TestApp():
             initial_put_response = test_app_client.put(endpoint["@id"],
                                                        data=json.dumps(dummy_object))
             assert initial_put_response.status_code == 201
-            response = json.loads(initial_put_response.data.decode('utf-8'))
-            regex = r'(.*)ID (.{36})* (.*)'
-            matchObj = re.match(regex, response['description'])
-            assert matchObj is not None
-            id_ = matchObj.group(2)
+            full_endpoint = initial_put_response.location
             if 'DELETE' in collection_methods:
-                delete_response = test_app_client.delete(
-                    f'{endpoint["@id"]}/{id_}')
+                delete_response = test_app_client.delete(f'{full_endpoint}')
                 assert delete_response.status_code == 200
     
     def test_Collection_Class_foreign_key(self, test_app_client, constants, doc):
@@ -443,14 +429,10 @@ class TestApp():
                         dummy_object = gen_dummy_object(class_.title, doc)
                         initial_put_response = test_app_client.put(endpoints[endpoint],
                                                                    data=json.dumps(dummy_object))
-                        response = json.loads(
-                            initial_put_response.data.decode('utf-8'))
-                        regex = r'(.*)ID (.{36})* (.*)'
-                        matchObj = re.match(regex, response['description'])
-                        id_ = matchObj.group(2)
+                        full_endpoint = initial_put_response.location
                         if 'POST' in class_methods:
                             dummy_object = gen_dummy_object(class_.title, doc)
-                            post_response = test_app_client.post(f'{endpoints[endpoint]}/{id_}',
+                            post_response = test_app_client.post(f'{full_endpoint}',
                                                                  data=json.dumps(dummy_object))
                             assert post_response.status_code == 200
 
@@ -472,14 +454,9 @@ class TestApp():
                         dummy_object = gen_dummy_object(class_.title, doc)
                         initial_put_response = test_app_client.put(endpoints[endpoint],
                                                                    data=json.dumps(dummy_object))
-                        response = json.loads(
-                            initial_put_response.data.decode('utf-8'))
-                        regex = r'(.*)ID (.{36})* (.*)'
-                        matchObj = re.match(regex, response['description'])
-                        id_ = matchObj.group(2)
+                        full_endpoint = initial_put_response.location
                         if 'DELETE' in class_methods:
-                            delete_response = test_app_client.delete(
-                                f'{endpoints[endpoint]}/{id_}')
+                            delete_response = test_app_client.delete(f'{full_endpoint}')
                             assert delete_response.status_code == 200
 
     def test_endpointClass_GET(self, test_app_client, constants, doc):
@@ -712,15 +689,12 @@ class TestApp():
                         dummy_object = gen_dummy_object(class_.title, doc)
                         initial_put_response = test_app_client.put(endpoints[endpoint],
                                                                    data=json.dumps(dummy_object))
-                        response = json.loads(initial_put_response.data.decode('utf-8'))
-                        regex = r'(.*)ID (.{36})* (.*)'
-                        matchObj = re.match(regex, response['description'])
-                        id_ = matchObj.group(2)
+                        full_endpoint = initial_put_response.location
                         if 'POST' in class_methods:
                             dummy_object = gen_dummy_object(class_.title, doc)
                             # Test for writeable properties
                             post_response = test_app_client.post(
-                                f'{endpoints[endpoint]}/{id_}', data=json.dumps(dummy_object))
+                                f'{full_endpoint}', data=json.dumps(dummy_object))
                             assert post_response.status_code == 200
                             # Test for properties with writeable=False
                             non_writeable_prop = ''
@@ -797,15 +771,11 @@ class TestApp():
                         initial_put_response = test_app_client.put(
                             endpoints[endpoint], data=json.dumps(dummy_object))
                         assert initial_put_response.status_code == 201
-                        response = json.loads(initial_put_response.data.decode('utf-8'))
-                        regex = r'(.*)ID (.{36})* (.*)'
-                        matchObj = re.match(regex, response['description'])
-                        assert matchObj is not None
-                        id_ = matchObj.group(2)
+                        full_endpoint = initial_put_response.location
                         if 'POST' not in class_methods:
                             dummy_object = gen_dummy_object(class_.title, doc)
                             post_replace_response = test_app_client.post(
-                                f'{endpoints[endpoint]}/{id_}', data=json.dumps(dummy_object))
+                                f'{full_endpoint}', data=json.dumps(dummy_object))
                             assert post_replace_response.status_code == 405
                         if 'DELETE' not in class_methods:
                             delete_response = test_app_client.delete(
