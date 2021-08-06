@@ -63,8 +63,10 @@ def get_modified_object(object_: Dict[str, Any], doc: HydraDoc, path: str) -> Di
                 dt_object = parser.isoparse(datetime_value)
                 object_[field] = dt_object
             except ValueError:
+                # Error is raised in case of invalid datetime format
                 raise InvalidDateTimeFormat(field)
             except TypeError:
+                # In case, when datetime field isn't a string
                 datetime_value = object_.get(field)
                 object_[field] = datetime_value
     return object_
