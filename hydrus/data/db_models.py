@@ -110,6 +110,8 @@ class Resource:
                     datatype = supported_property['range'].split('#')[1]
                     if datatype in datatype_keys:
                         attr_dict[title] = Column(datatype_keys[datatype])
+                    else:
+                        attr_dict[title] = Column(String)
                 else:
                     attr_dict[title] = Column(String)
 
