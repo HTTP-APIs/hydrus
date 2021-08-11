@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "hydrus"
-version = "0.4.6"
+version = "0.4.7"
 description = "Hydra Ecosystem Flagship Server. Deploy REST data for Web 3.0"
 authors = ["Hydra Ecosystem"]
 license = "MIT License"
