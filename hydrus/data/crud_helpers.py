@@ -162,11 +162,11 @@ def attach_hydra_view(
         if offset > page_size:
             collection_template["hydra:view"][
                 "hydra:previous"
-            ] = f"{iri}{paginate_param}={offset - page_size}"
+            ] = f"{get_host_domain()}{iri}{paginate_param}={offset - page_size}"
         if offset < result_length - page_size:
             collection_template["hydra:view"][
                 "hydra:next"
-            ] = f"{iri}{paginate_param}={offset + page_size}"
+            ] = f"{get_host_domain()}{iri}{paginate_param}={offset + page_size}"
     else:
         collection_template["hydra:view"] = {
             "@id": f"{get_host_domain()}{iri}{paginate_param}={page}",
@@ -177,8 +177,8 @@ def attach_hydra_view(
         if page != 1:
             collection_template["hydra:view"][
                 "hydra:previous"
-            ] = f"{iri}{paginate_param}={page-1}"
+            ] = f"{get_host_domain()}{iri}{paginate_param}={page-1}"
         if page != last:
             collection_template["hydra:view"][
                 "hydra:next"
-            ] = f"{iri}{paginate_param}={page + 1}"
+            ] = f"{get_host_domain()}{iri}{paginate_param}={page + 1}"
