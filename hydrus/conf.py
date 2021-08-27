@@ -12,6 +12,7 @@ import os
 import json
 import yaml
 import logging
+from flask import g
 from os.path import abspath, dirname
 from pathlib import Path
 from importlib.machinery import SourceFileLoader
@@ -100,8 +101,11 @@ def get_host_domain():
     """
     Returns host domain.
     """
-    HOST_DOMAIN = f"http://localhost:{PORT}"
-    return HOST_DOMAIN
+    try:
+        hydrus_server_url = getattr(g, "hydrus_server_url")[:-1]
+    except (AttributeError, RuntimeError):
+        hydrus_server_url = f"http://localhost:{PORT}"
+    return hydrus_server_url
 
 
 (path, FOUND_DOC) = get_apidoc_path()
