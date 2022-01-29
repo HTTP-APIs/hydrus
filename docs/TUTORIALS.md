@@ -1,6 +1,6 @@
-# hydrus Workflow
+# Hydra Workflow
 
-This document can be used to understand how hydrus works. <br>
+This document can be used to understand how hydra works. <br>
 To understand the concepts related to hydrus:<br>
 https://www.hydraecosystem.org/Starting-Material
 
