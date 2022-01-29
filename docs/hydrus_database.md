@@ -1,4 +1,4 @@
-## hydrus
+## Hydrus
 
 `hydrus` is a core part of the HydraEcosystem. It is the server which powers Hydra-based API Docs.
 
