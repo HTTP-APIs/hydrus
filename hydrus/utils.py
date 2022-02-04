@@ -1,355 +1,319 @@
-"""
-Pluggable utilities for hydrus.
-===============================
-This module is for Web server-related utilities. For data-related
- utilities use `data.helpers`
+# Pluggable utilities for hydrus.
+# ===============================
+# This module is for Web server-related utilities. For data-related
+#  utilities use `data.helpers`
 
-Imports :
-contextlib.contextmanager : This function is a decorator that can be used to
-define a factory function for with statement context managers, without needing
-to create a class or separate __enter__() and __exit__() methods.
-Ref- https://docs.python.org/2/library/contextlib.html#contextlib.contextmanager
-flask.appcontext_pushed : Signal is sent when an application context is pushed.
-The sender is the application.
-Ref- http://flask.pocoo.org/docs/0.12/api/#flask.appcontext_pushed
-Ref- https://speakerdeck.com/mitsuhiko/advanced-flask-patterns-1
-flask.g : Used to attach values to global variables
-doc_writer_sample : Sample script used to create Hydra APIDocumentation
-hydra_python_core.engine : An SQLalchemy DB engine
-sqlalchemy.orm.sessionmaker : Used to create a SQLalchemy Session
-sqlalchemy.orm.session.Session : SQLalchemy Session class
-Ref- http://docs.sqlalchemy.org/en/latest/orm/session_basics.html
-hydra_python_core.doc_writer.HydraDoc : Class for Hydra Documentation
-"""  # nopep8
+# Imports :
 
+# contextlib module used
+
+# contextlib.contextmanager : This function is a decorator that can be used to
+#                             define a factory function for with statement context 
+#                             managers, without needing to create a class or separate 
+#                             __enter__() and __exit__() methods.
+# Ref- https://docs.python.org/2/library/contextlib.html#contextlib.contextmanager
 from contextlib import contextmanager
-from typing import Dict, List
-from flask import appcontext_pushed
-from flask import g, Response, jsonify
-from hydrus.samples import doc_writer_sample
-from hydrus.data.db_models import engine
-from hydra_python_core.doc_writer import HydraError
+
+# sqlalchemy module used
+
+# sqlalchemy.orm.sessionmaker    : Used to create a SQLalchemy Session
+# sqlalchemy.orm.scoped_session  : Used to create a SQLalchemy Scoped_session
+# sqlalchemy.orm.session.Session : SQLalchemy Session class
+# Ref- http://docs.sqlalchemy.org/en/latest/orm/session_basics.html
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.orm.session import Session
-from hydra_python_core.doc_writer import HydraDoc
-from flask.app import Flask
-from typing import Any, Iterator
 
+# flask module used
 
-@contextmanager
-def set_authentication(application: Flask, authentication: bool) -> Iterator:
-    """
-    Set the whether API needs to be authenticated or not (before it is run in main.py).
+# flask.g                 : Used to attach values to global variables
+# flask.Response          :
+# flask.jsonify           :
+# flask.appcontext_pushed :
+# flask.app.Flask         :
+# flask.appcontext_pushed : Signal is sent when an application context is pushed. 
+#                           The sender is the application.
+# Ref- http://flask.pocoo.org/docs/0.12/api/#flask.appcontext_pushed
+# Ref- https://speakerdeck.com/mitsuhiko/advanced-flask-patterns-1
+from flask import g, Response, jsonify , appcontext_pushed , Flask
 
-    :param application: Flask app object
-            <flask.app.Flask>
-    :param authentication : Bool. API Auth needed or not
-            <bool>
+# typing 
+# 
 
+from typing import Any, Iterator , Dict, List
 
-    Raises:
-        TypeError: If `authentication` is not a boolean value.
+# hrdyus modules
 
-    """
-    if not isinstance(authentication, bool):
-        raise TypeError("Authentication flag must be of type <bool>")
+# hydrus.samples.doc_writer_sample        : Sample script used to create Hydra APIDocumentation
+# hydrus.data.db_models.engine            : An SQLalchemy DB engine
+# hydra_python_core.doc_writer.HydraDoc   : Class for Hydra Documentation
+# hydra_python_core.doc_writer.HydraError : Class for Hydra Error
+from hydrus.samples import doc_writer_sample
+from hydrus.data.db_models import engine
+from hydra_python_core.doc_writer import HydraDoc , HydraError
 
-    def handler(sender: Flask, **kwargs: Any) -> None:
-        g.authentication_ = authentication
+def error(value,data_type,error_msg):
+    if not isinstance(value,data_type):
+        raise TypeError(error_msg)
+    
+def error_2(value_1 , data_type_1 , value_2 , data_type_2 , error_msg):
+    if not isinstance(value_1, data_type_1) and not isinstance(value_1, data_type_2):
+        raise TypeError(error_msg)
 
+def try_except_block(value_1,value_2,value_3,value_4):
+    try:
+        value_1 = getattr(g, value_2)
+    except AttributeError:
+        value_1 = value_3
+        value_4 = value_1
+    return value_1
+    
+def appcontext_pushed_function():
     with appcontext_pushed.connected_to(handler, application):
         yield
 
+@contextmanager
+def set_authentication(application: Flask, authentication: bool) -> Iterator:
+    # set_authentication : 
+    #                     Set the whether API needs to be authenticated or not (before it is run in main.py).
+
+    # :param application: Flask app object
+    #         <flask.app.Flask>
+    # :param authentication : Bool. API Auth needed or not
+    #         <bool>
+
+    # Raises:
+    #        TypeError: If `authentication` is not a boolean value.
+
+    error(authentication, bool,"Authentication flag must be of type <bool>")
+
+    def handler(sender: Flask, **kwargs: Any) -> None:
+        g.authentication_ = authentication
+    
+    appcontext_pushed_function()
+
 
 def get_authentication() -> bool:
-    """
-    Check whether API needs to be authenticated or not.
-    Return and sets False if not found.
-    :return authentication : Bool. API Auth needed or not
-            <bool>
-    """
-    try:
-        authentication = getattr(g, "authentication_")
-    except AttributeError:
-        authentication = False
-        g.authentication_ = authentication
-    return authentication
+
+    # Check whether API needs to be authenticated or not.
+    # Return and sets False if not found.
+    # :return authentication : Bool. API Auth needed or not
+    #         <bool>
+
+    return try_except_block(authentication,"authentication_",False,g.authentication_)
 
 
 @contextmanager
 def set_api_name(application: Flask, api_name: str) -> Iterator:
-    """
-    Set the server name or EntryPoint for the app (before it is run in main.py).
-    :param application: Flask app object
-            <flask.app.Flask>
-    :param api_name : API/Server name or EntryPoint
-            <str>
 
-    Raises:
-        TypeError: If `api_name` is not a string.
+    # Set the server name or EntryPoint for the app (before it is run in main.py).
+    # :param application: Flask app object
+    #         <flask.app.Flask>
+    # :param api_name : API/Server name or EntryPoint
+    #         <str>
 
-    """
-    if not isinstance(api_name, str):
-        raise TypeError("The api_name is not of type <str>")
+    # Raises:
+    #     TypeError: If `api_name` is not a string.
+
+
+    error(api_name, str,"The api_name is not of type <str>")
 
     def handler(sender: Flask, **kwargs: Any) -> None:
         g.api_name = api_name
 
-    with appcontext_pushed.connected_to(handler, application):
-        yield
+    appcontext_pushed_function()
 
 
 def get_api_name() -> str:
-    """
-    Get the server API name.
-    Returns an sets "api" as api_name if not found.
-    :return api_name : API/Server name or EntryPoint
-            <str>
-    """
-    try:
-        api_name = getattr(g, "api_name")
-    except AttributeError:
-        api_name = "api"
-        g.api_name = api_name
-    return api_name
+
+    # Get the server API name.
+    # Returns an sets "api" as api_name if not found.
+    # :return api_name : API/Server name or EntryPoint
+    #         <str>
+
+    return try_except_block(api_name,"api_name","api",g.api_name)
 
 
 @contextmanager
 def set_page_size(application: Flask, page_size: int) -> Iterator:
-    """
-    Set the page_size of a page view.
-    :param application: Flask app object
-            <flask.app.Flask>
-    :param page_size : Number of maximum elements a page can contain
-            <int>
 
-    Raises:
-        TypeError: If `page_size` is not an int.
+    # Set the page_size of a page view.
+    # :param application: Flask app object
+    #         <flask.app.Flask>
+    # :param page_size : Number of maximum elements a page can contain
+    #         <int>
 
-    """
-    if not isinstance(page_size, int):
-        raise TypeError("The page_size is not of type <int>")
+    # Raises:
+    #     TypeError: If `page_size` is not an int.
+
+
+    error(page_size, int , "The page_size is not of type <int>")
 
     def handler(sender: Flask, **kwargs: Any) -> None:
         g.page_size = page_size
 
-    with appcontext_pushed.connected_to(handler, application):
-        yield
+    appcontext_pushed_function()
 
 
 def get_page_size() -> int:
-    """
-    Get the page_size of a page-view.
-    :return page_size : Number of maximum elements a page view can contain.
-            <int>
-    """
-    try:
-        page_size = getattr(g, "page_size")
-    except AttributeError:
-        page_size = 10
-        g.page_size = page_size
-    return page_size
+
+    # Get the page_size of a page-view.
+    # :return page_size : Number of maximum elements a page view can contain.
+    #         <int>
+
+    return try_except_block(page_size,"page_size",10,g.page_size)
 
 
 @contextmanager
 def set_pagination(application: Flask, paginate: bool) -> Iterator:
-    """
-    Enable or disable pagination.
-    :param application: Flask app object
-            <flask.app.Flask>
-    :param paginate : Pagination enabled or not
-            <bool>
 
-    Raises:
-        TypeError: If `paginate` is not a bool.
+    # Enable or disable pagination.
+    # :param application: Flask app object
+    #         <flask.app.Flask>
+    # :param paginate : Pagination enabled or not
+    #         <bool>
 
-    """
-    if not isinstance(paginate, bool):
-        raise TypeError("The CLI argument 'pagination' is not of type <bool>")
+    # Raises:
+    #     TypeError: If `paginate` is not a bool.
 
+
+    error(paginate, bool,"The CLI argument 'pagination' is not of type <bool>")
+    
     def handler(sender: Flask, **kwargs: Any) -> None:
         g.paginate = paginate
 
-    with appcontext_pushed.connected_to(handler, application):
-        yield
+    appcontext_pushed_function()
 
 
 def get_pagination() -> bool:
-    """
-    Get the pagination status(Enable/Disable).
-    :return paginate : Pagination enabled or not
-            <bool>
-    """
-    try:
-        paginate = getattr(g, "paginate")
-    except AttributeError:
-        paginate = True
-        g.paginate = paginate
-    return paginate
+
+    # Get the pagination status(Enable/Disable).
+    # :return paginate : Pagination enabled or not
+    #         <bool>
+
+    return try_except_block(paginate,"paginate",True,g.paginate)
 
 
 @contextmanager
 def set_doc(application: Flask, APIDOC: HydraDoc) -> Iterator:
-    """
-    Set the API Documentation for the app (before it is run in main.py).
-    :param application: Flask app object
-            <flask.app.Flask>
-    :param APIDOC : Hydra Documentation object
-            <hydra_python_core.doc_writer.HydraDoc>
 
-    Raises:
-        TypeError: If `APIDOC` is not an instance of `HydraDoc`.
+    # Set the API Documentation for the app (before it is run in main.py).
+    # :param application: Flask app object
+    #         <flask.app.Flask>
+    # :param APIDOC : Hydra Documentation object
+    #         <hydra_python_core.doc_writer.HydraDoc>
 
-    """
-    if not isinstance(APIDOC, HydraDoc):
-        raise TypeError(
-            "The API Doc is not of type <hydra_python_core.doc_writer.HydraDoc>"
-        )
+    # Raises:
+    #     TypeError: If `APIDOC` is not an instance of `HydraDoc`.
+
+
+    error(APIDOC, HydraDoc,"The API Doc is not of type <hydra_python_core.doc_writer.HydraDoc>")
 
     def handler(sender: Flask, **kwargs: Any) -> None:
         g.doc = APIDOC
 
-    with appcontext_pushed.connected_to(handler, application):
-        yield
+    appcontext_pushed_function()
 
 
 @contextmanager
 def set_token(application: Flask, token: bool) -> Iterator:
-    """Set whether API needs to implement token based authentication.
+    # Set whether API needs to implement token based authentication.
 
-    Raises:
-        TypeError: If `token` is not a boolean value.
+    # Raises:
+    #     TypeError: If `token` is not a boolean value.
 
-    """
-    if not isinstance(token, bool):
-        raise TypeError("Token flag must be of type <bool>")
+    error(token, bool,"Token flag must be of type <bool>")
 
     def handler(sender: Flask, **kwargs: Any) -> None:
         g.token_ = token
 
-    with appcontext_pushed.connected_to(handler, application):
-        yield
+    appcontext_pushed_function()
 
 
 def get_doc() -> HydraDoc:
-    """
-    Get the server API Documentation.
-    Returns and sets doc_writer_sample.api_doc if not found.
-    :return apidoc : Hydra Documentation object
-            <hydra_python_core.doc_writer.HydraDoc>
-    """
-    try:
-        apidoc = getattr(g, "doc")
-    except AttributeError:
-        g.doc = apidoc = doc_writer_sample.api_doc
-    return apidoc
+
+    # Get the server API Documentation.
+    # Returns and sets doc_writer_sample.api_doc if not found.
+    # :return apidoc : Hydra Documentation object
+    #         <hydra_python_core.doc_writer.HydraDoc>
+
+    return try_except_block(apidoc,"doc",g.doc,doc_writer_sample.api_doc)
 
 
 def get_token() -> bool:
-    """Check wether API needs to be authenticated or not."""
-    try:
-        token = getattr(g, "token_")
-    except AttributeError:
-        token = False
-        g.token_ = token
-    return token
+    # Check wether API needs to be authenticated or not.
+    return try_except_block(token,"token_",False,g.token_)
 
 
 @contextmanager
 def set_hydrus_server_url(application: Flask, server_url: str) -> Iterator:
-    """
-    Set the server URL for the app (before it is run in main.py).
-    :param application: Flask app object
-            <flask.app.Flask>
-    :param server_url : Server URL
-            <str>
 
-    Raises:
-        TypeError: If the `server_url` is not a string.
+    # Set the server URL for the app (before it is run in main.py).
+    # :param application: Flask app object
+    #         <flask.app.Flask>
+    # :param server_url : Server URL
+    #         <str>
 
-    """
-    if not isinstance(server_url, str):
-        raise TypeError("The server_url is not of type <str>")
+    # Raises:
+    #     TypeError: If the `server_url` is not a string.
+
+    error(server_url, str,"The server_url is not of type <str>")
 
     def handler(sender: Flask, **kwargs: Any) -> None:
         g.hydrus_server_url = server_url
 
-    with appcontext_pushed.connected_to(handler, application):
-        yield
+    appcontext_pushed_function()
 
 
 def get_hydrus_server_url() -> str:
-    """
-    Get the server URL.
-    Returns and sets "http://localhost/" if not found.
-    :return hydrus_server_url : Server URL
-            <str>
-    """
-    try:
-        hydrus_server_url = getattr(g, "hydrus_server_url")
-    except AttributeError:
-        hydrus_server_url = "http://localhost/"
-        g.hydrus_server_url = hydrus_server_url
-    return hydrus_server_url
+
+    # Get the server URL.
+    # Returns and sets "http://localhost/" if not found.
+    # :return hydrus_server_url : Server URL
+    #         <str>
+
+    return try_except_block(hydrus_server_url,"hydrus_server_url","http://localhost/",g.hydrus_server_url)
 
 
 @contextmanager
 def set_session(application: Flask, DB_SESSION: scoped_session) -> Iterator:
-    """
-    Set the Database Session for the app before it is run in main.py.
-    :param application: Flask app object
-            <flask.app.Flask>
-    :param DB_SESSION: SQLalchemy Session object
-            <sqlalchemy.orm.session.Session>
 
-    Raises:
-        TypeError: If `DB_SESSION` is not an instance of `scoped_session` or `Session`.
+    # Set the Database Session for the app before it is run in main.py.
+    # :param application: Flask app object
+    #         <flask.app.Flask>
+    # :param DB_SESSION: SQLalchemy Session object
+    #         <sqlalchemy.orm.session.Session>
 
-    """
-    if not isinstance(DB_SESSION, scoped_session) and not isinstance(
-        DB_SESSION, Session
-    ):
-        raise TypeError(
-            "The API Doc is not of type <sqlalchemy.orm.session.Session> or"
-            " <sqlalchemy.orm.scoping.scoped_session>"
-        )
+    # Raises:
+    #     TypeError: If `DB_SESSION` is not an instance of `scoped_session` or `Session`.
+
+
+    error_2(DB_SESSION, scoped_session,DB_SESSION, Session,"The API Doc is not of type <sqlalchemy.orm.session.Session> or\n<sqlalchemy.orm.scoping.scoped_session>")
 
     def handler(sender: Flask, **kwargs: Any) -> None:
         g.dbsession = DB_SESSION
 
-    with appcontext_pushed.connected_to(handler, application):
-        yield
+    appcontext_pushed_function()
 
 
 def get_session() -> scoped_session:
-    """
-    Get the Database Session from g.
-    Returns and sets a default Session if not found
-    :return session : SQLalchemy Session object
-            <sqlalchemy.orm.scoped_session>
-    """
-    try:
-        session = getattr(g, "dbsession")
-    except AttributeError:
-        session = scoped_session(sessionmaker(bind=engine))
-        g.dbsession = session
-    return session
+
+    # Get the Database Session from g.
+    # Returns and sets a default Session if not found
+    # :return session : SQLalchemy Session object
+    #         <sqlalchemy.orm.scoped_session>
+
+    return try_except_block(session,"dbsession",scoped_session(sessionmaker(bind=engine)),g.dbsession)
 
 
-def set_response_headers(
-    resp: Response,
-    ct: str = "application/ld+json",
-    headers: List[Dict[str, Any]]=[],
-    status_code: int = 200,
-) -> Response:
-    """
-    Set the response headers.
-    :param resp: Response.
-    :param ct: Content-type default "application/ld+json".
-    :param headers: List of objects.
-    :param status_code: status code default 200.
-    :return: Response with headers.
-    """
+def set_response_headers(resp: Response,ct: str = "application/ld+json",headers: List[Dict[str, Any]]=[],status_code: int = 200,) -> Response:
+
+    # Set the response headers.
+    # :param resp: Response.
+    # :param ct: Content-type default "application/ld+json".
+    # :param headers: List of objects.
+    # :param status_code: status code default 200.
+    # :return: Response with headers.
+
     resp.status_code = status_code
     for header in headers:
         resp.headers[list(header.keys())[0]] = header[list(header.keys())[0]]
@@ -364,12 +328,12 @@ def set_response_headers(
 
 
 def error_response(error: HydraError) -> Response:
-    """
-    Generate the response if there is an error while performing any operation
 
-    :param error: HydraError object which will help in generating response
-    :type error: HydraError
-    :return: Error response with appropriate status code
-    :rtype: Response
-    """
+    # Generate the response if there is an error while performing any operation
+
+    # :param error: HydraError object which will help in generating response
+    # :type error: HydraError
+    # :return: Error response with appropriate status code
+    # :rtype: Response
+
     return set_response_headers(jsonify(error.generate()), status_code=error.code)
