@@ -1,22 +1,22 @@
-"""Imports :
-    flask.json.jsonify : Turns the JSON output into a Response object with the
-    application/json mimetype Ref- http://flask.pocoo.org/docs/0.12/api
-    flask.request : The request object used by default in Flask.
-    Remembers the matched endpoint and view arguments.
-    Ref - http://flask.pocoo.org/docs/0.12/api
-    flask.abort : Raises an HTTPException for the given status code or WSGI
-    application: Ref - http://flask.pocoo.org/docs/0.12/api
-    flask_restful.Resource : Represents an abstract RESTful resource.
-    Ref - http://flask-restful.readthedocs.io/en/latest/api.html
-    hydrus.data.crud : Function/Class to perform basic CRUD operations for the server
-    hydrus.auth.authenticate : Decorator for checking authentication of each request
-    hydrus.utils.get_session : Gets the database session for the server
-    hydrus.utils.get_doc : Function which gets the server API documentation
-    hydrus.utils.get_api_name : Function which gets the server API name
-    hydrus.utils.get_hydrus_server_url : Function the gets the server URL
-    hydrus.utils.get_authentication : Function that checks whether API needs to be
-    authenticated or not
-"""  # nopep8
+# Imports :
+#     flask.json.jsonify : Turns the JSON output into a Response object with the
+#     application/json mimetype Ref- http://flask.pocoo.org/docs/0.12/api
+#     flask.request : The request object used by default in Flask.
+#     Remembers the matched endpoint and view arguments.
+#     Ref - http://flask.pocoo.org/docs/0.12/api
+#     flask.abort : Raises an HTTPException for the given status code or WSGI
+#     application: Ref - http://flask.pocoo.org/docs/0.12/api
+#     flask_restful.Resource : Represents an abstract RESTful resource.
+#     Ref - http://flask-restful.readthedocs.io/en/latest/api.html
+#     hydrus.data.crud : Function/Class to perform basic CRUD operations for the server
+#     hydrus.auth.authenticate : Decorator for checking authentication of each request
+#     hydrus.utils.get_session : Gets the database session for the server
+#     hydrus.utils.get_doc : Function which gets the server API documentation
+#     hydrus.utils.get_api_name : Function which gets the server API name
+#     hydrus.utils.get_hydrus_server_url : Function the gets the server URL
+#     hydrus.utils.get_authentication : Function that checks whether API needs to be
+#     authenticated or not
+
 
 import json
 
@@ -54,18 +54,18 @@ from hydrus.data.helpers.items_helpers import (
 
 
 class Index(Resource):
-    """Class for the EntryPoint."""
+    # Class for the EntryPoint.
 
     def get(self) -> Response:
-        """Return main entrypoint for the api."""
+        # Return main entrypoint for the api.
         return set_response_headers(jsonify(get_doc().entrypoint.get()))
 
 
 class Vocab(Resource):
-    """Vocabulary for Hydra."""
+    # Vocabulary for Hydra.
 
     def get(self) -> Response:
-        """Return the main hydra vocab or a fragment of the main hydra vocab."""
+        # Return the main hydra vocab or a fragment of the main hydra vocab.
         try:
             resource = request.args.getlist("resource")[0]
             return set_response_headers(jsonify(get_fragments(resource)))
@@ -74,26 +74,26 @@ class Vocab(Resource):
 
 
 class Entrypoint(Resource):
-    """Hydra EntryPoint."""
+    # Hydra EntryPoint.
 
     def get(self) -> Response:
-        """Return application main Entrypoint."""
+        # Return application main Entrypoint.
         response = {"@context": get_doc().entrypoint.context.generate()}
         return set_response_headers(jsonify(response))
 
 
 class Item(Resource):
-    """Handles all operations(GET, POST, PATCH, DELETE) on Items
-    (item can be anything depending upon the vocabulary)."""
+    # Handles all operations(GET, POST, PATCH, DELETE) on Items
+    # (item can be anything depending upon the vocabulary).
 
     @authenticate
     def get(self, id_: str, path: str) -> Response:
-        """
-        GET object with id = id_ from the database.
-        :param id_ : Item ID
-        :param path : Path for Item ( Specified in APIDoc @id)
-        :return : object with id=id_
-        """
+        
+        # GET object with id = id_ from the database.
+        # :param id_ : Item ID
+        # :param path : Path for Item ( Specified in APIDoc @id)
+        # :return : object with id=id_
+        
         id_ = str(id_)
         collections, parsed_classes = get_collections_and_parsed_classes()
         is_collection = False
@@ -121,11 +121,11 @@ class Item(Resource):
 
     @authenticate
     def post(self, id_: str, path: str) -> Response:
-        """
-        Update object of type<path> at ID<id_> with new object_ using HTTP POST.
-        :param id_ - ID of Item to be updated
-        :param path - Path for Item type( Specified in APIDoc @id)
-        """
+        
+        # Update object of type<path> at ID<id_> with new object_ using HTTP POST.
+        # :param id_ - ID of Item to be updated
+        # :param path - Path for Item type( Specified in APIDoc @id)
+        
         id_ = str(id_)
         collections, parsed_classes = get_collections_and_parsed_classes()
         is_collection = False
@@ -146,11 +146,11 @@ class Item(Resource):
 
     @authenticate
     def put(self, id_: str, path: str) -> Response:
-        """
-        Add new object_ optional <id_> parameter using HTTP PUT.
-        :param id_ - ID of Item to be updated
-        :param path - Path for Item type( Specified in APIDoc @id) to be updated
-        """
+        
+        # Add new object_ optional <id_> parameter using HTTP PUT.
+        # :param id_ - ID of Item to be updated
+        # :param path - Path for Item type( Specified in APIDoc @id) to be updated
+        
         id_ = str(id_)
         collections, parsed_classes = get_collections_and_parsed_classes()
         is_collection = False
@@ -166,11 +166,11 @@ class Item(Resource):
 
     @authenticate
     def delete(self, id_: str, path: str) -> Response:
-        """
-        Delete object with id=id_ from database.
-        :param id_ - ID of Item to be deleted
-        :param path - Path for Item type( Specified in APIDoc @id) to be deleted
-        """
+        
+        # Delete object with id=id_ from database.
+        # :param id_ - ID of Item to be deleted
+        # :param path - Path for Item type( Specified in APIDoc @id) to be deleted
+        
         id_ = str(id_)
         params = request.args.to_dict()
         if params.get("instances"):
@@ -193,15 +193,15 @@ class Item(Resource):
 
 
 class ItemCollection(Resource):
-    """Handle operation related to ItemCollection (a collection of items)."""
+    # Handle operation related to ItemCollection (a collection of items).
 
     @authenticate
     def get(self, path: str) -> Response:
-        """
-        Retrieve a collection of items from the database.
-        :param path : Path of the Collection
-        :return : collection of items
-        """
+        
+        # Retrieve a collection of items from the database.
+        # :param path : Path of the Collection
+        # :return : collection of items
+        
         endpoint_ = checkEndpoint("GET", path)
         if not endpoint_["method"]:
             # If endpoint and Get method not supported in the API
@@ -210,11 +210,11 @@ class ItemCollection(Resource):
 
     @authenticate
     def put(self, path: str) -> Response:
-        """
-        Method executed for PUT requests.
-        Used to add an item to a collection
-        :param path - Path for Item type ( Specified in APIDoc @id)
-        """
+        
+        # Method executed for PUT requests.
+        # Used to add an item to a collection
+        # :param path - Path for Item type ( Specified in APIDoc @id)
+        
         endpoint_ = checkEndpoint("PUT", path)
         if not endpoint_["method"]:
             # If endpoint and PUT method is not supported in the API
@@ -229,11 +229,11 @@ class ItemCollection(Resource):
 
     @authenticate
     def delete(self, path):
-        """
-        To delete multiple objects
-        :param path: endpoints
-        :return:
-        """
+       
+        # To delete multiple objects
+        # :param path: endpoints
+        # :return:
+        
         params = request.args.to_dict()
         if params.get("instances"):
             int_list = params.get("instances")
@@ -242,8 +242,8 @@ class ItemCollection(Resource):
 
 
 class Contexts(Resource):
-    """Dynamically generated contexts."""
+    # Dynamically generated contexts.
 
     def get(self, category: str) -> Response:
-        """Return the context for the specified class."""
+        # Return the context for the specified class.
         return get_context(category)
