@@ -1,7 +1,7 @@
 Hydrus [![Build Status](https://travis-ci.com/HTTP-APIs/hydrus.svg?branch=master)](https://travis-ci.com/HTTP-APIs/hydrus)
 ===================
 hydrus is a set of **Python** based tools for easier and efficient creation of Hypermedia driven REST-APIs. hydrus utilises the power of [Linked Data](https://en.wikipedia.org/wiki/Linked_data) to create a powerful REST APIs to serve data.
-hydrus uses the [Hydra(W3C)](http://www.hydra-cg.com/) standard for creation and documentation of it's APIs.
+hydrus uses the [hydra(W3C)](http://www.hydra-cg.com/) standard for creation and documentation of it's APIs.
 
 ## Start-up the demo
 - With [*Docker*](https://www.docker.com/) and [*docker-compose*](https://docs.docker.com/compose/) installed, run 
@@ -12,8 +12,8 @@ docker-compose up --build
 
 You should be displaying the example API as served by the server.
 
-## Add your own Hydra documentation file
-To serve your own Hydra-RDF documentation file:
+## Add your own hydra documentation file
+To serve your own hydra-RDF documentation file:
 
 1. Create a `doc.py` file as the ones in `examples/` directory containing your own *ApiDoc*.
 2. Set the `APIDOC_REL_PATH` variable in `docker-compose.yml`. This should the relative path from the project root.
@@ -29,8 +29,8 @@ You should be displaying your API as served by the server.
 
 <a name="features"></a>
 ## Features
-Hydrus supports the following features:
-- A client that can understand Hydra vocabulary and interacts with a Hydra supporting server to basic [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) operations on data.
+hydrus supports the following features:
+- A client that can understand hydra vocabulary and interacts with a hydra supporting server to basic [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) operations on data.
 - A generic server that can serve required data and metadata(in the form of API documentation) to a client over HTTP.
 - A middleware that allows users to use the client to interact with the server using Natural Language which is processed machine consumable language. **(under development)**
 
@@ -40,12 +40,12 @@ The system is built over the following standards and tools:
 - [Python](https://www.python.org/downloads/) 3.6 and above
 - [Flask](http://flask.pocoo.org/) a Python based micro-framework for handling server requests and responses.
 - [JSON-LD](http://json-ld.org/spec/latest/json-ld/) as the preferred data format.
-- [Hydra](http://www.hydra-cg.com/) as the API standard.
+- [hydra](http://www.hydra-cg.com/) as the API standard.
 - [SQLAlchemy](http://www.sqlalchemy.org/) as the backend database connector for storage and related operations.
 
 Apart from this, there are also various Python packages that hydrus uses. Using `python setup.py install` installs all the required dependencies.
 
-**NOTE:** You'll need to use `python3` not `python2`. Hydrus does not support python < 3.6
+**NOTE:** You'll need to use `python3` not `python2`. hydrus does not support python < 3.6
 To check your python version run 
 ```bash
 python --version
