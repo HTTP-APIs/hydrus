@@ -10,7 +10,7 @@ from hydra_python_core import doc_maker
 from hydrus.data.db_models import Base
 from hydrus.data.user import add_user
 from doc import doc
-from gevent.wsgi import WSGIServer
+from gevent.pywsgi import WSGIServer
 
 
 if __name__ == "__main__":
