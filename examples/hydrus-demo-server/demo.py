@@ -56,10 +56,6 @@ if __name__ == "__main__":
     print("Adding authorized users")
     add_user(id_=1, paraphrase="test", session=session)
 
-    # Insert them into the database
-    doc_parse.insert_classes(classes, session)
-    doc_parse.insert_properties(properties, session)
-
     print("Creating the application")
     # Create a Hydrus app with the API name you want, default will be "api"
     app = app_factory(API_NAME)
