@@ -64,7 +64,7 @@ if __name__ == "__main__":
     with set_authentication(app, True):
         # Use authentication for all requests
         with set_token(app, True):
-            with set_api_name(app, "serverapi"):
+            with set_api_name(app, API_NAME):
                 # Set the API Documentation
                 with set_doc(app, apidoc):
                     # Set HYDRUS_SERVER_URL
