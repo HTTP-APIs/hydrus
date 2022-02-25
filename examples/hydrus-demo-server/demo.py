@@ -10,7 +10,7 @@ from hydra_python_core import doc_maker
 from hydrus.data.db_models import Base
 from hydrus.data.user import add_user
 from doc import doc
-from gevent.wsgi import WSGIServer
+from gevent.pywsgi import WSGIServer
 
 
 if __name__ == "__main__":
@@ -56,10 +56,6 @@ if __name__ == "__main__":
     print("Adding authorized users")
     add_user(id_=1, paraphrase="test", session=session)
 
-    # Insert them into the database
-    doc_parse.insert_classes(classes, session)
-    doc_parse.insert_properties(properties, session)
-
     print("Creating the application")
     # Create a Hydrus app with the API name you want, default will be "api"
     app = app_factory(API_NAME)
@@ -68,7 +64,7 @@ if __name__ == "__main__":
     with set_authentication(app, True):
         # Use authentication for all requests
         with set_token(app, True):
-            with set_api_name(app, "serverapi"):
+            with set_api_name(app, API_NAME):
                 # Set the API Documentation
                 with set_doc(app, apidoc):
                     # Set HYDRUS_SERVER_URL
