@@ -9,7 +9,10 @@ try:
     from pip._internal.req import parse_requirements
 
     install_requires = parse_requirements("requirements.txt", session=PipSession())
-    dependencies = [str(package.requirement) for package in install_requires]
+    try:
+        dependencies = [str(package.requirement) for package in install_requires]
+    except:
+        dependencies = [str(package.req) for package in install_requires]
 except ImportError:
     msg = "Your pip version is out of date, please run `pip install --upgrade pip setuptools`"
     raise ImportError(msg)
@@ -33,8 +36,9 @@ setup(
     install_requires=dependencies,
     packages=find_packages(exclude=["contrib", "docs", "tests*", "hydrus.egg-info"]),
     package_dir={"hydrus": "hydrus"},
-    entry_points="""
-            [console_scripts]
-            hydrus=cli:startserver
-        """,
+    entry_points={
+        'console_scripts': [
+            'hydrus = cli:startserver',
+        ],
+    },
 )
