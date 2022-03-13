@@ -36,14 +36,8 @@ def app_factory(api_name: str = "api", vocab_route: str = "vocab") -> Flask:
 
     api.add_resource(Index, f"/{api_name}/", endpoint="api")
     api.add_resource(Vocab, f"/{api_name}/{vocab_route}", endpoint="vocab")
-    api.add_resource(
-        Contexts, f"/{api_name}/contexts/<string:category>.jsonld", endpoint="contexts"
-    )
-    api.add_resource(
-        Entrypoint,
-        f"/{api_name}/contexts/EntryPoint.jsonld",
-        endpoint="main_entrypoint",
-    )
+    api.add_resource(Contexts, f"/{api_name}/contexts/<string:category>.jsonld", endpoint="contexts")
+    api.add_resource(Entrypoint,f"/{api_name}/contexts/EntryPoint.jsonld",endpoint="main_entrypoint",)
     api.add_resource(
         ItemCollection, f"/{api_name}/<string:path>", endpoint="item_collection"
     )

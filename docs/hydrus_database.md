@@ -1,4 +1,4 @@
-## hydrus
+## Hydrus
 
 `hydrus` is a core part of the HydraEcosystem. It is the server which powers Hydra-based API Docs.
 
@@ -21,4 +21,4 @@ The overview of the process of making a database from `apidoc` object is:
 ### Example ER Diagram
 It might be easier to understand what we discussed above if we could see a ER diagram for a Hydra API Doc.
 So, let us take the sample [Drone API Doc](https://github.com/HTTP-APIs/hydrus/blob/develop/hydrus/samples/hydra_doc_sample.py) as our example.
-The ER diagram for the database generated for this Hydra doc can be found [here](er_diagram.pdf).
+The [ER diagram](https://en.wikipedia.org/wiki/Entity%E2%80%93relationship_model) for the database generated for this Hydra doc can be found [here](er_diagram.pdf).
