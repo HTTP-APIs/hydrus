@@ -910,14 +910,11 @@ docs = ["towncrier (>=21.9)", "sphinx-rtd-theme (>=1)", "sphinx-argparse (>=0.3.
 
 [[package]]
 name = "werkzeug"
-version = "2.2.2"
+version = "2.0.3"
 description = "The comprehensive WSGI web application library."
 category = "main"
 optional = false
-python-versions = ">=3.7"
-
-[package.dependencies]
-MarkupSafe = ">=2.1.1"
+python-versions = ">=3.6"
 
 [package.extras]
 watchdog = ["watchdog"]
@@ -950,7 +947,7 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "1.1"
 python-versions = "~=3.8.0"
-content-hash = "efff86c0833206e21b7ce1e370cd9e1a7e8ebf5d6747f73d10b4f69033401346"
+content-hash = "7dfbd71fc160495e51c0e68df33ac274bd8085fdedb8f2bf7e53b0650cbc1408"
 
 [metadata.files]
 alabaster = [
