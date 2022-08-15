@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "hydrus"
-version = "0.4.7"
+version = "0.5.0"
 description = "Hydra Ecosystem Flagship Server. Deploy REST data for Web 3.0"
 authors = ["Hydra Ecosystem"]
 license = "MIT License"
@@ -36,10 +36,10 @@ pytest = ">=7.1.2"
 pep8 = "1.7.1"
 flake8 = ">=3.8.4"
 pre-commit = ">=2.19"
+mypy = ">=0.971"
 
 [tool.pytest.ini_options]
 minversion = "7.1.2"
-addopts = "-ra -q"
 testpaths = [
     "tests"
 ]
