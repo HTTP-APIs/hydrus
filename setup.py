@@ -36,8 +36,9 @@ setup(
     install_requires=dependencies,
     packages=find_packages(exclude=["contrib", "docs", "tests*", "hydrus.egg-info"]),
     package_dir={"hydrus": "hydrus"},
-    entry_points="""
-            [console_scripts]
-            hydrus=cli:startserver
-        """,
+    entry_points={
+        'console_scripts': [
+            'hydrus = cli:startserver',
+        ],
+    },
 )
