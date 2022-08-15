@@ -146,6 +146,18 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
+name = "dateutils"
+version = "0.6.12"
+description = "Various utilities for working with date and datetime objects"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+python-dateutil = "*"
+pytz = "*"
+
+[[package]]
 name = "distlib"
 version = "0.3.5"
 description = "Distribution utilities"
@@ -947,7 +959,7 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "1.1"
 python-versions = "~=3.8.0"
-content-hash = "7dfbd71fc160495e51c0e68df33ac274bd8085fdedb8f2bf7e53b0650cbc1408"
+content-hash = "32bf81b8c2e063909526999e0ee7c5ba70d18a5a4b28be492446d672c9321f48"
 
 [metadata.files]
 alabaster = [
@@ -970,6 +982,7 @@ cfgv = []
 charset-normalizer = []
 click = []
 colorama = []
+dateutils = []
 distlib = []
 docutils = []
 filelock = []
