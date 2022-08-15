@@ -27,8 +27,7 @@ def app_factory(api_name: str = "api", vocab_route: str = "vocab") -> Flask:
     app = Flask(__name__)
 
     config_dct = None
-    with open(
-      Path(dirname(dirname(__file__))) / Path("config.yml"), "r") as stream:
+    with open(Path(dirname(dirname(__file__))) / Path("config.yml"), "r") as stream:
         config_dct = yaml.safe_load(stream)
     app.config["SECRET_KEY"] = config_dct["security"]["secret"]
 

@@ -493,7 +493,7 @@ def get_context(category: str) -> Response:
     collections, parsed_classes = get_collections_and_parsed_classes()
     # Check for collection
     if category in get_doc().collections:
-        # type: Union[Dict[str,Any],Dict[int,str]]
+        # expected type: Union[Dict[str,Any],Dict[int,str]]
         response = {"@context": collections[category]["context"].generate()}
         return set_response_headers(jsonify(response))
     # Check for non collection class
