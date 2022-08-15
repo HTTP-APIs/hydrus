@@ -3,6 +3,7 @@
 default_stages: [commit, push]
 default_language_version:
     python: python3
+exclude: "^examples/,^docs/,^data/,^samples/"
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.4.0
@@ -17,8 +18,9 @@ repos:
     rev: v0.812
     hooks:
     -   id: mypy # type annotations
-        exclude: ^tests/,^dat/,^cython/
+        exclude: ^tests/,^examples/, ^docs/, ^data/, ^samples/
 -   repo: https://github.com/PyCQA/pylint
     rev: pylint-2.7.2
     hooks:
     -   id: pylint
+        exclude: ^tests/,^examples/, ^docs/, ^data/, ^samples/
