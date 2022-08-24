@@ -1,4 +1,4 @@
-hydrus [![Build Status](https://travis-ci.com/HTTP-APIs/hydrus.svg?branch=master)](https://travis-ci.com/HTTP-APIs/hydrus)
+hydrus [![Build Status](https://travis-ci.com/HTTP-APIs/hydrus.svg?branch=develop)](https://travis-ci.com/HTTP-APIs/hydrus)
 ===================
 hydrus is a set of **Python** based tools for easier and efficient creation of Hypermedia driven REST-APIs. hydrus utilises the power of [Linked Data](https://en.wikipedia.org/wiki/Linked_data) to create a powerful REST APIs to serve data.
 hydrus uses the [Hydra(W3C)](http://www.hydra-cg.com/) standard for creation and documentation of it's APIs.
@@ -59,11 +59,11 @@ cd hydrus
 ```
 2. Install a [*Python virtual environment*](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/) using:
 ```bash
-python3.7 -m venv .venv
+python3.8 -m venv .venv
 ```
 or:
 ```bash
-virtualenv -p python3.7 .venv
+virtualenv -p python3.8 .venv
 ```
 
 3. Install hydrus using:
@@ -96,6 +96,5 @@ For more info, head to the [Usage](http://www.hydraecosystem.org/01-Usage.html) 
 Development
 -------------
 
-From the `hydrus` directory:
-* To run formatter: `pip install black && black *.py`
-* To test for formatting: `flake8 *.py`
+1. Install git hook: `pre-commit install`
+2. Every time code is committed, automated checks are run using `mypy` and `pylint`

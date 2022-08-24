@@ -1,5 +1,9 @@
 from flask import Flask
 
+import yaml
+from os.path import dirname
+from pathlib import Path
+
 
 def app_factory(api_name: str = "api", vocab_route: str = "vocab") -> Flask:
     """
@@ -8,8 +12,7 @@ def app_factory(api_name: str = "api", vocab_route: str = "vocab") -> Flask:
     :param vocab_route : The route at which the vocab of the apidoc is present
     :return : API with all routes directed at /[api_name].
     """
-    from flask import redirect, request
-    import uuid
+    from flask import redirect
     from flask_cors import CORS
     from flask_restful import Api
     from hydrus.resources import (
@@ -22,7 +25,12 @@ def app_factory(api_name: str = "api", vocab_route: str = "vocab") -> Flask:
     )
 
     app = Flask(__name__)
-    app.config["SECRET_KEY"] = "secret key"
+
+    config_dct = None
+    with open(Path(dirname(dirname(__file__))) / Path("config.yml"), "r") as stream:
+        config_dct = yaml.safe_load(stream)
+    app.config["SECRET_KEY"] = config_dct["security"]["secret"]
+
     CORS(app)
     app.url_map.strict_slashes = False
     api = Api(app)

@@ -1,0 +1,26 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+default_stages: [commit, push]
+default_language_version:
+    python: python3
+exclude: "^examples/,^docs/,^samples/"
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.4.0
+    hooks:
+    -   id: check-builtin-literals
+    -   id: check-executables-have-shebangs
+    -   id: check-merge-conflict
+    -   id: check-yaml
+    -   id: debug-statements
+    -   id: detect-private-key
+-   repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v0.812
+    hooks:
+    -   id: mypy # type annotations
+        exclude: ^tests/,^examples/, ^docs/, ^samples/
+-   repo: https://github.com/PyCQA/pylint
+    rev: pylint-2.7.2
+    hooks:
+    -   id: pylint
+        exclude: ^tests/,^examples/, ^docs/, ^samples/
